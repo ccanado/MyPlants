@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m http.server:*)",
+      "Bash(node --check:*)",
+      "Bash(npx skills:*)",
+      "WebSearch",
+      "WebFetch(domain:powo.science.kew.org)",
+      "WebFetch(domain:www.rhs.org.uk)",
+      "WebFetch(domain:www.gbif.org)",
+      "WebFetch(domain:api.gbif.org)",
+      "WebFetch(domain:es.wikipedia.org)",
+      "WebFetch(domain:en.wikipedia.org)"
+    ]
+  }
+}
