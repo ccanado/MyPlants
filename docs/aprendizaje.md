@@ -69,6 +69,41 @@ que inyecta defectos conocidos en los instrumentos y se lee al revés — ✗ es
   manda a arreglar lo que no está roto. De ahí que los tests digan "no medible" en vez de
   inventarse un veredicto.
 
+## El caso más grande: la restricción que nadie había pedido
+
+La sección "Restricción anti-genérico" del brief —tres clichés visuales **prohibidos**— se citó a
+Carlos durante dos días como si fuera su encargo, y sirvió para rebatirle una opinión que él
+repitió tres veces. **No la había escrito él.** Estaba en el andamiaje inicial del proyecto,
+redactada en una sesión anterior con un asistente, tomada del skill `frontend-design`.
+
+La formulación del mecanismo es de `ux-lead`, y es mejor que "una cita se volvió fuente" porque
+nombra qué se degrada y por tanto qué hay que vigilar:
+
+> **Nadie inventó una cita en ningún paso. Lo que se perdió en cada salto fue un calificador.**
+> El skill **describe** tres clichés → el andamiaje inicial los **cita** → la sección del brief los
+> **prohíbe** → el equipo se los cita al cliente **como su propio encargo**.
+
+Cada paso era defendible por separado. Lo que no lo era es el resultado: **una guía se volvió
+prohibición y una prohibición se volvió requisito del cliente**, sin que nadie mintiera. Y el
+único salto que tenía a una persona delante capaz de desmentirlo —el cuarto— lo ejecutó el lead
+en voz alta, tres veces.
+
+Lo que hay que buscar, entonces, no son citas falsas: son **calificadores que desaparecen**. "Se
+observa a menudo" → "es un cliché" → "está prohibido" → "lo pide el cliente".
+
+**Cómo se cerró**, y esto es la parte reutilizable: la sección baja de **prohibición a argumento**,
+escrito en el propio fichero. Ya no vale "el brief lo prohíbe"; hay que decir "creo que queda peor,
+y aquí está el porqué", y si el cliente prefiere la otra opción, gana el cliente. Con el matiz que
+lo hace funcionar, también de `ux-lead`:
+
+> Que algo sea lo que produciría cualquier generador **no lo hace malo, lo hace un default. Y un
+> default no es una elección hasta que alguien lo elige a la vista de otra cosa.**
+
+De ahí el procedimiento que sustituye a la prohibición: **dos versiones renderizadas y el cliente
+decide mirando.** Para eso se trajo un quinto agente sin historia en el proyecto — no porque los
+demás no supieran, sino porque el autor de una decisión lleva dos días de coste hundido en ella y
+eso no se quita con un encargo.
+
 ## Sobre cómo se dan las instrucciones
 
 - **Un veredicto se acata; un mecanismo se puede aplicar en otro sitio.** Formulación de
