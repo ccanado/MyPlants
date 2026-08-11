@@ -72,6 +72,12 @@ EXEMPT = re.compile(r"/\*\s*token-exempt", re.I)
 VAR_USE = re.compile(r"var\(\s*(--[\w-]+)")
 VAR_DEF = re.compile(r"^\s*(--[\w-]+)\s*:")
 
+# Custom properties que el JS establece en tiempo de ejecución con
+# `elemento.style.setProperty("--x", …)`. No son tokens de diseño: son coordenadas
+# por elemento, y meterlas en tokens.css sería meter el dato de una planta concreta
+# en el fichero que define el sistema. Están definidas, solo que no ahí.
+VAR_SET_JS = re.compile(r"""setProperty\(\s*["'`](--[\w-]+)["'`]""")
+
 
 def strip_comments(text: str) -> str:
     """Sustituye comentarios por espacios conservando el número de líneas."""
@@ -162,14 +168,40 @@ def main() -> int:
                         )
                         break
 
-    # 3) var() sin definición
+    # 2 bis) custom properties que el JS establece en tiempo de ejecución
+    en_runtime: dict[str, str] = {}
+    js_dir = raiz / "js"
+    if js_dir.is_dir():
+        for ruta in sorted(js_dir.rglob("*.js")):
+            texto = ruta.read_text(encoding="utf-8")
+            for n, linea in enumerate(texto.splitlines(), start=1):
+                for var in VAR_SET_JS.findall(linea):
+                    en_runtime.setdefault(var, f"{ruta.relative_to(raiz)}:{n}")
+
+    # 3) var() sin definición, ni en tokens.css ni desde el JS
     if tokens_path.is_file():
         for var, sitios in sorted(usados.items()):
-            if var not in definidos:
-                donde = ", ".join(sitios[:3]) + (" …" if len(sitios) > 3 else "")
+            if var in definidos or var in en_runtime:
+                continue
+            donde = ", ".join(sitios[:3]) + (" …" if len(sitios) > 3 else "")
+            errores.append(
+                f"{var} se usa pero no está definida en {TOKENS_FILE} "
+                f"(falla en silencio) — en {donde}"
+            )
+
+        for var, origen in sorted(en_runtime.items()):
+            if var in usados:
+                avisos.append(
+                    f"{var} no está en {TOKENS_FILE} y no hace falta: la establece el JS en "
+                    f"tiempo de ejecución ({origen}). Es una coordenada por elemento, no un "
+                    f"token de diseño — meterla en tokens.css sería meter un dato concreto "
+                    f"en el fichero que define el sistema"
+                )
+            if var in definidos:
                 errores.append(
-                    f"{var} se usa pero no está definida en {TOKENS_FILE} "
-                    f"(falla en silencio) — en {donde}"
+                    f"{var} está definida en {TOKENS_FILE} Y la sobrescribe el JS en "
+                    f"{origen}. Elige una de las dos: un valor que se pisa en runtime hace "
+                    f"que el token mienta sobre lo que pinta"
                 )
 
         sin_usar = sorted(definidos - set(usados))
