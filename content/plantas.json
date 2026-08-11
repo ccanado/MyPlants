@@ -2,7 +2,7 @@
   "meta": {
     "fecha_diagnostico": "2026-08-11",
     "contexto": "Móstoles (Madrid). Verano seco y caluroso, invierno con calefacción. Las siete plantas están en el SALÓN, junto a un ventanal grande orientado a noreste; el poto está en un hueco de estantería de madera algo retirado del ventanal. Por la mañana entra SOL DIRECTO donde están y después se va: el patrón real del día son dos tramos, sol directo a primera hora y sombra luminosa el resto. A primera hora en un ventanal a noreste el sol incide bajo y es menos agresivo que un mediodía a sur, pero es sol directo. En verano hay aire acondicionado con el objetivo de no pasar de 28 °C; en invierno, la calefacción mantiene el salón normalmente entre 21 y 24 °C. Las dos cifras las ha dado Carlos. Que el invierno sea cálido y no frío cambia el consejo de varias fichas: el riesgo de esta casa en enero no es que las plantas pasen frío, es que no tengan reposo y que el aire de la calefacción esté seco. No hay mascotas. Quien riega, poda y trasplanta es Noah, el hijo de Carlos, así que las fichas están escritas para quien va a tener la regadera en la mano. Al estar las siete juntas comparten microclima: agrupar para subir la humedad local funciona de verdad aquí, y una plaga en una es una plaga en las siete.",
-    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy. Y hay dos regímenes distintos: begonia y helecho llevan 74 días en casa, así que lo que se ve es de aquí; los dos coleos, el ficus y la margarita llegaron ese mismo día, así que su daño visible viene de producción, tienda o transporte y no de esta casa.",
+    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy. Y hay dos regímenes distintos: begonia y helecho llevan 74 días en casa, así que lo que se ve es de aquí; los dos coleos, el ficus y la margarita habían llegado el día antes, el 10 de agosto, así que su daño visible viene de producción, tienda o transporte y no de esta casa.",
     "escalas": {
       "luz.nivel": "alias de `nivel_ideal`, conservado para no romper el filtro de builder",
       "riego.dias_verano": "días orientativos entre riegos en julio-agosto en Móstoles, en interior",
@@ -22,7 +22,7 @@
       "luz.tramos": "el día dividido en tramos: `[{franja, tipo}]`, con `tipo` en el conjunto cerrado directo | indirecto_brillante | indirecto_medio | sombra. Sin horas: Carlos ha dicho «por la mañana sol directo y luego se va», y no se inventan horas que no ha dado",
       "riego.profundidad_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
       "fecha_llegada": "fecha en que la planta entró en casa, YYYY-MM-DD. `null` cuando solo se puede decir de forma aproximada: entonces el dato está en `fecha_llegada_texto`",
-      "dias_en_casa": "días desde `fecha_llegada` hasta la fecha del diagnóstico (2026-08-11). `null` si la llegada es aproximada",
+      "dias_en_casa": "días entre `fecha_llegada` y la fecha del diagnóstico (2026-08-11). `null` si la llegada es aproximada. Es una cifra congelada de ese día y NO los días que la planta lleva en casa hoy: para eso se cuenta desde `fecha_llegada`. Ver `meta.regla_tiempo`",
       "notas": "lista de notas personales, `[{autor, texto}]`, hoy vacía en las siete: nadie las ha dictado. Sustituye a `notas_carlos`, que se ha retirado del fichero: había dos campos para lo mismo y la duplicación es peor que el hueco. Los autores posibles son Carlos, Noah y Vanesa.",
       "manipulacion": "riesgo al manipular la planta (podar, trasplantar, hacer esquejes): la vía relevante en esta casa, que es dérmica y ocular, no digestiva. Con su propia cita",
       "nombre_comun": "el nombre con el que Carlos llama a la planta, y nada más. El estado de identificación NO va aquí: cuando `nombre_cientifico` es null, ese es el renglón donde se rotula «sin identificar». Y la discrepancia entre el nombre de la etiqueta y la especie real (caso de la margarita, que es un crisantemo) se cuenta en `nombre_cientifico` y en `estado`, no metida entre paréntesis en el nombre grande.",
@@ -48,7 +48,8 @@
       "fitosanitario": "ES13-28/0283F",
       "nota": "El nº fitosanitario ES13-28/0283F es del vivero y es el mismo en las etiquetas del ficus, los dos coleos y la margarita: identifica al operador, no a la planta. La begonia viene de otro productor y trae pasaporte fitosanitario europeo en lugar de esta etiqueta. El helecho y el poto no tienen etiqueta."
     },
-    "nota_calendario": "Las siete anclas de riego son del mismo día, el 11 de agosto de 2026: tres porque Carlos las regó ese día (begonia, helecho, poto) y cuatro porque llegaron a casa ese día (los dos coleos, el ficus y la margarita). Consecuencia que conviene tener presente al pintar el calendario: los vencimientos arrancan sincronizados y van a caer juntos o casi durante las primeras semanas, aunque los ritmos van de 2 a 10 días y se desacoplan solos. El riesgo es de manejo, no de datos: que ver las siete alineadas invite a regar las siete el mismo día. No se riegan igual —90 ml en una maceta de 9 cm y 300 ml en una de 1,6 L— y el disparador es el sustrato de cada una. Las que pagan un riego «de oficio» son las dos que van en recipiente sin agujero visible: la begonia en su cachepot y el poto en su cerámica decorativa."
+    "nota_calendario": "Las siete anclas de riego caen en dos días seguidos: el 11 de agosto de 2026 las tres que Carlos regó ese día (begonia, helecho, poto) y el 10 las cuatro que llegaron a casa esa fecha (los dos coleos, el ficus y la margarita). Consecuencia que conviene tener presente al pintar el calendario: los vencimientos arrancan sincronizados y van a caer juntos o casi durante las primeras semanas, aunque los ritmos van de 2 a 10 días y se desacoplan solos. El riesgo es de manejo, no de datos: que ver las siete alineadas invite a regar las siete el mismo día. No se riegan igual —90 ml en una maceta de 9 cm y 300 ml en una de 1,6 L— y el disparador es el sustrato de cada una. Las que pagan un riego «de oficio» son las dos que van en recipiente sin agujero visible: la begonia en su cachepot y el poto en su cerámica decorativa.",
+    "regla_tiempo": "El contenido de este fichero guarda HECHOS ABSOLUTOS y no expresiones relativas al momento en que se escribieron: `fecha_llegada: \"2026-08-10\"` es verdad para siempre y «es su primer día en casa» deja de serlo en veinticuatro horas. Quien calcula «ayer», «hace tres días» o «hace dos semanas» es la interfaz, a partir de `fecha_llegada`, `estados[].fecha_foto`, `riego.ancla` y `riego.ultimo`. La distinción fina, porque no todo lo que suena relativo lo es: caduca lo que se mide desde el día en que se ESCRIBIÓ («lleva horas en casa», «acaba de llegar», «ahora mismo»); no caduca lo que se mide desde el día en que se LEE —el «Hoy:» de un paso de tratamiento sigue queriendo decir hoy para quien lo lea—, ni lo que relaciona dos hechos fechados entre sí («llevaba un día en casa cuando se hizo esta foto», «el mismo día y del mismo regalo que la begonia»), ni un «hace más de veinte años», que solo se vuelve más cierto. Y ojo con `dias_en_casa`: es una cifra CONGELADA entre `fecha_llegada` y `meta.fecha_diagnostico`, no los días que lleva hoy. Para «lleva X días» se calcula desde `fecha_llegada` y no se lee ese campo."
   },
   "plantas": [
     {
@@ -58,7 +59,7 @@
       "familia": "Sin determinar",
       "foto": "helecho.jpg",
       "alt": "Maceta de barro con corazones blancos pintados. En el centro, una masa densa de tocones finos, oscuros y alambrados de una poda; a la izquierda, unos pocos brotes verdes pequeños de segmentos en forma de cuña que caen por el borde de la maceta.",
-      "historia": "Regalo de Vanesa a Noah, el 29 de mayo de 2026, el mismo día y del mismo regalo que la begonia. Es una de las dos plantas de Noah. En estos 74 días se secó por completo; Noah la podó entera y ha rebrotado.",
+      "historia": "Regalo de Vanesa a Noah, el 29 de mayo de 2026, el mismo día y del mismo regalo que la begonia. Es una de las dos plantas de Noah. En los 74 días que van de esa fecha al diagnóstico del 11 de agosto de 2026 se secó por completo; Noah la podó entera y ha rebrotado.",
       "riego": {
         "resumen": "Que no se seque nunca del todo: cada 3 días en verano, cada 4 en invierno, ~100 ml.",
         "detalle": "Con la masa foliar casi a cero la planta transpira poquísimo, así que el riesgo ahora no es la sed sino el encharcamiento: el mismo volumen que antes se bebía en dos días puede tardar una semana en irse. Riega poco y a menudo: unos 100 ml cada 3 días en agosto y cada 4 en invierno —no más, porque el salón se mantiene a 21-24 °C con la calefacción y el aire seco vacía la maceta antes de lo que sugiere el «en invierno se riega menos»—, comprobando siempre con el dedo que el primer centímetro no está mojado. El sustrato tiene que estar fresco al tacto de forma continua, sin llegar a barro. Un helecho tierno de interior es la planta que menos perdona un secado completo: RHS lo resume en que odian el sustrato seco. Si el cepellón se ha vuelto a separar de las paredes de la maceta (síntoma de que se secó del todo), sumerge la maceta 10 minutos en un barreño y deja escurrir; luego vuelve al riego normal. Agua a temperatura ambiente, nunca fría del grifo. Móstoles tiene agua dura: si puedes, usa agua de lluvia o filtrada, que a los helechos les sienta mejor.",
@@ -120,7 +121,7 @@
       },
       "sustrato": {
         "resumen": "Sustrato de interior sin turba, esponjoso y que retenga humedad. No lo cambies todavía.",
-        "detalle": "RHS recomienda para Adiantum sustrato de interior sin turba. Mientras esté recuperándose no lo toques: cambiar el sustrato implica manipular unas raíces que ya vienen de una desecación, y ahora mismo no tiene hoja con la que compensar el destrozo. Si al regar ves que el agua atraviesa la maceta en dos segundos y sale por abajo casi limpia, el cepellón está compactado y seco por dentro; la solución de esta semana es el riego por inmersión, no el trasplante.",
+        "detalle": "RHS recomienda para Adiantum sustrato de interior sin turba. Mientras esté recuperándose no lo toques: cambiar el sustrato implica manipular unas raíces que ya vienen de una desecación, y en el estado en que la deja la poda no tiene hoja con la que compensar el destrozo. Si al regar ves que el agua atraviesa la maceta en dos segundos y sale por abajo casi limpia, el cepellón está compactado y seco por dentro; la solución de esta semana es el riego por inmersión, no el trasplante.",
         "mezcla": null,
         "cambiar_ahora": false
       },
@@ -140,7 +141,7 @@
       },
       "trasplante": {
         "resumen": "No ahora. Cuando recupere masa foliar, en primavera, y solo si el cepellón lo pide.",
-        "detalle": "Trasplantar es la peor idea posible con una planta recién podada a ras: pierde raíz justo cuando no tiene hoja para reponerla. Deja pasar la recuperación completa y hazlo en primavera, que es cuando RHS sitúa la división de rizomas de Adiantum. Cuando llegue el momento, sube solo una talla de maceta. Comprueba antes que la maceta de barro de los corazones tiene agujero de drenaje: en la foto no se ve el fondo, y una maceta decorativa sin agujero con riego frecuente es la forma más rápida de terminar el trabajo que empezó la sequía.",
+        "detalle": "Trasplantar es la peor idea posible con una planta podada a ras: pierde raíz justo cuando no tiene hoja para reponerla. Deja pasar la recuperación completa y hazlo en primavera, que es cuando RHS sitúa la división de rizomas de Adiantum. Cuando llegue el momento, sube solo una talla de maceta. Comprueba antes que la maceta de barro de los corazones tiene agujero de drenaje: en la foto no se ve el fondo, y una maceta decorativa sin agujero con riego frecuente es la forma más rápida de terminar el trabajo que empezó la sequía.",
         "cuando": "primavera, tras recuperar masa foliar",
         "meses": [
           3,
@@ -1137,7 +1138,7 @@
             "El envés de las hojas: no se puede descartar araña roja, que prospera justo con el aire seco de esta casa, y que además está bajo sospecha en el coleo grande, a pocos metros y en la misma habitación.",
             "Si hay oídio incipiente. Hay hojas con zonas grisáceas, pero a esa resolución no distingo polvo de hongo de reflejo y pubescencia. Una foto del haz a contraluz lo resolvería.",
             "Cuánto sol directo recibe exactamente y durante cuántos minutos. Es el dato que confirmaría la causa que he puesto primera: se resuelve con una foto del salón a la hora en que entra el sol, viendo si la mancha de luz cae sobre la planta.",
-            "Si el cachepot blanco tiene agua estancada en el fondo ahora mismo.",
+            "Si el cachepot blanco tenía agua estancada en el fondo cuando se hizo la foto.",
             "La humedad real del cepellón: la superficie se ve suelta, pero eso no dice nada de los 10 cm de abajo.",
             "Si hay costra blanquecina de sales en el borde de la maceta. En la foto el borde queda tapado por el cachepot."
           ],
@@ -1186,7 +1187,7 @@
       "alt": "Coleo grande y frondoso en maceta blanca de vivero de 1,6 litros con aro de sujeción verde, de hojas dentadas granate oscuro con margen ancho verde lima y nervio central rosa; en varias hojas bajas se ve un punteado pálido y algún agujero.",
       "foto_etiqueta": "coleo-grande-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta blanca de vivero con la etiqueta de Viveros Projardín (Avda. de Móstoles): «COLEO MACETA 1,6L», 6,95 €, con el número de pasaporte fitosanitario ES13-28/0283F.",
-      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 6,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
+      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 10 de agosto de 2026 por 6,95 €.",
       "riego": {
         "resumen": "Cada 3 días en verano, cada 5 en invierno; unos 300 ml en la maceta de 1,6 L.",
         "detalle": "El coleo es de las plantas de interior que más agua mueven: mucha superficie de hoja, tallo semisuculento y ninguna tolerancia a marchitarse. RHS lo resume en regar con generosidad durante el crecimiento. Traducido a esta maceta de 1,6 litros y a agosto en Móstoles: unos 300 ml cada 3 días, comprobando antes con el dedo, y en invierno cada 5: el salón se queda a 21-24 °C con la calefacción, y en una casa cálida de aire seco el intervalo de invierno se alarga poco. Si un día la ves con las hojas lacias, riega y en dos horas se recupera, pero cada marchitez le cuesta hojas bajas. Riega por el borde y deja escurrir; no la dejes con plato con agua. En esta maceta blanca de vivero el drenaje es bueno, así que el riesgo real aquí es el defecto y no el exceso. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
@@ -1197,7 +1198,7 @@
         "ultimo": null,
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-10",
         "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
@@ -1534,7 +1535,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -1548,7 +1549,7 @@
           "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -1585,9 +1586,9 @@
         "otros": null,
         "nota": "La etiqueta da el volumen de la maceta (1,6 L) y no el diámetro, así que `maceta_cm` va en null. «2040 1849» es código interno del vivero, no un EAN-13."
       },
-      "fecha_llegada": "2026-08-11",
+      "fecha_llegada": "2026-08-10",
       "fecha_llegada_texto": null,
-      "dias_en_casa": 0,
+      "dias_en_casa": 1,
       "notas": [],
       "manipulacion": {
         "resumen": "Sin dato de irritación por contacto. Savia herbácea; lávate las manos al pinzar.",
@@ -1649,7 +1650,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-10",
           "ancla_tipo": "llegada_a_casa"
         }
       ],
@@ -1658,9 +1659,9 @@
           "fecha_foto": "2026-08-11",
           "foto": "coleo-grande.jpg",
           "severidad": "atencion",
-          "titulo": "Primer día en casa: el punteado y los agujeros vienen del vivero",
+          "titulo": "Un día en casa: el punteado y los agujeros vienen del vivero",
           "senales": [
-            "Es su primer día en casa: llegó el 11 de agosto de 2026, comprada esa misma mañana, y la foto es de ese día. Nada de lo que se ve lo ha causado esta casa.",
+            "Llevaba un día en casa cuando se hizo esta foto: se compró en el vivero el 10 de agosto de 2026. Nada de lo que se ve lo ha causado esta casa.",
             "Planta vigorosa y densa, con muchos tallos, hoja grande y turgente, sin marchitez ni caída de hojas.",
             "Punteado pálido fino, entre verdoso y tostado, sobre el granate de las hojas medias y bajas, en manchas irregulares y más densas junto a los nervios.",
             "Motas oscuras pequeñas repartidas entre ese punteado, y algún punto negro suelto en el margen lima.",
@@ -1673,10 +1674,10 @@
           ],
           "causas_probables": [
             {
-              "id": "llego-hoy",
+              "id": "llego-del-vivero",
               "tipo": "aclaracion",
-              "resumen": "Llegó hoy: nada de lo que se ve lo ha causado esta casa",
-              "detalle": "Lo primero y lo que reordena todo lo demás: la planta lleva horas en casa. El punteado pálido, las motas oscuras y los agujeros de las hojas bajas son daño de producción, de tienda o de transporte, y no de este salón. No hay nada que corregir en los cuidados de casa, porque todavía no ha habido cuidados de casa. Lo que hay que hacer es distinto: comprobar qué ha entrado con ella y evitar que pase a las otras seis.",
+              "resumen": "Llegó el 10 de agosto: nada de lo que se ve lo ha causado esta casa",
+              "detalle": "Lo primero y lo que reordena todo lo demás: cuando se hizo esta foto la planta llevaba un día en casa. El punteado pálido, las motas oscuras y los agujeros de las hojas bajas son daño de producción, de tienda o de transporte, y no de este salón. No hay nada que corregir en los cuidados de casa, porque todavía no ha habido cuidados de casa. Lo que hay que hacer es distinto: comprobar qué ha entrado con ella y evitar que pase a las otras seis.",
               "patron": null
             },
             {
@@ -1716,7 +1717,7 @@
             }
           ],
           "tratamiento": [
-            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Hoy: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
             "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
             "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
             "Antes de tratar nada, confirma la plaga, esta semana: sacude una hoja sobre un folio blanco y mira lo que cae (los trips se ven como rayitas que se mueven), y fotografía el envés de dos hojas con punteado, lo más cerca que enfoque el móvil. Sin eso, tratar es disparar a ciegas.",
@@ -1756,7 +1757,7 @@
       "alt": "Coleo pequeño y compacto en maceta de vivero de unos 9 cm, con hojas dentadas de color granate intenso, nervios rosas y un filo verde lima muy fino en el borde serrado.",
       "foto_etiqueta": "coleo-pequeno-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta de vivero de unos 9 cm, con cesta gris interior y funda terracota, y la etiqueta de Viveros Projardín: «COLEO», 2,25 €, pasaporte fitosanitario ES13-28/0283F.",
-      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 2,25 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
+      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 10 de agosto de 2026 por 2,25 €.",
       "riego": {
         "resumen": "Maceta mínima: en agosto puede pedir agua cada 2 días. Unos 90 ml y comprobación diaria.",
         "detalle": "Aquí el problema no es la planta, es el recipiente: en una maceta de vivero de unos 9 cm hay medio litro de sustrato para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. Unos 90 ml cada 2 días, pero mete el dedo a diario: la señal de alarma es el sustrato seco al primer centímetro. En invierno, con menos luz y menos crecimiento, cada 4 días: menos que en verano, pero no la mitad, porque el salón sigue a 21-24 °C y el aire de la calefacción seca la maceta más deprisa. En medio litro de sustrato eso se nota antes que en ninguna otra de las siete. RHS pide riego generoso durante el crecimiento; con esta maceta \"generoso\" significa sobre todo \"frecuente\". El día que la veas lacia ya llegas tarde: recupera en dos horas, pero pierde hojas bajas cada vez. Trasplantarla a 12 cm es lo que de verdad arregla el riego. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
@@ -1767,7 +1768,7 @@
         "ultimo": null,
         "calculable": true,
         "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-10",
         "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
@@ -1839,7 +1840,7 @@
       },
       "trasplante": {
         "resumen": "Espera 3 o 4 días a que se asiente y pásala a 12 cm. La maceta de vivero es su único problema.",
-        "detalle": "Es la acción más rentable de esta ficha, pero no hoy mismo: acaba de llegar y conviene darle tres o cuatro días para que se asiente antes de tocarle las raíces. Tampoco mucho más, porque la maceta de vivero de unos 9 cm en agosto es una trampa de riego —hay medio litro de tierra para una planta que bebe mucho— y eso obliga a regar casi a diario. Pasados esos días, pásala a 12 cm con universal sin turba y un puñado de perlita, sin enterrar más el cuello del tallo y sin romper el cepellón (la bola de raíces con su tierra): se saca entera y se rellena alrededor. Riega bien después y no la abones durante 4 semanas. Y en septiembre haz 2 o 3 esquejes de 8-10 cm cortados justo por debajo de un nudo, como propone RHS para el verano: enraízan en 10-15 días en agua o en tierra húmeda y son el seguro contra el invierno, cuando los coleos de interior se estiran con poca luz.",
+        "detalle": "Es la acción más rentable de esta ficha, pero no el mismo día de llegar: conviene darle tres o cuatro días en casa para que se asiente antes de tocarle las raíces. Tampoco mucho más, porque la maceta de vivero de unos 9 cm en agosto es una trampa de riego —hay medio litro de tierra para una planta que bebe mucho— y eso obliga a regar casi a diario. Pasados esos días, pásala a 12 cm con universal sin turba y un puñado de perlita, sin enterrar más el cuello del tallo y sin romper el cepellón (la bola de raíces con su tierra): se saca entera y se rellena alrededor. Riega bien después y no la abones durante 4 semanas. Y en septiembre haz 2 o 3 esquejes de 8-10 cm cortados justo por debajo de un nudo, como propone RHS para el verano: enraízan en 10-15 días en agua o en tierra húmeda y son el seguro contra el invierno, cuando los coleos de interior se estiran con poca luz.",
         "cuando": "maceta de 12 cm esta semana; esquejes en septiembre",
         "meses": null,
         "condicion": "3 o 4 días después de llegar, para que se asiente antes de tocarle las raíces"
@@ -2097,7 +2098,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -2111,7 +2112,7 @@
           "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -2148,9 +2149,9 @@
         "otros": null,
         "nota": "La etiqueta no indica calibre de maceta: `maceta_cm` va en null. Los 9 cm que se citan en la ficha son estimación a partir de la foto, no dato de etiqueta. El código «2040 2174» es el código interno del vivero, no un EAN-13."
       },
-      "fecha_llegada": "2026-08-11",
+      "fecha_llegada": "2026-08-10",
       "fecha_llegada_texto": null,
-      "dias_en_casa": 0,
+      "dias_en_casa": 1,
       "notas": [],
       "manipulacion": {
         "resumen": "Sin dato de irritación por contacto. Savia herbácea; lávate las manos al pinzar.",
@@ -2212,7 +2213,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-10",
           "ancla_tipo": "llegada_a_casa"
         }
       ],
@@ -2221,9 +2222,9 @@
           "fecha_foto": "2026-08-11",
           "foto": "coleo-pequeno.jpg",
           "severidad": "sana",
-          "titulo": "Primer día en casa, sana y con buen color: solo le falta maceta",
+          "titulo": "Un día en casa, sana y con buen color: solo le falta maceta",
           "senales": [
-            "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
+            "Llevaba un día en casa cuando se hizo esta foto: llegó del vivero el 10 de agosto de 2026.",
             "Planta pequeña, compacta y bien ramificada, con hojas turgentes y ninguna marchitez.",
             "Color de hoja intenso: granate profundo con nervios rosas y un filo verde lima muy fino sobre el margen serrado. El contraste está sin degradar.",
             "Sin bordes secos, sin amarilleo y sin caída de hojas bajas.",
@@ -2242,10 +2243,10 @@
               "patron": "El moteado oscuro que tiene es regular y simétrico entre hojas, y por eso lo leo como dibujo del cultivar. Lo que lo desmentiría: punteado pálido NUEVO, irregular y desigual de una hoja a otra —como el del coleo grande—, o que las pocas motas pálidas del margen de las dos hojas bajas aumenten de una semana a otra. Eso ya no sería dibujo, sería chupador."
             },
             {
-              "id": "llego-hoy",
+              "id": "llego-del-vivero",
               "tipo": "aclaracion",
-              "resumen": "Llegó hoy: ese buen estado es mérito del vivero, no de esta casa",
-              "detalle": "Lleva horas en casa. El color intenso y el porte compacto se hicieron en el vivero, con luz alta y riego diario, así que todavía no dicen nada de este salón. Lo que decide su futuro son las dos próximas semanas: el cambio de maceta, la entrada gradual al sol de la mañana y que no traiga plaga.",
+              "resumen": "Llegó el 10 de agosto: ese buen estado es mérito del vivero, no de esta casa",
+              "detalle": "Llevaba un día en casa cuando se hizo esta foto. El color intenso y el porte compacto se hicieron en el vivero, con luz alta y riego diario, así que todavía no dicen nada de este salón. Lo que decide su futuro son las dos próximas semanas: el cambio de maceta, la entrada gradual al sol de la mañana y que no traiga plaga.",
               "patron": null
             },
             {
@@ -2271,7 +2272,7 @@
             }
           ],
           "tratamiento": [
-            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Hoy: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
             "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
             "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
             "Preventivo, esta semana: pásala a una maceta de 12 cm con universal sin turba. Es lo que convierte un riego diario en un riego cada 3 días.",
@@ -2305,7 +2306,7 @@
       "alt": "Ficus Sunny muy denso en una maceta colgante verde de 15 cm, con cientos de hojas pequeñas, ovaladas y de margen ondulado, verdes en el centro y con un borde blanco crema ancho; los tallos rojizos caen por todos los lados.",
       "foto_etiqueta": "ficus-sunny-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta colgante verde rodeada de hojas de borde blanco, con la etiqueta de Viveros Projardín: «FICUS SUNNY MACETA 15 CM», 8,95 €, pasaporte fitosanitario ES13-28/0283F.",
-      "historia": "Comprado en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 8,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
+      "historia": "Comprado en Viveros Projardín (Avda. de Móstoles) el 10 de agosto de 2026 por 8,95 €.",
       "riego": {
         "resumen": "La que menos perdona un olvido: cada 3 días en verano, cada 5 en invierno, ~300 ml.",
         "detalle": "RHS lo dice sin rodeos para las higueras ornamentales de hoja pequeña: la mayoría lo pasa mal con el sustrato seco y con el aire seco, y da la regla concreta de regar cuando los 2 cm de arriba del sustrato estén secos. En una maceta colgante de 15 cm, con esta masa de hoja y en agosto en Móstoles, eso son unos 300 ml cada 3 días; en invierno, cada 5, manteniendo el sustrato solo ligeramente húmedo. RHS pide para las higueras que en invierno el sustrato esté «solo justo húmedo», pero eso es cuánta agua, no cada cuánto: con el salón a 21-24 °C y colgada por encima de la altura de la vista, ésta se seca antes que la mayoría. Lo importante de esta planta es que un secado completo no se recupera: las hojas afectadas se vuelven marrones y crujientes y no vuelven a ponerse verdes; la planta rebrota, pero se queda con calvas. Como está colgada, se seca más rápido que las que están en una mesa, y es fácil olvidarla porque queda por encima de la altura de la vista. Riega hasta que salga agua por los agujeros y déjala escurrir antes de volver a colgarla. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
@@ -2316,7 +2317,7 @@
         "ultimo": null,
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-10",
         "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
@@ -2387,8 +2388,8 @@
         "media_dosis": true
       },
       "trasplante": {
-        "resumen": "No lo cambies aún: recién llegado y con la maceta bien. Cada 2 años en primavera.",
-        "detalle": "Acaba de llegar y está denso y sano en su maceta colgante de 15 cm, así que ahora no se toca: trasplantar suma un estrés a otro. RHS sitúa el cambio de maceta cada dos años, en primavera, subiendo una talla, con sustrato con base de tierra. La señal de que le toca es que pida agua cada dos días y salgan raíces por los agujeros de abajo; entonces, a 17-18 cm. La otra tarea de mantenimiento es la poda, que RHS clasifica en el grupo 1 (poda ligera): se recortan los tallos que se hayan quedado pelados por dentro, cortando justo por encima de un nudo, y los trozos de 8-10 cm enraízan como esquejes en primavera o verano. Ponte guantes al podar: al cortar cualquier Ficus sale un látex blanco que es alérgeno cutáneo (ver `manipulacion`).",
+        "resumen": "No lo cambies mientras la maceta le siga bien. Cada 2 años en primavera.",
+        "detalle": "Está denso y sano en su maceta colgante de 15 cm, así que mientras siga así no se toca: trasplantar suma un estrés a otro. RHS sitúa el cambio de maceta cada dos años, en primavera, subiendo una talla, con sustrato con base de tierra. La señal de que le toca es que pida agua cada dos días y salgan raíces por los agujeros de abajo; entonces, a 17-18 cm. La otra tarea de mantenimiento es la poda, que RHS clasifica en el grupo 1 (poda ligera): se recortan los tallos que se hayan quedado pelados por dentro, cortando justo por encima de un nudo, y los trozos de 8-10 cm enraízan como esquejes en primavera o verano. Ponte guantes al podar: al cortar cualquier Ficus sale un látex blanco que es alérgeno cutáneo (ver `manipulacion`).",
         "cuando": "primavera, cada 2 años",
         "meses": [
           3,
@@ -2664,7 +2665,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -2678,7 +2679,7 @@
           "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -2715,9 +2716,9 @@
         "otros": null,
         "nota": "«2080 5364» es código interno del vivero, no un EAN-13."
       },
-      "fecha_llegada": "2026-08-11",
+      "fecha_llegada": "2026-08-10",
       "fecha_llegada_texto": null,
-      "dias_en_casa": 0,
+      "dias_en_casa": 1,
       "notas": [],
       "manipulacion": {
         "resumen": "El látex blanco de los Ficus es alérgeno cutáneo: guantes al podar, y no te frotes los ojos.",
@@ -2776,7 +2777,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-10",
           "ancla_tipo": "llegada_a_casa"
         }
       ],
@@ -2785,9 +2786,9 @@
           "fecha_foto": "2026-08-11",
           "foto": "ficus-sunny.jpg",
           "severidad": "sana",
-          "titulo": "Primer día en casa, impecable: todo depende de que no se seque ni un día",
+          "titulo": "Un día en casa, impecable: todo depende de que no se seque ni un día",
           "senales": [
-            "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
+            "Llevaba un día en casa cuando se hizo esta foto: llegó del vivero el 10 de agosto de 2026.",
             "Masa foliar densísima y bien repartida, con tallos cayendo por todo el perímetro de la maceta colgante: no hay calvas ni zonas peladas.",
             "Hojas pequeñas (1-2 cm), ovaladas y de margen ondulado, turgentes, verdes en el centro con un borde blanco crema ancho y bien definido.",
             "Variegación estable y del mismo dibujo en las hojas nuevas de las puntas que en las viejas del interior: señal de que la luz le está bastando.",
@@ -2805,10 +2806,10 @@
               "patron": "Que la hoja nueva de las puntas salga más verde y con el borde blanco más estrecho que las de dentro: eso diría que la luz ya no le basta y que esta afirmación se ha quedado vieja. Mientras salgan con el mismo dibujo, se sostiene."
             },
             {
-              "id": "llego-hoy",
+              "id": "llego-del-vivero",
               "tipo": "aclaracion",
-              "resumen": "Llegó hoy: esa densidad y esa variegación las hizo el vivero, no esta casa",
-              "detalle": "Lleva horas en casa, así que nada de lo que se ve refleja todavía este salón: lo que trae puesto se produjo en el vivero. Lo que va a decir cómo está dentro de un mes son estas primeras semanas aquí, no la foto de hoy.",
+              "resumen": "Llegó el 10 de agosto: esa densidad y esa variegación las hizo el vivero, no esta casa",
+              "detalle": "Cuando se hizo esta foto llevaba un día en casa, así que nada de lo que se ve refleja todavía este salón: lo que trae puesto se produjo en el vivero. Lo que va a decir cómo está dentro de un mes son estas primeras semanas aquí, no la foto de hoy.",
               "patron": null
             },
             {
@@ -2834,7 +2835,7 @@
             }
           ],
           "tratamiento": [
-            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Hoy: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
             "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
             "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
             "Preventivo: pon una alarma de riego. Con esta planta, un recordatorio cada 3 días en verano vale más que cualquier otro consejo de la ficha.",
@@ -2872,7 +2873,7 @@
       "alt": "Crisantemo de floristería en maceta gris de vivero de 12 cm, formando una cúpula compacta con decenas de flores dobles blancas de tipo pompón y centro amarillo verdoso, muchos botones aún cerrados y hojas verde oscuro profundamente lobuladas.",
       "foto_etiqueta": "margarita-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta gris de vivero con la etiqueta de Viveros Projardín: «MARGARITA MACETA 12 CM», 3,95 €, pasaporte fitosanitario ES13-28/0283F. Alrededor se ven bien las hojas anchas y profundamente lobuladas que delatan que es un crisantemo, no una margarita.",
-      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 3,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
+      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 10 de agosto de 2026 por 3,95 €.",
       "riego": {
         "resumen": "Mientras esté en flor, mucha sed: cada 2 días en verano, unos 180 ml en la maceta de 12 cm.",
         "detalle": "Una planta en plena floración con esta densidad de flor y de hoja en una maceta de 12 cm bebe muchísimo. RHS lo formula así: no dejar nunca que el sustrato se seque del todo, pero sin encharcar, porque no toleran el suelo saturado. En agosto en Móstoles eso son unos 180 ml cada 2 días; comprueba a diario metiendo el dedo, porque si se marchita en flor, las flores abiertas no se recuperan y los botones se quedan sin abrir. Riega por el borde de la maceta, nunca sobre las flores: las flores dobles mojadas se pudren y son la puerta de la botritis. Si la mantienes después de la floración, el consumo baja: cada 4 días. No baja más porque el salón está a 21-24 °C en invierno y el aire de la calefacción seca la maceta: la regla de «en invierno casi no se riega» vale para una casa fría, y ésta no lo es. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
@@ -2883,7 +2884,7 @@
         "ultimo": null,
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-10",
         "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
@@ -2948,7 +2949,7 @@
       },
       "trasplante": {
         "resumen": "Nada mientras esté en flor. Después: poda a 20 cm y decides si al jardín, a maceta o fuera.",
-        "detalle": "Este es el campo que de verdad hay que leer en esta planta. RHS describe el final de temporada así: cortar los tallos a unos 20 cm y guardar la planta en un sitio libre de heladas, y añade que los crisantemos comprados en verano se pueden plantar directamente en macizos y macetas de exterior. Las tres opciones honestas, con lo que implica cada una: (1) tirarla al acabar la flor, que es lo que se hace con la mayoría de los crisantemos de maceta y no es ninguna derrota; (2) plantarla en una maceta grande de exterior o en tierra, donde en Móstoles se comporta como planta perenne de otoño: rebrotará más alta y más suelta que ahora, y florecerá en otoño con los días cortos naturales, no en verano; (3) mantenerla dentro, que es la peor de las tres, porque sin la luz y sin el fotoperiodo del vivero se estira y no vuelve a florecer decentemente. En cualquiera de los casos, la poda a 20 cm va después de la flor, nunca durante. Y como acaba de llegar hoy, con más razón: mover el cepellón de una planta en plena flor le hace tirar los botones, y sumarlo al estrés del viaje sería el doble de innecesario. Advertencia honesta para que no te lleves un chasco: es un crisantemo de floristería comprado en agosto, producido forzando el fotoperiodo con días cortos artificiales y a menudo con enanizantes. Cuando la floración termine y la planta decaiga, eso es su ciclo y su forma de producción, no un fallo de cuidado tuyo.",
+        "detalle": "Este es el campo que de verdad hay que leer en esta planta. RHS describe el final de temporada así: cortar los tallos a unos 20 cm y guardar la planta en un sitio libre de heladas, y añade que los crisantemos comprados en verano se pueden plantar directamente en macizos y macetas de exterior. Las tres opciones honestas, con lo que implica cada una: (1) tirarla al acabar la flor, que es lo que se hace con la mayoría de los crisantemos de maceta y no es ninguna derrota; (2) plantarla en una maceta grande de exterior o en tierra, donde en Móstoles se comporta como planta perenne de otoño: rebrotará más alta y más suelta que ahora, y florecerá en otoño con los días cortos naturales, no en verano; (3) mantenerla dentro, que es la peor de las tres, porque sin la luz y sin el fotoperiodo del vivero se estira y no vuelve a florecer decentemente. En cualquiera de los casos, la poda a 20 cm va después de la flor, nunca durante. Y con una planta recién comprada, con más razón: mover el cepellón de una planta en plena flor le hace tirar los botones, y sumarlo al estrés del viaje sería el doble de innecesario. Advertencia honesta para que no te lleves un chasco: es un crisantemo de floristería comprado en agosto, producido forzando el fotoperiodo con días cortos artificiales y a menudo con enanizantes. Cuando la floración termine y la planta decaiga, eso es su ciclo y su forma de producción, no un fallo de cuidado tuyo.",
         "cuando": "al terminar la floración",
         "meses": null,
         "condicion": "al terminar la floración, nunca durante"
@@ -3044,7 +3045,7 @@
           "fuente": "RHS",
           "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
           "consultado": "2026-08-11",
-          "nota": "RHS: abono líquido durante el crecimiento y cambio a uno rico en potasio (tipo tomate) durante la floración; para los de floristería de interior, abono líquido equilibrado semanal en crecimiento. La media dosis y el \"no es imprescindible\" son criterio propio para una planta recién salida del vivero."
+          "nota": "RHS: abono líquido durante el crecimiento y cambio a uno rico en potasio (tipo tomate) durante la floración; para los de floristería de interior, abono líquido equilibrado semanal en crecimiento. La media dosis y el \"no es imprescindible\" son criterio propio para una planta que sale del vivero con el sustrato ya abonado de producción."
         },
         {
           "campo": "trasplante",
@@ -3184,7 +3185,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -3198,7 +3199,7 @@
           "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
         },
         {
           "campo": "sustrato.mezcla",
@@ -3242,9 +3243,9 @@
         "otros": null,
         "nota": "El nombre de la etiqueta («MARGARITA») no coincide con la planta, que es un crisantemo de floristería. Se transcribe lo que dice la etiqueta, no lo que es. «2040 6899» es código interno del vivero."
       },
-      "fecha_llegada": "2026-08-11",
+      "fecha_llegada": "2026-08-10",
       "fecha_llegada_texto": null,
-      "dias_en_casa": 0,
+      "dias_en_casa": 1,
       "notas": [],
       "manipulacion": {
         "resumen": "Alérgeno cutáneo según RHS. Si retiras muchas flores pasadas, hazlo con guantes.",
@@ -3292,7 +3293,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-10",
           "ancla_tipo": "llegada_a_casa"
         }
       ],
@@ -3301,9 +3302,9 @@
           "fecha_foto": "2026-08-11",
           "foto": "margarita.jpg",
           "severidad": "sana",
-          "titulo": "Primer día en casa y en plena floración: planta de temporada, no de colección",
+          "titulo": "Un día en casa y en plena floración: planta de temporada, no de colección",
           "senales": [
-            "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
+            "Llevaba un día en casa cuando se hizo esta foto: llegó del vivero el 10 de agosto de 2026.",
             "Mata compacta en forma de cúpula, muy cargada: decenas de flores dobles blancas tipo pompón abiertas y muchos más botones aún cerrados.",
             "Follaje verde oscuro, turgente, sin amarilleo, sin bordes secos, sin manchas y sin punteado.",
             "Hojas anchas, profundamente lobuladas, con lóbulos gruesos e irregulares, y flores dobles con centro amarillo verdoso.",
@@ -3314,10 +3315,10 @@
           ],
           "causas_probables": [
             {
-              "id": "llego-hoy",
+              "id": "llego-del-vivero",
               "tipo": "afirmacion",
-              "resumen": "Llegó hoy y está en el mejor momento de su ciclo: nada que corregir",
-              "detalle": "Lleva horas en casa y lo que se ve es el resultado de la producción de vivero. No hay nada que arreglar. Lo que hay que saber es que la cuenta atrás de su floración ya está en marcha y no depende de lo que se haga bien o mal aquí.",
+              "resumen": "Llegó el 10 de agosto en plena floración y en su mejor momento: nada que corregir",
+              "detalle": "Llevaba un día en casa cuando se hizo esta foto, así que lo que se ve es el resultado de la producción de vivero. No hay nada que arreglar. Lo que hay que saber es que la cuenta atrás de su floración ya está en marcha y no depende de lo que se haga bien o mal aquí.",
               "patron": "Que las flores abiertas se marchiten en pocos días o que los botones cerrados se queden sin abrir: eso diría que ya no está en su mejor momento, y apuntaría a un secado en flor o a que le sobra calor, no a una plaga."
             },
             {
@@ -3343,7 +3344,7 @@
             }
           ],
           "tratamiento": [
-            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Hoy: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
             "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
             "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
             "Riego: unos 180 ml cada 2 días en agosto, comprobando a diario, siempre por el borde de la maceta y nunca sobre las flores.",
