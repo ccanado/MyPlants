@@ -1,9 +1,15 @@
 # Cómo ejecutar el QA de MyPlants
 
-Todo lo de aquí funciona sin instalar nada: Python 3 de sistema y un navegador. Los ficheros
-de `tests/` no son un framework — son cinco comprobaciones que se lanzan a mano, tres en el
-navegador y dos en el terminal. Es a propósito: el proyecto no tiene build step y el QA
-tampoco debería tenerlo.
+Todo lo de aquí funciona sin instalar nada: Python 3 de sistema y un navegador. `tests/` no es
+un framework — son cinco comprobaciones de navegador (`*.js`), una de disco (`peso-assets.py`)
+y un lanzador que junta las dos cosas (`runner.py`). Sin dependencias, sin build: el proyecto
+no tiene paso de compilación y el QA tampoco debería tenerlo.
+
+**Si solo vas a ejecutar una cosa, que sea esta:**
+
+```bash
+python3 tests/runner.py          # 0 = todo bien · 1 = hay incidencias
+```
 
 El checklist que hay que rellenar con lo que salga de aquí es `docs/qa/checklist.md`.
 
@@ -59,10 +65,42 @@ Qué mira `tests/peso-assets.py` que no mire ningún otro:
 
 ## 2. Comprobaciones de navegador
 
-Los cuatro ficheros `.js` de `tests/` son autocontenidos: cada uno se pega entero y devuelve
-un objeto con el informe. No dependen entre sí ni de ninguna librería.
+Los cinco ficheros `.js` de `tests/` son autocontenidos: cada uno se pega entero en la consola
+y devuelve un objeto con el informe. No dependen entre sí ni de ninguna librería, y por eso
+valen igual pegados a mano que lanzados por `runner.py`.
 
-### 2a. Desde DevTools (rápido, para mirar algo concreto)
+### 2a. Con `tests/runner.py` — la vía por defecto
+
+```bash
+python3 tests/runner.py                                   # los 5 tests, 1280 px
+python3 tests/runner.py --ancho 768 --alto 1000
+python3 tests/runner.py --test contraste --test foco
+python3 tests/runner.py --reduce                          # con prefers-reduced-motion
+python3 tests/runner.py --abrir 1                         # abre la ficha nº1 antes de medir
+python3 tests/runner.py --captura docs/qa/1280-inicio.png --completa
+python3 tests/runner.py --json /tmp/informe.json          # el informe crudo, para hurgar
+```
+
+Levanta un servidor propio que sirve el repo pero inyecta los `tests/*.js` en la página raíz,
+la abre en Chrome headless **con su propio perfil** y recoge el informe por POST. Devuelve 1 si
+algo falla, así que sirve tal cual como puerta de salida.
+
+Tres cosas que conviene saber:
+
+- **No usa el Chrome del MCP de Playwright.** Ese servidor usa un perfil único: si otro
+  teammate lo tiene abierto, `browser_navigate` responde `Browser is already in use` y QA se
+  queda bloqueado. Este runner no depende de nadie y se puede lanzar en paralelo.
+- **Mide el DOM ya pintado por `js/`.** En este proyecto es la única forma útil de auditar:
+  `index.html` no contiene ninguna ficha, solo un `<template>`; las siete las construye
+  `js/ficha.js` desde el JSON. Un checker estático sobre el HTML no vería nada.
+- **Captura la consola desde antes que `js/app.js`.** El vigilante se inyecta como script
+  clásico y los `type="module"` se aplazan, así que llega a tiempo de cazar los errores de
+  arranque de la propia aplicación, los recursos que no cargan y las promesas sin capturar.
+
+`--dump-dom` de Chrome **no** funciona en esta página (el evento `load` no llega a dispararse),
+de ahí el POST. Está anotado en el código para que nadie lo intente otra vez.
+
+### 2b. Desde DevTools (rápido, para mirar algo concreto)
 
 Abrir la consola en `http://localhost:8000/`, pegar el contenido del fichero y leer el objeto
 que devuelve. Cada uno imprime además un `console.table` con lo que falla.
@@ -75,7 +113,7 @@ que devuelve. Cada uno imprime además un `console.table` con lo que falla.
 | `tests/movimiento.js` | ¿qué se mueve, y se para con `reduce`? |
 | `tests/terceros.js` | ¿ha salido alguna petición fuera del origen? |
 
-### 2b. Desde Playwright MCP (lo que produce la evidencia del informe)
+### 2c. Desde Playwright MCP (lo que produce la evidencia del informe)
 
 Los ficheros no se pueden pasar por ruta: hay que meter el **cuerpo** dentro de una función.
 El patrón para `browser_evaluate` es siempre este:
@@ -106,7 +144,7 @@ browser_evaluate            terceros.js
 browser_network_requests    → contrastar con lo que dijo terceros.js
 ```
 
-### 2c. Recorrido de teclado (no se automatiza del todo, y es el que más encuentra)
+### 2d. Recorrido de teclado (no se automatiza del todo, y es el que más encuentra)
 
 `qaFoco.recorrer()` es un cribado: usa `.focus()` programático, que **no siempre dispara
 `:focus-visible`**. La evidencia que vale es el Tab de verdad:
@@ -128,7 +166,7 @@ Para el retorno de foco tras Escape:
 () => ({ activo: document.activeElement.outerHTML.slice(0, 120) })
 ```
 
-### 2d. Movimiento reducido
+### 2e. Movimiento reducido
 
 `prefers-reduced-motion` no se puede forzar desde JS: hay que emularlo en el navegador y
 **recargar**. Con Playwright MCP:

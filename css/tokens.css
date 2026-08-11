@@ -232,6 +232,14 @@
   /* -- Bordes -------------------------------------------------------------- */
 
   --color-borde:        #918A7B;  /* borde INFORMATIVO (controles, campos)  3,28:1 sobre etiqueta */
+
+  /* ⚠ --color-borde SOLO vale sobre superficie clara: sobre --color-maceta da
+     1,92:1 y suspende WCAG 1.4.11 (bordes de control, 3:1). Lo levantó qa-visual
+     en el borde del buscador, que es el único control que vive sobre el fondo.
+     Un control sobre la maceta usa este otro (3,48:1 sobre teja). Y si lo que
+     se necesita es un control sobre el fondo, casi siempre la respuesta correcta
+     es ponerlo sobre una etiqueta blanca, no darle un borde más claro. */
+  --color-borde-sobre-maceta: #C1BCB3;
   --color-borde-sutil:  #D3CFC8;  /* filete decorativo dentro de una ficha — no comunica nada */
   --color-troquel:      #C1BCB3;  /* el canto de la pegatina troquelada */
 
