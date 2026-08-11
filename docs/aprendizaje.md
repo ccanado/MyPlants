@@ -58,6 +58,21 @@ que inyecta defectos conocidos en los instrumentos y se lee al revés — ✗ es
   sin causa verificada se manda como pregunta, no como instrucción.**
 - **Medir y publicar exigen lo mismo: un worktree limpio.** La lección nació para publicar y
   tardó una sesión en trasladarse a medir, que es donde se había originado.
+- **`grep` sobre el directorio de trabajo responde sobre un estado que no existe para nadie más.**
+  Formulación de `ux-lead`, y es la forma madura del hallazgo anterior: no es que alguien lea mal
+  el sello del runner, es que **la operación por defecto para comprobar si algo está hecho es la
+  operación equivocada**. La versión fiable es `git show HEAD:fichero` o un worktree, y cuesta un
+  carácter más. Nos pilló tres veces el mismo día —el expediente por la mañana, y el
+  `overflow: clip` dos veces— y a los tres: lead, `ux-lead` y `builder`. Con una consecuencia
+  registrada: **una pasada de QA se firmó contra un commit que no llevaba el arreglo que daba por
+  cerrado.**
+- **Un sticky puede estar declarado, con su `top` resuelto, y no pegar.** Tercer modo de fallo que
+  ninguna de las dos comprobaciones cubría: un ancestro con `overflow: hidden` es el contenedor de
+  scroll más cercano. Se detecta **scrolleando de verdad**, no leyendo el estilo computado. Y el
+  arreglo es `overflow: clip`, que recorta igual sin crear contenedor de scroll.
+- **Un umbral que aprueba con margen en su primera medición sigue sin estar derivado.** De
+  `ux-lead`, sobre su propia métrica de carreras sin ancla, que salió holgada —169–552 px contra un
+  tope de 600— y se quedó en el backlog igualmente. Aprobar no es lo mismo que estar justificado.
 - **Cada agente commitea sus propios ficheros, por nombre, nunca `git add -A`.** El lead publicó
   una página en blanco durante horas por barrer con `-A` una edición a medias ajena. Auditados
   los commits de los teammates, todos respetaron la propiedad: la disciplina funcionaba, el
