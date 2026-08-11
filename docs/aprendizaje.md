@@ -2,7 +2,8 @@
 
 Destino de los hallazgos sobre **cómo medimos y cómo nos coordinamos**, en lugar de sobre el
 producto. Por decisión de Carlos del 11 de agosto de 2026, **lo que se anota aquí no genera
-trabajo**, salvo que impida verificar algo del alcance de `docs/pendiente.md`.
+trabajo**, salvo que impida verificar algo del alcance. La regla completa, con su
+excepción, está en `docs/retomar.md`.
 
 Quien encuentre algo de esta clase lo escribe aquí y sigue con lo suyo. Cualquier teammate puede
 añadir; el lead mantiene el orden. La dirección visual y sus decisiones siguen en
@@ -275,7 +276,8 @@ adivinando.
   el objeto —"cronología" donde quería decir "recuperación"— estuvo a punto de matar un diagrama
   correcto.
 - **El proyecto no tenía definición de terminado**, solo de tarea terminada, y por eso se
-  alimentaba a sí mismo. Ese es el motivo de que exista `docs/pendiente.md`.
+  alimentaba a sí mismo. Ese fue el motivo de congelar el alcance el 11 de agosto; v1 se cerró
+  el 12 y el registro de aquel congelado está en `docs/retomar.md` § «v1, cerrada».
 
 ## Cuatro del instrumental, apuntadas por `builder` al cerrar v1
 

@@ -99,6 +99,7 @@ Leyenda de gravedad:
 | 6.5 | A | SVG informativo: `role="img"` + `<title>`. Decorativo: `aria-hidden="true"` + `focusable="false"` | `tests/estructura.js` → `svg` |
 | 6.6 | B | Un SVG que explica un concepto (escala de riego, niveles de luz) tiene **su equivalente en texto al lado** | leer la ficha con las imágenes desactivadas y comprobar que no falta ningún dato |
 | 6.7 | M | Ninguna imagen por encima de 300 KB; total por debajo de 2,5 MB | `tests/peso-assets.py` |
+| 6.8 | A | **Toda trama de `background-image` se comprueba EN CAPTURA**, no con un comprobador | mirar la captura. **Ninguno de los diez lo mira**, y por eso el código de barras de la pegatina —media signature del proyecto— no se pintó nunca: el HTML traía una clase y el CSS estilizaba otra. Todo en verde durante semanas |
 
 ## 7. Movimiento
 
@@ -131,8 +132,8 @@ Leyenda de gravedad:
 | 9.3 | A | Sin `preconnect`/`dns-prefetch`/analytics/beacons | `tests/terceros.js` → `sospechas` |
 | 9.4 | M | Los `<a>` externos de las fuentes citadas son enlaces legítimos y **no** peticiones; con `rel="noopener"` si abren en pestaña nueva | `tests/terceros.js` → `enlaces_externos` |
 | 9.6 | B | **Publicada en GitHub Pages** (`/MyPlants/`, subdirectorio): las fichas pintan, 0 recursos con error, 0 peticiones externas, 0 imágenes rotas | `browser_navigate` + `performance.getEntriesByType('resource')` sobre la URL real |
-| 9.7 | A | **Peso transferido en la carga inicial** con la rejilla cerrada (HTML+CSS+JS+JSON+fuentes, cero bytes de foto) | suma de `transferSize` en la carga en frío. Presupuesto: **< 400 KB** |
-| 9.8 | M | Peso de abrir una ficha: **una** foto, no acumulado | `transferSize` de la imagen tras desplegar |
+| 9.7 | A | **Peso transferido en la carga inicial** con la rejilla cerrada. Desde el 12/08/2026 la rejilla **lleva fotos**, así que el presupuesto viejo —«< 400 KB, cero bytes de foto»— estaba escrito sobre una premisa que ya no existe y no se puede ni cumplir ni incumplir. Lo que se mide ahora: HTML+CSS+JS+JSON+fuentes **más los derivados de rejilla que entren en el primer viewport** (`loading="lazy"` deja fuera el resto) | suma de `transferSize` en la carga en frío. **Presupuesto pendiente de derivar** — ver `docs/retomar.md` § 3: los topes de este proyecto que son números redondos sin procedencia se derivan o se retiran, no se heredan |
+| 9.8 | M | Peso de abrir una ficha: la foto grande de **esa** planta, no acumulado (la de la rejilla ya está descargada y es otro fichero) | `transferSize` de la imagen tras desplegar |
 | 9.5 | M | Sin salto de layout al cargar (las imágenes reservan su hueco) | grabar la carga y comparar el primer frame con el estable; `aspect-ratio` + width/height |
 
 ## 10. El trabajo que la página tiene que hacer

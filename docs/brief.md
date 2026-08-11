@@ -77,11 +77,12 @@
 > **Ocupación ≤ 20 %** de bandas de 100 px con la tinta parando antes del **62 %** del ancho, y
 > **ninguna carrera de más de 600 px sin un ancla de navegación**. Los tres cumplen hoy en las siete
 > fichas. **Y los tres umbrales —20, 62 y 600— NO están derivados**, está escrito dónde y por qué, y
-> están en el backlog de `docs/pendiente.md` para revisarlos. Úsalos; no los defiendas como física.
+> están en el backlog de `docs/retomar.md` para revisarlos. Úsalos; no los defiendas como física.
 >
 > ### Dónde está el estado de verdad
 >
-> `docs/retomar.md` (qué queda) · `docs/pendiente.md` (alcance y backlog) · `docs/decisiones.md`
+> **`docs/retomar.md` es el único fichero de estado** (qué es la web hoy y qué queda) ·
+> `docs/decisiones.md`
 > (cada decisión con su alternativa descartada) · `docs/aprendizaje.md` (doce casos de instrumentos
 > que afirman lo que no pueden saber — leerlo antes de fiarse de un test, incluido uno mío).
 

@@ -100,8 +100,14 @@ tests/                  comprobaciones de contraste, foco, movimiento, terceros 
 .claude/skills/         los dos skills que dirigen el trabajo
 ```
 
-Las fotos originales del móvil no están en el repo (34 MB): solo las versiones web derivadas,
-en `assets/img/`.
+Las fotos originales del móvil no están en el repo (34 MB): solo las versiones web derivadas, en
+`assets/img/` (800×1067 para la ficha) y sus derivados de rejilla en `assets/img/rejilla/`
+(480×640, el mismo encuadre a la mitad). Las siete de ficha en la rejilla serían ~1 MB de carga
+inicial; los derivados suman 468 KB y con `loading="lazy"` solo baja lo que se ve.
+
+Y una nota de documentación, porque el proyecto se ha equivocado por lo contrario: **`docs/` tiene
+un solo fichero de estado —`docs/retomar.md`— y el resto es registro histórico.** El mapa está en
+`CLAUDE.md`.
 
 ## El otro objetivo: aprender Agent Teams
 
@@ -121,11 +127,16 @@ Dos skills propios (`.claude/skills/`) codifican el criterio en lugar de repetir
 prompt: **`vanilla-web-craft`** para construir sin build step, y **`plant-expert`** para no
 inventarse datos botánicos.
 
-Lo que se observó por el camino está en `docs/brief.md` y `docs/decisiones.md`. Un par de cosas
-que merecen contarse: los teammates se corrigieron entre ellos y las correcciones fueron buenas
+Lo que se observó por el camino está en `docs/aprendizaje.md`, que es la mitad del entregable y se
+escribió a base de equivocarse: diecisiete casos de instrumentos que afirman lo que no pueden
+saber. Un par de cosas que merecen contarse: los teammates se corrigieron entre ellos y las correcciones fueron buenas
 —`botanist` avisó a `ux-lead` de que no había ninguna planta con "no tóxica" confirmada, así que
 un distintivo verde habría mentido en cinco de siete fichas—, y el lead se equivocó al menos dos
 veces con datos que había deducido en vez de preguntar. Los mensajes de commit registran las dos.
+
+Y el cierre del sandbox lo dijo `ux-lead` mejor que nadie: **un equipo de agentes puede mejorar
+indefinidamente algo que ya estaba bien, y la única cosa que no puede hacer solo es decidir que ha
+terminado.**
 
 ## Cómo se ve
 

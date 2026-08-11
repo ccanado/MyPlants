@@ -36,14 +36,32 @@ assets/img/             fotos de ficha (800×1067) y de etiqueta (500×667)
 assets/img/rejilla/     derivados de 480×640 para la rejilla — mismo encuadre, la mitad de tamaño.
                         La ruta la deriva js/datos.js del campo `foto`: cuál es el fichero pequeño
                         de una foto es presentación, no contenido
-docs/brief.md           brief de diseño y contenido
-docs/inventario.md      las plantas reales de Carlos (input humano)
-docs/decisiones.md      log de decisiones del equipo
+docs/                   ver el mapa de abajo: un fichero de estado y el resto, registro
+tests/                  los comprobadores, y docs/qa/ sus informes sellados
 ```
+
+## Los documentos: uno es estado, el resto es registro
+
+Esta distinción existe porque el proyecto ya se ha equivocado por lo contrario. El 12 de agosto la
+misma lista de pendientes estaba escrita en tres ficheros a la vez, y **un documento que se queda
+desfasado no avisa: alguien lo cita como si fuera cierto.** Antes de crear un fichero nuevo en
+`docs/`, mira si su sitio es uno de estos.
+
+| Fichero | Qué es | Se actualiza |
+| --- | --- | --- |
+| **`docs/retomar.md`** | **EL ESTADO.** Qué es la web hoy, qué queda y cómo trabajar sin tropezar con los instrumentos. Es por donde se empieza | **sí, siempre** — y es el único |
+| `docs/decisiones.md` | REGISTRO. Una línea por decisión, con la alternativa descartada y el motivo | solo crece, por vueltas |
+| `docs/aprendizaje.md` | REGISTRO. Los instrumentos que han mentido y el mecanismo de coordinación. **No genera trabajo** salvo que impida verificar algo | solo crece |
+| `docs/brief.md` | REGISTRO. La dirección visual y cómo se llegó a ella. **Su piel está sustituida**; dos tercios son historia y lleva su propio aviso al principio | no |
+| `docs/inventario.md` | INPUT HUMANO. Las siete plantas y el hueco de las notas de la casa | lo rellena Carlos |
+| `docs/qa/checklist.md` | El criterio de aceptación, punto por punto | cuando cambia un criterio |
+| `docs/qa/como-ejecutar.md` | Cómo se pasa cada comprobador y qué NO mide cada uno | cuando cambia un instrumento |
+| `docs/qa/informe-N.md` | REGISTRO. Cada pasada, sellada contra un commit y una fecha | solo se añade uno nuevo |
 
 **Regla dura:** ningún color, tamaño de fuente ni espaciado se escribe a mano fuera de
 `css/tokens.css`. En el resto del CSS solo `var(--…)`. Si falta un token, se añade al fichero
-de tokens (hablando con `ux-lead`), no se hardcodea.
+de tokens, no se hardcodea. Y si al terminar hay tokens definidos y sin usar, se borran o se usan:
+paleta muerta es deuda, y `check-tokens.py` los cuenta.
 
 ## Contenido
 
@@ -55,12 +73,15 @@ de tokens (hablando con `ux-lead`), no se hardcodea.
 
 Reglas de contenido:
 
-- **La lista de plantas la da Carlos** (ver `docs/inventario.md`). No inventar plantas ni añadir
-  especies "de relleno" para que la rejilla quede simétrica.
+- **La lista de plantas la da Carlos.** No inventar plantas ni añadir especies "de relleno" para
+  que la rejilla quede simétrica.
 - Los datos botánicos se **verifican** y se citan en `fuentes` (POWO/Kew, RHS, GBIF).
   Si un dato no se puede verificar, se marca como `null` y se anota — nunca se rellena a ojo.
 - `toxicidad_mascotas` es información de seguridad: se cita fuente siempre, o se deja `null`.
-- `historia` y `notas_carlos` son personales. Se preguntan a Carlos; no se fabrican.
+- `historia` y `notas` son personales. Se preguntan; **no se fabrican nunca**. `notas` está vacío
+  en las siete y es el hueco más grande que tiene el proyecto: el panel del cuaderno solo se pinta
+  con contenido, así que no se ve un hueco — se ve una web sin voz. El sitio para escribirlas es
+  `docs/inventario.md`.
 
 ## Cómo se trabaja aquí
 

@@ -1,38 +1,66 @@
-# Inventario — las plantas de casa
+# Inventario — las siete plantas, y el hueco que solo puedes rellenar tú
 
-**Este fichero lo rellena Carlos.** Es el input humano del que sale todo el contenido.
-El teammate `botanist` parte de aquí: verifica las especies, completa los datos de cuidado
-con fuentes citables, y volcará todo a `content/plantas.json`.
+**Este fichero lo rellena Carlos.** Hasta el 12 de agosto de 2026 era una plantilla en blanco con
+columnas para nombre, especie y sitio, y ya no sirve para eso: el inventario se recogió hablando,
+las siete especies están verificadas con 15–19 fuentes cada una y todo eso vive en
+`content/plantas.json`, que es la única fuente de verdad del contenido.
 
-No hace falta que sea preciso ni completo. Con el nombre que tú usas y dónde está cada planta
-ya hay bastante para arrancar — el `botanist` te preguntará el resto.
+Así que este fichero pasa a ser **lo que de verdad falta**, que es lo único de este proyecto que no
+puede hacer un agente: **la voz de la casa.**
+
+## Por qué importa, y por qué no se ve el hueco
+
+Cada ficha tiene un panel de cuaderno —papel claro, itálica, tinta azul, el nombre de quien
+habla— para lo que **no tiene fuente y no la necesita**: de dónde vino la planta, qué se ha
+aprendido fallando, qué le pasó el invierno pasado. Es la capa que distingue esto de un catálogo
+botánico.
+
+Ese panel **solo se renderiza si hay contenido**, decisión deliberada para no decorar una ausencia
+siete veces. La consecuencia es que hoy no se ve un hueco: **se ve una web sin voz**, que es peor,
+porque no delata lo que falta.
+
+Y no las escribe un agente. Una frase inventada en ese panel envenenaría justo la capa que existe
+para ser la única no verificada — el lector ya no sabría qué parte de la web es de una fuente y
+cuál es de la casa.
 
 ## Cómo rellenarlo
 
-Una fila por planta. Columnas:
+Una o dos frases por planta, en tu voz, sin formato. No hace falta que sean bonitas ni completas:
+*«esta la rescató Noah de una que se secó entera»* vale más que un párrafo. Si de alguna no tienes
+nada que decir, se deja vacía — un hueco de verdad es información y un relleno no.
 
-- **Nombre que le doy** — como la llamas tú, aunque no sea el nombre botánico ("la de la entrada", "el ficus grande").
-- **Especie** — si la sabes. Si no, déjalo vacío y describe la planta o adjunta foto en `assets/img/`.
-- **Dónde está** — habitación y relación con la ventana. Esto determina la ficha de luz real, no la teórica.
-- **Desde cuándo / de dónde vino** — regalo, esqueje, vivero, herencia. Es la materia prima de `historia`.
-- **Qué tal va** — sana, regular, se me está muriendo. Es lo que hace útil la web.
-- **Notas** — lo que ya sabes o has aprendido a base de fallos.
+Cuando estén, van a `content/plantas.json` en el campo `notas` de cada planta, con esta forma:
 
-## Plantas
+```json
+"notas": [
+  { "autor": "Noah", "texto": "…" }
+]
+```
 
-| Nombre que le doy | Especie (si la sabes) | Dónde está | Desde cuándo / de dónde vino | Qué tal va | Notas |
-| ----------------- | --------------------- | ---------- | ---------------------------- | ---------- | ----- |
-|                   |                       |            |                              |            |       |
-|                   |                       |            |                              |            |       |
-|                   |                       |            |                              |            |       |
+El `autor` es lo que se pinta como rótulo del panel: quien riega es Noah, así que el panel dirá
+`NOAH` y no un nombre fijo. Puede haber más de una nota y más de una voz.
 
-## Contexto de la casa
+## Las siete
 
-Rellenar en prosa, sin formato. Ayuda al `botanist` a dar consejos reales y no genéricos:
+| Planta | Especie | Desde | Cómo va | Nota de la casa |
+| --- | --- | --- | --- | --- |
+| **Helecho** | sin identificar | 29 may 2026 | crítica | |
+| **Begonia Elatior** | *Begonia × hiemalis* | 29 may 2026 | atención | |
+| **Coleo grande** | *Coleus scutellarioides* | 10 ago 2026 | atención | |
+| **Coleo pequeño** | *Coleus scutellarioides* | 10 ago 2026 | sana | |
+| **Ficus Sunny** | *Ficus pumila* | 10 ago 2026 | sana | |
+| **Margarita** | *Chrysanthemum × morifolium* | 10 ago 2026 | sana | |
+| **Poto** | *Epipremnum aureum* | hace más de 20 años | sana | |
 
-- **Orientación de la casa y ventanas:**
-- **Ciudad / clima:**
-- **Calefacción o aire acondicionado en invierno/verano:**
-- **¿Mascotas?** (crítico para la ficha de toxicidad):
-- **Cuánto tiempo tengo para cuidarlas, siendo honesto:**
-- **¿Viajo y las dejo solas? ¿Cuántos días seguidos?:**
+Las cuatro primeras columnas salen de `content/plantas.json` y están para que sepas de cuál hablas;
+la quinta es la tuya. Si alguna vez cambia el inventario —una planta nueva, una que se va—, la
+verdad sigue estando en el JSON y esta tabla se regenera de ahí.
+
+## Preguntas sueltas que quedaron abiertas
+
+- **¿Hay radiador cerca de alguna?** `botanist` lo preguntó y no llegó respuesta. Mientras no la
+  haya, el diagrama térmico rotula la banda 21–24 °C como **del salón** y no de cada planta, que es
+  lo honesto: hoy es una constante de la casa replicada siete veces. El día que se sepa, deja de
+  serlo para las afectadas sin cambiar el esquema.
+- **¿Fotos nuevas?** El esquema ya es histórico: añadir un estado nuevo con su foto y su fecha no
+  rompe nada, y la ficha seguirá diciendo de qué día habla cada diagnóstico.
