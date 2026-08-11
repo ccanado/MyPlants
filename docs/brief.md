@@ -2132,6 +2132,36 @@ la ha aplicado a los 38 ítems**, y que el sitio donde se termina es el fichero 
   no abono*. No es solo qué mirar: es **en qué orden concluir**, que es lo que evita el error de
   abonar una planta a la que le falta luz. Un diagrama no puede decir eso.
 
+### La banda de casa es de la habitación, no de la planta — y el rótulo tiene que decirlo
+
+Sale de la pregunta con la que `botanist` cierra su fichero —si hay un radiador cerca de las
+plantas— y de comprobar cómo está guardado el dato. **`casa_invierno_min_c: 21`, `max: 24` y
+`casa_verano_max_c: 28` son idénticos en las siete**: una constante de la casa replicada planta a
+planta. Y sin embargo `ubicacion.relacion_ventana` **sí** varía —la margarita está *"junto al
+ventanal grande orientado a noreste"*—, así que el esquema ya sabe que no están en el mismo sitio.
+
+Eso deja una tensión dentro de la misma ficha, y es del helecho: **sus causas dicen que su sitio, con
+sol directo matinal y la corriente del aire acondicionado, es incompatible con un helecho**, mientras
+su diagrama térmico lo dibuja viviendo los mismos 21–24 que todo lo demás. Las dos cosas no pueden
+ser igual de ciertas: si el sitio importa lo bastante para ser una causa, importa lo bastante para
+que la banda no sea una constante.
+
+**No digo que la banda esté mal: digo que es una banda de habitación presentada como banda de
+planta.** El dato de `botanist` es correcto y su `null` en `casa_invierno_c` es la clase de rigor que
+este proyecto pide. Lo que falta es que el dibujo diga de qué es.
+
+**Corrección, y es sólo de rótulo, así que cuesta nada:** la banda se rotula como lo que es —**la del
+salón**, no la del sitio de la planta—. Con eso el diagrama deja de afirmar más de lo que sabe y no se
+pierde nada de su valor, que era ver que en varias fichas la casa cae fuera de lo que la especie
+quiere: sigue viéndose, y con el alcance correcto.
+
+**Y queda anotado como la asunción que hay que revisar si llega el dato.** Si Carlos dice que hay un
+radiador cerca de alguna, la banda pasa a ser **por planta** para ésas: una maceta encima de un
+radiador no vive a 21–24, y una pegada al cristal tampoco por la noche. El esquema no necesita cambiar
+—`temperatura` es por planta ya— y el diagrama tampoco: solo dejaría de recibir el mismo par de
+números siete veces. Mientras no haya dato, **una constante rotulada como constante es honesta; una
+constante rotulada como medida de esa planta, no.**
+
 ## Fases
 
 | Fase | Qué | Quién |
