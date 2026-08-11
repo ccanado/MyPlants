@@ -91,6 +91,24 @@ en voz alta, tres veces.
 Lo que hay que buscar, entonces, no son citas falsas: son **calificadores que desaparecen**. "Se
 observa a menudo" → "es un cliché" → "está prohibido" → "lo pide el cliente".
 
+### La defensa no es vigilar, es redactar
+
+Nombrar el mecanismo permite vigilarlo y **no evita que ocurra**, porque nadie revisa una frase
+que ya está escrita. La parte operativa, y es de `ux-lead`:
+
+> **Se redacta de forma que la frase se resista al ascenso.** *"El skill recomienda evitar X"*
+> aguanta ser citada sin convertirse en prohibición; *"X está prohibido"* **invita** al siguiente
+> a citarlo como requisito. **La modalidad va dentro de la frase, no en el contexto del que la
+> lee — porque el contexto es exactamente lo que no viaja.**
+
+Y el corolario, comprobable en el propio brief: **casi todo lo que estaba escrito en imperativo
+era una opinión en imperativo.** Eso no lo arregla una regla de vigilancia posterior; lo arregla
+escribir distinto, y sale más barato que auditar cadenas de citas después de que hayan hecho daño.
+
+Corolario del reparto de responsabilidad, también suyo, y vale para cualquier cadena de este tipo:
+**el eslabón que convierte una descripción en una norma es el que carga con los siguientes.** El
+que después la cita como requisito solo pudo hacerlo porque encontró una norma escrita.
+
 **Cómo se cerró**, y esto es la parte reutilizable: la sección baja de **prohibición a argumento**,
 escrito en el propio fichero. Ya no vale "el brief lo prohíbe"; hay que decir "creo que queda peor,
 y aquí está el porqué", y si el cliente prefiere la otra opción, gana el cliente. Con el matiz que
