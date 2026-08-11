@@ -85,11 +85,19 @@ def estado_del_arbol(raiz: Path) -> dict:
         mtimes[str(f.relative_to(raiz))] = round(m, 1)
         ultimo = max(ultimo, m)
 
-    sucio = git("status", "--porcelain")
+    # Solo cuenta como "sucio" lo que puede cambiar el resultado: los ficheros que se
+    # miden. `git status` a secas incluye notas, scratch y directorios sin rastrear que
+    # no afectan a nada, y con la negativa activada eso bloquearía al equipo entero por
+    # un fichero de apuntes. La pregunta correcta no es "¿hay algo sin commitear?" sino
+    # "¿es distinto de su commit lo que estoy midiendo?".
+    sucio = git("status", "--porcelain", "--", "index.html", "css", "js", "content")
+    otros = git("status", "--porcelain")
     return {
         "commit": git("rev-parse", "--short", "HEAD") or "(sin git)",
         "arbol_sucio": bool(sucio),
         "ficheros_modificados": len([l for l in sucio.splitlines() if l.strip()]),
+        "otros_sin_commitear": max(0, len([l for l in otros.splitlines() if l.strip()])
+                                   - len([l for l in sucio.splitlines() if l.strip()])),
         "ficheros_medidos": len(mtimes),
         "mtime_mas_reciente": round(ultimo, 1),
         "mtimes": mtimes,
