@@ -2421,6 +2421,49 @@ hoy y caben en seis entradas—, y el estirador no es el número de tareas sino 
 `botanist` (85 caracteres el del sol directo del helecho). **Eso envuelve y está bien: un título que
 envuelve se lee, uno truncado miente.** No se recorta.
 
+### El hueco que arreglé en la ficha lo he introducido en la franja
+
+Firmado el punto 6 y revisado el hero sobre `fefe72a` en worktree limpio, con mis ojos y no solo con
+el instrumento. **El hero funciona:** el veredicto es por fin lo más grande de la pantalla, el `h1`
+lee como antetítulo sin dejar de ser `h1`, y el eje de tareas quedó como lo especifiqué —cuatro
+entradas en vez de seis, con `ESTE MES` agrupado por tarea y las cinco plantas nombradas—.
+
+**Y hay un defecto, y es mío, y es el mismo del que hice una métrica.** Medido en la franja a
+1280×900:
+
+```
+perfil de ocupación por bandas:  100% · 62% · 63% · 61%
+hueco vacío bajo los chips:      325 px de alto en el tercio derecho
+ancho libre a la derecha de los chips:  24 px
+```
+
+Los chips terminan a 42 px del borde superior y debajo quedan **325 px de blanco** en el ~38 %
+derecho. Es la misma forma que pasé el día persiguiendo en el expediente, **introducida por mí en la
+cabecera al ascender la franja a hero.** Y no lo vio mi métrica porque definí su referencia como *"el
+contenedor del expediente de una ficha abierta"*: la franja nunca estuvo dentro del alcance del
+instrumento que yo mismo escribí.
+
+**Lo que NO voy a hacer es extender la métrica a la franja.** El 0,62 se derivó —flojamente, y así
+está escrito— de una **medida de lectura**, y un grupo de controles no es prosa. Aplicar ahí un
+umbral sacado de otra cosa sería exactamente el error del 2.400 cometido por mí y a sabiendas: un
+número viajando más allá de su procedencia. Que el perfil salga rozando el 62 % en tres bandas es una
+coincidencia de geometría, no un veredicto.
+
+**Lo que sí digo es que el hueco es real**, y hay dos observaciones independientes de `qa-visual` que
+caen exactamente ahí: que la franja está *"tipográficamente plana para ser lo primero que se lee"* y
+que *"a 1280 el buscador queda descolgado, el único elemento de la portada que no participa de la
+retícula"*.
+
+**Y las tres cosas se resuelven con un solo cambio:** el buscador está hoy flotando fuera de la
+retícula arriba a la derecha, y la franja tiene un agujero justo debajo de ahí. **El buscador va
+dentro de la franja, en esa columna derecha.** Cierra el hueco, mete el buscador en la retícula y
+pone el campo de búsqueda al lado de la lista de lo que hay que hacer, que es donde se usa. No es una
+idea nueva: es colocar en su sitio lo único que estaba fuera de él.
+
+**No lo ejecuto por mi cuenta**: el alcance está congelado y esto no es de los siete puntos. Queda
+propuesto, con la medición delante, y decide el lead — con el argumento de que **un cambio cierra dos
+críticas aceptadas y un defecto que introduje yo**.
+
 ## Fases
 
 | Fase | Qué | Quién |
