@@ -1,12 +1,12 @@
 {
   "meta": {
     "fecha_diagnostico": "2026-08-11",
-    "contexto": "Móstoles (Madrid). Verano seco y caluroso, invierno con calefacción. Las siete plantas están en el SALÓN, junto a un ventanal grande orientado a noreste; el poto está en un hueco de estantería de madera algo retirado del ventanal. Por la mañana entra SOL DIRECTO donde están y después se va: el patrón real del día son dos tramos, sol directo a primera hora y sombra luminosa el resto. A primera hora en un ventanal a noreste el sol incide bajo y es menos agresivo que un mediodía a sur, pero es sol directo. En verano hay aire acondicionado con el objetivo de no pasar de 28 °C; en invierno, calefacción. No hay mascotas. Quien riega, poda y trasplanta es Noah, el hijo de Carlos, así que las fichas están escritas para quien va a tener la regadera en la mano. Al estar las siete juntas comparten microclima: agrupar para subir la humedad local funciona de verdad aquí, y una plaga en una es una plaga en las siete.",
+    "contexto": "Móstoles (Madrid). Verano seco y caluroso, invierno con calefacción. Las siete plantas están en el SALÓN, junto a un ventanal grande orientado a noreste; el poto está en un hueco de estantería de madera algo retirado del ventanal. Por la mañana entra SOL DIRECTO donde están y después se va: el patrón real del día son dos tramos, sol directo a primera hora y sombra luminosa el resto. A primera hora en un ventanal a noreste el sol incide bajo y es menos agresivo que un mediodía a sur, pero es sol directo. En verano hay aire acondicionado con el objetivo de no pasar de 28 °C; en invierno, la calefacción mantiene el salón normalmente entre 21 y 24 °C. Las dos cifras las ha dado Carlos. Que el invierno sea cálido y no frío cambia el consejo de varias fichas: el riesgo de esta casa en enero no es que las plantas pasen frío, es que no tengan reposo y que el aire de la calefacción esté seco. No hay mascotas. Quien riega, poda y trasplanta es Noah, el hijo de Carlos, así que las fichas están escritas para quien va a tener la regadera en la mano. Al estar las siete juntas comparten microclima: agrupar para subir la humedad local funciona de verdad aquí, y una plaga en una es una plaga en las siete.",
     "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy. Y hay dos regímenes distintos: begonia y helecho llevan 74 días en casa, así que lo que se ve es de aquí; los dos coleos, el ficus y la margarita llegaron ese mismo día, así que su daño visible viene de producción, tienda o transporte y no de esta casa.",
     "escalas": {
       "luz.nivel": "alias de `nivel_ideal`, conservado para no romper el filtro de builder",
       "riego.dias_verano": "días orientativos entre riegos en julio-agosto en Móstoles, en interior",
-      "riego.dias_invierno": "días orientativos entre riegos en invierno con calefacción encendida",
+      "riego.dias_invierno": "días orientativos entre riegos en invierno, con la calefacción encendida y el salón a 21-24 °C. No es la mitad del ritmo de verano, y ese es el error fácil: RHS avisa de que las macetas se secan MÁS deprisa en invierno cuando la calefacción baja la humedad del aire, y de que una planta en habitación cálida necesita riego más a menudo que la misma en habitación fría. Cinco de estos siete intervalos se acortaron al saber que la casa está a 21-24 y no a 17",
       "riego.ml_aprox": "mililitros por riego para la maceta que tiene ahora la planta",
       "severidad": "sana | atencion | critica",
       "dificultad": "fácil | media | exigente",
@@ -14,7 +14,7 @@
       "luz.categoria_ideal": "conjunto cerrado: sol_directo | sol_directo_matinal | indirecta_brillante | indirecta_media | sombra",
       "luz.categoria_recibida": "mismo conjunto cerrado que categoria_ideal",
       "riego.profundidad_seco_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
-      "temperatura": "min_c / max_c es el rango de trabajo recomendado; optimo_min_c / optimo_max_c solo se rellenan cuando una fuente publica un óptimo; minima_letal_c va en null en las siete porque no es un dato que publiquen RHS ni POWO; casa_verano_max_c es el objetivo del aire acondicionado que ha dado Carlos y casa_invierno_c está pendiente de que lo mida",
+      "temperatura": "min_c / max_c es el rango de trabajo recomendado; optimo_min_c / optimo_max_c solo se rellenan cuando una fuente publica un óptimo; minima_letal_c va en null en las siete porque no es un dato que publiquen RHS ni POWO; casa_verano_max_c es el objetivo del aire acondicionado que ha dado Carlos. El invierno es una BANDA y no un punto —la calefacción mantiene el salón entre 21 y 24 °C—, así que va en casa_invierno_min_c y casa_invierno_max_c; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única (22,5) sería inventar una precisión que nadie ha medido",
       "toxicidad_mascotas.clave": "conjunto cerrado: toxica | no_toxica | sin_datos. El campo entero puede ser null (planta sin identificar). Ninguna planta de la casa es `no_toxica` confirmada",
       "etiqueta_vivero": "transcripción literal de la foto de la pegatina; null si la planta no tiene etiqueta. Los campos que no se lean van en null, no se deducen",
       "luz.nivel_ideal": "1-5, la luz que querría la especie. Es el valor que antes se llamaba `nivel`, que se mantiene como alias",
@@ -30,12 +30,12 @@
       "tareas.calculable": "false significa que la web NO debe decir «hoy toca»: falta el dato de origen. Está explicado en `por_que_no`",
       "revisar_fecha": "fecha de la revisión del diagnóstico, YYYY-MM-DD. `null` cuando la revisión no cuenta desde hoy sino desde una acción que aún no se ha hecho: entonces el plazo está en `revisar_dias` y el punto de partida en `revisar_desde`",
       "abonado.meses / trasplante.meses": "meses del año (1-12) en que la tarea aplica. `null` cuando la tarea no depende del calendario, y entonces hay `condicion`",
-      "riego.ultimo": "fecha del último riego. `null` en las siete: nadie lo registra. Es la razón por la que el riego no se puede convertir en «hoy toca regar»",
+      "riego.ultimo": "fecha del último riego. Ya no es null en las siete: la begonia, el helecho y el poto la tienen (11 de agosto de 2026, dicho por Carlos). En las cuatro que llegaron ese mismo día sigue en null, y no es lo mismo: de ellas consta cuándo entraron en casa, no cuándo las regaron. Con esta fecha el ritmo ya se puede contar; lo que sigue sin poder afirmarse es «hoy toca regar», porque eso lo decide el sustrato y no el calendario",
       "estados": "lista de diagnósticos, con histórico: cada tanda de fotos añade una entrada, no sustituye a la anterior. Se mantiene ordenada del más reciente al más antiguo, pero el consumidor NO debe fiarse del orden: el vigente es el de `fecha_foto` más alta. Cada entrada lleva su `fecha_foto` y su `foto` porque un diagnóstico describe una imagen concreta, no el presente.",
       "estados[].causas_probables": "objetos `{id, resumen, detalle, patron}`. `patron` es la señal que permite distinguir esa causa de las otras mirando la planta; puede ser null si la causa no tiene patrón propio",
       "estados[].verificacion": "qué hipótesis del diagnóstico anterior quedó confirmada, refutada o sin resolver. Null en el primer diagnóstico de cada planta",
       "riego.ancla": "fecha desde la que contar los vencimientos de riego. Con `dias_verano`/`dias_invierno` basta para calcular sin guardar nada",
-      "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (alguien apuntó el riego: el cálculo es firme), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe), `sin_dato` (no se puede contar)",
+      "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (consta la fecha de un riego real, dicha por quien riega o apuntada: el cálculo es firme; es el caso de la begonia, el helecho y el poto desde el 11 de agosto de 2026), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe), `sin_dato` (no se puede contar). Hoy ninguna planta usa `sin_dato`: se conserva en el conjunto porque el hueco puede volver — si nadie apunta el siguiente riego, la fecha envejece y hay que devolverla a null en lugar de arrastrarla",
       "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
       "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente."
     },
@@ -46,7 +46,8 @@
       "telefono": "91.644.22.13",
       "fitosanitario": "ES13-28/0283F",
       "nota": "El nº fitosanitario ES13-28/0283F es del vivero y es el mismo en las etiquetas del ficus, los dos coleos y la margarita: identifica al operador, no a la planta. La begonia viene de otro productor y trae pasaporte fitosanitario europeo en lugar de esta etiqueta. El helecho y el poto no tienen etiqueta."
-    }
+    },
+    "nota_calendario": "Las siete anclas de riego son del mismo día, el 11 de agosto de 2026: tres porque Carlos las regó ese día (begonia, helecho, poto) y cuatro porque llegaron a casa ese día (los dos coleos, el ficus y la margarita). Consecuencia que conviene tener presente al pintar el calendario: los vencimientos arrancan sincronizados y van a caer juntos o casi durante las primeras semanas, aunque los ritmos van de 2 a 10 días y se desacoplan solos. El riesgo es de manejo, no de datos: que ver las siete alineadas invite a regar las siete el mismo día. No se riegan igual —90 ml en una maceta de 9 cm y 300 ml en una de 1,6 L— y el disparador es el sustrato de cada una. Las que pagan un riego «de oficio» son las dos que van en recipiente sin agujero visible: la begonia en su cachepot y el poto en su cerámica decorativa."
   },
   "plantas": [
     {
@@ -59,16 +60,16 @@
       "historia": "Regalo de Vanesa a Noah, el 29 de mayo de 2026, el mismo día y del mismo regalo que la begonia. Es una de las dos plantas de Noah. En estos 74 días se secó por completo; Noah la podó entera y ha rebrotado.",
       "riego": {
         "resumen": "Que no se seque nunca del todo: cada 3 días en verano, cada 4 en invierno, ~100 ml.",
-        "detalle": "Con la masa foliar casi a cero la planta transpira poquísimo, así que el riesgo ahora no es la sed sino el encharcamiento: el mismo volumen que antes se bebía en dos días puede tardar una semana en irse. Riega poco y a menudo: unos 100 ml cada 3 días en agosto, cada 4-5 en invierno, comprobando siempre con el dedo que el primer centímetro no está mojado. El sustrato tiene que estar fresco al tacto de forma continua, sin llegar a barro. Un helecho tierno de interior es la planta que menos perdona un secado completo: RHS lo resume en que odian el sustrato seco. Si el cepellón se ha vuelto a separar de las paredes de la maceta (síntoma de que se secó del todo), sumerge la maceta 10 minutos en un barreño y deja escurrir; luego vuelve al riego normal. Agua a temperatura ambiente, nunca fría del grifo. Móstoles tiene agua dura: si puedes, usa agua de lluvia o filtrada, que a los helechos les sienta mejor.",
+        "detalle": "Con la masa foliar casi a cero la planta transpira poquísimo, así que el riesgo ahora no es la sed sino el encharcamiento: el mismo volumen que antes se bebía en dos días puede tardar una semana en irse. Riega poco y a menudo: unos 100 ml cada 3 días en agosto y cada 4 en invierno —no más, porque el salón se mantiene a 21-24 °C con la calefacción y el aire seco vacía la maceta antes de lo que sugiere el «en invierno se riega menos»—, comprobando siempre con el dedo que el primer centímetro no está mojado. El sustrato tiene que estar fresco al tacto de forma continua, sin llegar a barro. Un helecho tierno de interior es la planta que menos perdona un secado completo: RHS lo resume en que odian el sustrato seco. Si el cepellón se ha vuelto a separar de las paredes de la maceta (síntoma de que se secó del todo), sumerge la maceta 10 minutos en un barreño y deja escurrir; luego vuelve al riego normal. Agua a temperatura ambiente, nunca fría del grifo. Móstoles tiene agua dura: si puedes, usa agua de lluvia o filtrada, que a los helechos les sienta mejor.",
         "dias_verano": 3,
         "dias_invierno": 4,
         "ml_aprox": 100,
         "profundidad_cm": 1,
-        "ultimo": null,
-        "calculable": false,
+        "ultimo": "2026-08-11",
+        "calculable": true,
         "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": null,
-        "ancla_tipo": "sin_dato"
+        "ancla": "2026-08-11",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "Luz difusa, nada de sol directo: ese tramo de la mañana le puede quemar el brote.",
@@ -106,13 +107,15 @@
       "temperatura": {
         "min_c": 10,
         "max_c": null,
-        "detalle": "RHS es explícito con los helechos tiernos de interior: no sobreviven por debajo de 10 °C y les molestan las corrientes frías. No doy máximo porque no he encontrado cifra publicada para un helecho de interior genérico, y como la especie está sin identificar tampoco puedo tomar el máximo de otra: lo que sí es seguro es que el calor con aire seco es peor que el calor con aire húmedo. En agosto en Móstoles, si el salón pasa de 30 °C, sube la humedad antes que bajar la temperatura.",
+        "detalle": "RHS es explícito con los helechos tiernos de interior: no sobreviven por debajo de 10 °C y les molestan las corrientes frías. No doy máximo porque no he encontrado cifra publicada para un helecho de interior genérico, y como la especie está sin identificar tampoco puedo tomar el máximo de otra: lo que sí es seguro es que el calor con aire seco es peor que el calor con aire húmedo. En agosto en Móstoles, si el salón pasa de 30 °C, sube la humedad antes que bajar la temperatura. Con la calefacción el salón se mantiene entre 21 y 24 °C, así que en invierno el mínimo de 10 °C no está en juego: el frío no es el problema de esta planta en esta casa. Y para un helecho que está reconstruyendo fronde desde casi cero, que no haya parón invernal juega a favor, porque sigue vegetando. Lo que sí es riesgo concreto es el radiador: RHS avisa de que la proximidad a un radiador deshidrata las hojas y les pone el margen marrón, y en un helecho tierno ése es el primer síntoma y el más difícil de revertir. Lejos del radiador, y agrupado con las demás para subir la humedad local.",
         "optimo_min_c": null,
         "optimo_max_c": null,
         "minima_letal_c": null,
         "rusticidad_rhs": null,
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Sustrato de interior sin turba, esponjoso y que retenga humedad. No lo cambies todavía.",
@@ -286,10 +289,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -363,10 +366,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Regada el 11 de agosto de 2026: lo ha dicho Carlos. Es el primer riego con fecha real del fichero, y con él el ritmo ya se puede contar. Lo que no cambia: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador sigue siendo el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: a partir del segundo riego vuelve a depender de que alguien lo apunte. Si no se apunta, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
         },
         {
           "campo": "estados[0].verificacion",
@@ -377,10 +380,10 @@
         },
         {
           "campo": "riego.ancla",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: no consta cuándo se regó por última vez, así que no hay punto de partida desde el que contar y el vencimiento no se puede calcular. Pregunta concreta para Carlos o Noah: ¿cuándo la regaste por última vez? Con una sola fecha, el cálculo se activa. Mientras no la haya, la ficha solo puede dar el ritmo y recordar la comprobación con el dedo: una fecha estimada daría vencimientos falsos con aspecto de exactos."
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que Carlos dice que la regó. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme y no una aproximación. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
         },
         {
           "campo": "sustrato.mezcla",
@@ -388,6 +391,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null en el helecho y en la margarita a propósito: en el helecho porque no hay que cambiarle el sustrato ahora y proponer una mezcla invitaría a hacerlo; en la margarita porque no se trasplanta durante la floración. En las otras cinco hay mezcla concreta."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -462,11 +479,11 @@
           "tipo": "ritmo",
           "dias_verano": 3,
           "dias_invierno": 4,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
+          "calculable": true,
+          "por_que_no": null,
           "prioridad": 2,
-          "ancla": null,
-          "ancla_tipo": "sin_dato"
+          "ancla": "2026-08-11",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
@@ -586,17 +603,17 @@
       "alt_etiqueta": "Mano sosteniendo la maceta de vivero roja. La etiqueta ovalada verde dice «BEGONIA ELATIOR TM 15» y «Product from ALMERÍA», con cinco fotos de flores de distintos colores, el sello del productor GONZA S.A.T. y un pasaporte fitosanitario europeo: A BEGONIA ELATIOR, B ES01042001, C L1, D NL.",
       "historia": "Regalo de Vanesa a Noah, el 29 de mayo de 2026. Llegó el mismo día que el helecho y del mismo regalo. Es una de las dos plantas de Noah, y es él quien la cuida.",
       "riego": {
-        "resumen": "Cada 4 días en verano, cada 7 con calefacción. Unos 250 ml, y saca la maceta del cachepot.",
-        "detalle": "Comprueba con el dedo: riega cuando los 2 cm de arriba estén secos y el resto solo fresco. En la maceta de vivero de 15 cm eso son unos 250 ml, que en agosto en Móstoles viene a ser cada 4 días y en invierno con la calefacción puesta cada 7 (la calefacción seca el aire, no el sustrato: se riega menos, no más). El detalle que más importa aquí es el cachepot blanco: la maceta de plástico roja va dentro, así que el agua que sobra se queda en el fondo sin que se vea. Riega en el fregadero, espera 10 minutos a que escurra y devuélvela al cachepot; o vacía el cachepot después de cada riego. RHS lo dice en negativo: no dejar que el sustrato se seque, pero sin excederse con el agua. Riega por el borde de la maceta, no por el centro y nunca sobre las hojas ni las flores: en begonia el follaje mojado es la puerta de entrada del oídio y de la botritis.",
+        "resumen": "Cada 4 días en verano, cada 5 con calefacción. Unos 250 ml, y saca la maceta del cachepot.",
+        "detalle": "Comprueba con el dedo: riega cuando los 2 cm de arriba estén secos y el resto solo fresco. En la maceta de vivero de 15 cm eso son unos 250 ml, que en agosto en Móstoles viene a ser cada 4 días y en invierno, con el salón a 21-24 °C, cada 5. Aquí corrijo lo que decía antes esta ficha —que la calefacción seca el aire y no el sustrato, así que se riega bastante menos—: RHS dice lo contrario, que las macetas se secan MÁS deprisa en invierno porque la calefacción baja la humedad del aire, y que una planta en habitación cálida necesita riego más a menudo que la misma en habitación fría. En una casa a 17 °C el intervalo se alargaría de verdad; a 21-24 apenas. Y hay una razón propia de esta planta: es de floración invernal, así que en invierno está trabajando, no descansando. El detalle que más importa aquí es el cachepot blanco: la maceta de plástico roja va dentro, así que el agua que sobra se queda en el fondo sin que se vea. Riega en el fregadero, espera 10 minutos a que escurra y devuélvela al cachepot; o vacía el cachepot después de cada riego. RHS lo dice en negativo: no dejar que el sustrato se seque, pero sin excederse con el agua. Riega por el borde de la maceta, no por el centro y nunca sobre las hojas ni las flores: en begonia el follaje mojado es la puerta de entrada del oídio y de la botritis.",
         "dias_verano": 4,
-        "dias_invierno": 7,
+        "dias_invierno": 5,
         "ml_aprox": 250,
         "profundidad_cm": 2,
-        "ultimo": null,
-        "calculable": false,
+        "ultimo": "2026-08-11",
+        "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": null,
-        "ancla_tipo": "sin_dato"
+        "ancla": "2026-08-11",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "Le sobra sol: el directo de la mañana le está quemando los bordes. Sepárala del cristal.",
@@ -632,15 +649,17 @@
         "hr_objetivo_pct": 55
       },
       "temperatura": {
-        "min_c": 13,
+        "min_c": 10,
         "max_c": 22,
-        "detalle": "Las fuentes no coinciden y el rango honesto es este: RHS da como franja buena 15–22 °C con mínimo invernal de 13 °C, y en la ficha de la planta como planta de interior da un mínimo de 10 °C; para la floración menciona incluso mantenerla a 10–13 °C. No he encontrado una cifra máxima específica publicada para el grupo Elatior: por encima de 25 °C, que en agosto en Móstoles es lo normal dentro de casa, lo esperable es que aborte botones y florezca menos, que es parte de lo que se ve en la foto.",
-        "optimo_min_c": 15,
-        "optimo_max_c": 22,
+        "detalle": "Corrijo aquí una atribución de la versión anterior de esta ficha, porque estaba mezclando grupos de begonia de la misma página de RHS. RHS clasifica la Begonia × hiemalis (sinónimo B. × elatior) dentro del grupo SEMITUBEROSO, y para ese grupo lo que publica es mantenerla a 10-13 °C durante la floración y darle después un reposo a 7 °C. Los 15-22 °C que esta ficha daba como «franja buena» son la línea de las begonias de tallo de caña, y el mínimo invernal de 13 °C es la de las fibrosas: ni uno ni otro son de esta planta. Lo que sí es de esta planta: mínimo de 10 °C en su ficha de especie como planta de interior, y 10-13 °C mientras florece. El máximo de 22 °C sigue siendo criterio propio y no cifra de RHS; por encima, y desde luego por encima de 25 °C —que en agosto en Móstoles es lo normal dentro de casa—, lo esperable es que aborte botones y florezca menos, que es parte de lo que se ve en la foto. Y esto es lo que cambia con el dato nuevo de la casa: en invierno el salón está a 21-24 °C, entre 8 y 14 grados por encima de lo que RHS pide para la floración, y justo en la estación en la que esta begonia florece — RHS describe el grupo como plantas de floración invernal, cultivadas como maceta de floristería y no pensadas para cultivo prolongado, que se descartan después de florecer. Consecuencia práctica, y no es un fallo de cuidado de nadie: aquí la flor va a durar menos que en el invernadero donde se produjo. El sitio más fresco de la casa y lejos del radiador es el que más flor le saca; RHS avisa además de que la cercanía a un radiador deshidrata la hoja y le pone el margen marrón, que es exactamente el daño que esta planta ya tiene.",
+        "optimo_min_c": 10,
+        "optimo_max_c": 13,
         "minima_letal_c": null,
         "rusticidad_rhs": null,
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Universal sin turba de base coco, o John Innes nº 2, con un 20 % de perlita. Ligero y drenante.",
@@ -745,7 +764,7 @@
           "fuente": "RHS",
           "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
           "consultado": "2026-08-11",
-          "nota": "RHS da 15-22 °C como franja buena (recogida en optimo_min_c/optimo_max_c), mínimo invernal de 13 °C, mínimo de 10 °C como planta de interior y 10-13 °C durante la floración. No publica máximo para el grupo Elatior. El techo de 28 °C del aire acondicionado lo ha dado Carlos y es buena noticia: acota el estrés térmico del verano."
+          "nota": "Página de begonias de interior de RHS, releída entera para atribuir bien las cifras, porque la primera versión de esta ficha las mezcló. RHS pone la B. × hiemalis (syn. B. × elatior) en el grupo SEMITUBEROSO, cuyas indicaciones son: semisombra, sustrato húmedo sin llegar a secarse, humedad alta y «mantener 10-13 °C durante la floración»; y en propagación, reposo posterior a 7 °C antes de volver a subir a 10-13 °C. Los 15-22 °C son de las de tallo de caña y el mínimo invernal de 13 °C es de las fibrosas: son otros grupos de la misma página. RHS describe además este grupo como de floración invernal, cultivado como maceta de floristería y no pensado para cultivo prolongado. De ahí los valores de esta ficha: min_c 10 (mínimo de interior de la ficha de especie), optimo 10-13 (cifra publicada para el grupo, durante la floración) y max_c 22, que es criterio propio y no de RHS. El techo de 28 °C del aire acondicionado lo ha dado Carlos y acota el estrés térmico del verano."
         },
         {
           "campo": "sustrato",
@@ -819,10 +838,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -896,10 +915,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Regada el 11 de agosto de 2026: lo ha dicho Carlos. Es el primer riego con fecha real del fichero, y con él el ritmo ya se puede contar. Lo que no cambia: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador sigue siendo el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: a partir del segundo riego vuelve a depender de que alguien lo apunte. Si no se apunta, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
         },
         {
           "campo": "estado.revisar_fecha",
@@ -924,10 +943,24 @@
         },
         {
           "campo": "riego.ancla",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: no consta cuándo se regó por última vez, así que no hay punto de partida desde el que contar y el vencimiento no se puede calcular. Pregunta concreta para Carlos o Noah: ¿cuándo la regaste por última vez? Con una sola fecha, el cálculo se activa. Mientras no la haya, la ficha solo puede dar el ritmo y recordar la comprobación con el dedo: una fecha estimada daría vencimientos falsos con aspecto de exactos."
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que Carlos dice que la regó. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme y no una aproximación. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -988,12 +1021,12 @@
           "titulo": "Regar",
           "tipo": "ritmo",
           "dias_verano": 4,
-          "dias_invierno": 7,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
+          "dias_invierno": 5,
+          "calculable": true,
+          "por_que_no": null,
           "prioridad": 2,
-          "ancla": null,
-          "ancla_tipo": "sin_dato"
+          "ancla": "2026-08-11",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
@@ -1134,10 +1167,10 @@
       "alt_etiqueta": "Detalle de la maceta blanca de vivero con la etiqueta de Viveros Projardín (Avda. de Móstoles): «COLEO MACETA 1,6L», 6,95 €, con el número de pasaporte fitosanitario ES13-28/0283F.",
       "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 6,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
-        "resumen": "Cada 3 días en verano, cada 6 en invierno; unos 300 ml en la maceta de 1,6 L.",
-        "detalle": "El coleo es de las plantas de interior que más agua mueven: mucha superficie de hoja, tallo semisuculento y ninguna tolerancia a marchitarse. RHS lo resume en regar con generosidad durante el crecimiento. Traducido a esta maceta de 1,6 litros y a agosto en Móstoles: unos 300 ml cada 3 días, comprobando antes con el dedo, y en invierno cada 6. Si un día la ves con las hojas lacias, riega y en dos horas se recupera, pero cada marchitez le cuesta hojas bajas. Riega por el borde y deja escurrir; no la dejes con plato con agua. En esta maceta blanca de vivero el drenaje es bueno, así que el riesgo real aquí es el defecto y no el exceso. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
+        "resumen": "Cada 3 días en verano, cada 5 en invierno; unos 300 ml en la maceta de 1,6 L.",
+        "detalle": "El coleo es de las plantas de interior que más agua mueven: mucha superficie de hoja, tallo semisuculento y ninguna tolerancia a marchitarse. RHS lo resume en regar con generosidad durante el crecimiento. Traducido a esta maceta de 1,6 litros y a agosto en Móstoles: unos 300 ml cada 3 días, comprobando antes con el dedo, y en invierno cada 5: el salón se queda a 21-24 °C con la calefacción, y en una casa cálida de aire seco el intervalo de invierno se alarga poco. Si un día la ves con las hojas lacias, riega y en dos horas se recupera, pero cada marchitez le cuesta hojas bajas. Riega por el borde y deja escurrir; no la dejes con plato con agua. En esta maceta blanca de vivero el drenaje es bueno, así que el riesgo real aquí es el defecto y no el exceso. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
         "dias_verano": 3,
-        "dias_invierno": 6,
+        "dias_invierno": 5,
         "ml_aprox": 300,
         "profundidad_cm": 2,
         "ultimo": null,
@@ -1182,13 +1215,15 @@
       "temperatura": {
         "min_c": 10,
         "max_c": 28,
-        "detalle": "RHS le da rusticidad H1C, que en su escala significa que solo puede estar fuera en verano y que el mínimo está entre 5 y 10 °C: para un piso, eso quiere decir que en interior no va a pasar frío nunca, pero que si la sacas a una terraza no puede quedarse ahí en otoño. El máximo de 28 °C es criterio propio traducido a Madrid, no cifra de RHS: por encima, con aire seco, el consumo de agua se dispara y aparece la araña roja.",
+        "detalle": "RHS le da rusticidad H1C, que en su escala significa que solo puede estar fuera en verano y que el mínimo está entre 5 y 10 °C: para un piso, eso quiere decir que en interior no va a pasar frío nunca, pero que si la sacas a una terraza no puede quedarse ahí en otoño. El máximo de 28 °C es criterio propio traducido a Madrid, no cifra de RHS: por encima, con aire seco, el consumo de agua se dispara y aparece la araña roja. En invierno el salón está a 21-24 °C, así que térmicamente no hay nada que vigilar: H1C significa que en interior no va a pasar frío nunca. Lo que hay que vigilar es la combinación de ese calor con la luz de diciembre en un ventanal a noreste. RHS lo dice para plantas de interior en general: demasiado calor junto con poca luz natural en invierno fuerza crecimiento débil y poco sano. Y de las siete, el coleo es el primer candidato, porque es la única que RHS pone a pleno sol: a partir de noviembre espera entrenudos largos, hojas más pequeñas y granate apagado. No es enfermedad ni falta de abono. Se lleva despuntando lo que se estire, y si el invierno la deja desgarbada, la vía normal con un coleo es rehacerla de esqueje en primavera — RHS describe el género como uno de los más fáciles de propagar.",
         "optimo_min_c": null,
         "optimo_max_c": null,
         "minima_letal_c": null,
         "rusticidad_rhs": "H1C",
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Universal sin turba, que retenga algo de humedad y drene. El de vivero le sirve esta temporada.",
@@ -1391,10 +1426,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -1478,7 +1513,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -1493,6 +1528,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -1575,7 +1624,7 @@
           "titulo": "Regar",
           "tipo": "ritmo",
           "dias_verano": 3,
-          "dias_invierno": 6,
+          "dias_invierno": 5,
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
@@ -1683,9 +1732,9 @@
       "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 2,25 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
         "resumen": "Maceta mínima: en agosto puede pedir agua cada 2 días. Unos 90 ml y comprobación diaria.",
-        "detalle": "Aquí el problema no es la planta, es el recipiente: en una maceta de vivero de unos 9 cm hay medio litro de sustrato para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. Unos 90 ml cada 2 días, pero mete el dedo a diario: la señal de alarma es el sustrato seco al primer centímetro. En invierno, con menos luz y menos crecimiento, cada 5 días. RHS pide riego generoso durante el crecimiento; con esta maceta \"generoso\" significa sobre todo \"frecuente\". El día que la veas lacia ya llegas tarde: recupera en dos horas, pero pierde hojas bajas cada vez. Trasplantarla a 12 cm es lo que de verdad arregla el riego. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
+        "detalle": "Aquí el problema no es la planta, es el recipiente: en una maceta de vivero de unos 9 cm hay medio litro de sustrato para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. Unos 90 ml cada 2 días, pero mete el dedo a diario: la señal de alarma es el sustrato seco al primer centímetro. En invierno, con menos luz y menos crecimiento, cada 4 días: menos que en verano, pero no la mitad, porque el salón sigue a 21-24 °C y el aire de la calefacción seca la maceta más deprisa. En medio litro de sustrato eso se nota antes que en ninguna otra de las siete. RHS pide riego generoso durante el crecimiento; con esta maceta \"generoso\" significa sobre todo \"frecuente\". El día que la veas lacia ya llegas tarde: recupera en dos horas, pero pierde hojas bajas cada vez. Trasplantarla a 12 cm es lo que de verdad arregla el riego. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
         "dias_verano": 2,
-        "dias_invierno": 5,
+        "dias_invierno": 4,
         "ml_aprox": 90,
         "profundidad_cm": 1,
         "ultimo": null,
@@ -1730,13 +1779,15 @@
       "temperatura": {
         "min_c": 10,
         "max_c": 28,
-        "detalle": "Igual que el coleo grande: rusticidad H1C en la escala de RHS, es decir mínimo entre 5 y 10 °C y solo fuera en verano. En interior no pasará frío; el cuidado es no dejarla en una terraza en otoño. El máximo de 28 °C es criterio propio traducido a Madrid, no cifra de RHS; con esta maceta tan pequeña, el calor se traduce antes en sed que en daño.",
+        "detalle": "Igual que el coleo grande: rusticidad H1C en la escala de RHS, es decir mínimo entre 5 y 10 °C y solo fuera en verano. En interior no pasará frío; el cuidado es no dejarla en una terraza en otoño. El máximo de 28 °C es criterio propio traducido a Madrid, no cifra de RHS; con esta maceta tan pequeña, el calor se traduce antes en sed que en daño. Mismo caso que el coleo grande, agravado por la maceta. En invierno el salón está a 21-24 °C y no va a pasar frío; lo que le espera es estirarse, porque RHS avisa de que demasiado calor con poca luz natural en invierno fuerza crecimiento débil, y con la luz de diciembre en un noreste el granate se apaga y los entrenudos se alargan. Despunta lo que se estire y no lo leas como falta de riego. Y en medio litro de sustrato el aire seco de la calefacción se nota antes que en cualquiera de las otras seis: es la que antes acusa el invierno de esta casa, aunque la temperatura le dé igual.",
         "optimo_min_c": null,
         "optimo_max_c": null,
         "minima_letal_c": null,
         "rusticidad_rhs": "H1C",
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Universal sin turba con algo de perlita. El de vivero está bien, la maceta no.",
@@ -1932,10 +1983,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -2019,7 +2070,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -2034,6 +2085,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -2116,7 +2181,7 @@
           "titulo": "Regar",
           "tipo": "ritmo",
           "dias_verano": 2,
-          "dias_invierno": 5,
+          "dias_invierno": 4,
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
@@ -2204,10 +2269,10 @@
       "alt_etiqueta": "Detalle de la maceta colgante verde rodeada de hojas de borde blanco, con la etiqueta de Viveros Projardín: «FICUS SUNNY MACETA 15 CM», 8,95 €, pasaporte fitosanitario ES13-28/0283F.",
       "historia": "Comprado en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 8,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
-        "resumen": "La que menos perdona un olvido: cada 3 días en verano, cada 6 en invierno, ~300 ml.",
-        "detalle": "RHS lo dice sin rodeos para las higueras ornamentales de hoja pequeña: la mayoría lo pasa mal con el sustrato seco y con el aire seco, y da la regla concreta de regar cuando los 2 cm de arriba del sustrato estén secos. En una maceta colgante de 15 cm, con esta masa de hoja y en agosto en Móstoles, eso son unos 300 ml cada 3 días; en invierno, cada 6, manteniendo el sustrato solo ligeramente húmedo. Lo importante de esta planta es que un secado completo no se recupera: las hojas afectadas se vuelven marrones y crujientes y no vuelven a ponerse verdes; la planta rebrota, pero se queda con calvas. Como está colgada, se seca más rápido que las que están en una mesa, y es fácil olvidarla porque queda por encima de la altura de la vista. Riega hasta que salga agua por los agujeros y déjala escurrir antes de volver a colgarla. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
+        "resumen": "La que menos perdona un olvido: cada 3 días en verano, cada 5 en invierno, ~300 ml.",
+        "detalle": "RHS lo dice sin rodeos para las higueras ornamentales de hoja pequeña: la mayoría lo pasa mal con el sustrato seco y con el aire seco, y da la regla concreta de regar cuando los 2 cm de arriba del sustrato estén secos. En una maceta colgante de 15 cm, con esta masa de hoja y en agosto en Móstoles, eso son unos 300 ml cada 3 días; en invierno, cada 5, manteniendo el sustrato solo ligeramente húmedo. RHS pide para las higueras que en invierno el sustrato esté «solo justo húmedo», pero eso es cuánta agua, no cada cuánto: con el salón a 21-24 °C y colgada por encima de la altura de la vista, ésta se seca antes que la mayoría. Lo importante de esta planta es que un secado completo no se recupera: las hojas afectadas se vuelven marrones y crujientes y no vuelven a ponerse verdes; la planta rebrota, pero se queda con calvas. Como está colgada, se seca más rápido que las que están en una mesa, y es fácil olvidarla porque queda por encima de la altura de la vista. Riega hasta que salga agua por los agujeros y déjala escurrir antes de volver a colgarla. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
         "dias_verano": 3,
-        "dias_invierno": 6,
+        "dias_invierno": 5,
         "ml_aprox": 300,
         "profundidad_cm": 2,
         "ultimo": null,
@@ -2252,13 +2317,15 @@
       "temperatura": {
         "min_c": 13,
         "max_c": 26,
-        "detalle": "Las dos cifras de RHS no dicen lo mismo y conviene saber por qué: la ficha de la especie le da rusticidad H2, que en su escala es un mínimo de 1 a 5 °C, pero eso describe una planta en el suelo, en un jardín sin heladas. La guía de higueras ornamentales como planta de interior es más exigente y pide mantenerlas por encima de 10-13 °C, con temperatura estable y sin corrientes. Para un piso, la cifra útil es 13 °C: nunca la saques al balcón en invierno. El máximo de 26 °C es criterio propio: por encima, con aire seco, el consumo de agua sube y aparece la araña roja.",
+        "detalle": "Las dos cifras de RHS no dicen lo mismo y conviene saber por qué: la ficha de la especie le da rusticidad H2, que en su escala es un mínimo de 1 a 5 °C, pero eso describe una planta en el suelo, en un jardín sin heladas. La guía de higueras ornamentales como planta de interior es más exigente y pide mantenerlas por encima de 10-13 °C, con temperatura estable y sin corrientes. Para un piso, la cifra útil es 13 °C: nunca la saques al balcón en invierno. El máximo de 26 °C es criterio propio: por encima, con aire seco, el consumo de agua sube y aparece la araña roja. Éste es el mejor parado del invierno de esta casa: 21-24 °C constantes es casi literalmente lo que RHS pide para las higueras ornamentales —temperatura cálida y uniforme, sin oscilaciones grandes y lejos de corrientes—, y la caída súbita de hoja que RHS asocia a temperaturas bajas, poca luz o corrientes frías es justo el fallo que este salón evita. Dos matices. Uno: el radiador sí deshidrata el margen de la hoja según RHS, y en una variegada el margen blanco es lo primero que se marca, así que la distancia al radiador importa más que la temperatura. Dos, y es una inversión estacional que conviene saber: en invierno el tramo de sol de la mañana deja de ser un riesgo y pasa a ser útil, porque RHS dice que las higueras toleran unas horas de sol de mañana especialmente en invierno, y que las plantas de interior aprovechan el sol pleno cuando la luz del día es débil.",
         "optimo_min_c": null,
         "optimo_max_c": null,
         "minima_letal_c": null,
         "rusticidad_rhs": "H2",
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Sustrato con base de tierra (John Innes nº 2), sin turba, que retenga humedad y drene.",
@@ -2472,10 +2539,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -2559,7 +2626,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -2574,6 +2641,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -2653,7 +2734,7 @@
           "titulo": "Regar",
           "tipo": "ritmo",
           "dias_verano": 3,
-          "dias_invierno": 6,
+          "dias_invierno": 5,
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
@@ -2713,7 +2794,7 @@
             "Preventivo, cada 2 semanas: mira el envés de unas cuantas hojas con el zoom del móvil buscando punteado o telaraña. Es la revisión que evita perderla por araña roja.",
             "Gírala un cuarto de vuelta cada 2 semanas para que el lado de la pared no se pele.",
             "Antes de tocar cualquier bultito marrón de los nudos, mira con lupa si es raíz adventicia (sale del tallo, no se desprende) o cochinilla. No la trates a ciegas.",
-            "En invierno: a un metro largo del radiador, riego cada 6 días y sin abono.",
+            "En invierno: a un metro largo del radiador, riego cada 5 días y sin abono. La distancia al radiador no es un detalle: RHS avisa de que su cercanía deshidrata la hoja y le pone el margen marrón, y en una variegada el margen blanco es lo primero.",
             "Con el sol matinal: mira cada semana las hojas más expuestas. Si el margen blanco se vuelve de color papel, difumina ese sol con un visillo."
           ],
           "revisar_en": "1 mes: la planta tiene que seguir sin bordes marrones nuevos y con la variegación igual de contrastada en las hojas de las puntas. Si aparecen bordes crujientes en muchas hojas a la vez, revisa primero si hubo un secado (cepellón separado de las paredes, maceta muy ligera al levantarla) antes de cambiar nada más.",
@@ -2745,9 +2826,9 @@
       "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 3,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
         "resumen": "Mientras esté en flor, mucha sed: cada 2 días en verano, unos 180 ml en la maceta de 12 cm.",
-        "detalle": "Una planta en plena floración con esta densidad de flor y de hoja en una maceta de 12 cm bebe muchísimo. RHS lo formula así: no dejar nunca que el sustrato se seque del todo, pero sin encharcar, porque no toleran el suelo saturado. En agosto en Móstoles eso son unos 180 ml cada 2 días; comprueba a diario metiendo el dedo, porque si se marchita en flor, las flores abiertas no se recuperan y los botones se quedan sin abrir. Riega por el borde de la maceta, nunca sobre las flores: las flores dobles mojadas se pudren y son la puerta de la botritis. Si la mantienes después de la floración, el consumo baja mucho: cada 5 días. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
+        "detalle": "Una planta en plena floración con esta densidad de flor y de hoja en una maceta de 12 cm bebe muchísimo. RHS lo formula así: no dejar nunca que el sustrato se seque del todo, pero sin encharcar, porque no toleran el suelo saturado. En agosto en Móstoles eso son unos 180 ml cada 2 días; comprueba a diario metiendo el dedo, porque si se marchita en flor, las flores abiertas no se recuperan y los botones se quedan sin abrir. Riega por el borde de la maceta, nunca sobre las flores: las flores dobles mojadas se pudren y son la puerta de la botritis. Si la mantienes después de la floración, el consumo baja: cada 4 días. No baja más porque el salón está a 21-24 °C en invierno y el aire de la calefacción seca la maceta: la regla de «en invierno casi no se riega» vale para una casa fría, y ésta no lo es. Primeros días, que no funcionan como la rutina: el sustrato de vivero puede llegar empapado del último riego de la tienda o completamente seco del viaje, y no se sabe sin comprobarlo. Antes del primer riego mete el dedo dos centímetros y levanta la maceta para notar el peso; a partir de ahí ya vale la pauta de arriba. Durante la primera semana revisa a diario en lugar de fiarte del calendario.",
         "dias_verano": 2,
-        "dias_invierno": 5,
+        "dias_invierno": 4,
         "ml_aprox": 180,
         "profundidad_cm": 2,
         "ultimo": null,
@@ -2792,13 +2873,15 @@
       "temperatura": {
         "min_c": 10,
         "max_c": 22,
-        "detalle": "RHS da un mínimo de 10 °C para los crisantemos de floristería de interior, y para conservar las plantas de un año a otro habla de guardarlas en sitio luminoso y libre de heladas y arrancarlas después a 7-10 °C. El máximo de 22 °C es criterio propio y es el dato práctico más útil de esta ficha: cuanto más fresco esté, más duran las flores. En un salón de Madrid en agosto a 27-28 °C la tanda de flor se acorta bastante; si tienes un sitio luminoso y más fresco, ahí durará semanas más.",
+        "detalle": "RHS da un mínimo de 10 °C para los crisantemos de floristería de interior, y para conservar las plantas de un año a otro habla de guardarlas en sitio luminoso y libre de heladas y arrancarlas después a 7-10 °C. El máximo de 22 °C es criterio propio y es el dato práctico más útil de esta ficha: cuanto más fresco esté, más duran las flores. En un salón de Madrid en agosto a 27-28 °C la tanda de flor se acorta bastante; si tienes un sitio luminoso y más fresco, ahí durará semanas más. Y el invierno de esta casa es lo contrario de lo que esta planta necesita, que es el dato más útil de esta ficha después del fotoperiodo: RHS describe el crisantemo como perenne que entra en REPOSO en invierno y rebrota en primavera, y la conservación de un año a otro pasa por frío — guardarla en sitio luminoso y libre de heladas y arrancar la brotación a 7-10 °C. Un salón a 21-24 °C no da reposo ninguno. Y como el techo útil son 22 °C, la casa en invierno está en ese techo o por encima: cuanto más cerca de 24, menos duran las flores. No tiene arreglo con cuidados, porque la temperatura de la casa está puesta para las personas: es la razón de fondo por la que un crisantemo de floristería se trata como planta de temporada y no como perenne de interior.",
         "optimo_min_c": null,
         "optimo_max_c": null,
         "minima_letal_c": null,
         "rusticidad_rhs": null,
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Fértil, húmedo y bien drenado, sin turba. No la cambies de maceta estando en flor.",
@@ -2972,10 +3055,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -3052,7 +3135,7 @@
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 11 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
         },
         {
           "campo": "estados[0].verificacion",
@@ -3074,6 +3157,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null en el helecho y en la margarita a propósito: en el helecho porque no hay que cambiarle el sustrato ahora y proponer una mezcla invitaría a hacerlo; en la margarita porque no se trasplanta durante la floración. En las otras cinco hay mezcla concreta."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -3142,7 +3239,7 @@
           "titulo": "Regar",
           "tipo": "ritmo",
           "dias_verano": 2,
-          "dias_invierno": 5,
+          "dias_invierno": 4,
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
@@ -3229,17 +3326,17 @@
       "alt": "Poto en una maceta cerámica de cuadros blancos y negros, sobre una estantería de madera oscura, con hojas grandes acorazonadas de verde intenso muy jaspeadas de amarillo y crema, que se abren hacia los lados del hueco.",
       "historia": "Lleva más de veinte años con la familia: es, con diferencia, la planta más antigua de la casa. No tiene etiqueta de vivero ni trazabilidad comercial, cosa coherente con dos décadas de convivencia.",
       "riego": {
-        "resumen": "Cada 7 días en verano, cada 10–14 en invierno. ~200 ml, y comprueba el drenaje del cachepot.",
-        "detalle": "RHS da la regla exacta: no regar en exceso y dejar que los 2 cm de arriba del sustrato se secen entre riegos; en su guía lo repite como \"riega solo cuando el sustrato esté acercándose a la sequedad, compruébalo con el dedo\". Para esta maceta, unos 200 ml cada 7 días en verano y cada 10-14 en invierno. Es la planta más tolerante de la casa a que te olvides, y la más fácil de matar por lo contrario: la podredumbre de raíz por exceso de agua es su problema principal según RHS. Aquí hay un detalle concreto de esta maceta: es cerámica decorativa y en la foto no se ve si tiene agujero. Si no lo tiene, el agua sobrante se queda en el fondo y las raíces se ahogan sin que se vea nada desde fuera. Lo mejor: riégala en el fregadero, deja escurrir 10 minutos y devuélvela a su sitio.",
+        "resumen": "Cada 7 días en verano, cada 10 en invierno. ~200 ml, y comprueba el drenaje del cachepot.",
+        "detalle": "RHS da la regla exacta: no regar en exceso y dejar que los 2 cm de arriba del sustrato se secen entre riegos; en su guía lo repite como \"riega solo cuando el sustrato esté acercándose a la sequedad, compruébalo con el dedo\". Para esta maceta, unos 200 ml cada 7 días en verano y cada 10 en invierno. El techo de 14 días que daba antes esta ficha era para una casa fría: con el salón a 21-24 °C, RHS avisa de que la maceta se seca más deprisa porque la calefacción baja la humedad del aire, así que el intervalo de invierno se queda en 10 y la comprobación con el dedo manda igual. Es la planta más tolerante de la casa a que te olvides, y la más fácil de matar por lo contrario: la podredumbre de raíz por exceso de agua es su problema principal según RHS. Aquí hay un detalle concreto de esta maceta: es cerámica decorativa y en la foto no se ve si tiene agujero. Si no lo tiene, el agua sobrante se queda en el fondo y las raíces se ahogan sin que se vea nada desde fuera. Lo mejor: riégala en el fregadero, deja escurrir 10 minutos y devuélvela a su sitio.",
         "dias_verano": 7,
         "dias_invierno": 10,
         "ml_aprox": 200,
         "profundidad_cm": 2,
-        "ultimo": null,
-        "calculable": false,
+        "ultimo": "2026-08-11",
+        "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": null,
-        "ancla_tipo": "sin_dato"
+        "ancla": "2026-08-11",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "En la estantería recibe menos de lo ideal. Acércala al ventanal, pero no al tramo de sol directo.",
@@ -3277,13 +3374,15 @@
       "temperatura": {
         "min_c": 18,
         "max_c": 30,
-        "detalle": "RHS da para el poto una franja de 18 a 30 °C, evitando corrientes frías y sin ponerlo junto a fuentes de calor directo. Es un rango cómodo para un piso de Móstoles todo el año: en verano estará en la parte alta y en invierno con calefacción, en la media. El único punto de atención es no dejarlo pegado a un cristal en una noche fría de enero ni encima de un radiador.",
+        "detalle": "RHS da para el poto una franja de 18 a 30 °C, evitando corrientes frías y sin ponerlo junto a fuentes de calor directo. Es un rango cómodo para un piso de Móstoles todo el año: en verano estará en la parte alta y en invierno con calefacción, en la media. El único punto de atención es no dejarlo pegado a un cristal en una noche fría de enero ni encima de un radiador. Los 21-24 °C del invierno caen de lleno en la franja de 18 a 30 °C de RHS: es la que mejor encaja térmicamente de las siete, y los doce meses. El aviso de RHS que sí aplica es el otro, el de no ponerlo junto a una fuente de calor directo: con la calefacción encendida eso significa no dejarlo sobre un radiador ni pegado a él. El punto flojo es la combinación de diciembre, calor sin luz: RHS asocia la poca luz a pérdida de variegación y crecimiento pobre, y el calor con poca luz a crecimiento débil, y este poto ya recibe un escalón menos del que querría, en un hueco de estantería retirado del ventanal. Diciembre y enero son justo los meses de acercarlo al cristal: RHS dice que en invierno las plantas de interior aprovechan el sol pleno cuando la luz del día es débil.",
         "optimo_min_c": 18,
         "optimo_max_c": 30,
         "minima_letal_c": null,
         "rusticidad_rhs": null,
         "casa_verano_max_c": 28,
-        "casa_invierno_c": null
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
       },
       "sustrato": {
         "resumen": "Sustrato sin turba con base de tierra, que drene bien. No necesita nada especial.",
@@ -3470,10 +3569,10 @@
         },
         {
           "campo": "temperatura.casa_invierno_c",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Sin dato. Carlos ha dado el techo de verano (aire acondicionado a 28 °C) pero no la temperatura del salón en invierno con la calefacción puesta. Pregunta concreta: ¿a cuántos grados está el salón una noche de enero, y hay radiador cerca de las plantas?"
+          "nota": "Carlos ha dado la temperatura del salón en invierno: la calefacción lo mantiene normalmente entre 21 y 24 °C. Es una banda y así se guarda —casa_invierno_min_c 21, casa_invierno_max_c 24—; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única sería inventar una precisión que nadie ha medido. Lo escribió diciendo «en verano», pero es un lapsus: el techo de verano con aire acondicionado ya estaba dado (28 °C) y 21-24 es un termostato de calefacción. Queda una pregunta sin hacer, la que faltaría para cerrar el dato: si hay un radiador cerca de las plantas, que es lo que decidiría si el aviso de RHS sobre la hoja deshidratada junto al radiador aplica a una planta concreta o a las siete."
         },
         {
           "campo": "etiqueta_vivero",
@@ -3547,10 +3646,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+          "nota": "Regada el 11 de agosto de 2026: lo ha dicho Carlos. Es el primer riego con fecha real del fichero, y con él el ritmo ya se puede contar. Lo que no cambia: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador sigue siendo el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: a partir del segundo riego vuelve a depender de que alguien lo apunte. Si no se apunta, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
         },
         {
           "campo": "estados[0].verificacion",
@@ -3561,10 +3660,24 @@
         },
         {
           "campo": "riego.ancla",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Null: no consta cuándo se regó por última vez, así que no hay punto de partida desde el que contar y el vencimiento no se puede calcular. Pregunta concreta para Carlos o Noah: ¿cuándo la regaste por última vez? Con una sola fecha, el cálculo se activa. Mientras no la haya, la ficha solo puede dar el ritmo y recordar la comprobación con el dedo: una fecha estimada daría vencimientos falsos con aspecto de exactos."
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que Carlos dice que la regó. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme y no una aproximación. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
+        },
+        {
+          "campo": "temperatura.invierno_casa",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "Guía de plantas de interior de RHS, abierta y comprobada. Es la fuente del análisis del invierno de esta casa a 21-24 °C, y de ella salen tres frases que se usan en las siete fichas: «demasiado calor junto con poca luz natural en invierno puede forzar a la planta a hacer crecimiento débil y poco sano»; «la proximidad a un radiador puede deshidratar las hojas y ponerlas marrones por el margen»; y «en invierno las plantas de interior se benefician del sol pleno cuando la luz del día es débil»."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
         }
       ],
       "ubicacion": {
@@ -3627,11 +3740,11 @@
           "tipo": "ritmo",
           "dias_verano": 7,
           "dias_invierno": 10,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
+          "calculable": true,
+          "por_que_no": null,
           "prioridad": 2,
-          "ancla": null,
-          "ancla_tipo": "sin_dato"
+          "ancla": "2026-08-11",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
