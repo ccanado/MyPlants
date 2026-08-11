@@ -283,6 +283,14 @@
 
      BORDE DE CONTROL → ≥3:1 obligatorio (WCAG 1.4.11), sobre CUALQUIER
        superficie donde aparezca. Botones, campos, tiradores, chips pulsables.
+       Y también —esto lo afinó builder y el nombre del token se queda corto—
+       **todo gráfico que porte información**: el marco discontinuo de «sin dato»
+       de los diagramas, las marcas del dial de riego, los ejes. 1.4.11 no habla
+       solo de controles, habla de "graphical objects required to understand the
+       content", y un eje sin el que no se entiende el diagrama es justo eso.
+       Regla práctica: si al borrarlo se pierde información o se pierde el
+       objetivo de un clic, es de control. Si solo se pierde una separación
+       visual, es separador.
      SEPARADOR → sin umbral. Filetes entre bloques, canto de la pegatina, reglas
        internas. Nunca delimita algo que se pueda pulsar.
 
@@ -302,22 +310,6 @@
      borde. Es lo que se hizo con el buscador. */
   --color-borde-control-sobre-maceta: #C1BCB3;
 
-  /* ── ALIAS TEMPORALES · A BORRAR ─────────────────────────────────────────
-     `app.css` es de builder y todavía usa los nombres viejos. Estos dos alias
-     existen solo para que el repo no quede roto entre su turno y el mío, y
-     desaparecen en cuanto migre. Mapeo:
-
-       --color-borde        →  --color-borde-control   (o --color-separador,
-                                según si delimita algo pulsable o no: MIRAR CADA USO,
-                                no sustituir a ciegas — ese es justo el criterio
-                                que los nombres nuevos vienen a forzar)
-       --color-borde-sutil  →  --color-separador
-
-     Ojo con el segundo: los siete `summary.despegue__tirador` que suspenden a
-     1,49:1 usan hoy --color-borde-sutil, y ésos NO van a --color-separador: son
-     controles y van a --color-borde-control. */
-  --color-borde:        var(--color-borde-control);   /* DEPRECATED */
-  --color-borde-sutil:  var(--color-separador);       /* DEPRECATED */
 
   /* -- Escala de bandas para los diagramas ---------------------------------
      Rampa de --color-tinta a --color-etiqueta. Se usa para las bandas de

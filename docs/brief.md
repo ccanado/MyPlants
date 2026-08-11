@@ -837,9 +837,20 @@ No es partir el texto en dos para ahorrar scroll: **es que son dos cosas distint
 - **La izquierda va `position: sticky`** mientras se lee la derecha, con
   `max-block-size: calc(100dvh - var(--space-7))` y `overflow: auto` para que nunca se coma la
   pantalla. Lo que hay que hacer se queda a la vista mientras lees por qué.
-- **Nada se pliega.** Mi regla se mantiene entera: `LO QUE LA FOTO NO DICE` sigue abierto y también
-  los patrones. **La columna es la jerarquía; no hace falta esconder nada.** Un `<details>` dentro
-  de otro `<details>` habría sido, además, un lío de teclado.
+- **Qué se pliega y qué no — regla corregida.** Mi versión anterior decía "nada se pliega", y era
+  demasiado gruesa. `builder` la aplicó mejor de lo que estaba escrita y su reparto es el correcto:
+
+  | | Se pliega | Por qué |
+  | --- | --- | --- |
+  | `causa__resumen` — la afirmación | **no** | es lo que la ficha sostiene |
+  | `PARA RECONOCERLA` — el patrón | **no** | es lo que necesitas **delante de la planta** |
+  | `causa__detalle` — el razonamiento | **sí**, tras "Por qué" | es la segunda velocidad de lectura, y el rótulo lo dice |
+  | `LO QUE SE VE` · `LO QUE LA FOTO NO DICE` | **no** | son las observaciones y los límites de lo que sabemos |
+
+  **La regla real, que es la que quería decir: no se pliegan ni las afirmaciones ni los límites de
+  lo que sabemos. El razonamiento sí puede.** Esconder "esto no lo podemos afirmar" decide por el
+  lector que no le interesa; esconder el porqué detrás de un rótulo que dice "Por qué" no esconde
+  nada, lo ordena.
 - **Container query, no media query:** `@container etiqueta (min-width: 52rem)`. Por debajo se
   apila en una sola columna, acción arriba.
 

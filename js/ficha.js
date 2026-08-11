@@ -424,13 +424,18 @@ function fechaLegible(iso) {
 
 function bloqueFoto(q, planta) {
   const figura = q(".foto");
-  if (!planta.foto) {
+  /* Un diagnóstico describe la imagen sobre la que se hizo. Hoy coinciden, pero
+     en cuanto haya fotos nuevas dejarán de hacerlo, y entonces mostrar la foto
+     actual junto a un diagnóstico de agosto sería enseñar dos momentos como si
+     fueran uno. */
+  const fuente = planta.estado?.foto_diagnostico ?? planta.foto;
+  if (!fuente) {
     figura.remove();
     return;
   }
   figura.hidden = false;
   const img = q(".foto__img");
-  img.src = planta.foto;
+  img.src = fuente;
   img.width = FOTO.ancho;
   img.height = FOTO.alto;
   // Sin alt útil, la foto no le aporta nada a un lector de pantalla.
@@ -720,12 +725,8 @@ function sinEnlace(titulo, consultado) {
   return span;
 }
 
-function dominio(url) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
+/* `dominio()` se retiró: las fuentes se citan por nombre corto («RHS ↗»),
+   así que ya no hace falta extraer el host de la URL. */
 }
 
 /* ── capa 3 · el cuaderno de Carlos ─────────────────────────────────────────── */

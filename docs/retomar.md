@@ -27,16 +27,44 @@ iconos de campo; cuatro diagramas; histórico de estados; campo de manipulación
 firme una pasada con captura sobre el estado actual. Nadie ha visto todavía con los ojos los
 cuatro diagramas ni la ficha crítica legible después del último arreglo.
 
+## Verificado al cerrar, después de escribir lo de arriba
+
+Llegaron informes tardíos y comprobé lo que afirmaban, porque uno decía que seguía habiendo un
+bloqueante abierto. **No lo hay:**
+
+- **El bloqueante de `estados` está cerrado.** `js/datos.js` usa `estadoVigente(p)`, que ordena
+  por `fecha_foto` y no coge `estados[0]`, con el razonamiento escrito en el propio código. El
+  informe que lo daba por abierto medía un estado anterior. Y `severidadesDe()` toma el **peor**
+  de todos los estados, no solo el vigente: una planta con histórico sigue siendo crítica
+  mientras alguna observación lo diga.
+- **El diagnóstico llega a pantalla:** `tests/runner.py --abrir-todas --test cobertura-datos`
+  da 7 plantas, 20 campos con contenido y **0 campos que no llegan a la página**.
+- **El bloque de la ficha crítica ya va en pálido**, así que la decisión de no invertir un
+  contenedor de texto está aplicada.
+- **GitHub Pages está limpio:** 7 fichas pintadas bajo `/MyPlants/`, 0 recursos con error, 0
+  peticiones externas, 6 de 6 fuentes cargadas. El fallo clásico de subdirectorio no se da.
+- **Carga inicial: 218 KB** con la rejilla cerrada y **0 bytes de foto**, porque cada ficha es
+  la etiqueta dibujada en CSS. El presupuesto del checklist se reescribió en esos términos:
+  carga inicial < 400 KB, y el peso de abrir una ficha es una foto, no un acumulado.
+
+`tests/` tiene ahora diez herramientas, todas ejecutables sin el MCP: `coherencia.py`
+(todo `url()` local resuelve, y ninguna planta sin pegatina trae precio, EAN ni fitosanitario),
+`enlaces-fuentes.py` (una petición por cita: 26 de 29 con 200, y clasifica 401/403/429/503 como
+`MANUAL` y no como cita rota, porque POWO/Kew bloquea clientes automáticos) y
+`cobertura-datos.js` (que el contenido llegue a la pantalla).
+
+Queda una duda menor para `botanist`: `ipni.org` no está en la lista de dominios citables del
+proyecto. IPNI es la fuente de la que POWO toma los nombres, así que probablemente sea legítimo
+y lo que falte sea añadirlo a la lista.
+
 ## Cola pendiente, por dueño
 
 **`builder`** — `index.html`, `css/app.css`, `js/`, `assets/img/`
-1. Sacar el bloque de la ficha crítica del rojo sólido, según la decisión de `ux-lead`: pálido
-   con tinta normal, y solo el chip y el filete en rojo. Los catorce selectores enumerados
-   desaparecen. Ver `docs/brief.md` § "El bloque crítico no puede ir invertido".
-2. La franja `HOY` con `tareas[]` y fecha real del navegador.
-3. El diagrama de cronología (décadas / semanas / horas, eje logarítmico rotulado).
-4. El expediente: dos columnas semánticas (`QUÉ HAGO AHORA` / `EN QUÉ ME BASO`), índice con
-   recuento, y suprimir el resumen duplicado en los campos que ya traen diagrama.
+1. La franja `HOY` con `tareas[]` y fecha real del navegador.
+2. El diagrama de cronología (décadas / semanas / horas, eje logarítmico rotulado).
+3. El expediente: dos columnas semánticas (`QUÉ HAGO AHORA` / `EN QUÉ ME BASO`), índice con
+   recuento, y suprimir el resumen duplicado en los campos que ya traen diagrama. **No se va a
+   reducir solo**: los 4.801 px se midieron con los diagramas dentro.
 
 **`ux-lead`** — `css/tokens.css`, `docs/brief.md`
 Nada bloqueante. Revisar la captura del expediente cuando exista.
@@ -93,7 +121,16 @@ más valen:
    de `estado` a `estados[]` y el render siguió leyendo el campo viejo: las siete fichas
    perdieron el diagnóstico entero con la consola limpia y los tres comprobadores en verde. De
    ahí salieron `avisarDeCamposAusentes()` en `js/datos.js` y `tests/cobertura-datos.js`.
-3. **Quien revisa necesita ejecutar, no leer.** El lead afirmó tres defectos que no existían
+3. **Cinco falsos positivos, todos del mismo tronco: una herramienta que opina cuando no puede
+   saber.** Contar `@font-face` con `grep` (cuenta el código comentado), comparar orden de foco
+   contra bandas horizontales en una rejilla de tarjetas, cruzar JSON contra JS con una regex que
+   casaba cualquier variable llamada `p`, medir texto con `innerText` (omite lo que
+   `content-visibility` salta), y tratar un 403 de bot-blocking como cita rota. La formulación de
+   `qa-visual` es la que hay que recordar: **el coste de un falso positivo en un equipo de
+   agentes no es el tuyo, es el del teammate al que mandas a arreglar lo que no está roto.** De
+   ahí que los tests digan ahora "no medible" en lugar de inventarse un veredicto.
+
+4. **Quien revisa necesita ejecutar, no leer.** El lead afirmó tres defectos que no existían
    —fuentes con 404, desbordamiento a 320 px, diagramas sin renderizar— las tres veces
    inspeccionando ficheros estáticos en vez de ejecutar la web, y dos de ellas mandaron a un
    teammate a arreglar algo intacto. El corolario: un resultado de QA solo vale si se puede

@@ -200,7 +200,7 @@ function normalizarEstado(e) {
     revisar_dias: e.revisar_dias ?? null,
     revisar_desde: texto(e.revisar_desde),
     titulo_estado: texto(e.titulo),
-    foto_diagnostico: texto(e.foto),
+    foto_diagnostico: null,   // se resuelve en normalizarPlanta, que conoce RUTA_IMG
     verificacion: e.verificacion ?? null,
     // Para el rótulo del diagrama hace falta algo corto ("3 semanas"), no el
     // párrafo entero: se toma lo que va antes del primer dos puntos si cabe.
@@ -395,7 +395,14 @@ function normalizarPlanta(p) {
     procedencia_nota: texto(p.procedencia_nota ?? p.origen),
     vivero: normalizarVivero(p),
     medidas: normalizarMedidas(p),
-    estado: normalizarEstado(estadoVigente(p)),
+    estado: (() => {
+      const e = normalizarEstado(estadoVigente(p));
+      if (e) {
+        const f = texto(estadoVigente(p)?.foto);
+        e.foto_diagnostico = f ? (f.includes("/") ? f : RUTA_IMG + f) : null;
+      }
+      return e;
+    })(),
     severidades: severidadesDe(p),
     historico: Array.isArray(p.estados) ? p.estados.length : (p.estado ? 1 : 0),
     fuentes: lista(p.fuentes).map(normalizarFuente).filter(Boolean),
