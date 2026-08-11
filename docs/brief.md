@@ -1734,6 +1734,165 @@ expediente aparece entero, que es el patrón que `builder` ya usa en su bloque d
   foto mete un nodo no medible o si la bisagra rompe un orden de foco, **la idea está mal, no la
   cifra.**
 
+### Correcciones tras el expediente construido — y el tope de altura era mi 2.400
+
+Cuatro correcciones, y **dos son a cosas que escribí yo hace unas horas.**
+
+#### 1. Retiro el tope de altura en píxeles. Era el mismo error que el 2.400, más suave
+
+`builder` construyó las dos columnas y **mi métrica de ocupación se cumple con margen: 9 % en el
+peor caso contra un tope del 20 %, viniendo del 73–87 %.** La tesis queda demostrada: al ocupar el
+ancho, las alturas cayeron solas (begonia 4.727 → 3.858, helecho 3.718 → 2.802). Eso funcionó.
+
+**El tope de altura no.** Las siete lo incumplen, y las cuatro sanas por 52–73 %. Medí la ficha
+sana entera para ver si era maquetable: coleo pequeño, 3.014 px, de los que el expediente son
+2.834. Dentro del diagnóstico, `senales` 480 + `causas` 487 + `limites` 306. Si se borrara el
+bloque de causas **entero** —lo único que existía porque el rótulo lo pedía— la ficha quedaría en
+~2.527 px. **Sigue a un 40 % del tope de 1.800.** O sea: el tope no se alcanza maquetando, y solo
+se alcanzaría borrando la foto, los campos con diagrama, los límites o las fuentes.
+
+Así que la conclusión honesta, con los números delante:
+
+> **1.800 px era mi 2.400.** Lo derivé de "dos pantallas", que es un número redondo de viewports,
+> no del contenido. Es exactamente el defecto que le reproché al 2.400 —un número elegido por su
+> forma y no por su procedencia— en versión más suave, y cometido en el mismo documento en que lo
+> reprochaba. Que la aritmética viniera de un viewport real no lo salva: el viewport es real, pero
+> "dos" no salía de nada.
+
+Y el fondo del asunto es que **la altura siempre fue un proxy.** Lo que se quería evitar no son los
+píxeles: es que la ficha sea un muro de texto por el que no se puede navegar. Ese proxy tenía
+sentido cuando no había nada mejor que medir; ahora hay dos cosas que miden la propiedad de verdad,
+así que el proxy se retira en lugar de recalibrarse — recalibrarlo sería buscarle un número que
+cuadre, que es como se llega a los 2.400.
+
+**Lo que queda como objetivo, y esto sí sale del contenido:**
+
+1. **Ocupación ≤ 20 %** de bandas de 100 px con el contenido parando antes del 62 % del ancho.
+   Cumplido: 9 %.
+2. **Nuevo: ninguna carrera de más de 600 px sin un ancla de navegación** —un rótulo de bloque, una
+   entrada del índice o un diagrama—. Esto es lo que "muro de texto" significa de verdad, y explica
+   por qué una ficha de 2.886 px con un rótulo cada 400 px se lee bien y una de 1.800 de un solo
+   bloque no. Se mide igual de fácil que la ocupación.
+3. **La columna de acción tiene que pegar de verdad.** Es la mitad del argumento del reparto en dos
+   columnas; sin `sticky` funcionando se cumple la ocupación y se pierde el motivo.
+
+**Y la altura en píxeles pasa de objetivo a observación:** se sigue midiendo y se sigue apuntando en
+los informes, porque una ficha que doblara su alto de un día para otro sería una señal. Pero no
+suspende nada por sí sola. La diferencia entre un objetivo y una observación es que el objetivo
+manda cortar y la observación manda mirar.
+
+**Lo que no cambia**, y es la razón por la que retiro el tope en vez de pedir recortes: **el
+contenido no se recorta para cuadrar una cifra mía.** Si `botanist` reduce las mejoras de una planta
+sana, que sea porque sobran como contenido, nunca porque mi número no cabía. La opción "el tope está
+bien y el contenido sobra" se descarta explícitamente.
+
+#### 2. Retiré un diagrama que no era el que había que retirar
+
+Escribí *"retiro la especificación del diagrama de cronología"* cuando lo que había medido y
+condenado era **`diagrama--recuperacion`**, los seis pasos del plan de recuperación con el eje
+falso. Son dos diagramas distintos y les puse el mismo nombre.
+
+**El diagrama de cronología es sólido y se queda.** Está construido, en la portada, y dice: *Poto,
+más de 20 años · Helecho, 74 días · Begonia, 74 días · Coleo grande, llegó hoy · Coleo pequeño, llegó
+hoy · Ficus, llegó hoy · Margarita, llegó hoy*. Eso es un rango real de cuatro órdenes de magnitud
+—un día contra siete mil— **medido de `fecha_llegada`, no repartido a ojo**, y es justo el caso en
+que un eje logarítmico es la representación correcta y no un adorno. Y `builder` resolvió con una
+fila por planta la objeción que yo había puesto al otro diagrama: los cuatro marcadores del día 0 no
+se apilan en el origen porque cada uno tiene su propia pista. Lleva además una nota que explica cómo
+se lee el eje, sin la cual el gráfico invitaría a leer las distancias como lineales.
+
+O sea: el que borré tenía un eje que mentía, y este tiene un eje que dice la verdad sobre un dato
+que de otro modo no se ve. **Mi frase amenazaba a los dos por igual**, y es la misma clase de error
+que acabo de anotar en las notas de aprendizaje: la explicación de un hallazgo viaja tan rápido como
+el hallazgo, y la mía nombraba mal el objeto. Corregido: lo retirado es el de recuperación y solo
+ese.
+
+#### 3. El rótulo de las sanas: no son dos clases de ítem, son tres — y mi rótulo empeoraba una
+
+`botanist` fue a leer los 35 ítems antes de aceptar mi corrección y encontró que **«mejoras
+opcionales» misfila el ítem más grave de cada ficha sana.** Su ejemplo cierra el caso: el poto lleva
+*«el riesgo dominante es el agua: podredumbre de raíz en una maceta sin drenaje visible»*, que es la
+forma número uno de matar un poto y lo único de esa ficha que puede acabar con la planta. **Llamarlo
+"opcional" invita a no hacerlo, y si además las mejoras se pliegan, se pliega con ello.** Mi
+corrección era mejor que el rótulo anterior y seguía siendo demasiado gruesa.
+
+Los ítems son de cinco clases, no de dos: **afirmación, riesgo, mejora, aclaración** y la `causa`
+de siempre. Y hay una `aclaracion` que no cabía en ninguna casilla y que es de las mejores frases
+del proyecto: *«no es una margarita: es un crisantemo de floristería, y eso cambia el consejo
+entero»*.
+
+**Acepto su propuesta entera**, y es mejor que partir el campo: una clave `tipo` en los objetos que
+ya existen, con conjunto cerrado `causa | afirmacion | riesgo | mejora | aclaracion`, y ausente =
+`causa`, así que no rompe nada. **El desajuste es por ítem, no por severidad** — y por eso ningún
+rótulo de bloque podía encajar, ni el viejo ni el mío. Con `tipo`:
+
+| clase | ¿se pliega? | por qué |
+| --- | --- | --- |
+| `afirmacion` | **no** | es lo que la ficha sostiene |
+| `riesgo` | **no** | es lo que puede matar la planta |
+| `aclaracion` | **no** | cambia cómo se lee todo lo demás |
+| `mejora` | **sí** | es opcional, y el rótulo lo dirá |
+| `causa` | como hasta ahora | el `resumen` visible, el `detalle` tras "Por qué" |
+
+Esto es la tercera vez que una regla mía sale demasiado gruesa y un teammate la afina con el
+contenido delante —`builder` con el plegado, `botanist` con esto— y las tres veces la versión
+afinada era la correcta. **La regla general que saco: una regla de presentación escrita sin los 35
+ítems delante va a misfilar el caso grave, porque el caso grave es siempre el raro.** Y el rótulo
+interino, mientras `tipo` no exista, es el que propone él: **«lo que hay que saber»**, que cubre las
+tres clases sin degradar el riesgo. «Opcionales» queda descartado.
+
+#### 4. La temperatura de casa en invierno es una banda, y eso cambia el diagrama
+
+`botanist` da 21–24 °C y deja `casa_invierno_c` en `null` a propósito, porque reducirlo a 22,5
+inventaría una precisión que nadie midió. Correcto, y la consecuencia de dibujo la decido así:
+
+**Dos formas distintas, porque son dos clases de dato distintas.** El verano sigue siendo un
+marcador de **tope** —28 °C es una cifra sola, la del aire acondicionado— y el invierno es una
+**banda** de 21 a 24, del mismo tipo que las dos que el diagrama ya tiene. Descartado unificar:
+convertir el invierno en punto sería inventar el 22,5 que `botanist` se negó a inventar, y convertir
+el verano en banda abierta sería dibujar un intervalo donde solo hay un tope. **La forma codifica la
+clase de dato, y que dos datos se dibujen distinto no es una inconsistencia: es la información.**
+
+Y esto le da al diagrama lo que le faltaba para ser algo más que decoración: en tres de las siete
+**la casa cae fuera de lo que la especie quiere**, y ahora se ve de un vistazo. La begonia es el
+caso fuerte —óptimo corregido a 10–13 °C y la casa entera fuera, en la estación en que florece— y el
+poto el contraejemplo, con 21–24 de lleno dentro de su 18–30. **Ese contraste entre fichas es lo que
+hace que la banda de casa se lea como información y no como adorno**, y es el argumento de
+`botanist`, no mío.
+
+**El solape de rótulos que él avisa no lo puedo confirmar todavía:** he mirado las siete y el
+diagrama pinta hoy solo `ver 28°`, `0°` y `40°` — **el marcador de invierno no está renderizado**,
+así que la zona 21–28 donde temía la colisión aún no tiene nada que colisionar. Queda anotado para
+mirarlo con captura **cuando exista**, y su instinto de no afirmarlo sin verlo era el correcto.
+
+#### 5. Entrada por síntoma: entra, y no va en la portada
+
+Del diseño externo que trae el lead no se toma el look —es el cliché nº 1 del brief más el del
+dominio, y su contenido son seis plantas inventadas— pero **una de sus ideas es mejor que lo que
+tenemos, y no es estética: es de producto.** Ofrece entrar por síntoma (`¿hojas amarillas?`) y
+nuestras fichas solo van planta → diagnóstico.
+
+Y no es una idea nueva que haya que justificar: **es una promesa que ya hacemos y no cumplimos.** El
+buscador dice literalmente *"buscar planta, sala o **síntoma**"* y el contenido no está organizado
+así. Eso no es una carencia de funcionalidad, es un placeholder que miente.
+
+Decisión: **entra, y su sitio es el buscador, no la portada.** La portada acaba de recibir una tesis
+y un solo trabajo; meterle una segunda región competiría con el hero que estoy especificando. Lo que
+entra es que **el buscador cumpla lo que promete** y que los síntomas presentes se puedan recorrer.
+
+Con dos condiciones que lo salvan de la trampa que el propio lead señala:
+
+- **El índice se genera de `senales` y de `patron`, no de una taxonomía de síntomas.** Así cada
+  entrada tiene por construcción al menos una planta, y **el problema de "qué dice un síntoma que
+  hoy ninguna planta tiene" no existe**: ese síntoma no aparece. Una lista fija de síntomas
+  obligaría a escribir "ninguna hoy" setenta veces, o peor, a inventar el catálogo.
+- **Es una vista redundante de contenido existente**, que es el criterio que ya usamos: no añade ni
+  una afirmación botánica nueva. Y sirve el día bueno —consultar un síntoma **antes** de que
+  aparezca es exactamente el uso de una planta que va bien—, lo que la hace compatible con el hero
+  de `LAS 7 ESTÁN BIEN`.
+
+Va **después** del expediente y de las tres cosas visuales.
+
 ## Fases
 
 | Fase | Qué | Quién |
@@ -1785,6 +1944,26 @@ Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
   herramienta que afirma lo que no puede saber— con una vuelta de tuerca: **aquí el fallo no
   produce un dato falso, produce un dato ausente disfrazado de dato completo**, que es más difícil
   de detectar porque no hay nada raro que mirar.
+- **La gravedad del promedio, demostrada por un tercero con nuestro material delante.** Carlos generó
+  un diseño alternativo con una herramienta externa y pidió basarnos en él. Sus colores dominantes:
+  crema `#fbf9f4`, terracota `#7e2b0f` y **verde salvia `#b0cdbb`**; su sistema se llama "Botanical
+  Journal" y su ficha de ejemplo es *"La Reina: Monstera"*. Es el cliché nº1 de este brief —crema,
+  serif, acento terracota— más el cliché específico del dominio —salvia y monstera—, los dos a la
+  vez. De sus siete plantas **solo el poto es real**; las otras seis son las de cualquier artículo
+  de plantas de interior.
+  Y el dato que lo convierte en prueba: **una de sus pantallas se titula "Extracted text from
+  https://ccanado.github.io/MyPlants/"**. La herramienta **leyó esta web** —copió literalmente el pie
+  sobre cero dependencias— y aun así fue a crema, salvia y monstera. **Tenía el material concreto
+  delante y la gravedad del promedio se lo llevó igual.** Eso es el argumento de este brief mejor
+  demostrado de lo que yo podía demostrarlo: la procedencia no se hereda mirando el resultado, hay
+  que ir al objeto. El terracota de aquí es el plástico medido de un tiesto; el de allí es un acento
+  de moodboard, y se parecen lo suficiente para que la diferencia solo esté en de dónde salieron.
+  Corolario práctico, porque de ahí sí se sacó algo: de ese diseño **no se tomó ni un color ni una
+  tipografía, y sí una idea de producto** —entrar por síntoma— que además resultó ser una promesa que
+  ya incumplíamos. La forma correcta de usar una referencia es esa: para una técnica o una pregunta,
+  nunca para un look. Y su chip verde de "Feliz" en cinco de siete plantas es justo el distintivo que
+  `botanist` hizo retirar aquí, porque no hay ninguna planta con "sana" ni "no tóxica" confirmada de
+  esa manera: la referencia también sirvió para confirmar que una decisión nuestra era la correcta.
 - **Un aviso que acierta el problema y falla la causa manda el arreglo al sitio equivocado.** El
   lead me avisó de que un `transform` rompería el `position: sticky` de la columna de acción, y
   propuso mitigarlo poniendo el `transform` en `.etiqueta`. El aviso valía —había una trampa de
