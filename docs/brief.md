@@ -1599,6 +1599,141 @@ repite aquí porque ahora hay un número que podría usarse como excusa.
   pulsable. La matriz de validez no necesita fila nueva **hoy**; si la columna sticky acaba con
   fondo propio, entonces sí, y se mide antes de usarla.
 
+### Vuelta de ambición visual — tres sitios, y ninguno añade material
+
+Encargo de Carlos: *"me gustaría que se le dé una vuelta al diseño visual"*. Preguntó si conviene
+buscar webs muy atractivas y basarse en alguna. **No, y el motivo es concreto y no es purismo.**
+Las tres direcciones que salen de esa búsqueda son crema con serif de alto contraste y acento
+terracota, negro con un acento ácido, o broadsheet con filetes y cero radio. **La primera ya es
+casi esta web por accidente** —fondo cálido, tinta oscura, filetes—, así que "inspirarse" ahí solo
+puede empujarnos hacia el promedio del que estamos a un paso. Lo único que nos separa es la
+**procedencia**: que el terracota sea el plástico medido del tiesto del coleo y el blanco el
+satinado de la pegatina térmica de Móstoles. Eso no se importa, se tiene. Si aparece una referencia
+externa, que resuelva una **técnica** —una escala, una secuencia, un mecanismo— nunca un look.
+
+No se toca la paleta, ni la tipografía, ni la signature. Y ninguna de las tres cosas de abajo
+**añade material**: las tres revelan material que ya está y que no se estaba usando.
+
+#### 1. La portada: el parte del día pasa de cintillo a hero
+
+El diagnóstico, mirando la captura: **en la primera pantalla nada es grande.** El `h1` compite en
+peso con `HELECHO` de la tarjeta de abajo, y los primeros 360 px son seis filas de chrome pequeño
+—título, subtítulo, buscador, franja, tres filas de filtros, recuento— sobre terracota que no hace
+nada. No falta un elemento: falta **contraste de escala**. Y sobra un hueco que este brief declaró
+que el color agresivo podía ocupar sin coste ("ocupa los huecos, nunca la lectura"): arriba ese
+argumento no se cumple, porque ahí el terracota no rodea lectura, la sustituye.
+
+La página tiene un solo trabajo: decirte qué mirar hoy. Esa frase —hoy `3 DE 7 PIDEN MIRADA`— es
+lo más pequeño de la pantalla. **Va a escala de display**, con los tres chips nombrados como la
+entrada, y el `h1` baja a eyebrow: un título no necesita ser lo más grande cuando la página tiene
+una tesis. Cero contenido nuevo, cero assets: es información, así que no gasta la excepción.
+
+**Tamaño y nivel son ejes independientes, y hay que decirlo o se mezclan.** El `h1` sigue siendo
+`<h1>` y sigue siendo el título de la página en la semántica, aunque se pinte pequeño. El veredicto
+del día **no es un encabezado**: es el contenido de la franja, y va en un elemento de texto
+normal, por grande que se pinte. Si el veredicto se promociona a `h1` porque es lo mayor, se rompe
+el esquema de encabezados y `qa-visual` lo caza — con razón.
+
+**El hero se diseña para el día bueno, no para hoy.** `3 DE 7 PIDEN MIRADA` funciona porque hoy hay
+tres plantas tocadas, pero el objetivo de esta web es que llegue el día en que diga **las siete
+están bien** — y ese día no es un caso borde, es el estado deseado. Así que el hero tiene **forma
+fija y contenido variable**: un veredicto grande y hasta tres entradas.
+
+| Estado del día | Veredicto (a escala de display) | Las tres entradas |
+| --- | --- | --- |
+| Alguna con severidad | `3 DE 7 PIDEN MIRADA` | las tocadas, por urgencia |
+| Ninguna con severidad, y hay plazos | `LAS 7 ESTÁN BIEN` | lo siguiente que toca, con su plazo |
+| Ninguna con severidad, ningún plazo | `LAS 7 ESTÁN BIEN` | `sin riegos registrados`, que es una entrada honesta y accionable |
+
+`LAS 7 ESTÁN BIEN` **no es un hero más débil: es el mejor que puede tener esta página**, porque es
+la frase que el proyecto existe para producir. Se compone con la misma confianza y **no se encoge
+pidiendo perdón** por no traer una alarma.
+
+Y la tentación queda prohibida por escrito: **no se inventa urgencia para que el hero siga teniendo
+tensión.** Sin rachas, sin porcentaje de cumplimiento, sin "todo en orden" con un check. Un día sin
+nada que hacer se dice tal cual, y el segundo renglón baja a lo que viene, en el idioma de certeza
+que ya fija § `HOY` (fecha dura / ritmo / `sin registrar`). Nota de token, y no es menor: **el día
+bueno no estrena color.** No existe un color de severidad "sana" en este sistema a propósito, así
+que el veredicto bueno se compone en `--color-tinta` como todo lo demás. Un verde de celebración
+sería un token nuevo para decir lo que la tipografía ya dice.
+
+**La excepción que me concede el lead, gastada una sola vez y aquí:** ese cintillo se revela al
+cargar **como se imprime una etiqueta térmica** — una banda que resuelve de arriba abajo. Es del
+**objeto**, no del terminal: un cursor que teclea letra a letra es justo el tic que hay que evitar,
+y además la etiqueta térmica no imprime así. Condiciones, y si alguna no se cumple el gesto se cae:
+un disparo, sobre texto que **ya está en el DOM** (una máscara, nunca contenido que llega tarde),
+sin desplazamiento de layout, no arranca nada más, y con `prefers-reduced-motion` la banda aparece
+**entera** — versión alternativa, no duración corta.
+
+#### 2. Las fotos: ni un filtro, y la foto declara qué no se puede juzgar en ella
+
+Descartado de entrada lo que se pide solo: duotono, viñeta, grado cálido, fondo difuminado.
+**Filtrar una foto de diagnóstico corrompe la prueba**, y en la única planta que se muere la haría
+parecer mejor de lo que está. Toda la credibilidad de esta web es no hacer eso. La foto de móvil,
+de noche, con luz de salón, **no es un defecto que haya que disimular**: es la condición real en la
+que se documenta esta casa.
+
+El hallazgo es que **el contenido ya dice los límites de sus propias fotos** y están enterrados. El
+helecho lleva escrito *"la foto está tomada de noche y con poca luz: el color real de la fronde
+nueva y el detalle del envés no se pueden juzgar en ella"*, como una observación más entre trece.
+Eso sube a la imagen: la foto pasa de documentación a **prueba fechada que declara qué no se puede
+juzgar en ella**. Con su `fecha_foto`, que ya existe en `estados[]`. Es información, no tratamiento,
+y el sistema no se disculpa por la foto: dice qué vale.
+
+**Y va en una banda de superficie sólida pegada a la imagen, nunca sobre los píxeles.** Texto sobre
+fotografía es contraste **no medible** —`qa-visual` ya arrastra 24 nodos así— y sobre la foto del
+helecho, que es oscura y nocturna, sería además ilegible. En banda sólida se mide como cualquier
+otro texto y la cifra de AA se queda en 0. No se pierde nada del concepto: la declaración sigue
+siendo de la foto porque va pegada a ella y comparte su ancho.
+
+#### 3. El despegue: que despegue
+
+Es la signature y al usarla apenas se nota. Medido en el CSS, y es más literal de lo que parecía:
+**la `.etiqueta` nunca se mueve.** Lo único que pasa es que la sombra se profundiza
+(`--sombra-pegatina` → `--sombra-despegada`, 260 ms) y el panel de debajo hace un fade con
+`scaleY(0.97)` y 8 px de `translateY`. O sea, un desplegable corriente.
+
+Y el detalle que lo delata: **`--ease-troquel`, cuyo propio comentario dice "el rebote mínimo del
+despegue", está gastado en una opacidad.** El sistema tenía documentado un gesto que nadie había
+construido. No hace falta inventar nada: hace falta cumplir lo que los tokens ya prometen.
+
+La etiqueta **bisagra por un canto** y el expediente se descubre **por debajo**, no aparece encima.
+Es lo que hace una pegatina de verdad: se levanta por un borde, el borde libre proyecta sombra, y
+lo que aparece es lo que estaba debajo. Los tokens están todos —`--ease-troquel`, `--sombra-despegada`,
+`--radio-troquel`, `--dur-media`—; lo que falta es aplicarlos al elemento correcto.
+
+**Versión reducida, alternativa y no acortada:** sin bisagra. La sombra sola marca el estado y el
+expediente aparece entero, que es el patrón que `builder` ya usa en su bloque de `reduce`.
+
+> **Trampa verificada, y no es la que parecía.** El aviso que me llega es que un `transform` rompe
+> `position: sticky` en los descendientes, y que por eso la bisagra pondría en peligro la columna
+> `QUÉ HAGO AHORA`. **Lo medí con una sonda sticky dentro del panel, scrolleando 800 px, y no es
+> así:** con `transform: rotateX(2deg)` en `.etiqueta` la sonda sigue pegando (top 17 px). Un
+> `transform` crea containing block para `fixed` y `absolute`, pero **no crea contenedor de
+> scroll**, y `sticky` se posiciona respecto al contenedor de scroll más cercano.
+>
+> Lo que **sí** lo rompe es `overflow: hidden`, y está en `css/app.css:421`, en `.etiqueta`, desde
+> antes de esta conversación: con él la sonda se va a **−775 px**, o sea se comporta como estática.
+> Así que la columna de acción del expediente **no iba a pegar**, y no por la bisagra. El arreglo es
+> una palabra: **`overflow: clip`** — recorta igual, así que la esquina troquelada de 3 px y la
+> signature se mantienen, pero no crea contenedor de scroll y el sticky funciona (top 16 px).
+>
+> Importa más de lo que parece: **el sticky es la mitad del argumento de las dos columnas** —"lo que
+> hay que hacer se queda a la vista mientras lees por qué"—. Sin él se cumple la métrica de
+> ocupación y se pierde la razón de ser del reparto. No firmo el expediente sin scrollear esa
+> columna.
+
+#### Lo que se descarta en esta vuelta
+
+- **Reabrir el plano de casa.** Cerrado con razón: las siete están en el salón, así que serían
+  siete puntos en una habitación. Cero información.
+- **Paleta, tipografía y signature**, intactas. Y **las tarjetas no se decoran**: son lo mejor que
+  tiene el proyecto y están llenas. Todo esto es sobre el envoltorio, no sobre la ficha.
+- **Una segunda cosa en la portada.** Se concede una excepción y se gasta una.
+- **Cualquier idea que cueste una cifra medida.** Si el hero baja un contraste, si la banda de la
+  foto mete un nodo no medible o si la bisagra rompe un orden de foco, **la idea está mal, no la
+  cifra.**
+
 ## Fases
 
 | Fase | Qué | Quién |
@@ -1650,6 +1785,18 @@ Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
   herramienta que afirma lo que no puede saber— con una vuelta de tuerca: **aquí el fallo no
   produce un dato falso, produce un dato ausente disfrazado de dato completo**, que es más difícil
   de detectar porque no hay nada raro que mirar.
+- **Un aviso que acierta el problema y falla la causa manda el arreglo al sitio equivocado.** El
+  lead me avisó de que un `transform` rompería el `position: sticky` de la columna de acción, y
+  propuso mitigarlo poniendo el `transform` en `.etiqueta`. El aviso valía —había una trampa de
+  sticky y habría costado ciclos— pero medido con una sonda: **el `transform` no rompe nada** (la
+  sonda sigue pegando a 17 px) y **lo que rompía era un `overflow: hidden` que llevaba ahí todo el
+  proyecto** (la sonda se va a −775 px). Y la mitigación no habría servido, porque la columna sticky
+  **es descendiente de `.etiqueta`**: `builder` habría movido código, comprobado que seguía sin
+  pegar y buscado donde no estaba. Es la estructura del caso 2.400 otra vez —preocupación correcta,
+  atribución incorrecta— y la lección compuesta de los dos es la misma: **en un equipo de agentes lo
+  que se propaga no es el hallazgo, es la explicación del hallazgo**, y una explicación equivocada
+  viaja igual de rápido y de convincente que una acertada. La única defensa es que el que recibe el
+  aviso lo reproduzca antes de actuar. Costó una sonda de doce líneas.
 - **Medir mientras otro edita mide el instrumento.** Mi primera tanda de números salió con
   `js/ficha.js` a medias —el `estado` del helecho me dio 2.116, 2.182 y 2.232 px en tres medidas
   seguidas— y en medio `builder` commiteó el arreglo de una página en blanco. El sello de commit
