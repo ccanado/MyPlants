@@ -105,6 +105,26 @@ Y el corolario, comprobable en el propio brief: **casi todo lo que estaba escrit
 era una opinión en imperativo.** Eso no lo arregla una regla de vigilancia posterior; lo arregla
 escribir distinto, y sale más barato que auditar cadenas de citas después de que hayan hecho daño.
 
+**La mitad que le faltaba a la regla, y evita el error contrario —huir de todo imperativo—:**
+
+> **El problema no era el imperativo, era el imperativo sin procedencia.** Una norma que el dueño
+> humano del proyecto ha aprobado **sí** es un requisito, y ahí el imperativo es la forma correcta
+> de escribirla. Lo que no puede es nacer imperativa en el fichero de un agente y ascender por
+> citas hasta parecer suya.
+>
+> Regla completa: **la modalidad va dentro de la frase, y el imperativo está reservado a lo que
+> tiene dueño humano.** Todo lo demás se escribe como lo que es: una propuesta con su motivo.
+
+Y la observación que lo cierra, de `ux-lead`: **preguntarle al dueño antes de escribir en su
+fichero es lo que da la procedencia.** La misma frase, en el mismo tono imperativo, es una norma
+legítima si él la aprueba y un ascenso indebido si aparece sola en el fichero de un agente. **La
+diferencia no está en la redacción: está en que haya un dueño humano detrás.**
+
+**Prueba barata para auditar un fichero propio:** leer cada imperativo y preguntar *"¿esto tiene
+dueño humano, o soy yo con voz de norma?"*. Aplicada al brief, la respuesta fue incómoda más veces
+de las esperadas. Los **skills** son el vehículo más peligroso para este ascenso, porque se leen
+como el manual del proyecto: queda pendiente en el backlog pasarles esa prueba.
+
 Corolario del reparto de responsabilidad, también suyo, y vale para cualquier cadena de este tipo:
 **el eslabón que convierte una descripción en una norma es el que carga con los siguientes.** El
 que después la cita como requisito solo pudo hacerlo porque encontró una norma escrita.
@@ -199,3 +219,14 @@ adivinando.
   correcto.
 - **El proyecto no tenía definición de terminado**, solo de tarea terminada, y por eso se
   alimentaba a sí mismo. Ese es el motivo de que exista `docs/pendiente.md`.
+
+## La conclusión, y es de `ux-lead` al cerrar
+
+> **Un equipo de agentes puede mejorar indefinidamente algo que ya estaba bien, y la única cosa
+> que no puede hacer solo es decidir que ha terminado.**
+
+Lo dice quien retiró ocho decisiones propias en una sola sesión —el tope de altura, la definición
+de ocupación, la regla de la franja, el acento por planta, un diagrama, un rótulo, su definición de
+perfil y la restricción fundacional— y añade que **cada retirada estaba bien y aun así el conjunto
+no convergía**. El rigor no era el problema; la ausencia de final sí. Y el final no lo pone quien
+está midiendo: lo pone quien puede decir "esto ya sirve".

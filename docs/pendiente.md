@@ -90,6 +90,13 @@ medirlo y decirlo**, no descubrirlo.
   se renderiza con contenido, así que no se ve ningún hueco, pero es la capa por la que ese
   panel existe.
 - **Fotos nuevas** cuando Carlos quiera un estado nuevo. El esquema ya es histórico.
+- **Pasar la prueba del imperativo a los dos skills.** `.claude/skills/vanilla-web-craft/` y
+  `plant-expert/` están escritos en imperativo y **son el vehículo más peligroso del ascenso de
+  calificadores**, porque se leen como el manual del proyecto. La prueba es barata: leer cada
+  imperativo y preguntar *"¿esto tiene dueño humano, o soy yo con voz de norma?"*. Lo que no lo
+  tenga, se reescribe como propuesta con su motivo. No entra en v1 por decisión propia del lead:
+  sería exactamente el meta-trabajo que el congelado corta.
+
 
 ## Qué hacer con los hallazgos de instrumental
 
