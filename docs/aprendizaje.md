@@ -1,0 +1,96 @@
+# Aprendizaje — el instrumental y el mecanismo del equipo
+
+Destino de los hallazgos sobre **cómo medimos y cómo nos coordinamos**, en lugar de sobre el
+producto. Por decisión de Carlos del 11 de agosto de 2026, **lo que se anota aquí no genera
+trabajo**, salvo que impida verificar algo del alcance de `docs/pendiente.md`.
+
+Quien encuentre algo de esta clase lo escribe aquí y sigue con lo suyo. Cualquier teammate puede
+añadir; el lead mantiene el orden. La dirección visual y sus decisiones siguen en
+`docs/brief.md` y `docs/decisiones.md`.
+
+## El patrón dominante: una herramienta que afirma donde no puede saber
+
+Nueve casos en dos sesiones, y todos del mismo tronco. Se listan porque la repetición **es** el
+hallazgo: no fue el descuido de nadie, fue una propiedad del montaje.
+
+1. **Contar `@font-face` con `grep`.** Cuenta el código comentado. El lead declaró un bloqueante
+   inexistente y `qa-visual` cometió el mismo error por separado, "confirmándolo" con `curl` a
+   rutas que efectivamente no existían — pero que el navegador nunca pedía.
+2. **Orden de foco comparado contra bandas horizontales** en una rejilla de tarjetas: 198 saltos
+   inexistentes. Habrían enterrado 36 hallazgos reales.
+3. **Cruce estático JSON↔JS con una regex** que casaba cualquier variable llamada `p`, incluida
+   `plagas.map(p => p.nombre)`: 25 errores, cero reales. Se retiró entero.
+4. **Medir texto con `innerText`**, que omite lo que `content-visibility` salta: 15 "cables
+   sueltos" falsos.
+5. **Un 403 de bot-blocking tratado como cita rota.** POWO/Kew bloquea clientes automáticos: 4
+   fuentes "muertas" que cargaban perfectamente en el navegador.
+6. **`check-tokens.py` exigiendo que `--x` esté en `tokens.css`**, cuando es una coordenada por
+   elemento que el JS establece con `setProperty`. Obedecer al script habría metido la fecha de
+   una planta concreta en el fichero que define el sistema.
+7. **`runner.py --completa` capturando siempre exactamente `--alto`.** No producía un dato falso:
+   producía **un dato ausente disfrazado de completo**. El lead dio por vista una ficha de
+   4.000 px habiendo visto 900.
+8. **`estructura.js` aprobando con 0 `<article>`.** El test más importante del proyecto daba
+   verde sobre una página en blanco. Un checker que aprueba el caso peor no protege nada.
+9. **El sello del runner avisando donde debía negarse.** Imprime `commit X + N ficheros sin
+   commitear` y solo se niega si algo cambia *durante* la pasada. Con el árbol sucio de antes,
+   informa y sigue: **la línea está redactada para quien ya sospecha**, porque nombra primero lo
+   que tranquiliza y deja la advertencia detrás de un `+`.
+
+**El corolario que cierra la lista, y que nadie había mirado en dos días:** el error simétrico de
+un falso positivo es **un test en verde que no comprueba nada**. De ahí salió `tests/autoprueba.js`,
+que inyecta defectos conocidos en los instrumentos y se lee al revés — ✗ es el resultado bueno.
+
+## Reglas que quedan del proceso
+
+- **Un objetivo que se cita se cita con fichero y línea.** Si no lo tiene, es una estimación de
+  quien la escribió. Nació de que un número inventado en un informe de QA —2.400 px— sostuviera
+  un ALTA durante dos pasadas y dirigiera el encargo de un día entero.
+- **El reparto de ficheros protege quién edita un dato, no quién lo cita.** Nadie escribió en un
+  fichero ajeno: una cita se volvió fuente. Es el hueco que el reparto de `CLAUDE.md` no cubre.
+- **Un informe de QA puede medir contra un objetivo, no crearlo.** Sin objetivo definido, el
+  informe dice "sin objetivo definido" en lugar de poner un número.
+- **Un dato sin el instante al que corresponde no es comparable con otro.** Cinco tropiezos
+  vinieron de mediciones ciertas sobre estados distintos presentadas como contradicciones.
+- **Verificar ejecutando no basta: hay que verificar la causa.** El lead acertó tres veces en que
+  había un problema y falló en qué lo causaba. Una mitigación construida sobre la causa
+  equivocada no es media solución: es cero, y manda a alguien a buscar donde no está. **Un aviso
+  sin causa verificada se manda como pregunta, no como instrucción.**
+- **Medir y publicar exigen lo mismo: un worktree limpio.** La lección nació para publicar y
+  tardó una sesión en trasladarse a medir, que es donde se había originado.
+- **Cada agente commitea sus propios ficheros, por nombre, nunca `git add -A`.** El lead publicó
+  una página en blanco durante horas por barrer con `-A` una edición a medias ajena. Auditados
+  los commits de los teammates, todos respetaron la propiedad: la disciplina funcionaba, el
+  problema era el atajo del lead.
+- **Un acierto por el motivo equivocado es un fallo que todavía no se ha manifestado.** Un
+  auditor "confirmó de forma independiente" un hallazgo real por un bug de parseo, y estuvo a
+  punto de pasar **porque coincidía con lo que quien lo leía ya creía**.
+- **El coste de un falso positivo no lo paga quien lo emite**, lo paga el teammate al que se
+  manda a arreglar lo que no está roto. De ahí que los tests digan "no medible" en vez de
+  inventarse un veredicto.
+
+## Sobre el mecanismo de equipo
+
+- **El hallazgo del sol directo no lo cazó ningún agente: lo cazó el reparto.** El lead dedujo
+  "sin sol directo" de la orientación noreste y lo pasó como contexto de la casa; se propagó a
+  las siete fichas. Se detectó porque el dato y el fichero estaban en manos distintas y porque un
+  teammate **se negó a elegir** entre dos fuentes en conflicto y lo marcó como abierto. Un solo
+  agente con las dos cosas en la cabeza habría cerrado la contradicción sin enterarse de que
+  existía.
+- **Los teammates cierran la parte más pequeña de un encargo múltiple y se quedan inactivos.** Un
+  encargo de tres puntos rara vez vuelve con los tres. El lead no puede fiarse del informe: tiene
+  que comprobar el fichero. De cuatro verificaciones en disco antes de contestar, tres cambiaron
+  lo que iba a decir.
+- **Los mensajes se cruzan y cuesta turnos.** Cuatro turnos se perdieron demostrando que algo ya
+  estaba hecho. Mitigación: comprobar antes de encargar (`grep -n "^### " docs/brief.md`,
+  `git status`) y dar líneas exactas en los informes en lugar de nombres de sección.
+- **El navegador del MCP es un recurso exclusivo** y el reparto de ficheros no dice nada de los
+  recursos de ejecución. Bloqueó a QA media sesión. Se resolvió con `tests/runner.py`, que
+  levanta su propio Chrome — y salió de un conflicto de coordinación, no del plan.
+- **Un mensaje largo entierra la petición.** Tres avisos del lead sobre un cambio de tres líneas
+  no se aplicaron hasta que el cuarto fue de cinco líneas y sin contexto.
+- **La explicación de un hallazgo viaja tan rápido como el hallazgo.** Un informe que nombraba mal
+  el objeto —"cronología" donde quería decir "recuperación"— estuvo a punto de matar un diagrama
+  correcto.
+- **El proyecto no tenía definición de terminado**, solo de tarea terminada, y por eso se
+  alimentaba a sí mismo. Ese es el motivo de que exista `docs/pendiente.md`.
