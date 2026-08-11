@@ -2078,6 +2078,60 @@ regresión, es que antes no se estaba viendo el hueco entero.** El tope del 20 %
 dos columnas resultara inalcanzable **con la tinta**, el sospechoso sería el 20 y no el código, igual
 que con el 600 y con el 0,62.
 
+### La afirmación que no puede llevar falsación, y por qué mi criterio necesitaba su caso negativo
+
+Verificado: 6 afirmaciones, **5 con condición de falsación** y una sin ella. La que no la lleva es
+*«veinte años en casa demuestran que la rutina que se le da funciona»*, y `botanist` deja escrito el
+motivo. Tiene razón, y su excepción es más importante que mi regla.
+
+**El motivo generaliza, así que lo escribo como parte del criterio y no como excepción de una ficha.**
+Hay dos clases de afirmación:
+
+| clase | qué afirma | su falsación |
+| --- | --- | --- |
+| **observacional** | un estado visible: *«está sana, y lo que lo demuestra es la variegación»* | **propia** — hay una mirada que la desmiente, y va escrita |
+| **inferencial** | una conclusión de la historia: *«veinte años demuestran que la rutina funciona»* | **heredada** — la desmienten las observacionales de debajo, al fallar |
+
+*«Veinte años»* no describe nada que se pueda mirar hoy: es una inferencia sobre el régimen de
+cuidado, y lo que la tumbaría es que empiecen a fallar el jaspeado, el tamaño de hoja o el drenaje —
+o sea, las otras tres del poto. **Inventarle una señal propia habría duplicado esas tres y habría
+dicho menos.** El criterio queda: *donde pueda llevarla, la lleva*; y una afirmación inferencial no
+puede, **no porque falte el dato, sino porque ahí no existe.**
+
+#### Y el fallo que casi cometo es el mismo que arreglé esta mañana, una capa más arriba
+
+Vale la pena decirlo sin rodeos porque las dos son mías: **el rótulo `CAUSAS PROBABLES` obligaba a
+escribir causas donde no había, y un criterio que exigiera falsación en toda afirmación obligaría a
+escribir falsaciones donde no hay.** Es el mismo error con distinto disfraz — **una obligación
+aplicada donde el contenido no tiene la cosa** — y las dos veces el resultado habría sido contenido
+manufacturado para satisfacer una casilla. Que yo introdujera el segundo el mismo día que retiraba el
+primero dice algo sobre lo fácil que es: el defecto no está en el rótulo ni en el criterio, está en
+escribir una obligación sin su caso negativo.
+
+De ahí la regla sobre cómo escribo reglas, que es la cuarta vez hoy que hace falta:
+
+> **Una regla redactada como obligación positiva —"donde pueda, la lleva"— la lee como cupo
+> cualquiera que la aplique con diligencia, si al lado no está escrito el caso en que no aplica.** Y
+> quien aplica una regla con diligencia es exactamente quien no quieres que se pase.
+
+Las cuatro veces —el plegado, `tipo` en los ítems, el rótulo del `patron` y esto— **la ha completado
+un teammate con el contenido delante, no yo escribiéndola mejor.** La conclusión operativa no es
+"escribir reglas más finas": es que **una regla de presentación no está terminada hasta que alguien
+la ha aplicado a los 38 ítems**, y que el sitio donde se termina es el fichero de contenido, no este.
+
+#### Dos cosas del contenido nuevo que son mejores que el criterio que las pidió
+
+- **El discriminante de los dos coleos.** La falsación del coleo pequeño no es genérica: *punteado
+  pálido **nuevo**, irregular y desigual entre hojas —como el del coleo grande—, o que las motas del
+  margen aumenten de una semana a otra*. Las dos plantas son **del mismo lote, del mismo vivero y del
+  mismo salón**, y una tiene moteado regular y simétrico y la otra punteado irregular. Eso convierte
+  la ficha en algo que se usa **comparando las dos plantas que están una al lado de la otra**, que es
+  el uso real y que ninguna web de jardinería puede dar: hace falta tener estas dos.
+- **Una falsación con orden de lectura.** La del alimento del poto dice que si la hoja nueva sale más
+  pequeña con el mismo sitio y el mismo riego, pero **además** sale menos jaspeada, *primero es luz y
+  no abono*. No es solo qué mirar: es **en qué orden concluir**, que es lo que evita el error de
+  abonar una planta a la que le falta luz. Un diagrama no puede decir eso.
+
 ## Fases
 
 | Fase | Qué | Quién |
