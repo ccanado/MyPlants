@@ -37,7 +37,8 @@
       "riego.ancla": "fecha desde la que contar los vencimientos de riego. Con `dias_verano`/`dias_invierno` basta para calcular sin guardar nada",
       "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (consta la fecha de un riego real, dicha por quien riega o apuntada: el cálculo es firme; es el caso de la begonia, el helecho y el poto desde el 11 de agosto de 2026), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe), `sin_dato` (no se puede contar). Hoy ninguna planta usa `sin_dato`: se conserva en el conjunto porque el hueco puede volver — si nadie apunta el siguiente riego, la fecha envejece y hay que devolverla a null en lugar de arrastrarla",
       "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
-      "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente."
+      "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente.",
+      "estados[].causas_probables[].tipo": "conjunto cerrado que dice QUÉ CLASE de ítem es, porque en un mismo bloque conviven cosas distintas y un rótulo único misfila la grave: `causa` (explica algo que se ve en la foto), `afirmacion` (lo que la ficha sostiene: por qué está bien, con su evidencia), `riesgo` (lo que puede matar la planta y todavía no ha pasado), `mejora` (opcional: se puede hacer o no y no pasa nada), `aclaracion` (reencuadra cómo se lee todo lo demás: de dónde viene la planta, qué especie es de verdad, qué acota el cuadro). Ausente = `causa`, así que no rompe nada anterior. Reparto real hoy: 15 causa, 9 riesgo, 7 aclaracion, 4 afirmacion y 1 mejora. Solo `mejora` se pliega; las otras cuatro van abiertas, porque una afirmación, un riesgo y una aclaración no son letra pequeña. Regla acordada con ux-lead: toda ficha `sana` lleva al menos una `afirmacion`, la primera y sin plegar, porque en una planta sana la afirmación ES el diagnóstico — un bloque que solo enseña riesgos afirma que la planta está en apuros, que es tan falso como preguntarle la causa de un problema que no tiene. En `critica` y `atencion` NO se exige: forzar una afirmación de salud en una planta enferma sería el mismo error al revés."
     },
     "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas: sus fichas se citan porque son la autoridad nomenclatural y se han localizado una a una, pero no se han podido abrir con herramientas. Por eso cada nombre aceptado se ha comprobado además en IPNI (ipni.org), que es el índice nomenclatural de la misma casa —Kew— del que POWO toma la autoría y la publicación original, y que sí se puede abrir. IPNI no sustituye a POWO: POWO decide qué nombre es el aceptado y cuál es sinónimo, e IPNI aporta la autoría y la referencia de publicación. Las dos citas van juntas en las fichas para que se pueda auditar. Las URLs de ASPCA se citan en su forma final: el patrón antiguo /pet-care/animal-poison-control/toxic-and-non-toxic-plants/… redirige a /pet-care/aspca-poison-control/…, y como son citas de seguridad se guarda el destino y no la redirección. Excepción comprobada: el listado completo para gatos (/pet-care/animal-poison-control/cats-plant-list) NO existe bajo el patrón nuevo, devuelve 404, así que esa se conserva tal cual.",
     "vivero": {
@@ -505,30 +506,35 @@
           "causas_probables": [
             {
               "id": "desecacion-previa",
+              "tipo": "causa",
               "resumen": "Se secó por completo y se podó a ras: el daño ya está hecho",
               "detalle": "Desecación completa previa, ya confirmada por Carlos: la planta se secó y él la podó entera. Los tocones marrones son consecuencia de la poda, no de una enfermedad activa.",
               "patron": null
             },
             {
               "id": "secado-puntual",
+              "tipo": "aclaracion",
               "resumen": "Fue un secado puntual, no un declive lento: ocurrió en 74 días",
               "detalle": "Que ocurriera en 74 días acota mucho la causa, y apunta a un secado puntual y no a un declive lento. Los 74 días son junio, julio y media de agosto: el tramo más seco y caluroso del año en Móstoles, con el aire acondicionado deshumidificando a diario. En un helecho tierno basta con que el cepellón (la bola de raíces con su tierra) se separe de las paredes de la maceta una vez: a partir de ahí el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
               "patron": null
             },
             {
               "id": "aire-seco",
+              "tipo": "causa",
               "resumen": "Aire seco de A/A y calefacción, los doce meses",
               "detalle": "En un helecho tierno, la causa habitual de esa desecación en Móstoles es la combinación de aire muy seco (calefacción en invierno, calor seco en verano) con un riego que se salta: el cepellón se separa de las paredes de la maceta, el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
               "patron": null
             },
             {
               "id": "margen-cero",
+              "tipo": "riesgo",
               "resumen": "Lo crítico no es una plaga: es que no le queda hoja con la que fallar",
               "detalle": "El estado es crítico no por una plaga ni por una infección, sino por el margen: con esta masa foliar cualquier error de riego, un sol directo o un secado de dos días la mata. La buena noticia del cuadro es que ha rebrotado, lo que indica que el rizoma sigue vivo.",
               "patron": null
             },
             {
               "id": "ubicacion-sol",
+              "tipo": "riesgo",
               "resumen": "Su sitio actual, con sol directo matinal, es incompatible con un helecho",
               "detalle": "Su ubicación actual, con sol directo matinal, es incompatible con lo que RHS pide para un helecho tierno, y el aire acondicionado añade corriente fría y sequedad en verano. No son la causa del estado actual —eso lo explica la desecación previa que ya ha contado Carlos— pero sí son la vía más probable de que la recuperación fracase.",
               "patron": null
@@ -1052,42 +1058,56 @@
           "causas_probables": [
             {
               "id": "cepellon-agotado",
+              "tipo": "causa",
               "resumen": "El cepellón está agotado: 74 días en la maceta de vivero",
               "detalle": "El cepellón agotado, y la pongo primera. 74 días en una maceta de vivero, con un sustrato de producción pensado para semanas de venta, explica más partes del cuadro que ninguna otra causa: las hojas nuevas cada vez más pequeñas y pálidas, la floración que se apaga con una sola flor abierta frente a muchos restos secos, y que la planta necesite agua cada poco.",
               "patron": "Hoja nueva más pequeña que la anterior, color pálido general, y al regar el agua atraviesa la maceta en un par de segundos porque la tierra está llena de raíces. No lo arregla el riego: lo arregla el cambio de maceta."
             },
             {
               "id": "sol-directo",
+              "tipo": "causa",
               "resumen": "El sol directo de la mañana le quema la hoja expuesta",
               "detalle": "Sol directo de la mañana sobre hoja fina, y va segunda porque es la que tiene mejor prueba en la foto. RHS no le da sol directo a una Elatior en ningún caso.",
               "patron": "El daño no está repartido, se concentra en las hojas de arriba y en las del lado de la ventana —en la foto, el lado derecho— mientras las del interior de la mata están bien; y las hojas nuevas salen acucharadas hacia arriba, que es lo que hace una hoja para poner menos superficie al sol. Las dos cosas se ven."
             },
             {
+              "id": "temperatura-floracion",
+              "tipo": "causa",
+              "resumen": "El salón está entre 8 y 14 grados por encima de lo que RHS pide para su floración, y justo en la estación en que florece",
+              "detalle": "RHS clasifica la Begonia × hiemalis en el grupo semituberoso y para ese grupo pide mantenerla a 10-13 °C DURANTE LA FLORACIÓN; y describe estas begonias como plantas de floración invernal, cultivadas como maceta de floristería y no pensadas para cultivo prolongado. Este salón está a 21-24 °C en invierno con la calefacción y sube hasta 28 en verano: entre 8 y 14 grados por encima de lo que pide la fuente, precisamente cuando esta planta tendría que estar floreciendo. La consecuencia hay que decirla porque no es un fallo de cuidado de nadie: aquí la flor va a durar menos que en el invernadero donde se produjo, y ningún riego ni abono lo compensa. Lo único que está en tu mano es acercarla al extremo frío de lo que da la casa: el sitio más fresco del salón y lejos del radiador, que además evita el otro daño que avisa RHS, la hoja deshidratada con el margen marrón junto a una fuente de calor.",
+              "patron": "Botones que se quedan sin abrir o flores que duran pocos días con la planta por lo demás entera: eso es temperatura. Si además hubiera hoja lacia o sustrato empapado, sería riego; si hubiera polvo blanco o punteado, sería plaga."
+            },
+            {
               "id": "aire-seco",
+              "tipo": "causa",
               "resumen": "Aire seco los doce meses: aire acondicionado en verano, calefacción en invierno",
               "detalle": "Aire seco, y en esta casa de los doce meses: el aire acondicionado de junio a agosto deshumidifica igual que la calefacción en invierno. Los 74 días que lleva aquí son justo el tramo más duro del año.",
               "patron": "Bordes secos y crujientes de forma general, en hojas expuestas y no expuestas por igual, con el centro de la hoja verde y sano. Se distingue de la quemadura precisamente en eso: la quemadura elige, el aire seco no."
             },
             {
               "id": "sales-sustrato",
+              "tipo": "causa",
               "resumen": "Sales acumuladas en el sustrato viejo",
               "detalle": "Sales acumuladas del sustrato viejo, que es consecuencia de la primera causa y merece nombre propio porque su patrón es distinto y muy reconocible.",
               "patron": "La punta de la hoja marrón con un halo amarillo alrededor, y una costra blanquecina en el borde de la maceta o sobre la tierra. Si ves eso, además de cambiarla de maceta conviene regar dos veces seguidas con abundante agua para lavar el sustrato antes de sacarla."
             },
             {
               "id": "flores-pasadas",
+              "tipo": "causa",
               "resumen": "Flores pasadas sin retirar en 74 días",
               "detalle": "Flores pasadas sin retirar, y en 74 días dan para muchas. No causan los bordes secos, pero frenan la floración nueva, gastan energía y son la puerta de entrada del moho gris.",
               "patron": "Ramilletes marrones y papeláceos retenidos en las puntas, como se ven en la foto."
             },
             {
               "id": "riego-irregular",
+              "tipo": "causa",
               "resumen": "Riego irregular y agua estancada en el cachepot — la menos probable",
               "detalle": "Riego irregular, agravado por el cachepot de cerámica sin agujero visible, y va la última a propósito.",
               "patron": "Hojas de abajo amarillas, blandas y caídas sobre la tierra, y sustrato que sigue mojado días después de regar. En la foto no hay ni una hoja caída ni blanda, así que el exceso de agua no es lo que está causando el daño. Sigue mereciendo corregirse como prevención, porque el agua que se queda en el fondo del cachepot no se ve."
             },
             {
               "id": "corriente-fria",
+              "tipo": "causa",
               "resumen": "Corriente fría del aire acondicionado",
               "detalle": "Corriente fría del aire acondicionado: no explica los bordes secos, pero RHS avisa de que a las begonias les molestan las corrientes. Se descarta mirando dónde apunta el aparato.",
               "patron": null
@@ -1104,7 +1124,8 @@
             "Desde ya y cada 2 semanas hasta septiembre: abono rico en potasio (el de tomate sirve) a media dosis, siempre sobre tierra ya húmeda, nunca en seco. Espera 4 semanas después del cambio de maceta si el sustrato nuevo ya lleva abono.",
             "Riego: unos 250 ml cuando los 2 cm de arriba de la tierra estén secos al meter el dedo. En agosto, cada 4 días aproximadamente. Riega por el borde de la maceta, no sobre la hoja ni sobre las flores.",
             "Gira la maceta un cuarto de vuelta en cada riego.",
-            "Cuando acabe esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes de los brotes nuevos cuando midan 5-7 cm. Ningún cuidado va a rellenar los tramos de tallo que ya están pelados; una poda sí."
+            "Cuando acabe esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes de los brotes nuevos cuando midan 5-7 cm. Ningún cuidado va a rellenar los tramos de tallo que ya están pelados; una poda sí.",
+            "En invierno, cuando florezca: al sitio más fresco del salón y lejos del radiador. RHS pide 10-13 °C durante la floración para este grupo y la casa está a 21-24: cada grado de menos es flor que dura más."
           ],
           "revisar_en": "3 semanas, contando desde el cambio de maceta: la hoja que salga nueva tiene que ser más grande, de verde más oscuro y plana, no acucharada. Los bordes marrones que ya existen no se curan, porque ese tejido está muerto: lo que se mide siempre es la hoja nueva. Y hay dos pruebas que separan las causas. Una: si al alejarla del cristal las hojas nuevas dejan de salir acucharadas, era el sol. Dos: si tras el cambio de maceta la hoja nueva crece claramente más grande, era el cepellón agotado. Pueden dar las dos positivas a la vez, y sería lo esperable.",
           "revisar_fecha": null,
@@ -1653,36 +1674,42 @@
           "causas_probables": [
             {
               "id": "llego-hoy",
+              "tipo": "aclaracion",
               "resumen": "Llegó hoy: nada de lo que se ve lo ha causado esta casa",
               "detalle": "Lo primero y lo que reordena todo lo demás: la planta lleva horas en casa. El punteado pálido, las motas oscuras y los agujeros de las hojas bajas son daño de producción, de tienda o de transporte, y no de este salón. No hay nada que corregir en los cuidados de casa, porque todavía no ha habido cuidados de casa. Lo que hay que hacer es distinto: comprobar qué ha entrado con ella y evitar que pase a las otras seis.",
               "patron": null
             },
             {
               "id": "trips",
+              "tipo": "causa",
               "resumen": "Trips, la primera candidata del punteado",
               "detalle": "El punteado pálido con motas oscuras es daño de chupador y la primera candidata son los trips: RHS describe para ellos moteado pálido fino en el haz, tono plateado y puntitos rojizos o negros de excremento. Encaja. En una planta de vivero es de lo más habitual, porque los invernaderos son su ambiente ideal.",
               "patron": "El punteado está en las hojas viejas, las de abajo, que son las que llevan más tiempo vivas; las de arriba están limpias."
             },
             {
               "id": "arana-roja",
+              "tipo": "causa",
               "resumen": "Araña roja, segunda candidata",
               "detalle": "Segunda candidata, araña roja: el punteado inicial es casi idéntico y se distingue mirando el envés con lupa buscando telaraña finísima. No se ve telaraña en la foto, lo que la deja por detrás de los trips sin descartarla.",
               "patron": null
             },
             {
               "id": "patron-cultivar",
+              "tipo": "causa",
               "resumen": "Que el punteado sea el dibujo del cultivar: hay que descartarlo antes de tratar",
               "detalle": "Tercera opción, y hay que descartarla antes de tratar nada: que parte de ese punteado sea el dibujo propio del cultivar, porque muchos coleos comerciales lo tienen.",
               "patron": "Un moteado genético saldría también en las hojas nuevas y con el mismo dibujo en todas. Aquí es asimétrico, en manchas y solo en las viejas, así que probablemente no lo es."
             },
             {
               "id": "dano-mecanico",
+              "tipo": "causa",
               "resumen": "Los agujeros son daño mecánico, no enfermedad",
               "detalle": "Los agujeros de bordes limpios son daño mecánico o mordedura, no enfermedad: ni los trips ni la araña roja hacen agujeros. Con un día en casa, lo más probable es el roce del transporte o un mordisco en el vivero.",
               "patron": null
             },
             {
               "id": "hoja-nueva-palida",
+              "tipo": "causa",
               "resumen": "Las hojas altas pálidas se formaron en el vivero, no aquí",
               "detalle": "Las hojas de arriba casi todas verde lima con poco granate: esto NO es falta de luz de esta casa, porque la planta no ha vivido aquí. Se formaron en el vivero. Y hay una segunda explicación compatible que conviene conocer: en un coleo la hoja nueva sale más pálida y va cogiendo color a medida que madura con luz.",
               "patron": "Si esas mismas hojas se oscurecen en 2 o 3 semanas ya en casa, era hoja joven; si se quedan pálidas al madurar, entonces sí le falta luz y hay que acercarla al cristal."
@@ -2208,25 +2235,36 @@
           ],
           "causas_probables": [
             {
+              "id": "esta-sana",
+              "tipo": "afirmacion",
+              "resumen": "Está en buen estado: compacta, turgente, con el granate sin degradar y sin un solo borde seco",
+              "detalle": "Conviene decirlo antes que ningún riesgo, porque es lo que dice la foto: planta pequeña, compacta y bien ramificada, con las hojas turgentes y ninguna marchitez; el granate profundo con los nervios rosas y el filo verde lima del margen serrado están sin degradar; y no hay bordes secos, ni amarilleo, ni caída de hojas bajas. El moteado más oscuro que se ve sobre el granate está repartido y es simétrico entre hojas, y por esa regularidad lo leo como dibujo del cultivar y no como daño — que es justo lo contrario de lo que pasa en el coleo grande, donde el punteado es irregular.",
+              "patron": null
+            },
+            {
               "id": "llego-hoy",
-              "resumen": "Llegó hoy: su buen estado es mérito del vivero, no de esta casa",
+              "tipo": "aclaracion",
+              "resumen": "Llegó hoy: ese buen estado es mérito del vivero, no de esta casa",
               "detalle": "Lleva horas en casa. El color intenso y el porte compacto se hicieron en el vivero, con luz alta y riego diario, así que todavía no dicen nada de este salón. Lo que decide su futuro son las dos próximas semanas: el cambio de maceta, la entrada gradual al sol de la mañana y que no traiga plaga.",
               "patron": null
             },
             {
               "id": "maceta-minima",
+              "tipo": "riesgo",
               "resumen": "La maceta de vivero de unos 9 cm es una trampa de riego en agosto",
               "detalle": "Es su riesgo real y a corto plazo. Hay medio litro de tierra para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. La forma habitual de perder un coleo pequeño no es una plaga: es un fin de semana sin regar.",
               "patron": "Hojas lacias a media tarde y la maceta muy ligera al levantarla."
             },
             {
               "id": "contagio",
+              "tipo": "riesgo",
               "resumen": "Riesgo de contagio: comparte lote, vivero y sitio con el coleo grande",
               "detalle": "No es un problema de su salud, es de vecindad. Viene del mismo vivero y del mismo lote que el coleo grande, que tiene punteado sospechoso de trips o araña roja, y las siete plantas están en el mismo salón. Una plaga de chupadores pasa de una a otra sin esfuerzo.",
               "patron": "Punteado pálido nuevo en hojas que hoy están limpias."
             },
             {
               "id": "luz-color",
+              "tipo": "aclaracion",
               "resumen": "Si pierde intensidad de color, se verá en la hoja nueva y no en la que trae",
               "detalle": "El sol directo de la mañana que entra en este salón es lo que RHS pide para la especie, así que no hay motivo para esperar que se apague donde está. Pero el color que tiene hoy se formó en el vivero: la prueba real es la hoja que salga aquí. Si la nueva sale con más verde y menos granate al madurar, entonces sí le falta luz y hay que acercarla al cristal.",
               "patron": "Hoja nueva que sigue pálida después de madurar 2 o 3 semanas."
@@ -2760,25 +2798,36 @@
           ],
           "causas_probables": [
             {
+              "id": "esta-sana",
+              "tipo": "afirmacion",
+              "resumen": "Está sano, y lo que lo demuestra es la variegación: la hoja nueva sale con el mismo dibujo que la vieja",
+              "detalle": "No necesita explicación, necesita no romperse, y eso es lo primero que hay que leer de esta ficha. La mata está densísima y bien repartida, sin calvas ni zonas peladas; la hoja está turgente; y no se ven telarañas, ni punteado pálido, ni melaza, ni hojas amarillas, ni hojas caídas. El dato que más dice es la variegación: las hojas nuevas de las puntas traen el mismo borde blanco ancho y bien definido que las viejas del interior, y eso significa que la luz le está bastando. Los pocos bordes con tono pardo que se aprecian son compatibles con el transporte o con un rato de sequedad en la tienda, y no forman patrón.",
+              "patron": "Mira la hoja nueva de las puntas: mientras salga con el mismo borde blanco ancho que las de dentro, la luz le basta. El día que salga más verde y con el borde más estrecho, es que le falta."
+            },
+            {
               "id": "llego-hoy",
-              "resumen": "Llegó hoy: la densidad y la variegación son de producción de vivero",
-              "detalle": "Lleva horas en casa, así que nada de lo que se ve refleja todavía este salón. Está sano y no necesita explicación: necesita no romperse. Los pocos bordes con tono pardo que se aprecian son compatibles con el transporte o con un rato de sequedad en la tienda, y no forman patrón.",
+              "tipo": "aclaracion",
+              "resumen": "Llegó hoy: esa densidad y esa variegación las hizo el vivero, no esta casa",
+              "detalle": "Lleva horas en casa, así que nada de lo que se ve refleja todavía este salón: lo que trae puesto se produjo en el vivero. Lo que va a decir cómo está dentro de un mes son estas primeras semanas aquí, no la foto de hoy.",
               "patron": null
             },
             {
               "id": "riesgo-riego",
+              "tipo": "riesgo",
               "resumen": "El riesgo dominante es el riego, no la luz ni las plagas",
               "detalle": "En esta especie un secado completo del cepellón no se revierte: la hoja afectada se vuelve marrón y crujiente, no recupera color, y la planta se queda con calvas permanentes en la silueta, que es justo lo que hace bonita a una colgante. Y como está colgada por encima de la altura de la vista, es la más fácil de olvidar de las siete.",
               "patron": "Muchas hojas crujientes de golpe, cepellón separado de las paredes y maceta muy ligera al levantarla."
             },
             {
               "id": "riesgo-invierno",
+              "tipo": "riesgo",
               "resumen": "En invierno el problema será la calefacción, y el consejo es el contrario",
               "detalle": "Con el radiador puesto aparecerán bordes marrones y crujientes con el centro de la hoja verde. Eso es aire seco, no sed: la respuesta es subir la humedad, no regar más. Confundirlo lleva a encharcar una planta que ya está sufriendo.",
               "patron": "Bordes crujientes con el centro de la hoja verde y turgente."
             },
             {
               "id": "arana-roja",
+              "tipo": "riesgo",
               "resumen": "Araña roja: RHS la cita para esta especie y el ambiente de la casa la favorece",
               "detalle": "Prospera con calor y aire seco, que es exactamente lo que hay aquí en verano y en invierno. Con esta densidad de mata, una infestación incipiente no se ve desde fuera, así que la revisión del envés cada dos semanas no es una formalidad.",
               "patron": "Punteado pálido fino en el haz y telaraña finísima en el envés."
@@ -3266,24 +3315,28 @@
           "causas_probables": [
             {
               "id": "llego-hoy",
+              "tipo": "afirmacion",
               "resumen": "Llegó hoy y está en el mejor momento de su ciclo: nada que corregir",
               "detalle": "Lleva horas en casa y lo que se ve es el resultado de la producción de vivero. No hay nada que arreglar. Lo que hay que saber es que la cuenta atrás de su floración ya está en marcha y no depende de lo que se haga bien o mal aquí.",
               "patron": null
             },
             {
               "id": "identificacion",
+              "tipo": "aclaracion",
               "resumen": "No es una margarita: es un crisantemo de floristería, y eso cambia el consejo entero",
               "detalle": "La etiqueta dice MARGARITA, pero la planta no lo es. La hoja ancha y profundamente lobulada y la flor doble en pompón son de crisantemo de floristería (Chrysanthemum × morifolium). Una margarita arbustiva (Argyranthemum) tiene la hoja finamente dividida, casi de encaje, y flor sencilla con centro amarillo plano; una margarita de pradera (Leucanthemum) tiene hoja estrecha y dentada y flor sencilla grande. Ninguna encaja. No es un arbusto de exterior de temporada larga: es una planta forzada de flor puntual.",
               "patron": "Hoja ancha con 3-5 lóbulos gruesos y flor doble en pompón, en lugar de hoja de encaje y flor sencilla."
             },
             {
               "id": "porte-forzado",
+              "tipo": "aclaracion",
               "resumen": "El porte compacto es de producción forzada, no su forma natural",
               "detalle": "Los crisantemos de maceta se producen con fotoperiodo controlado y a menudo con enanizantes para que salgan a la venta bajos y cargados de flor. Cuando rebrote, saldrá más alta y más suelta. No es que se haya estropeado: es que entonces se verá como es de verdad.",
               "patron": "Mata anormalmente baja y densa para la cantidad de flor que lleva."
             },
             {
               "id": "riesgos",
+              "tipo": "riesgo",
               "resumen": "Dos riesgos concretos: que se seque un día en flor y que no retires las flores pasadas",
               "detalle": "Las flores abiertas no se recuperan de un marchitamiento, y los botones se quedan sin abrir. Y las primeras flores pasadas, si se dejan puestas, son la vía de entrada del moho gris en una mata así de densa.",
               "patron": "Botones que se secan sin abrir; pelusa gris sobre las flores marchitas."
@@ -3765,30 +3818,35 @@
           "causas_probables": [
             {
               "id": "veinte-anos",
+              "tipo": "afirmacion",
               "resumen": "Veinte años en casa demuestran que la rutina que se le da funciona",
               "detalle": "Antes de buscarle problemas conviene decir lo que significan más de dos décadas: el régimen de luz, riego y sitio que ha tenido hasta hoy es demostradamente suficiente para esta planta. Cualquier cambio que se le proponga —acercarla al ventanal, cambiarla de maceta— es una mejora opcional y no una corrección urgente, y conviene hacerlo de uno en uno para no romper lo que ya funciona.",
               "patron": null
             },
             {
               "id": "sana-variegada",
+              "tipo": "afirmacion",
               "resumen": "Está sana, y lo que lo demuestra es la variegación, no el verde",
               "detalle": "En un poto la variegación es el indicador de luz: si las hojas mantienen el jaspeado amarillo amplio y bien repartido, la luz le ha bastado. Una planta verde y sin jaspear puede parecer sana y estar contándote que vive a oscuras.",
               "patron": "Jaspeado amarillo amplio y bien contrastado en las hojas nuevas, no solo en las viejas."
             },
             {
               "id": "riesgo-agua",
+              "tipo": "riesgo",
               "resumen": "El riesgo dominante es el agua: podredumbre de raíz en una maceta sin drenaje visible",
               "detalle": "Es su problema principal según RHS, por delante de cualquier plaga. Y aquí hay un agravante concreto: la maceta de cerámica decorativa no permite ver si tiene agujero, así que el agua sobrante puede quedarse en el fondo sin que se note nada desde fuera.",
               "patron": "Hojas de abajo amarillas y blandas, tierra húmeda días después de regar y olor a cerrado."
             },
             {
               "id": "riesgo-luz",
+              "tipo": "mejora",
               "resumen": "A medio plazo, la luz: en la estantería está un escalón por debajo de lo ideal",
               "detalle": "RHS avisa de que con poca luz el follaje pierde la variegación y el crecimiento es pobre. Está retirada del ventanal, así que recibe alrededor de un nivel 2 cuando le convendría un 3. Esto no pasa en una semana: se ve en la hoja que salga en dos o tres meses.",
               "patron": "Hoja nueva más verde, con menos amarillo, o bastante más pequeña que las actuales."
             },
             {
               "id": "sin-hambre",
+              "tipo": "afirmacion",
               "resumen": "Hojas grandes y bien formadas: no le falta alimento",
               "detalle": "No hay nada que corregir en abonado. Y si algún día pierde variegación, la reacción intuitiva de abonar más sería un error: la variegación depende de la luz, no del abono.",
               "patron": null
