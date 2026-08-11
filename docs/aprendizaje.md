@@ -235,6 +235,38 @@ adivinando.
 - **El proyecto no tenía definición de terminado**, solo de tarea terminada, y por eso se
   alimentaba a sí mismo. Ese es el motivo de que exista `docs/pendiente.md`.
 
+## Cuatro del instrumental, apuntadas por `builder` al cerrar v1
+
+Van aquí y no como tarea, por la regla del lead. Ninguna me impidió verificar, salvo la primera.
+
+- **Un test puede no encontrar algo y no decir que no lo encuentra.** `tests/diagramas.js` informa
+  `eje log: no medible` sobre la cronología, y no es que el eje falle: es que el auditor recorre la
+  ficha desplegada y la cronología es **de página**, fuera de cualquier `<article>`. El instrumento
+  está bien escrito —tiene incluso un comentario explicando que la cronología es HTML y no SVG— y
+  aun así no llega. Medido a mano por regresión: **R² 0,9995 contra log y 0,615 contra lineal.**
+  Es la única de las cuatro que cae en la excepción, porque deja sin verificar la honestidad de un
+  diagrama, así que se la pasé a `qa-visual` en vez de solo apuntarla.
+- **Un test puede nombrar un causante que no existe.** `movimiento.js` atribuye dos bloqueantes a
+  `element.animate()`, y en `js/` no hay ni una llamada. Lo que corre es una animación CSS. Medido
+  con `getAnimations()`: bajo `reduce` corre **exactamente una**, `aparecer`, 120 ms, opacidad. El
+  test ve bien el efecto e inventa la causa — es el patrón dominante de esta sesión, aplicado al
+  diagnóstico en vez de al hallazgo.
+- **Un umbral sin derivar convierte una decisión en un fallo.** Los 50 ms de `movimiento.js` no
+  distinguían mover de no mover, así que suspendían una decisión deliberada y documentada. Lo
+  resolvió `ux-lead` con una regla y no subiendo la cifra: *la duración solo tiene umbral si la
+  animación mueve algo*. Un umbral que no dice de qué es umbral no se puede cumplir ni discutir.
+- **Un test puede aprobar el caso peor.** `estructura.js` dio ✓ con **0 `<article>`** sobre una
+  página completamente en blanco. Es el mismo tronco por el otro extremo: no una herramienta que
+  opina sin poder saber, sino una que **calla cuando sí puede**. Un suelo mínimo lo cierra, y el
+  número sale del propio JSON.
+
+Y una que no es del instrumental sino del método, y es la que más me costó:
+
+> **Verificar ejecutando tiene una cara B: hay que ejecutar DESPUÉS del último commit.** La web
+> estuvo en blanco en `main` con un árbol limpio y cinco comprobadores en verde, porque el verde
+> era de dos commits atrás. El sello de commit del runner funcionó perfectamente; lo que faltaba
+> era volver a pasarlo.
+
 ## La conclusión, y es de `ux-lead` al cerrar
 
 > **Un equipo de agentes puede mejorar indefinidamente algo que ya estaba bien, y la única cosa
