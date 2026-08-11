@@ -38,7 +38,8 @@
       "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (consta la fecha de un riego real, dicha por quien riega o apuntada: el cálculo es firme; es el caso de la begonia, el helecho y el poto desde el 11 de agosto de 2026), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe), `sin_dato` (no se puede contar). Hoy ninguna planta usa `sin_dato`: se conserva en el conjunto porque el hueco puede volver — si nadie apunta el siguiente riego, la fecha envejece y hay que devolverla a null en lugar de arrastrarla",
       "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
       "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente.",
-      "estados[].causas_probables[].tipo": "conjunto cerrado que dice QUÉ CLASE de ítem es, porque en un mismo bloque conviven cosas distintas y un rótulo único misfila la grave: `causa` (explica algo que se ve en la foto), `afirmacion` (lo que la ficha sostiene: por qué está bien, con su evidencia), `riesgo` (lo que puede matar la planta y todavía no ha pasado), `mejora` (opcional: se puede hacer o no y no pasa nada), `aclaracion` (reencuadra cómo se lee todo lo demás: de dónde viene la planta, qué especie es de verdad, qué acota el cuadro). Ausente = `causa`, así que no rompe nada anterior. Reparto real hoy: 15 causa, 9 riesgo, 7 aclaracion, 4 afirmacion y 1 mejora. Solo `mejora` se pliega; las otras cuatro van abiertas, porque una afirmación, un riesgo y una aclaración no son letra pequeña. Regla acordada con ux-lead: toda ficha `sana` lleva al menos una `afirmacion`, la primera y sin plegar, porque en una planta sana la afirmación ES el diagnóstico — un bloque que solo enseña riesgos afirma que la planta está en apuros, que es tan falso como preguntarle la causa de un problema que no tiene. En `critica` y `atencion` NO se exige: forzar una afirmación de salud en una planta enferma sería el mismo error al revés."
+      "estados[].causas_probables[].tipo": "conjunto cerrado que dice QUÉ CLASE de ítem es, porque en un mismo bloque conviven cosas distintas y un rótulo único misfila la grave: `causa` (explica algo que se ve en la foto), `afirmacion` (lo que la ficha sostiene: por qué está bien, con su evidencia), `riesgo` (lo que puede matar la planta y todavía no ha pasado), `mejora` (opcional: se puede hacer o no y no pasa nada), `aclaracion` (reencuadra cómo se lee todo lo demás: de dónde viene la planta, qué especie es de verdad, qué acota el cuadro). Ausente = `causa`, así que no rompe nada anterior. Reparto real hoy: 15 causa, 9 riesgo, 7 aclaracion, 4 afirmacion y 1 mejora. Solo `mejora` se pliega; las otras cuatro van abiertas, porque una afirmación, un riesgo y una aclaración no son letra pequeña. Regla acordada con ux-lead: toda ficha `sana` lleva al menos una `afirmacion`, la primera y sin plegar, porque en una planta sana la afirmación ES el diagnóstico — un bloque que solo enseña riesgos afirma que la planta está en apuros, que es tan falso como preguntarle la causa de un problema que no tiene. En `critica` y `atencion` NO se exige: forzar una afirmación de salud en una planta enferma sería el mismo error al revés.",
+      "anos_en_casa_min": "años que la planta lleva en casa como MÍNIMO, en número. Solo existe en el poto, que es la única sin `fecha_llegada`: es la forma numérica de `fecha_llegada_texto` («hace más de 20 años»). No es una medida, es un suelo, así que quien lo dibuje tiene que dejarlo abierto hacia arriba y nunca leerlo como «20 años exactos». Existe para que nadie tenga que sacar el número de una frase con una expresión regular: la prosa es para el lector y el número para el render, y si algún día se reescribe la frase el diagrama no se entera. Si aparece la fecha exacta, este campo se retira y manda `fecha_llegada`."
     },
     "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas: sus fichas se citan porque son la autoridad nomenclatural y se han localizado una a una, pero no se han podido abrir con herramientas. Por eso cada nombre aceptado se ha comprobado además en IPNI (ipni.org), que es el índice nomenclatural de la misma casa —Kew— del que POWO toma la autoría y la publicación original, y que sí se puede abrir. IPNI no sustituye a POWO: POWO decide qué nombre es el aceptado y cuál es sinónimo, e IPNI aporta la autoría y la referencia de publicación. Las dos citas van juntas en las fichas para que se pueda auditar. Las URLs de ASPCA se citan en su forma final: el patrón antiguo /pet-care/animal-poison-control/toxic-and-non-toxic-plants/… redirige a /pet-care/aspca-poison-control/…, y como son citas de seguridad se guarda el destino y no la redirección. Excepción comprobada: el listado completo para gatos (/pet-care/animal-poison-control/cats-plant-list) NO existe bajo el patrón nuevo, devuelve 404, así que esa se conserva tal cual.",
     "vivero": {
@@ -3654,7 +3655,14 @@
           "fuente": "Carlos",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Solo se puede afirmar de forma aproximada («hace más de 20 años»), así que `fecha_llegada` y `dias_en_casa` van en null y el dato está en `fecha_llegada_texto`. Una fecha exacta inventada sería peor que un texto impreciso y cierto."
+          "nota": "Solo se puede afirmar de forma aproximada («hace más de 20 años»), así que `fecha_llegada` y `dias_en_casa` van en null y el dato está en `fecha_llegada_texto` y, en número, en `anos_en_casa_min`. Una fecha exacta inventada sería peor que un texto impreciso y cierto."
+        },
+        {
+          "campo": "anos_en_casa_min",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Mismo dato que `fecha_llegada_texto` y del mismo origen —Carlos—, en número para que no haya que sacarlo de una frase. Es un SUELO y no una medida: la planta lleva veinte años o más, y por eso el diagrama la dibuja abierta hacia la derecha en vez de cerrarla en una cifra que nadie ha cerrado. Lo que lo resolvería del todo sería una fecha, y no existe: nadie apuntó cuándo llegó."
         },
         {
           "campo": "luz.tramos",
@@ -3744,6 +3752,7 @@
       "alt_etiqueta": null,
       "fecha_llegada": null,
       "fecha_llegada_texto": "hace más de 20 años",
+      "anos_en_casa_min": 20,
       "dias_en_casa": null,
       "notas": [],
       "manipulacion": {
