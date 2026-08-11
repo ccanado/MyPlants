@@ -30,7 +30,7 @@ import sys
 from pathlib import Path
 
 CAMPOS_TEXTO = ["id", "nombre_comun", "familia", "foto"]
-CAMPOS_ANULABLES_TEXTO = ["nombre_cientifico", "historia", "notas_carlos"]
+CAMPOS_ANULABLES_TEXTO = ["nombre_cientifico", "historia"]
 CAMPOS_RESUMEN_DETALLE = ["riego", "luz", "humedad", "sustrato", "abonado", "trasplante"]
 DIFICULTADES = {"fácil", "media", "exigente"}
 SEVERIDADES = {"sana", "atencion", "critica"}
@@ -44,8 +44,10 @@ CAMPOS_VERIFICABLES = set(
     CAMPOS_RESUMEN_DETALLE
 ) | {"nombre_cientifico", "familia", "temperatura", "plagas_comunes", "toxicidad_mascotas"}
 
-# Campos personales: los da Carlos, no llevan fuente institucional.
-CAMPOS_PERSONALES = {"historia", "notas_carlos"}
+# Campos personales: los dan las personas de la casa, no llevan fuente institucional.
+# `notas` es una lista: una casa puede tener varias voces (quien la compró, quien la cuida,
+# quien la regaló) y cada nota dice de quién es.
+CAMPOS_PERSONALES = {"historia", "notas"}
 
 
 class Informe:
@@ -203,29 +205,80 @@ def validar_planta(p, idx: int, inf: Informe, img_dir: Path, ids_vistos: set[str
     if dif not in DIFICULTADES:
         inf.error(f"{etq}.dificultad: debe ser una de {sorted(DIFICULTADES)} → {dif!r}")
 
-    estado = p.get("estado")
-    if estado is not None:
-        if not isinstance(estado, dict):
-            inf.error(f"{etq}.estado: debe ser objeto o null")
-        else:
-            sev = estado.get("severidad")
+    # --- notas: la capa personal, una lista porque la casa tiene varias voces ---
+    notas = p.get("notas")
+    if "notas" not in p:
+        inf.error(f"{etq}: falta `notas` (lista vacía si nadie ha contado nada todavía)")
+    elif not isinstance(notas, list):
+        inf.error(f"{etq}.notas: debe ser una lista de objetos {{autor, texto}}")
+    else:
+        for j, n in enumerate(notas):
+            if not isinstance(n, dict):
+                inf.error(f"{etq}.notas[{j}]: debe ser un objeto con `autor` y `texto`")
+                continue
+            for clave in ("autor", "texto"):
+                if not isinstance(n.get(clave), str) or not n[clave].strip():
+                    inf.error(
+                        f"{etq}.notas[{j}].{clave}: falta — una nota sin autor no se puede "
+                        f"atribuir, y sin atribución no es la voz de nadie"
+                    )
+
+    # --- estados: histórico, no un momento único ---
+    estados = p.get("estados")
+    if not isinstance(estados, list) or not estados:
+        inf.error(
+            f"{etq}: `estados` debe ser una lista no vacía. Cada entrada es un diagnóstico "
+            f"fechado; el histórico es lo que permite confirmar o refutar el anterior"
+        )
+    else:
+        fechas: list[str] = []
+        for j, e in enumerate(estados):
+            eetq = f"{etq}.estados[{j}]"
+            if not isinstance(e, dict):
+                inf.error(f"{eetq}: debe ser un objeto")
+                continue
+
+            sev = e.get("severidad")
             if sev not in SEVERIDADES:
-                inf.error(f"{etq}.estado.severidad: debe ser una de {sorted(SEVERIDADES)} → {sev!r}")
-            fecha = estado.get("fecha_foto")
-            if not (isinstance(fecha, str) and RE_FECHA.match(fecha)):
+                inf.error(f"{eetq}.severidad: debe ser una de {sorted(SEVERIDADES)} → {sev!r}")
+
+            fecha = e.get("fecha_foto")
+            if not (isinstance(fecha, str) and RE_FECHA.match(str(fecha))):
                 inf.error(
-                    f"{etq}.estado.fecha_foto: obligatoria y en YYYY-MM-DD — el diagnóstico "
-                    f"describe un momento, no el presente"
+                    f"{eetq}.fecha_foto: obligatoria y en YYYY-MM-DD — un diagnóstico sin "
+                    f"fecha no se puede ordenar ni caducar"
                 )
-            for clave in ("senales", "causas_probables", "tratamiento"):
-                v = estado.get(clave)
-                if not isinstance(v, list) or not v:
-                    inf.error(f"{etq}.estado.{clave}: debe ser una lista no vacía")
-            if sev in {"atencion", "critica"} and not estado.get("revisar_en"):
-                inf.error(
-                    f"{etq}.estado.revisar_en: falta — un tratamiento sin plazo de revisión "
-                    f"no se puede seguir"
-                )
+            else:
+                fechas.append(fecha)
+
+            if not isinstance(e.get("senales"), list) or not e["senales"]:
+                inf.error(f"{eetq}.senales: debe ser una lista no vacía de lo observado")
+            if not isinstance(e.get("tratamiento"), list) or not e["tratamiento"]:
+                inf.error(f"{eetq}.tratamiento: debe ser una lista no vacía")
+
+            if sev in {"atencion", "critica"}:
+                if not isinstance(e.get("causas_probables"), list) or not e["causas_probables"]:
+                    inf.error(f"{eetq}.causas_probables: obligatoria cuando la severidad no es sana")
+                if not e.get("revisar_en"):
+                    inf.error(
+                        f"{eetq}.revisar_en: falta — un tratamiento sin plazo de revisión no se "
+                        f"puede seguir ni comprobar"
+                    )
+
+            if e.get("foto") and img_dir.is_dir() and not (img_dir / e["foto"]).is_file():
+                inf.error(f"{eetq}.foto: '{e['foto']}' no existe en assets/img/")
+
+        if len(set(fechas)) != len(fechas):
+            inf.error(
+                f"{etq}.estados: hay dos diagnósticos con la misma `fecha_foto`. Si son del "
+                f"mismo día, únelos; si no, corrige la fecha"
+            )
+        if fechas != sorted(fechas, reverse=True):
+            inf.aviso(
+                f"{etq}.estados: no están ordenados del más reciente al más antiguo. No es un "
+                f"error —quien lo consume debe ordenar por `fecha_foto` y no fiarse del "
+                f"índice— pero leerlo cuesta más"
+            )
 
     # --- la regla del hueco anotado ---
     por_campo = validar_fuentes(p.get("fuentes"), etq, inf)

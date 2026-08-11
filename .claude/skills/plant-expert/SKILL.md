@@ -150,16 +150,19 @@ segundos y ampliable si te interesa.
       ],
       "toxicidad_mascotas": { "gatos": "tóxica", "perros": "tóxica", "detalle": "…" },
       "dificultad": "media",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "atencion",
-        "fecha_foto": "2026-08-11",
-        "senales": ["…"],
-        "causas_probables": ["…"],
-        "tratamiento": ["…"],
-        "revisar_en": "3 semanas: …",
-        "no_visible_en_foto": ["…"]
-      },
+      "notas": [ { "autor": "Noah", "texto": "…" } ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "begonia-elatior.jpg",
+          "severidad": "atencion",
+          "senales": ["…"],
+          "causas_probables": ["…"],
+          "tratamiento": ["…"],
+          "revisar_en": "3 semanas: …",
+          "no_visible_en_foto": ["…"]
+        }
+      ],
       "fuentes": [
         { "campo": "nombre_cientifico", "fuente": "POWO", "url": "https://…", "consultado": "2026-08-11" },
         { "campo": "historia", "fuente": null, "url": null, "consultado": "2026-08-11",
@@ -170,9 +173,30 @@ segundos y ampliable si te interesa.
 }
 ```
 
-`dificultad` es una de `"fácil"`, `"media"`, `"exigente"`. `estado` y `alt` extienden la lista
-de campos de `CLAUDE.md`: `estado` porque Carlos pidió que la ficha diga cómo está la planta y
-cómo tratarla, y `alt` porque el texto alternativo es contenido, no maquetación.
+`dificultad` es una de `"fácil"`, `"media"`, `"exigente"`. `estados`, `notas` y `alt` extienden
+la lista de campos de `CLAUDE.md`: `estados` porque la ficha tiene que decir cómo está la planta
+y cómo tratarla, y `alt` porque el texto alternativo es contenido y no maquetación.
+
+### `estados` es una lista, y eso no es un detalle
+
+Un diagnóstico describe **el día de la foto**, no el presente. Con un solo objeto, un
+diagnóstico nuevo sustituye al anterior y se pierde justo lo que hace verificable el trabajo:
+el estado siguiente **confirma o refuta** las causas que el anterior daba por probables. Si
+dijiste que los bordes secos eran quemadura de sol y tres semanas después, apartada del cristal,
+las hojas nuevas salen enteras, la causa deja de ser hipótesis. Eso es lo que promete
+`revisar_en` y sin histórico no tiene dónde aterrizar.
+
+Dos consecuencias prácticas:
+
+- **Cada entrada lleva `fecha_foto` y `foto`.** El diagnóstico se hizo sobre una imagen
+  concreta y esa trazabilidad es la mitad de su valor.
+- **Quien consume la lista ordena por `fecha_foto`; nunca coge `estados[0]` a ciegas.** Fiarse
+  del índice significa que el día que alguien inserte un estado antiguo al final, la ficha
+  muestre un diagnóstico caducado sin que nada falle.
+
+`notas` también es lista, y por un motivo parecido: en una casa hay varias voces —quien la
+compró, quien la cuida, quien la regaló— y cada nota dice de quién es. Un campo único obliga
+a elegir un dueño de la voz personal, y eso es una decisión de contenido disfrazada de esquema.
 
 ### La regla del hueco anotado
 
