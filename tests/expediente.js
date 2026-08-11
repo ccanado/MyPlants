@@ -28,20 +28,27 @@
  * de uno sobre una población que varía, y encima el peor caso quedaba fuera. Esta
  * versión mide **las siete** y reporta el peor caso además del detalle.
  *
- * ── LOS DOS OBJETIVOS QUE SÍ ESTÁN DERIVADOS ────────────────────────────────────
+ * ── LOS OBJETIVOS QUE SÍ ESTÁN DERIVADOS ────────────────────────────────────────
  *
- * De `docs/brief.md` § "Los objetivos que sustituyen al de 2.400 px":
+ * De `docs/brief.md`, `ux-lead` en `4f1b350` y `69ce939`:
  *
  *   1. **Ocupación.** Ninguna ficha con más del **20 %** de sus bandas de 100 px donde
  *      el contenido pare antes del **62 %** del ancho disponible.
- *   2. **Altura en pantallas y por severidad**, a 1280×900: **≤ 3 pantallas (2.700 px)**
- *      en `critica` y `atencion`, **≤ 2 pantallas (1.800 px)** en `sana`.
+ *   2. **Ninguna carrera de más de 600 px sin un ancla de navegación** — un rótulo de
+ *      bloque, una entrada del índice o un diagrama.
+ *   3. **La columna de acción tiene que pegar de verdad.** Sin `sticky` funcionando se
+ *      cumple la ocupación y se pierde el motivo del reparto en dos columnas.
  *
- * El segundo tiene dos tramos a propósito, y esa es la parte que mi número único hacía
- * imposible: un solo umbral para las siete obliga a que una planta sin problema y una
- * que se muere quepan en lo mismo, y la única forma de lograrlo es recortarle contenido
- * a la que lo necesita o inventárselo a la que no. La severidad manda en cuánto hay que
- * contar, así que tiene que estar en el objetivo.
+ * Y la **altura en píxeles es observación, no objetivo**. `ux-lead` retiró también su
+ * propio tope de 1.800 px, y por el mismo defecto que el mío: lo había derivado de "dos
+ * pantallas", un número redondo de viewports y no del contenido. La segunda versión de
+ * este fichero medía contra ese tope; esta ya no. El objetivo manda cortar, la
+ * observación manda mirar.
+ *
+ * Lo que no cambia, y es la razón de retirar topes en vez de pedir recortes: **el
+ * contenido no se recorta para cuadrar una cifra.** Si un objetivo de altura obliga a
+ * borrar una observación de `botanist`, el que está mal es el objetivo. Va como punto
+ * bloqueante 13.14 del checklist, no como comentario.
  *
  * ── MÉTODO — por qué escanea tinta y no cajas ───────────────────────────────────
  *
@@ -55,9 +62,9 @@
  * SE ABSTIENE cuando no puede saber: sin fichas desplegadas devuelve `no_medible` con
  * el motivo en vez de inventar un cero.
  *
- * Uso:
- *   python3 tests/runner.py --abrir-fichas --alto 40000 --test expediente
- *   python3 tests/runner.py --abrir 0      --alto 6000  --test expediente   (una sola)
+ * Uso — no hace falta abrir nada, las abre y las restaura él:
+ *   python3 tests/runner.py --alto 40000 --test expediente
+ *   python3 tests/runner.py --url https://ccanado.github.io/MyPlants/ --alto 40000 --test expediente
  */
 
 (() => {
@@ -66,9 +73,23 @@
   const BANDA = 100;            // alto de banda del objetivo de ocupación
   const CORTE_ANCHO = 0.62;     // el contenido debe pasar del 62% del ancho
   const MAX_BANDAS_CORTAS = 0.20;
-  const PANTALLA = 900;         // el viewport en el que se derivó el objetivo
-  const MAX_PANTALLAS = { critica: 3, atencion: 3, sana: 2 };
+  const MAX_CARRERA = 600;      // px sin un ancla de navegación
+  const PANTALLA = 900;         // solo para expresar la altura en pantallas
   const PASO = 4;
+
+  /* La altura en píxeles **no suspende nada**. `ux-lead` la pasó de objetivo a
+     observación en `69ce939`, y retiró su propio tope de 1.800 px por el mismo motivo
+     por el que yo retiré el 2.400: lo había derivado de "dos pantallas", un número
+     redondo de viewports y no del contenido. Lo comprobó midiendo: una ficha sana
+     borrando el bloque de causas ENTERO seguiría en ~2.527 px contra un tope de 1.800,
+     así que no se alcanzaba maquetando — solo recortando contenido, que es la línea
+     que no se cruza. La altura era un proxy de "muro de texto", y lo que de verdad
+     mide eso es la carrera sin ancla: una ficha de 2.886 px con un rótulo cada 400 px
+     se lee bien y una de 1.800 de un solo bloque no.
+
+     Se sigue midiendo y apuntando porque una ficha que doblara su alto de un día para
+     otro sería una señal. La diferencia: el objetivo manda cortar, la observación
+     manda mirar. */
 
   const noMedible = (motivo, extra) => {
     const informe = Object.assign({
@@ -82,7 +103,10 @@
 
   /* ── severidad por planta, desde el JSON ────────────────────────────────── */
 
-  /* Hace falta para elegir el umbral de altura, y se toma el **peor** de todos los
+  /* Ya no elige umbral —los topes de altura están retirados— pero se sigue anotando,
+     porque es la variable con la que se lee el resto del informe: una ficha larga en
+     `critica` cuenta más cosas por un motivo, y una larga en `sana` es sospechosa.
+     Se toma el **peor** de todos los
      estados, no el vigente: una planta con histórico sigue contando como crítica
      mientras alguna observación lo diga. Es el mismo criterio que `severidadesDe()`
      en `js/datos.js`, y se replica aquí a propósito para no depender de que el
@@ -217,19 +241,69 @@
       else if (v <= umbral) { dentro = false; }
     });
 
+    /* ── carreras sin ancla de navegación ─────────────────────────────────
+       Un ancla es, en palabras de `ux-lead`: un rótulo de bloque, una entrada del
+       índice o un diagrama. Se recogen sus posiciones verticales, se ordenan, y se
+       mide el hueco mayor entre dos consecutivas — contando también el tramo desde
+       el principio de la región a la primera y desde la última al final. */
+    const anclas = [];
+    const ES_ANCLA = 'h2, h3, h4, h5, h6, dt, summary, svg, ' +
+      '[class*="rotulo"], [class*="titulo"], [class*="indice"], [class*="epigrafe"]';
+    for (const el of cuerpo.querySelectorAll(ES_ANCLA)) {
+      if (oculto(el)) continue;
+      if (el.tagName.toLowerCase() === 'svg') {
+        const r0 = el.getBoundingClientRect();
+        if (r0.width < 60 || r0.height < 40) continue;   // iconos no son anclas
+      }
+      if (el.closest('.oculto-visual')) continue;        // no ancla nada visualmente
+      const r = el.getBoundingClientRect();
+      if (r.height > 0) anclas.push(r.top);
+    }
+    anclas.sort((a, b) => a - b);
+
+    const carreras = [];
+    let cursor = region.top;
+    for (const y of anclas) {
+      if (y - cursor > 0) carreras.push(y - cursor);
+      cursor = Math.max(cursor, y);
+    }
+    if (region.bottom - cursor > 0) carreras.push(region.bottom - cursor);
+    const carreraMax = carreras.length ? Math.max(...carreras) : Math.round(region.height);
+    const carrerasLargas = carreras.filter((c) => c > MAX_CARRERA);
+
+    /* ── ¿la columna de acción pega de verdad? ────────────────────────────
+       Es la mitad del argumento del reparto en dos columnas: sin `sticky`
+       funcionando se cumple la ocupación y se pierde el motivo. Un `position:
+       sticky` con `top: auto` está declarado y no hace nada, y es un fallo
+       silencioso clásico — de ahí que se compruebe el desplazamiento y no solo la
+       propiedad. Que se quede pegada al scrollear no se mide aquí: hace falta
+       scroll real y esto corre con el viewport alto, así que se abstiene. */
+    let sticky = null;
+    for (const el of cuerpo.querySelectorAll('*')) {
+      const c = getComputedStyle(el);
+      if (c.position !== 'sticky') continue;
+      const desplazamientos = [c.top, c.bottom, c.left, c.right];
+      sticky = {
+        elemento: el.tagName.toLowerCase() + '.' + String(el.getAttribute('class') || '').split(' ')[0],
+        top: c.top,
+        tiene_desplazamiento: desplazamientos.some((v) => v && v !== 'auto'),
+      };
+      break;
+    }
+
     const conTinta = lineas.filter((v) => v !== null);
     const severidad = severidadPorPlanta[id] || 'sana';
-    const pantallas = alto / PANTALLA;
-    const topePantallas = MAX_PANTALLAS[severidad] != null ? MAX_PANTALLAS[severidad] : 3;
 
     return {
       planta: id || String(nombre).trim().slice(0, 40),
       severidad,
-      alto_px: Math.round(alto),
-      pantallas: Number(pantallas.toFixed(2)),
-      tope_pantallas: topePantallas,
-      tope_px: topePantallas * PANTALLA,
-      cumple_altura: pantallas <= topePantallas,
+      alto_px: Math.round(alto),           // observación, no objetivo
+      pantallas: Number((alto / PANTALLA).toFixed(2)),
+      carrera_max_px: Math.round(carreraMax),
+      carreras_largas: carrerasLargas.length,
+      cumple_carreras: carrerasLargas.length === 0,
+      anclas: anclas.length,
+      sticky,
       ancho_region_px: Math.round(ancho),
       bandas: bandas.length,
       bandas_cortas: cortas.length,
@@ -283,39 +357,68 @@
         dueño: 'builder',
       });
     }
-    if (!m.cumple_altura) {
+    if (!m.cumple_carreras) {
       fallos.push({
-        objetivo: 'altura por severidad (≤' + m.tope_pantallas + ' pantallas en ' + m.severidad + ')',
+        objetivo: 'ninguna carrera de más de ' + MAX_CARRERA + ' px sin ancla de navegación',
         planta: m.planta,
-        medido: m.alto_px + ' px = ' + m.pantallas + ' pantallas',
-        tope: m.tope_px + ' px',
+        medido: m.carreras_largas + ' carrera(s) larga(s) · la mayor ' + m.carrera_max_px + ' px',
+        anclas_encontradas: m.anclas,
+        que_cuenta_como_ancla: 'un rótulo de bloque, una entrada del índice o un diagrama',
+        dueño: 'builder',
+      });
+    }
+    if (m.sticky && !m.sticky.tiene_desplazamiento) {
+      fallos.push({
+        objetivo: 'la columna de acción tiene que pegar de verdad',
+        planta: m.planta,
+        que: 'hay un position:sticky sin ningún desplazamiento (top/bottom/left/right en auto): ' +
+             'está declarado y no pega, y no da ningún error',
+        elemento: m.sticky.elemento,
         dueño: 'builder',
       });
     }
   }
 
+  const sinSticky = medidas.filter((m) => !m.sticky);
+  if (sinSticky.length === medidas.length) {
+    fallos.push({
+      objetivo: 'la columna de acción tiene que pegar de verdad',
+      que: 'ningún elemento con position:sticky en ninguna ficha. Sin sticky se cumple la ' +
+           'ocupación y se pierde el motivo del reparto en dos columnas',
+      dueño: 'builder',
+    });
+  }
+
   const peorAlto = medidas.slice().sort((a, b) => b.alto_px - a.alto_px)[0];
   const peorOcup = medidas.slice().sort((a, b) => b.bandas_cortas_pct - a.bandas_cortas_pct)[0];
+  const peorCarrera = medidas.slice().sort((a, b) => b.carrera_max_px - a.carrera_max_px)[0];
 
   const informe = {
     ok: fallos.length === 0,
     resumen:
-      `${medidas.length} ficha(s) · peor altura ${peorAlto.planta} ${peorAlto.alto_px} px ` +
-      `(${peorAlto.pantallas} pantallas, tope ${peorAlto.tope_pantallas}) · ` +
-      `peor ocupación ${peorOcup.planta} ${peorOcup.bandas_cortas_pct}% de bandas cortas ` +
-      `(tope 20%) · ${fallos.length} fallo(s)`,
+      `${medidas.length} ficha(s) · ocupación: peor ${peorOcup.planta} ${peorOcup.bandas_cortas_pct}% ` +
+      `de bandas cortas (tope 20%) · carrera sin ancla: peor ${peorCarrera.planta} ` +
+      `${peorCarrera.carrera_max_px} px (tope ${MAX_CARRERA}) · alto máx ${peorAlto.alto_px} px ` +
+      `(${peorAlto.planta}, observación) · ${fallos.length} fallo(s)`,
     objetivos: {
       ocupacion: '≤20% de bandas de 100px con el contenido parando antes del 62% del ancho',
-      altura: '≤3 pantallas (2.700px) en critica/atencion · ≤2 (1.800px) en sana, a 1280×900',
-      procedencia: 'docs/brief.md § "Los objetivos que sustituyen al de 2.400 px" (ux-lead, 4f1b350)',
+      carreras: 'ninguna carrera de más de 600px sin ancla de navegación (rótulo de bloque, ' +
+                'entrada del índice o diagrama)',
+      sticky: 'la columna de acción tiene que pegar de verdad: sin sticky se cumple la ' +
+              'ocupación y se pierde el motivo del reparto en dos columnas',
+      altura_px: 'OBSERVACIÓN, no objetivo: se apunta porque un cambio brusco sería una señal, ' +
+                 'pero no suspende nada por sí sola',
+      procedencia: 'docs/brief.md, ux-lead: 4f1b350 (retira el 2.400 mío) y 69ce939 (retira su ' +
+                   'propio tope de 1.800, derivado de "dos pantallas" y no del contenido)',
       nota: 'el "objetivo de 2.400 px" de los informes 1 y 2 no existía: lo inventó qa-visual ' +
-            'y se lo atribuyó a ux-lead. Retirado.',
+            'y se lo atribuyó a ux-lead. Los dos topes de altura están retirados.',
     },
     fichas_medidas: medidas.length,
     fichas_en_el_dom: todas.length,
     saltadas,
     acordeon_exclusivo: todas.some((d) => d.hasAttribute('name')),
-    peor_altura: peorAlto.planta,
+    peor_altura_observada: peorAlto.planta,
+    peor_carrera: peorCarrera.planta,
     peor_ocupacion: peorOcup.planta,
     detalle: medidas.sort((a, b) => b.alto_px - a.alto_px),
     fallos,
