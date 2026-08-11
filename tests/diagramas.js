@@ -87,7 +87,13 @@
   /* Diagramas dibujados con HTML+CSS, que un buscador de `<svg>` no ve. Se identifican
      por clase y se exige que tengan estructura de eje (marcas o tics), para no contar
      cualquier contenedor con un nombre sugestivo. */
-  const htmlDiagramas = [...raiz.querySelectorAll(
+  /* Los diagramas HTML se buscan SIEMPRE en el documento, no en el ámbito. La
+     cronología es de página —vive fuera de cualquier `<article>`— así que con una ficha
+     abierta `raiz` es la ficha y no la veía nunca: informaba «eje log: no medible» sin
+     decir que ni la había encontrado. Lo cazó `builder`, y es el mismo pecado que ya
+     tenía anotado en este fichero: silencio, un instrumento que no encuentra algo y no
+     dice que no lo encuentra. */
+  const htmlDiagramas = [...document.querySelectorAll(
     '[class*="cronologia"], [class*="crono"], [class*="linea-tiempo"], [data-diagrama]')]
     .filter((el) => el.tagName.toLowerCase() !== 'svg')
     .filter((el) => !el.parentElement || !el.parentElement.closest('[class*="cronologia"]'))
@@ -405,9 +411,25 @@
     const pos = orden.map((m) => (horizontal ? m.x : m.y));
     const val = orden.map((m) => m.valor);
     const idx = orden.map((_, i) => i);
-    const positivos = val.every((v) => v > 0);
+    /* Un eje logarítmico **no puede representar el cero**: `log10(0)` es −∞. La
+       cronología rotula «hoy» con `data-tick="0"`, que es un origen convencional y no
+       un punto de la escala. Mi versión anterior exigía que TODOS los valores fueran
+       positivos y, al no serlo, ponía `rLog = 0` — con lo que el ajuste por índice
+       ganaba y el veredicto salía «índice» sobre un eje que es logarítmico de libro.
+       Habría reportado como defecto el diagrama que `ux-lead` defendió y `builder`
+       midió en 0,9995.
 
-    const rLog = positivos ? r2(val.map(Math.log10), pos) : 0;
+       Lo correcto es ajustar el logaritmo sobre el subconjunto con valor positivo y
+       **decir cuántas marcas se excluyeron y por qué**, en vez de castigar al eje por
+       tener un origen. Se exigen 3 marcas positivas para que la regresión signifique
+       algo. */
+    const idxPositivos = val.map((v, i) => (v > 0 ? i : -1)).filter((i) => i >= 0);
+    const excluidasPorNoPositivas = orden
+      .filter((m) => !(m.valor > 0))
+      .map((m) => m.rotulo + ' (' + m.valor + ')');
+    const rLog = idxPositivos.length >= 3
+      ? r2(idxPositivos.map((i) => Math.log10(val[i])), idxPositivos.map((i) => pos[i]))
+      : 0;
     const rLin = r2(val, pos);
     const rIdx = r2(idx, pos);
 
@@ -430,6 +452,8 @@
       marcas: orden.map((m) => ({ rotulo: m.rotulo, valor: m.valor, px: Math.round(horizontal ? m.x : m.y) })),
       marcas_graficas: marcasGraficas,
       r2_log: Number(rLog.toFixed(4)),
+      marcas_en_el_ajuste_log: idxPositivos.length,
+      excluidas_del_ajuste_log: excluidasPorNoPositivas,
       r2_lineal: Number(rLin.toFixed(4)),
       r2_indice: Number(rIdx.toFixed(4)),
       veredicto,

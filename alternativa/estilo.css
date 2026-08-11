@@ -1,0 +1,795 @@
+/* =============================================================================
+   MyPlants — versión alternativa · ui-designer
+   Dirección: la paleta sale de las fotos reales, no de un moodboard.
+   El fondo es el marrón casi negro de las encimeras y la foto nocturna del
+   helecho. El ácido es el borde de hoja del coleo grande. El magenta es su
+   vena. Nada de esto se ha elegido "porque queda bien en una web de plantas":
+   se ha muestreado del material que hay en assets/img/.
+   Todos los contrastes están MEDIDOS (ver tabla al final del fichero).
+   ========================================================================== */
+
+@layer base, tipografia, layout, componentes, movimiento;
+
+/* ---------- tipografías self-hosted (cero requests a terceros) ---------- */
+@font-face {
+  font-family: 'Archivo Narrow';
+  src: url('../assets/fonts/archivo-narrow-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Alegreya Sans';
+  src: url('../assets/fonts/alegreya-sans-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Alegreya Sans';
+  src: url('../assets/fonts/alegreya-sans-400-italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Alegreya Sans';
+  src: url('../assets/fonts/alegreya-sans-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../assets/fonts/ibm-plex-mono-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../assets/fonts/ibm-plex-mono-600.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+
+@layer base {
+  :root {
+    /* --- superficies: tierra a contraluz, tres alturas --- */
+    --fondo:      #15110E;
+    --sup-1:      #201A15;
+    --sup-2:      #2B231C;
+    --sup-3:      #362C23;
+
+    /* --- tinta sobre oscuro --- */
+    --texto:      #F4EFE8;   /* 16,41 sobre fondo */
+    --texto-2:    #C3B7AA;   /*  9,54 sobre fondo */
+    --meta:       #A5988A;   /*  6,67 sobre fondo */
+
+    /* --- el acento vivo: borde de hoja del coleo grande --- */
+    --acido:      #CFE84F;   /* 13,69 sobre fondo */
+    --acido-hondo:#A8C22E;
+
+    /* --- severidad: la vena del coleo subida a señal, y el ocre del sustrato seco --- */
+    --critica:    #F1728F;   /*  6,75 sobre fondo */
+    --atencion:   #EBA94C;   /*  9,22 sobre fondo */
+    --sana:       #9FD17C;   /* verde de hoja nueva; medido abajo */
+
+    /* --- bordes: dos tokens, porque tienen dos umbrales distintos --- */
+    --borde-deco:    #362C23;  /* separador decorativo, sin umbral */
+    --borde-control: #8A6E56;  /* borde de control: ≥3:1 (3,86 sobre fondo) */
+
+    /* --- el papel: la voz de la casa. Único sitio donde el fondo se aclara --- */
+    --papel:      #F3EDE2;
+    --papel-2:    #E4DBC9;
+    --tinta-papel:#20180F;   /* 15,03 sobre papel */
+
+    /* --- tipografía --- */
+    --display: 'Archivo Narrow', 'Arial Narrow', 'Helvetica Neue Condensed',
+               system-ui, sans-serif;
+    --texto-f: 'Alegreya Sans', 'Optima', 'Segoe UI', system-ui, sans-serif;
+    --mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+    /* escala tipográfica — el salto grande es intencionado: el problema de la
+       versión anterior es que NADA era grande */
+    --t-hero:  clamp(2.75rem, 9vw, 6.5rem);
+    --t-titulo:clamp(1.9rem, 4.2vw, 3.1rem);
+    --t-sub:   clamp(1.35rem, 2.4vw, 1.9rem);
+    --t-cuerpo: 1.0625rem;
+    --t-cuerpo-l: 1.1875rem;
+    --t-pequeno: 0.9375rem;
+    --t-micro: 0.8125rem;
+
+    --medida: 68ch;          /* medida de lectura: el muro de texto se acaba aquí */
+
+    /* --- espaciado --- */
+    --e-1: 0.25rem; --e-2: 0.5rem;  --e-3: 0.75rem; --e-4: 1rem;
+    --e-5: 1.5rem; --e-6: 2rem;     --e-7: 3rem;    --e-8: 4.5rem;
+    --e-9: 7rem;
+
+    /* --- radio y profundidad --- */
+    --radio-s: 6px;
+    --radio-m: 12px;
+    --radio-l: 20px;
+
+    /* Profundidad en oscuro: la sombra sola no basta, la elevación es
+       superficie más clara + un filo de luz arriba. */
+    --sombra-1: 0 1px 2px rgb(0 0 0 / .5), 0 2px 8px rgb(0 0 0 / .3);
+    --sombra-2: 0 2px 4px rgb(0 0 0 / .5), 0 8px 24px rgb(0 0 0 / .38);
+    --sombra-3: 0 4px 8px rgb(0 0 0 / .5), 0 18px 48px rgb(0 0 0 / .45);
+    --filo-luz: inset 0 1px 0 rgb(255 255 255 / .07);
+
+    /* --- movimiento --- */
+    --dur-corta: 140ms;
+    --dur-media: 300ms;
+    --dur-larga: 620ms;
+    --curva: cubic-bezier(.22,.61,.36,1);
+
+    /* --- foco: anillo doble. Ningún color único pasa 3:1 contra el fondo
+       oscuro Y contra el papel claro a la vez, así que se usan los dos. --- */
+    --foco-interior: var(--acido);
+    --foco-exterior: var(--fondo);
+
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--texto-f);
+    font-size: var(--t-cuerpo);
+    line-height: 1.6;
+    /* el halo cálido detrás del contenido: es fondo de página, no filtro de foto */
+    background-image:
+      radial-gradient(1200px 700px at 15% -10%, #2E2117 0%, transparent 70%),
+      radial-gradient(900px 600px at 95% 5%,   #241C22 0%, transparent 65%);
+    background-repeat: no-repeat;
+  }
+
+  img { max-width: 100%; display: block; }
+
+  :focus-visible {
+    outline: 2px solid var(--foco-interior);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--foco-exterior);
+    border-radius: var(--radio-s);
+  }
+  /* dentro del papel claro el anillo se invierte: manda el filo oscuro */
+  .voz :focus-visible {
+    outline-color: var(--tinta-papel);
+    box-shadow: 0 0 0 5px var(--papel);
+  }
+
+  ::selection { background: var(--acido); color: var(--fondo); }
+
+  .salta-a {
+    position: absolute; left: var(--e-4); top: var(--e-4);
+    transform: translateY(-200%);
+    background: var(--acido); color: var(--fondo);
+    padding: var(--e-3) var(--e-5);
+    font-family: var(--display); text-transform: uppercase;
+    letter-spacing: .06em; text-decoration: none;
+    border-radius: var(--radio-s); z-index: 50;
+  }
+  .salta-a:focus { transform: translateY(0); }
+
+  .oculto-visual {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+
+@layer tipografia {
+  .display {
+    font-family: var(--display);
+    font-weight: 700;
+    line-height: .93;
+    letter-spacing: -.015em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .mono {
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    letter-spacing: .02em;
+    font-variant-numeric: tabular-nums;
+  }
+  /* rótulo de campo: mono en versalita ancha. Solo para DATO, nunca para voz. */
+  .rotulo {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    color: var(--meta);
+  }
+  .cientifico { font-style: italic; color: var(--texto-2); }
+  .prosa { max-width: var(--medida); }
+  .prosa p { margin: 0 0 var(--e-4); }
+  .prosa > :last-child { margin-bottom: 0; }
+}
+
+/* =========================== LAYOUT ======================================= */
+@layer layout {
+  .marco {
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 3.5rem);
+  }
+
+  /* --- cabecera: el h1 baja a eyebrow. Sigue siendo <h1> en semántica. --- */
+  .cabecera {
+    display: flex; flex-wrap: wrap; gap: var(--e-4);
+    align-items: baseline; justify-content: space-between;
+    padding-block: var(--e-6) var(--e-5);
+    border-bottom: 1px solid var(--borde-deco);
+  }
+  .cabecera h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    text-transform: uppercase;
+    letter-spacing: .16em;
+    color: var(--texto);
+  }
+  .cabecera h1 .punto { color: var(--acido); }
+  .cabecera__meta { color: var(--meta); }
+
+  /* --- el parte del día, a escala de display --- */
+  .parte { padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(2rem, 5vw, 4rem); }
+  .parte__rotulo { display: block; margin-bottom: var(--e-4); }
+  .parte__veredicto {
+    display: block;
+    font-size: var(--t-hero);
+    margin: 0 0 var(--e-6);
+    max-width: 22ch;
+  }
+  .parte__veredicto .cifra { color: var(--acido); }
+  .parte__entradas {
+    display: flex; flex-wrap: wrap; gap: var(--e-3);
+    list-style: none; margin: 0; padding: 0;
+  }
+
+  /* --- las dos bandas --- */
+  .grupo { padding-bottom: clamp(2.5rem, 6vw, 5rem); }
+  .grupo__titulo {
+    display: flex; align-items: baseline; gap: var(--e-4);
+    font-size: var(--t-sub);
+    margin: 0 0 var(--e-5);
+    padding-bottom: var(--e-3);
+    border-bottom: 1px solid var(--borde-deco);
+    letter-spacing: .04em;
+  }
+  .grupo__cuenta { color: var(--meta); margin-left: auto; }
+  #grupo-mirada .grupo__titulo { border-bottom-color: var(--borde-control); }
+
+  /* --- la rejilla: aquí es donde entran las fotos --- */
+  .rejilla {
+    display: grid;
+    gap: clamp(1rem, 1.8vw, 1.75rem);
+    align-items: stretch;
+    margin: 0; padding: 0;
+  }
+  /* Las que piden mirada van a tres por fila: foto más grande y sitio para el
+     titular del diagnóstico. Las sanas, a cuatro: siguen siendo fotos de
+     verdad, pero no compiten con lo urgente. */
+  .rejilla--mirada { grid-template-columns: repeat(3, 1fr); }
+  .rejilla--bien   { grid-template-columns: repeat(4, 1fr); }
+
+  .celda { display: grid; min-width: 0; }
+  /* Cada planta es un <article>: es contenido autocontenido y se anuncia con
+     su nombre. El <details> de dentro es solo el mecanismo de abrir/cerrar. */
+  .tarjeta { display: flex; min-width: 0; }
+  .tarjeta > .planta { flex: 1; min-width: 0; }
+
+  /* una ficha abierta se queda con todo el ancho de su banda */
+  .celda:has(.planta[open]) { grid-column: 1 / -1; }
+
+  @media (max-width: 1100px) {
+    .rejilla--mirada, .rejilla--bien { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .rejilla--mirada, .rejilla--bien { grid-template-columns: 1fr; }
+  }
+
+  .pie {
+    border-top: 1px solid var(--borde-deco);
+    padding-block: var(--e-6) var(--e-8);
+    color: var(--meta);
+    display: flex; flex-wrap: wrap; gap: var(--e-4);
+    justify-content: space-between;
+  }
+}
+
+/* ========================= COMPONENTES ==================================== */
+@layer componentes {
+
+  /* ---------- marca de severidad: color + TEXTO, nunca color solo ---------- */
+  .sev {
+    display: inline-flex; align-items: center; gap: .5em;
+    font-family: var(--mono); font-size: 0.6875rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .12em;
+    white-space: nowrap;
+  }
+  .sev::before {
+    content: ''; width: .5em; height: .5em; border-radius: 50%;
+    background: currentColor; flex: none;
+  }
+  .sev[data-sev="critica"]  { color: var(--critica); }
+  .sev[data-sev="atencion"] { color: var(--atencion); }
+  .sev[data-sev="sana"]     { color: var(--sana); }
+
+  /* entradas del parte del día */
+  .entrada {
+    display: inline-flex; align-items: center; gap: var(--e-3);
+    background: var(--sup-1);
+    border: 1px solid var(--borde-control);
+    border-radius: 999px;
+    padding: var(--e-2) var(--e-4) var(--e-2) var(--e-3);
+    text-decoration: none; color: var(--texto);
+    box-shadow: var(--sombra-1), var(--filo-luz);
+    transition: background var(--dur-corta) var(--curva),
+                border-color var(--dur-corta) var(--curva),
+                transform var(--dur-corta) var(--curva);
+  }
+  .entrada:hover { background: var(--sup-2); border-color: var(--acido); transform: translateY(-2px); }
+  .entrada__nombre { font-family: var(--display); text-transform: uppercase; letter-spacing: .04em; }
+  .entrada__que { color: var(--texto-2); font-size: var(--t-pequeno); }
+
+  /* ------------------------- el mosaico de planta ------------------------- */
+  .planta {
+    height: 100%;
+    display: flex; flex-direction: column;
+    background: var(--sup-1);
+    border: 1px solid var(--borde-deco);
+    border-radius: var(--radio-l);
+    box-shadow: var(--sombra-1), var(--filo-luz);
+    overflow: hidden;
+    transition: box-shadow var(--dur-media) var(--curva),
+                border-color var(--dur-media) var(--curva),
+                transform var(--dur-media) var(--curva);
+  }
+  .planta:hover { box-shadow: var(--sombra-3), var(--filo-luz); transform: translateY(-3px); }
+  .planta[open] {
+    background: var(--sup-1);
+    border-color: var(--borde-control);
+    box-shadow: var(--sombra-3), var(--filo-luz);
+    transform: none;
+  }
+  /* el filo de color de severidad, en el canto superior */
+  .celda[data-sev="critica"] .planta  { border-top: 3px solid var(--critica); }
+  .celda[data-sev="atencion"] .planta { border-top: 3px solid var(--atencion); }
+  .celda[data-sev="sana"] .planta     { border-top: 3px solid var(--sana); }
+
+  .planta > summary {
+    display: flex; flex-direction: column; flex: 1;
+    cursor: pointer; list-style: none; padding: 0;
+  }
+  .planta > summary::-webkit-details-marker { display: none; }
+  .planta > summary::marker { content: ''; }
+
+  /* La foto NO lleva texto encima, y no lleva ningún filtro: son fotos de
+     diagnóstico. Se recortan y se agrandan; no se tocan. */
+  .foto {
+    position: relative;
+    overflow: hidden;
+    background: var(--sup-2);
+    flex: none;
+    aspect-ratio: 1 / 1;
+  }
+  .rejilla--mirada .foto { aspect-ratio: 1 / 1.1; }
+  /* Abierta, la foto deja de ser mosaico y pasa a banda: a ancho completo un
+     recorte vertical mediría 1400 px de alto y no cabría en ninguna pantalla. */
+  .planta[open] .foto {
+    aspect-ratio: auto;
+    height: clamp(260px, 44vh, 460px);
+  }
+  .foto img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 42%;
+    transition: transform var(--dur-larga) var(--curva);
+  }
+  .planta:hover .foto img { transform: scale(1.035); }
+
+  .mosaico__cuerpo {
+    padding: var(--e-5);
+    display: flex; flex-direction: column; gap: var(--e-3);
+    flex: 1;
+  }
+  .mosaico__alto {
+    display: flex; flex-wrap: wrap; gap: var(--e-3);
+    align-items: center; justify-content: space-between;
+  }
+  .mosaico__nombre {
+    font-size: var(--t-titulo);
+    margin: 0;
+  }
+  .rejilla--mirada .mosaico__nombre { font-size: clamp(1.7rem, 2.6vw, 2.35rem); }
+  .rejilla--bien .mosaico__nombre { font-size: var(--t-sub); }
+  .mosaico__titular {
+    color: var(--texto-2);
+    font-size: var(--t-cuerpo);
+    margin: 0;
+    max-width: 46ch;
+  }
+  .mosaico__datos {
+    display: flex; flex-wrap: wrap; gap: var(--e-2);
+    list-style: none; margin: var(--e-2) 0 0; padding: 0;
+    flex: none;
+  }
+  .dato {
+    display: inline-flex; align-items: baseline; gap: .45em;
+    background: var(--sup-2);
+    border: 1px solid var(--borde-deco);
+    border-radius: var(--radio-s);
+    padding: .3em .6em;
+  }
+  .dato b { font-family: var(--mono); font-weight: 600; font-size: var(--t-micro); color: var(--texto); }
+  .dato span { color: var(--meta); font-family: var(--mono); font-size: 0.6875rem;
+               text-transform: uppercase; letter-spacing: .1em; }
+
+  .mosaico__abrir {
+    display: inline-flex; align-items: center; gap: var(--e-2);
+    margin-top: auto; padding-top: var(--e-3);
+    align-self: flex-start;
+    font-family: var(--mono); font-size: var(--t-micro); font-weight: 600;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--acido);
+  }
+  .mosaico__abrir::after {
+    content: ''; width: .5em; height: .5em; flex: none;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-15%);
+    transition: transform var(--dur-media) var(--curva);
+  }
+  .planta[open] .mosaico__abrir::after { transform: rotate(225deg) translateY(-15%); }
+  .planta[open] .mosaico__abrir .cerrar { display: inline; }
+  .planta[open] .mosaico__abrir .abrir  { display: none; }
+  .mosaico__abrir .cerrar { display: none; }
+
+  /* ------------------------- la ficha abierta ---------------------------- */
+  /* Dos columnas: el dato duro se queda a la izquierda y se pega; el
+     diagnóstico y la voz de la casa ocupan la principal. Así el texto largo
+     tiene medida de lectura en vez de media columna a cuerpo 11. */
+  .ficha {
+    display: grid;
+    grid-template-columns: minmax(280px, 27%) 1fr;
+    gap: clamp(1.5rem, 3vw, 3.5rem);
+    padding: 0 var(--e-5) var(--e-6);
+    border-top: 1px solid var(--borde-deco);
+    margin-top: var(--e-2);
+  }
+  @media (max-width: 900px) { .ficha { grid-template-columns: 1fr; } }
+
+  .ficha__rail { padding-top: var(--e-6); }
+  .ficha__principal { padding-top: var(--e-6); min-width: 0; }
+
+  .ficha__pie-foto { color: var(--meta); margin: 0 0 var(--e-6); }
+
+  .bloque { margin-bottom: var(--e-7); }
+  .bloque__titulo {
+    font-family: var(--display); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .04em;
+    font-size: var(--t-sub);
+    margin: 0 0 var(--e-4);
+    padding-bottom: var(--e-3);
+    border-bottom: 1px solid var(--borde-deco);
+  }
+  .bloque__titulo .n {
+    color: var(--acido); font-family: var(--mono); font-size: .55em;
+    letter-spacing: .1em; margin-left: .6em; vertical-align: .2em;
+  }
+
+  /* --- cuidados: resumen visible, detalle desplegable --- */
+  .cuidados { display: grid; gap: var(--e-1); margin: 0; }
+  .cuidado {
+    border-top: 1px solid var(--borde-deco);
+    padding-block: var(--e-5);
+  }
+  .cuidado:first-child { border-top: 0; padding-top: 0; }
+  .cuidado__resumen { margin: var(--e-2) 0 0; color: var(--texto); }
+  .cuidado__cifras { display: flex; flex-wrap: wrap; gap: var(--e-2); margin-top: var(--e-3); }
+
+  /* La diana cumple WCAG 2.2 · 2.5.8 (24×24 CSS px) por tamaño propio, no por
+     la excepción de espaciado: min-height 28px y padding horizontal. */
+  .desplegable > summary {
+    cursor: pointer; list-style: none;
+    display: inline-flex; align-items: center; gap: .5em;
+    min-height: 28px;
+    padding: var(--e-1) var(--e-3);
+    margin-top: var(--e-3);
+    margin-left: calc(var(--e-3) * -1);
+    font-family: var(--mono); font-size: var(--t-micro); font-weight: 600;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--acido);
+    border-radius: var(--radio-s);
+    transition: background-color var(--dur-corta) var(--curva);
+  }
+  .desplegable > summary:hover { background: var(--sup-2); }
+  .desplegable > summary::-webkit-details-marker { display: none; }
+  .desplegable > summary::marker { content: ''; }
+  .desplegable > summary::after {
+    content: '+'; font-weight: 400; font-size: 1.15em; line-height: 1;
+  }
+  .desplegable[open] > summary::after { content: '–'; }
+  .desplegable__cuerpo {
+    margin-top: var(--e-3);
+    padding: var(--e-4);
+    background: var(--sup-2);
+    border-radius: var(--radio-m);
+    border: 1px solid var(--borde-deco);
+    color: var(--texto-2);
+    font-size: var(--t-pequeno);
+  }
+  .desplegable__cuerpo p { margin: 0 0 var(--e-3); }
+  .desplegable__cuerpo > :last-child { margin-bottom: 0; }
+
+  /* --- la balanza de luz: `nivel_ideal` contra `nivel_actual`. El dato
+     accionable del JSON que no estaba pintado en ninguna parte. --- */
+  .luz-balanza { margin-top: var(--e-3); }
+  .luz-balanza__escala {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 3px; margin: var(--e-3) 0 var(--e-2);
+  }
+  .luz-balanza__paso {
+    height: 10px; border-radius: 2px;
+    background: var(--sup-3);
+    border: 1px solid var(--borde-deco);
+    position: relative;
+  }
+  .luz-balanza__paso[data-ideal] {
+    background: var(--acido-hondo); border-color: var(--acido);
+  }
+  /* el nivel que RECIBE se marca con un filete debajo, no con otro color:
+     así el estado no depende de distinguir dos verdes */
+  .luz-balanza__paso[data-actual]::after {
+    content: ''; position: absolute; inset: auto 0 -7px 0;
+    height: 3px; background: var(--texto);
+  }
+  .luz-balanza__leyenda {
+    display: flex; flex-wrap: wrap; gap: var(--e-1) var(--e-4);
+    margin-top: var(--e-3);
+  }
+  .luz-balanza__veredicto { font-size: var(--t-pequeno); margin: var(--e-2) 0 0; }
+  .luz-balanza__veredicto b { font-weight: 700; }
+
+  /* --- el diagnóstico --- */
+  .diag__cabeza {
+    display: grid; gap: var(--e-3);
+    padding: var(--e-5);
+    border-radius: var(--radio-m);
+    background: var(--sup-2);
+    border: 1px solid var(--borde-deco);
+    box-shadow: var(--filo-luz);
+    margin-bottom: var(--e-5);
+  }
+  .celda[data-sev="critica"] .diag__cabeza { border-left: 3px solid var(--critica); }
+  .celda[data-sev="atencion"] .diag__cabeza { border-left: 3px solid var(--atencion); }
+  .celda[data-sev="sana"] .diag__cabeza { border-left: 3px solid var(--sana); }
+  .diag__titulo {
+    font-family: var(--display); font-weight: 700; text-transform: none;
+    font-size: var(--t-sub); line-height: 1.15; margin: 0;
+    letter-spacing: -.005em;
+  }
+  .diag__fecha { color: var(--meta); }
+
+  .lista-limpia { list-style: none; margin: 0; padding: 0; }
+
+  /* señales: lo observado. Filete a la izquierda, medida de lectura. */
+  .senales { display: grid; gap: var(--e-4); max-width: var(--medida); }
+  .senales li {
+    padding-left: var(--e-5);
+    border-left: 1px solid var(--borde-control);
+    color: var(--texto-2);
+  }
+
+  /* causas: resumen en tinta plena, detalle en secundaria.
+     Son <ul>/<li>: una causa probable no es un <article> independiente. */
+  .causas { display: grid; gap: var(--e-4); list-style: none; margin: 0; padding: 0; }
+  .causa {
+    padding: var(--e-4) var(--e-5);
+    background: var(--sup-2);
+    border: 1px solid var(--borde-deco);
+    border-radius: var(--radio-m);
+    max-width: var(--medida);
+  }
+  .causa[data-tipo="aclaracion"] { background: transparent; border-style: dashed; }
+  .causa__resumen {
+    margin: var(--e-2) 0 var(--e-3);
+    font-family: var(--texto-f); font-weight: 700;
+    font-size: var(--t-cuerpo-l); line-height: 1.35;
+  }
+  .causa__detalle { margin: 0; color: var(--texto-2); font-size: var(--t-pequeno); }
+
+  /* lo que la foto no dice: la honestidad del dato merece diseño propio */
+  .no-visible {
+    border: 1px dashed var(--borde-control);
+    border-radius: var(--radio-m);
+    padding: var(--e-5);
+    max-width: var(--medida);
+  }
+  .no-visible li {
+    color: var(--texto-2); font-size: var(--t-pequeno);
+    padding-left: var(--e-5); position: relative; margin-bottom: var(--e-3);
+  }
+  .no-visible li:last-child { margin-bottom: 0; }
+  .no-visible li::before {
+    content: '?'; position: absolute; left: 0; top: 0;
+    font-family: var(--mono); font-weight: 600; color: var(--meta);
+  }
+
+  /* plan de recuperación: pasos numerados con su señal de que va bien */
+  .plan { display: grid; gap: var(--e-4); counter-reset: paso; }
+  .plan li {
+    counter-increment: paso;
+    display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--e-4);
+    max-width: var(--medida);
+  }
+  .plan li::before {
+    content: counter(paso);
+    font-family: var(--mono); font-weight: 600; font-size: var(--t-cuerpo);
+    color: var(--fondo); background: var(--acido);
+    width: 2.5rem; height: 2.5rem; border-radius: 50%;
+    display: grid; place-items: center;
+  }
+  .plan__paso { margin: 0 0 var(--e-2); padding-top: .35rem; }
+  .plan__senal {
+    margin: 0; color: var(--texto-2); font-size: var(--t-pequeno);
+    padding-left: var(--e-4); border-left: 2px solid var(--acido-hondo);
+  }
+  .plan__hito { display: block; margin-top: var(--e-2); }
+
+  /* tratamiento: lo que hay que hacer */
+  .tratamiento { display: grid; gap: var(--e-3); max-width: var(--medida); }
+  .tratamiento li {
+    display: grid; grid-template-columns: 1.4rem 1fr; gap: var(--e-3);
+    color: var(--texto-2);
+  }
+  .tratamiento li::before {
+    content: ''; margin-top: .45em;
+    width: 1rem; height: 1rem; border-radius: 4px;
+    border: 1px solid var(--borde-control);
+  }
+
+  /* ---- LA VOZ DE LA CASA: papel claro. El único sitio donde el fondo se
+     aclara, y por eso se lee como material distinto del dato verificado. ---- */
+  .voz {
+    background: var(--papel);
+    color: var(--tinta-papel);
+    border-radius: var(--radio-m);
+    padding: var(--e-6);
+    box-shadow: var(--sombra-2);
+    max-width: calc(var(--medida) + 6rem);
+    /* levísima rotación: es un papel metido en el expediente, no un div */
+    background-image: linear-gradient(180deg, #F6F1E8 0%, var(--papel) 55%, var(--papel-2) 100%);
+  }
+  .voz .rotulo { color: #5E5546; }
+  .voz__titulo {
+    font-family: var(--display); font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; font-size: var(--t-sub);
+    margin: var(--e-2) 0 var(--e-4);
+    color: var(--tinta-papel);
+  }
+  .voz p {
+    font-size: var(--t-cuerpo-l); line-height: 1.62;
+    margin: 0 0 var(--e-4); max-width: 60ch;
+  }
+  .voz p:last-child { margin-bottom: 0; }
+  .voz .firma {
+    font-style: italic; color: #4A4235; font-size: var(--t-pequeno);
+    border-top: 1px solid #C9BEA6; padding-top: var(--e-3); margin-top: var(--e-5);
+  }
+  .voz__notas { margin: var(--e-4) 0 0; padding-left: var(--e-5); }
+  .voz__notas li { margin-bottom: var(--e-2); }
+
+  /* --- procedencia / etiqueta de vivero: el guiño, no el sistema entero --- */
+  .procedencia {
+    display: grid; grid-template-columns: auto 1fr; gap: var(--e-4);
+    align-items: start;
+    padding: var(--e-4);
+    background: var(--sup-2);
+    border: 1px solid var(--borde-deco);
+    border-radius: var(--radio-m);
+  }
+  .procedencia img {
+    width: 92px; height: auto; border-radius: var(--radio-s);
+    border: 1px solid var(--borde-deco);
+  }
+  .procedencia__texto { color: var(--texto-2); font-size: var(--t-pequeno); margin: 0; }
+  .procedencia__texto b { color: var(--texto); }
+
+  /* --- fuentes: 34 citas no son un adorno, pero tampoco la portada --- */
+  .fuentes__lista { display: grid; gap: var(--e-3); margin: 0; padding: 0; list-style: none; }
+  .fuentes__lista li {
+    display: grid; gap: .2rem;
+    padding-bottom: var(--e-3);
+    border-bottom: 1px solid var(--borde-deco);
+    font-size: var(--t-micro);
+  }
+  .fuentes__campo { font-family: var(--mono); font-weight: 600; color: var(--acido); }
+  .fuentes__lista a { color: var(--texto-2); }
+  .fuentes__nota { color: var(--meta); }
+
+  .enlace { color: var(--acido); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+
+  .aviso-datos {
+    margin-top: var(--e-6); padding: var(--e-4) var(--e-5);
+    border: 1px solid var(--borde-deco); border-radius: var(--radio-m);
+    color: var(--meta); font-size: var(--t-pequeno); max-width: var(--medida);
+  }
+}
+
+/* ========================== MOVIMIENTO =================================== */
+@layer movimiento {
+  /* Entrada escalonada de los mosaicos. --i lo pone el JS. */
+  .revela {
+    opacity: 0;
+    transform: translateY(22px) scale(.985);
+    transition: opacity var(--dur-larga) var(--curva),
+                transform var(--dur-larga) var(--curva);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+  .revela.dentro { opacity: 1; transform: none; }
+
+  /* El parte del día entra una sola vez, más lento y sin escala. */
+  .parte__veredicto { animation: sube var(--dur-larga) var(--curva) both; }
+  .parte__entradas  { animation: sube var(--dur-larga) var(--curva) 180ms both; }
+  @keyframes sube {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* --------------------------------------------------------------------------
+     prefers-reduced-motion: VERSIÓN ALTERNATIVA, no la misma más corta.
+     - Nada se desplaza ni se escala: se sustituye por un cambio de opacidad
+       instantáneo y, en la entrada, por presencia directa.
+     - El hover deja de mover la tarjeta y pasa a marcar el borde en ácido,
+       que es una señal equivalente sin desplazamiento.
+     - El zoom de la foto se elimina por completo.
+     -------------------------------------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    .revela { opacity: 1; transform: none; transition: none; transition-delay: 0s; }
+    .parte__veredicto, .parte__entradas { animation: none; opacity: 1; transform: none; }
+
+    .planta, .entrada { transition: border-color var(--dur-corta) linear,
+                                    background-color var(--dur-corta) linear; }
+    .planta:hover, .planta[open] { transform: none; box-shadow: var(--sombra-1), var(--filo-luz); }
+    .planta:hover { border-color: var(--acido); }
+    .entrada:hover { transform: none; border-color: var(--acido); background: var(--sup-2); }
+
+    .foto img, .planta:hover .foto img { transition: none; transform: none; }
+    .mosaico__abrir::after { transition: none; }
+  }
+}
+
+/* =============================================================================
+   CONTRASTES MEDIDOS (WCAG 2.1, calculados con tests/ + script propio)
+
+   texto      / fondo   16,41   ✅ 4,5     acido    / fondo   13,69   ✅ 4,5
+   texto-2    / fondo    9,54   ✅ 4,5     acido    / sup-1   12,55   ✅ 4,5
+   meta       / fondo    6,67   ✅ 4,5     acido    / sup-2   11,26   ✅ 4,5
+   texto      / sup-1   15,05   ✅ 4,5     critica  / fondo    6,75   ✅ 4,5
+   texto-2    / sup-1    8,75   ✅ 4,5     critica  / sup-2    5,55   ✅ 4,5
+   meta       / sup-1    6,11   ✅ 4,5     atencion / fondo    9,22   ✅ 4,5
+   texto      / sup-2   13,50   ✅ 4,5     atencion / sup-2    7,58   ✅ 4,5
+   texto-2    / sup-2    7,85   ✅ 4,5     sana     / fondo   10,63   ✅ 4,5
+   meta       / sup-2    5,48   ✅ 4,5     sana     / sup-2    8,74   ✅ 4,5
+   tinta-papel/ papel   15,03   ✅ 4,5     fondo sobre acido  13,69   ✅ 4,5
+   acido-hondo/ fondo    9,32   ✅ 4,5     rotulo voz/papel    6,29   ✅ 4,5
+   firma voz  / papel    8,49   ✅ 4,5
+   borde-control/fondo   3,97   ✅ 3,0 (borde de control)
+   borde-control/sup-2   3,27   ✅ 3,0
+   NOTA: borde-control sobre sup-3 da 2,88 — por eso sup-3 no se usa nunca
+   como superficie detrás de un control; solo vive como valor de borde-deco.
+   papel      / fondo   16,11   ✅ 3,0 (cambio de superficie)
+
+   PAR PROHIBIDO: acido sobre papel = 1,18. El ácido NUNCA se escribe sobre el
+   papel claro; dentro de .voz la tinta es --tinta-papel y el foco se invierte.
+
+   FOCO: anillo doble, porque ningún color pasa 3:1 contra el fondo oscuro Y
+   contra el papel claro. Sobre oscuro manda el ácido (13,69); sobre papel
+   manda el filo --fondo (16,11).
+
+   INFORMACIÓN POR COLOR: ninguna. La severidad lleva siempre etiqueta de
+   texto ("crítica" / "atención" / "sana") junto al punto de color, y además
+   el tamaño del mosaico y el filete superior la redundan.
+   ========================================================================== */

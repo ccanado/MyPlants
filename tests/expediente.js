@@ -348,10 +348,90 @@
       const c = getComputedStyle(el);
       if (c.position !== 'sticky') continue;
       const desplazamientos = [c.top, c.bottom, c.left, c.right];
+      /* Tercer modo de fallo, y es el silencioso. `ux-lead` lo midió con scroll real
+         sobre `0c81869`: el `top` de la columna iba 16 → −284 → −684 → −1184, o sea
+         que se va con el scroll 1:1 y NO pega — con `position: sticky` bien declarado
+         y `top` resuelto a `16px`. La causa era un ancestro con `overflow: hidden`,
+         que se convierte en el contenedor de scroll y deja el sticky sin nada a lo
+         que pegarse.
+         Yo comprobaba dos modos (falta el `position`, o `top: auto`) y este no es
+         ninguno de los dos. Se caza sin scroll y sin viewport alto: es una consulta de
+         estilo computado sobre la cadena de ancestros. Con los tres juntos —position,
+         top resuelto y cero ancestros con contenedor de scroll— ya se puede firmar. */
+      /* SOLO los valores que crean un contenedor de scroll rompen el sticky:
+         `hidden`, `auto`, `scroll`. **`clip` NO**, y esa distinción es justo el
+         arreglo que `builder` aplicó a propósito — cambiar `hidden` por `clip`
+         recorta igual y deja de crear scrollport, así que el sticky vuelve a pegarse
+         al viewport.
+
+         Mi primera versión de esta comprobación metía `clip` en el mismo saco y
+         señalaba las siete fichas, o sea que habría mandado a `builder` a quitar
+         exactamente la línea que arregla el problema. Sexto falso positivo del mismo
+         tronco, y van dos en el mismo día por razonar desde el nombre de la propiedad
+         en vez de medir el efecto. Por eso debajo va la medición de verdad. */
+      const CREA_SCROLLPORT = /^(hidden|auto|scroll|overlay)$/;
+      const ancestrosQueRecortan = [];
+      for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+        const ca = getComputedStyle(a);
+        for (const eje of ['overflow', 'overflowX', 'overflowY']) {
+          if (ca[eje] && CREA_SCROLLPORT.test(ca[eje])) {
+            ancestrosQueRecortan.push(
+              a.tagName.toLowerCase() + '.' + String(a.getAttribute('class') || '').split(' ')[0] +
+              ' {' + eje + ': ' + ca[eje] + '}');
+            break;
+          }
+        }
+      }
+
+      /* Y la comprobación que cierra la abstención de los informes 1-3: **scrollear de
+         verdad.** Se lleva la página al fondo y se mira si la columna dejó de seguir al
+         scroll. Un sticky que funciona se mueve 1:1 hasta alcanzar su offset y ahí se
+         para; si sigue subiendo hasta salirse, no pega.
+
+         Ojo con la trampa que me comí midiéndolo: la columna empieza a 1.471 px del
+         viewport, así que **es normal que se mueva 1:1 al principio** — un heurístico
+         de "si baja más de N, no pega" da NO PEGA sobre un sticky perfecto. Lo que hay
+         que mirar es si **se detiene** al llegar a su offset. */
+      const scroller = document.scrollingElement;
+      const scrollPrevio = scroller.scrollTop;
+      const topDeclarado = parseFloat(c.top) || 0;
+
+      /* El punto donde se mide importa, y equivocarlo da un NO PEGA sobre un sticky
+         perfecto — me pasó. Llevar la página a `scrollHeight` la lleva **más allá de la
+         ficha**, y ahí el sticky ya está liberado porque su bloque contenedor se ha ido:
+         eso es comportamiento correcto, no un fallo. La sonda tiene que caer **dentro
+         del recorrido de la ficha**, pasado el punto en que la columna alcanza su
+         offset y con ficha de sobra por debajo. */
+      const rFicha0 = ficha.getBoundingClientRect();
+      const fichaTopDoc = rFicha0.top + scroller.scrollTop;
+      const rColumna0 = el.getBoundingClientRect();
+      const columnaTopDoc = rColumna0.top + scroller.scrollTop;
+      // Se pasa el punto de pegado por 400 px, sin salirse de la ficha.
+      const margenDisponible = Math.max(0, (fichaTopDoc + rFicha0.height) -
+                                           (columnaTopDoc + rColumna0.height) - 50);
+      const objetivo = columnaTopDoc - topDeclarado + Math.min(400, margenDisponible);
+      scroller.scrollTop = Math.max(0, objetivo);
+      void scroller.scrollTop;
+      const topAlFondo = el.getBoundingClientRect().top;
+      const sondaValida = margenDisponible > 60 &&
+                          Math.abs(scroller.scrollTop - Math.max(0, objetivo)) < 4;
+      scroller.scrollTop = scrollPrevio;
+      void scroller.scrollTop;
+      // Con margen: el sticky está acotado por su bloque contenedor, así que al final
+      // del recorrido puede quedar unos px por encima de su offset nominal.
+      // Si la sonda no cabe (ficha demasiado corta o scroll topado), NO se afirma:
+      // se marca como no medible y el punto sigue abierto, que es mejor que inventarlo.
+      const seDetiene = sondaValida ? (topAlFondo >= topDeclarado - 24) : null;
       sticky = {
         elemento: el.tagName.toLowerCase() + '.' + String(el.getAttribute('class') || '').split(' ')[0],
         top: c.top,
         tiene_desplazamiento: desplazamientos.some((v) => v && v !== 'auto'),
+        ancestros_que_recortan: ancestrosQueRecortan,
+        top_tras_la_sonda: Math.round(topAlFondo),
+        sonda_valida: sondaValida,
+        se_detiene_al_scrollear: seDetiene,
+        pega: desplazamientos.some((v) => v && v !== 'auto') &&
+              ancestrosQueRecortan.length === 0 && seDetiene === true,
       };
       break;
     }
@@ -438,6 +518,30 @@
         donde: m.carreras_largas_detalle,
         anclas_encontradas: m.anclas,
         que_cuenta_como_ancla: 'un rótulo de bloque, una entrada del índice o un diagrama',
+        dueño: 'builder',
+      });
+    }
+    if (m.sticky && m.sticky.tiene_desplazamiento && m.sticky.se_detiene_al_scrollear === false) {
+      fallos.push({
+        objetivo: 'la columna de acción tiene que pegar de verdad',
+        planta: m.planta,
+        que: 'medido con scroll real: la columna sigue al scroll hasta salirse en vez de ' +
+             'detenerse en su offset, así que no pega',
+        elemento: m.sticky.elemento,
+        top_declarado: m.sticky.top,
+        top_tras_la_sonda: m.sticky.top_tras_la_sonda,
+        dueño: 'builder',
+      });
+    }
+    if (m.sticky && m.sticky.tiene_desplazamiento && m.sticky.ancestros_que_recortan.length) {
+      fallos.push({
+        objetivo: 'la columna de acción tiene que pegar de verdad',
+        planta: m.planta,
+        que: 'el sticky está bien declarado y con top resuelto, pero un ancestro recorta el ' +
+             'overflow y se convierte en el contenedor de scroll: no pega, y no da ningún error',
+        elemento: m.sticky.elemento,
+        ancestros_que_recortan: m.sticky.ancestros_que_recortan,
+        medido_por: 'ux-lead con scroll real sobre 0c81869: top 16 → −284 → −684 → −1184',
         dueño: 'builder',
       });
     }
