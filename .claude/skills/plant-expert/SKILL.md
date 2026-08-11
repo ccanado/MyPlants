@@ -19,7 +19,7 @@ inventado envenena la ficha entera, porque el lector ya no sabe qué partes cree
 
 ## Nunca inventes estas cosas
 
-- **Datos personales.** `historia`, `notas_carlos`, dónde está la planta, de dónde vino,
+- **Datos personales.** `historia`, `notas`, dónde está la planta, de dónde vino,
   qué tal le va. Eso se pregunta. Si Carlos no lo ha dicho, es `null` — no "un regalo de
   alguien especial" ni ninguna otra prosa de relleno.
 - **La lista de plantas.** Solo existen las plantas que Carlos tiene. Nunca añadas una
