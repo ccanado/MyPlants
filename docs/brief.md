@@ -2502,6 +2502,13 @@ Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
   en el contexto del que la lee**, porque el contexto es exactamente lo que no viaja. Corolario
   incómodo y verificable en este mismo fichero: **casi todo lo que escribí en imperativo era una
   opinión mía en imperativo.**
+  Y una precisión, porque sin ella esta nota lleva al error contrario —huir de todo imperativo—:
+  **el problema no era el imperativo, era el imperativo sin procedencia.** Una norma en `CLAUDE.md`
+  que Carlos ha aprobado **sí** es un requisito, y ahí el imperativo es la forma correcta de
+  escribirla. Lo que no puede es nacer imperativa en el fichero de un agente y ascender por citas
+  hasta parecer suya. La regla completa tiene dos mitades: **la modalidad va dentro de la frase, y el
+  imperativo está reservado a lo que tiene dueño humano.** Todo lo demás se escribe como lo que es:
+  una propuesta con su motivo.
 - **La gravedad del promedio, demostrada por un tercero con nuestro material delante.** Carlos generó
   un diseño alternativo con una herramienta externa y pidió basarnos en él. Sus colores dominantes:
   crema `#fbf9f4`, terracota `#7e2b0f` y **verde salvia `#b0cdbb`**; su sistema se llama "Botanical
