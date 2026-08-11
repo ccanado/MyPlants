@@ -2162,6 +2162,63 @@ radiador no vive a 21–24, y una pegada al cristal tampoco por la noche. El esq
 números siete veces. Mientras no haya dato, **una constante rotulada como constante es honesta; una
 constante rotulada como medida de esa planta, no.**
 
+### Retiro «la franja no crece»: optimizaba contra el escenario equivocado
+
+Carlos, textual: *"el «y 8 más, cada una en su ficha» es complejo porque te obliga a entrar en todas
+las fichas. ¿No es mejor poner todos los hoy ahí arriba?"*
+
+**Tiene razón y la decisión era mía.** Escribí *"la franja no crece: si un día hay siete tareas, dice
+el número y las dos primeras, y el resto están en sus fichas — que es donde se hacen"*. En el código
+son `TAREAS_EN_LA_FRANJA` y una línea de `resto`, y hoy con **diez tareas** eso significa dos
+visibles y **ocho detrás de siete clics**.
+
+El fallo no es el razonamiento, es a qué escenario servía. **Mi regla protegía "hay muchas tareas y
+la portada explota", y el caso real es "hay diez tareas cortas y quiero verlas de un tirón".** Diez
+líneas de una frase no son un muro; **diez fichas que abrir, sí.** La página existe para ahorrar
+exactamente ese trabajo, y yo había puesto una regla que lo creaba.
+
+Y hay un dato del propio proyecto que lo agrava y que yo tenía delante: **las siete se regaron el
+mismo día**, así que los vencimientos van a caer juntos. "Muchas tareas a la vez" no es el caso raro
+que yo estaba conteniendo — **es el caso normal de esta casa.**
+
+#### Lo que sustituye a la regla, y por qué no necesita tope
+
+**Una línea por planta, no por tarea. Todas las plantas que necesiten algo hoy. Sin truncar.**
+
+Y aquí está lo que me hace retirar el tope en vez de subirlo: **el techo ya existe en el dominio.**
+Hay siete plantas, así que la lista no puede pasar de siete líneas ni el día que todas necesiten
+algo. Agrupando por planta, una planta con tres tareas ocupa **una** línea y no tres — hoy son diez
+tareas en, como mucho, siete renglones. **Mi tope estaba resolviendo un problema que no puede
+ocurrir**, y al resolverlo creaba uno que ocurre todos los días.
+
+Es el mismo error que el tope de altura, y van dos: **un número inventado para contener un
+crecimiento que el dominio ya contiene.** Si algún día Carlos tiene cuarenta plantas, esto vuelve a
+ser un problema real y se resuelve entonces, **con el dato delante y no antes.**
+
+#### Lo que NO cambia, que era la intención buena de la regla retirada
+
+La regla venía de *"esto no es una app de tareas"*, y eso sigue en pie entero — lo que estaba mal era
+el mecanismo, no el propósito. Truncar no era lo que impedía que esto fuera un gestor de tareas; lo
+que lo impide es:
+
+- **Sin rachas, sin porcentaje de cumplimiento, sin felicitar a nadie por regar**, sin nada que premie
+  abrir la web más a menudo.
+- **Solo lo de hoy.** Lo que no vence hoy no aparece. Eso es lo que mantiene la lista corta **por
+  definición**, y no un recorte: "hoy" es un día, y un día tiene un número acotado de plantas.
+- **Ni una tarea que el dato no sostenga.** La franja no dice nunca "hoy le toca" si nadie ha marcado
+  nunca ese riego; sigue vigente la tabla de tres certezas de § `HOY`, y **`sin registrar` se dice
+  como ausencia** en `--color-sin-dato`.
+
+O sea que la franja puede crecer hasta siete renglones y seguir sin ser una app de tareas, porque lo
+que la separaba de una app nunca fue su altura.
+
+#### Lo que se borra
+
+La línea de `resto` —*"y 8 más, cada una en su ficha"*— **desaparece**, no se reescribe. Era el
+síntoma: un contador que anuncia trabajo que esconde. **Un índice que dice cuánto documento hay es
+información; un contador que dice cuánto trabajo te oculta es una traba.** Y esto último es lo que
+tenía puesto yo, después de haber escrito lo primero para el expediente.
+
 ## Fases
 
 | Fase | Qué | Quién |
