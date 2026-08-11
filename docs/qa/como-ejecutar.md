@@ -261,6 +261,43 @@ en píxeles sea lineal en `log(valor)` y contrasta el R² contra el ajuste linea
 de `data-tick`, y si no están los parsea del rótulo (`1 h`, `1 día`, `1 año`); si tampoco puede,
 se abstiene en vez de firmar.
 
+## 2g. La pasada contra la web publicada, sin Playwright
+
+Servir desde subdirectorio (`/MyPlants/`) es lo único que no se puede reproducir en local, y
+hasta ahora era la única parte de la pasada que dependía del MCP de Playwright — que usa un
+perfil de Chrome único y bloquea al resto del equipo mientras esté abierto. Ya no:
+
+```bash
+python3 tests/runner.py --url https://ccanado.github.io/MyPlants/ \
+    --abrir 0 --alto 6000 --test expediente --test franja-hoy --test diagramas --test terceros
+```
+
+`--url` convierte el runner en **espejo**: reenvía todo el tráfico al sitio publicado, no solo la
+portada. Así el navegador ve un único origen, las rutas relativas del documento siguen
+resolviendo sin tocarlo y el `fetch` del JSON no se topa con CORS. La alternativa —inyectar un
+`<base href>`— modificaría el documento que se está auditando, que es justo lo que no se puede
+hacer en una auditoría.
+
+Dos detalles que hubo que resolver y conviene no volver a descubrir:
+
+- El HTML publicado enlaza con rutas absolutas que **ya llevan el subdirectorio**
+  (`/MyPlants/css/app.css`). Servidas desde la raíz del espejo llegan con el prefijo puesto, y
+  hay que quitarlo o se pide `/MyPlants/MyPlants/css/app.css`. Es el fallo clásico de
+  subdirectorio, visto desde el otro lado.
+- **El sello cambia de naturaleza.** Contra una URL remota el commit local no dice nada: Pages
+  sirve lo que hay en `main` *en el remoto*, que puede ir por detrás. Así que el sello pregunta
+  al remoto por su HEAD (`git ls-remote`), guarda el **sha256 del `index.html` servido** —la
+  única prueba de qué se midió— y avisa en rojo si el remoto y el local no son el mismo código:
+
+```
+PUBLICADO · https://ccanado.github.io/MyPlants/
+commit 58b2191 @origin/main · index sha256 f6d839a85a7e · 12177 bytes
+⚠  el remoto sirve 58b2191 y en local estás en c88c36a: NO es el mismo código
+```
+
+Ese aviso es la versión remota de la regla 0. Un informe que dice «medido en producción» sin
+decir *qué* había en producción no es atribuible a nada.
+
 ### Y la autoprueba, que se lee al revés
 
 ```bash

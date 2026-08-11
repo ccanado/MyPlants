@@ -241,13 +241,97 @@ def construir_inyeccion(tests: list[str]) -> str:
     return "\n".join(trozos)
 
 
-def servidor(inyeccion: str, puerto: int, buzon: dict):
+def sello_remoto(base: str) -> dict:
+    """Identifica el estado que sirve una URL remota.
+
+    Con `--url` el commit local no dice nada: GitHub Pages sirve lo que hay en
+    `main` **en el remoto**, que puede ir por detrás de lo que tengo delante. Se
+    pregunta al remoto por su HEAD y se guarda además la huella del `index.html`
+    servido, que es lo único que prueba qué se midió de verdad.
+    """
+    import hashlib
+    import urllib.request
+
+    def git(*args):
+        try:
+            return _sp.run(["git", *args], cwd=RAIZ, capture_output=True, text=True,
+                           timeout=15).stdout.strip()
+        except Exception:
+            return ""
+
+    remoto = git("ls-remote", "origin", "refs/heads/main").split("\t")[0][:7]
+    huella, largo = "", 0
+    try:
+        with urllib.request.urlopen(base, timeout=20) as r:
+            cuerpo = r.read()
+        huella = hashlib.sha256(cuerpo).hexdigest()[:12]
+        largo = len(cuerpo)
+    except Exception as e:
+        huella = f"(no se pudo leer: {e})"
+
+    return {
+        "medido_contra": base,
+        "commit": (remoto or "(remoto no accesible)") + " @origin/main",
+        "commit_local": git("rev-parse", "--short", "HEAD"),
+        "arbol_sucio": False,      # lo local es irrelevante: no es lo que se mide
+        "ficheros_modificados": 0,
+        "ficheros_medidos": 0,
+        "mtime_mas_reciente": 0,
+        "mtimes": {},
+        "sha256_index_servido": huella,
+        "bytes_index_servido": largo,
+    }
+
+
+def servidor(inyeccion: str, puerto: int, buzon: dict, base: str | None = None):
+    """Sirve el repo local, o —con `base`— hace de espejo de una URL remota.
+
+    El espejo existe para poder auditar la web publicada con estas mismas
+    herramientas. GitHub Pages sirve desde subdirectorio (`/MyPlants/`) y eso es lo
+    único que no se puede comprobar en local, así que era la única parte de la pasada
+    que dependía del MCP de Playwright, que es un recurso exclusivo y bloquea a otros
+    teammates.
+
+    Se reenvía **todo** el tráfico, no solo la página: así el navegador ve un único
+    origen, las rutas relativas siguen resolviendo sin tocar el HTML y el `fetch` del
+    JSON no se topa con CORS. La alternativa —inyectar un `<base href>`— cambia el
+    documento que se está auditando, que es justo lo que no se puede hacer.
+    """
+    import urllib.error
+    import urllib.request
+
+    prefijo = ""
+    if base:
+        from urllib.parse import urlsplit
+        prefijo = urlsplit(base).path.rstrip("/")   # p.ej. "/MyPlants"
+
     class Handler(http.server.SimpleHTTPRequestHandler):
         def __init__(self, *a, **k):
             super().__init__(*a, directory=str(RAIZ), **k)
 
         def log_message(self, *a):
             pass
+
+        def _remoto(self, ruta: str):
+            """Trae un recurso del sitio publicado y lo entrega como si fuera propio."""
+            rel = ruta.lstrip("/")
+            # El HTML publicado enlaza con rutas absolutas que ya llevan el
+            # subdirectorio (`/MyPlants/css/app.css`). Servidas desde la raíz del
+            # espejo llegarían aquí con el prefijo puesto y habría que quitarlo, o
+            # se pediría `/MyPlants/MyPlants/css/app.css`.
+            if prefijo and ruta.startswith(prefijo + "/"):
+                rel = ruta[len(prefijo) + 1:]
+            destino = base.rstrip("/") + "/" + rel
+            try:
+                pet = urllib.request.Request(destino, headers={"User-Agent": "MyPlants-QA"})
+                with urllib.request.urlopen(pet, timeout=25) as r:
+                    datos, tipo = r.read(), r.headers.get("Content-Type", "application/octet-stream")
+                    codigo = r.status
+            except urllib.error.HTTPError as e:
+                datos, tipo, codigo = e.read() or b"", "text/plain", e.code
+            except Exception as e:
+                datos, tipo, codigo = str(e).encode(), "text/plain", 502
+            return datos, tipo, codigo
 
         def do_POST(self):
             if self.path != "/__qa__":
@@ -261,8 +345,17 @@ def servidor(inyeccion: str, puerto: int, buzon: dict):
 
         def do_GET(self):
             ruta = self.path.split("?")[0]
-            if ruta in ("/", "/index.html"):
-                html = (RAIZ / "index.html").read_text(encoding="utf-8")
+            es_portada = ruta in ("/", "/index.html", prefijo + "/", prefijo + "/index.html")
+
+            if es_portada:
+                if base:
+                    crudo, _, codigo = self._remoto("/index.html" if ruta.endswith("index.html") else "/")
+                    if codigo >= 400:
+                        self.send_error(codigo, f"el sitio publicado devolvió {codigo}")
+                        return
+                    html = crudo.decode("utf-8", "replace")
+                else:
+                    html = (RAIZ / "index.html").read_text(encoding="utf-8")
                 html = html.replace("</body>", inyeccion + "\n</body>")
                 datos = html.encode("utf-8")
                 self.send_response(200)
@@ -271,6 +364,16 @@ def servidor(inyeccion: str, puerto: int, buzon: dict):
                 self.end_headers()
                 self.wfile.write(datos)
                 return
+
+            if base:
+                datos, tipo, codigo = self._remoto(ruta)
+                self.send_response(codigo)
+                self.send_header("Content-Type", tipo)
+                self.send_header("Content-Length", str(len(datos)))
+                self.end_headers()
+                self.wfile.write(datos)
+                return
+
             super().do_GET()
 
     class Server(socketserver.ThreadingTCPServer):
@@ -296,19 +399,22 @@ def main() -> int:
     ap.add_argument("--puerto", type=int, default=8011)
     ap.add_argument("--abrir", type=int, default=None, help="abre la ficha N (0-based) antes de medir")
     ap.add_argument("--abrir-todas", action="store_true", help="abre TODOS los <details> antes de medir")
+    ap.add_argument("--url", default=None,
+                    help="audita una URL publicada en vez del repo local, haciendo de espejo. "
+                         "Ej.: --url https://ccanado.github.io/MyPlants/")
     ap.add_argument("--verboso", action="store_true")
     args = ap.parse_args()
 
     tests = args.test or ORDEN
     buzon = {"informe": None, "listo": threading.Event()}
-    sello_antes = estado_del_arbol(RAIZ)
+    sello_antes = sello_remoto(args.url) if args.url else estado_del_arbol(RAIZ)
     inyeccion = construir_inyeccion(tests)
     if args.abrir_todas:
         inyeccion = "<script>window.__QA_ABRIR_TODAS__=true;</script>" + inyeccion
     elif args.abrir is not None:
         inyeccion = (f"<script>window.__QA_ABRIR__=true;window.__QA_ABRIR_N__={args.abrir};</script>"
                      + inyeccion)
-    srv = servidor(inyeccion, args.puerto, buzon)
+    srv = servidor(inyeccion, args.puerto, buzon, args.url)
     url = f"http://127.0.0.1:{args.puerto}/"
 
     perfil = tempfile.mkdtemp(prefix="qa-chrome-")
@@ -364,11 +470,16 @@ def main() -> int:
         return 2
 
     informe = buzon["informe"]
-    sello_despues = estado_del_arbol(RAIZ)
     informe["estado_medido"] = sello_antes
-    movido = [f for f, m in sello_despues["mtimes"].items()
-              if sello_antes["mtimes"].get(f) != m]
-    informe["codigo_movido_durante_la_medida"] = movido
+    if args.url:
+        # Contra una URL publicada no hay mtimes que vigilar: lo que se mide está en
+        # otra máquina. La huella del index servido es la única prueba del estado.
+        informe["codigo_movido_durante_la_medida"] = []
+    else:
+        sello_despues = estado_del_arbol(RAIZ)
+        movido = [f for f, m in sello_despues["mtimes"].items()
+                  if sello_antes["mtimes"].get(f) != m]
+        informe["codigo_movido_durante_la_medida"] = movido
     if args.json:
         Path(args.json).write_text(json.dumps(informe, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -377,9 +488,17 @@ def main() -> int:
     print(f"\n{'═' * 78}")
     print(f"  {meta['ancho']}×{meta['alto']} · dpr {meta['dpr']} · "
           f"reduce: {'sí' if meta['reduce'] else 'no'} · {meta['articles']} ficha(s)")
-    print(f"  commit {sello['commit']}"
-          + (f" + {sello['ficheros_modificados']} fichero(s) sin commitear" if sello["arbol_sucio"] else " (árbol limpio)")
-          + f" · {sello['ficheros_medidos']} ficheros medidos")
+    if sello.get("medido_contra"):
+        print(f"  PUBLICADO · {sello['medido_contra']}")
+        print(f"  commit {sello['commit']} · index sha256 {sello['sha256_index_servido']}"
+              f" · {sello['bytes_index_servido']} bytes")
+        if sello.get("commit_local") and sello["commit"].split(" ")[0] != sello["commit_local"]:
+            print(f"  ⚠  el remoto sirve {sello['commit'].split(' ')[0]} y en local estás en "
+                  f"{sello['commit_local']}: NO es el mismo código")
+    else:
+        print(f"  commit {sello['commit']}"
+              + (f" + {sello['ficheros_modificados']} fichero(s) sin commitear" if sello["arbol_sucio"] else " (árbol limpio)")
+              + f" · {sello['ficheros_medidos']} ficheros medidos")
     print(f"{'═' * 78}")
     if informe["codigo_movido_durante_la_medida"]:
         print("\n⚠  EL CÓDIGO CAMBIÓ MIENTRAS SE MEDÍA — este resultado no es atribuible:")
