@@ -21,9 +21,12 @@
 (() => {
   'use strict';
 
+  /* Ojo: `details` NO es enfocable — lo es su `summary`. Incluir los dos duplica
+     cada disclosure y, al medir el espaciado entre dianas, cada `details` aparece
+     como "vecino a 0 px" de su propio `summary`. */
   const SEL_FOCUSABLE = [
     'a[href]', 'button', 'input:not([type="hidden"])', 'select', 'textarea',
-    'summary', 'details', 'audio[controls]', 'video[controls]', 'iframe',
+    'summary', 'audio[controls]', 'video[controls]', 'iframe',
     '[contenteditable]:not([contenteditable="false"])', '[tabindex]',
   ].join(',');
 
@@ -90,51 +93,142 @@
     });
   }
 
+  /* La diana real de un checkbox oculto es su <label>, no el input de 1×1 px que
+     está clipado. Medir el input y gritar "diana pequeña" es un falso positivo:
+     lo que el usuario pulsa —y lo que tiene que medir 24×24— es la etiqueta. */
+  function dianaDe(el) {
+    let objetivo = el;
+    if (el.tagName === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) {
+      const lb = (el.labels && el.labels[0]) || (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`));
+      if (lb) {
+        const r = lb.getBoundingClientRect();
+        if (r.width * r.height > el.getBoundingClientRect().width * el.getBoundingClientRect().height) objetivo = lb;
+      }
+    }
+    const r = objetivo.getBoundingClientRect();
+    return { rect: r, via: objetivo === el ? null : 'label', w: Math.round(r.width), h: Math.round(r.height) };
+  }
+
+  /* Un contenedor "de lectura": dentro de él el orden visual sí es arriba→abajo,
+     izquierda→derecha. Entre contenedores el orden lo marca el contenedor. */
+  const CONTENEDOR = 'li, article, fieldset, form, header, footer, nav, section, main, body';
+
   // --- 1. orden de foco vs orden visual ------------------------------------------------
   function orden() {
     const lista = enfocables().map((el, i) => {
       const r = el.getBoundingClientRect();
+      const d = dianaDe(el);
       return {
-        i,
-        el,
+        i, el,
         selector: selector(el),
         tabindex: el.getAttribute('tabindex'),
+        contenedor: el.parentElement ? el.parentElement.closest(CONTENEDOR) : null,
         x: Math.round(r.left + window.scrollX),
         y: Math.round(r.top + window.scrollY),
-        w: Math.round(r.width),
-        h: Math.round(r.height),
-        area: Math.round(r.width * r.height),
+        w: Math.round(r.width), h: Math.round(r.height),
+        dianaW: d.w, dianaH: d.h, dianaVia: d.via,
       };
     });
 
-    // orden visual: bandas horizontales de 24px, luego x
-    const visual = [...lista].sort((a, b) => {
-      const banda = Math.round(a.y / 24) - Math.round(b.y / 24);
-      return banda !== 0 ? banda : a.x - b.x;
-    });
+    /* Comparar TODA la lista contra un orden "bandas horizontales" es incorrecto en
+       una rejilla de tarjetas: dentro de cada ficha el contenido baja en vertical,
+       y las fichas van una al lado de otra. Ordenar por bandas entrelazaría
+       elementos de fichas distintas y marcaría cientos de saltos que no existen.
+       Se compara por tanto DENTRO de cada contenedor, y luego los contenedores
+       entre sí. Eso es lo que de verdad nota quien tabula. */
+    const grupos = new Map();
+    for (const it of lista) {
+      const clave = it.contenedor || document.body;
+      if (!grupos.has(clave)) grupos.set(clave, []);
+      grupos.get(clave).push(it);
+    }
 
     const saltos = [];
-    visual.forEach((v, pos) => {
-      if (v.i !== pos) saltos.push({ dom: v.i, visual: pos, selector: v.selector, y: v.y, x: v.x });
-    });
+    for (const [cont, items] of grupos) {
+      if (items.length < 2) continue;
+      const visual = [...items].sort((a, b) => {
+        const banda = Math.round(a.y / 16) - Math.round(b.y / 16);
+        return banda !== 0 ? banda : a.x - b.x;
+      });
+      visual.forEach((v, pos) => {
+        if (items[pos].i !== v.i) {
+          saltos.push({
+            contenedor: selector(cont).slice(0, 40),
+            enDOM: items[pos].selector, seVePrimero: v.selector,
+            y: v.y, x: v.x,
+          });
+        }
+      });
+    }
+
+    // orden de los contenedores entre sí
+    const cabezas = [...grupos.entries()]
+      .map(([c, items]) => ({ c, primero: items[0] }))
+      .filter((g) => g.primero);
+    const saltosContenedor = [];
+    for (let k = 1; k < cabezas.length; k++) {
+      const a = cabezas[k - 1].primero;
+      const b = cabezas[k].primero;
+      // b va después en el DOM: no debería empezar claramente por encima de a
+      if (b.y + 8 < a.y && Math.abs(b.x - a.x) < 4) {
+        saltosContenedor.push({ de: selector(cabezas[k - 1].c), a: selector(cabezas[k].c), ya: a.y, yb: b.y });
+      }
+    }
 
     const problemas = [];
-    if (saltos.length) {
-      problemas.push(`${saltos.length} elemento(s) con orden de Tab distinto del orden visual`);
-    }
+    if (saltos.length) problemas.push(`${saltos.length} elemento(s) con orden de Tab distinto del orden visual dentro de su contenedor`);
+    if (saltosContenedor.length) problemas.push(`${saltosContenedor.length} contenedor(es) que se tabulan antes de lo que se ven`);
+    /* WCAG 2.2 · 2.5.8 Target Size (Minimum), AA: 24×24 CSS px, PERO con dos
+       excepciones que hay que aplicar o el informe se llena de ruido:
+         · Inline: la diana va dentro de una frase y su alto lo fija el
+           line-height del texto que la rodea.
+         · Espaciado: aunque la diana sea menor, cumple si no hay otra diana a
+           menos de 24 px — es decir, si cabe un círculo de 24 px sin solapar
+           con la diana de al lado.
+       Lo que no cumple ninguna de las dos sí se reporta. */
+    const dianasPequenas = [];
     for (const it of lista) {
       if (it.tabindex && +it.tabindex > 0) problemas.push(`tabindex="${it.tabindex}" en ${it.selector}`);
-      if (it.w < 24 || it.h < 24) problemas.push(`diana pequeña (${it.w}×${it.h}px, mínimo recomendado 24×24) en ${it.selector}`);
+      if (it.dianaW >= 24 && it.dianaH >= 24) continue;
+
+      const cs = getComputedStyle(it.el);
+      if (cs.display === 'inline') continue; // excepción "inline"
+
+      // excepción de espaciado
+      const r = it.el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      let vecinoCerca = null;
+      for (const otro of lista) {
+        if (otro === it) continue;
+        // un antepasado o un descendiente no es "la diana de al lado"
+        if (otro.el.contains(it.el) || it.el.contains(otro.el)) continue;
+        const o = otro.el.getBoundingClientRect();
+        const ox = o.left + o.width / 2;
+        const oy = o.top + o.height / 2;
+        const d = Math.hypot(cx - ox, cy - oy);
+        if (d < 24) { vecinoCerca = { selector: otro.selector, distancia: Math.round(d) }; break; }
+      }
+      if (!vecinoCerca) continue; // cumple por espaciado
+
+      dianasPequenas.push({
+        selector: it.selector, w: it.dianaW, h: it.dianaH,
+        via: it.dianaVia, vecino: vecinoCerca,
+      });
+      problemas.push(
+        `diana ${it.dianaW}×${it.dianaH}px < 24×24 y con otra diana a ${vecinoCerca.distancia}px ` +
+        `(WCAG 2.2 · 2.5.8 AA)` + (it.dianaVia ? ' [medida sobre su <label>]' : '') + ` en ${it.selector}`
+      );
     }
 
     const informe = {
       ok: problemas.length === 0,
       total: lista.length,
+      resumen: `${lista.length} enfocables · ${saltos.length} salto(s) de orden · ${problemas.length} problema(s)`,
       secuencia: lista.map((it) => `${it.i}. ${it.selector}  @${it.x},${it.y}`),
-      saltos,
-      problemas,
+      saltos, saltosContenedor, problemas, dianasPequenas,
     };
-    if (console.table) { console.log(informe.ok ? '✓ orden de foco' : '✗ orden de foco', `${lista.length} enfocables`); if (saltos.length) console.table(saltos); }
+    if (console.table) { console.log(informe.ok ? '✓ orden de foco' : '✗ orden de foco', informe.resumen); if (saltos.length) console.table(saltos); }
     return informe;
   }
 

@@ -390,8 +390,34 @@
   --trazo-fino:   1px;    /* cuadrícula de los diagramas */
   --trazo:        1.5px;  /* trazo normal de SVG */
   --trazo-grueso: 2.5px;  /* la línea de tiempo de recuperación, marcadores */
-  --filete-personal:  3px; /* el filete azul a la izquierda del panel de Carlos */
+  --filete-personal:  3px; /* el filete azul a la izquierda del panel personal */
   --filete-severidad: 3px; /* el canto izquierdo de la ficha en severidad crítica */
+
+
+  /* ===========================================================================
+     7 quater. ICONOGRAFÍA Y SILUETAS
+     ===========================================================================
+     Dos sistemas distintos y no se mezclan:
+
+     ICONOS DE CAMPO — nombran un campo (riego, luz, temperatura…). Caja de
+     --icono-tam, trazo --trazo, currentColor, sin relleno y SIN detalle interior:
+     a 20 px el detalle es ruido. Siempre aria-hidden="true", porque la versalita
+     con el nombre del campo va al lado y nunca se sustituye por el icono.
+
+     SILUETAS DE HOJA — identifican la planta en la rejilla cerrada. Silueta
+     cerrada de un solo trazo, sin relleno, quieta: es un ancla para escanear y
+     una cosa que se mueve no ancla nada. Por eso NO tienen animación ni versión
+     reducida — no hay versión.
+
+     El anclaje de los dos sistemas no es externo: la etiqueta real de la begonia
+     ya trae su fila de pictogramas de cuidado. Ver docs/brief.md § "Más
+     superficie visual".
+     ------------------------------------------------------------------------ */
+
+  --icono-tam:    1.25rem;  /* 20 px · icono de campo junto a la versalita */
+  --icono-tam-s:  1rem;     /* 16 px · dentro de un paso de tratamiento o un chip */
+  --silueta-tam:  2.5rem;   /* 40 px · en el troquel de la etiqueta, arriba a la derecha */
+  --silueta-tam-l: 4rem;    /* 64 px · en la ficha despegada */
 
 
   /* ===========================================================================
@@ -418,6 +444,7 @@
      ------------------------------------------------------------------------ */
 
   --aspecto-foto:  3 / 4;
+  --aspecto-diagrama: 5 / 2;   /* los diagramas de eje: riego, luz, temperatura, cronología */
   --ancho-prueba:  9rem;   /* la foto de la etiqueta real en el bloque de procedencia.
                               Pequeña a propósito: es prueba documental, no protagonista;
                               a este tamaño no le come la escena a la etiqueta dibujada. */

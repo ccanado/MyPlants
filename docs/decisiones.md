@@ -85,6 +85,18 @@ Formato: `- [quién] decisión — alternativa descartada y por qué`.
 - [ux-lead] **La ausencia de etiqueta de vivero pasa de hueco a antigüedad**: el bloque `LA PRUEBA` dice "sin etiqueta: lleva más de veinte años en la familia" — descartado seguir tratándola como dato que falta; la signature deja de ser recurso estético y pasa a ser cronología, que es sentido gratis.
 - [ux-lead] **El patrón de que las dos plantas tocadas son los dos regalos NO se subraya** — descartado el rótulo, la agrupación y la nota al pie: el trabajo del diseño es poner origen y estado en el mismo golpe de vista para que se vea solo; señalarlo con el dedo lo convertiría en una gracia.
 
+## Sexta vuelta — más superficie visual, y el lector resulta ser Noah
+
+- [ux-lead] El tramo de sol vuelve como **segunda fila del mismo SVG 2**, no como diagrama aparte — el JSON estaba caduco, no en desacuerdo: la frase "sin sol directo" era una deducción de la orientación NE, y Carlos describe su propio salón. La escala con el hueco es el dato y el tramo de sol es el porqué; separarlos habría partido en dos una sola explicación.
+- [ux-lead] Diagrama 6, **la cronología**, con eje **logarítmico** y marcas rotuladas — descartado el eje lineal, en el que el poto (20 años) ocupa todo el ancho y las otras seis son un borrón; y descartado no rotular las marcas, porque un eje logarítmico sin rótulos miente sobre las proporciones.
+- [ux-lead] **Siete siluetas de hoja de línea en la rejilla cerrada** — arregla un agujero que abrí yo: al quitar las fotos, las siete fichas se distinguían solo por el texto del nombre. La silueta es legítima porque la forma de la hoja **es la clave de identificación botánica**, no un adorno vegetal; y el sistema no se importa de fuera, se levanta de la fila de pictogramas que ya trae la etiqueta real de la begonia.
+- [ux-lead] La silueta del helecho se dibuja **con trama de sin-dato dentro del contorno** — descartado dibujarle una hoja de *Adiantum* bonita: está sin identificar, y afirmar una especie con un lápiz es la misma mentira que rellenar un campo a ojo.
+- [ux-lead] Las siluetas **no se animan** — descartada la entrada escalonada: son el ancla para escanear la rejilla y algo que se mueve no ancla nada. Es el único elemento del sistema sin versión reducida, porque no hay versión.
+- [ux-lead] Iconos de campo **junto a la versalita, nunca en su lugar** — descartado el icono solo: obliga a aprender un vocabulario antes de poder usar una web que se abre con prisa una vez cada quince días.
+- [ux-lead] El aviso de savia irritante va **dentro del paso de tratamiento** que la provoca, no en el campo de toxicidad — el campo describe la especie; el riesgo real es de manipulación y pertenece a la acción, no a la ficha.
+- [ux-lead] **La toxicidad no vuelve al rojo** pese al aviso de que había un niño (Noah tiene 20 años) — se mantiene el principio: el color significa "haz algo hoy", y tres fichas en rojo se comerían al helecho, que es el único que se está muriendo.
+- [ux-lead] El panel personal se queda en **una sola superficie con el nombre del autor tomado del dato** (`nota.autor`), no en dos paneles para Carlos y Noah — descartadas dos superficies: el panel codifica un **registro** ("esto no tiene fuente y no la necesita"), no una persona, y dos superficies para el mismo tipo de enunciado obligan a aprender dos cosas para entender una. Además así cabe una tercera voz (Vanesa) sin inventar nada.
+
 ## Accesibilidad
 
 - [ux-lead] Anillo de foco doble (2 px Tinta + halo 3 px Etiqueta) en un solo token — descartado el anillo de un color, porque ningún color de la paleta pasa 3:1 contra el blanco de la ficha y contra la teja del fondo a la vez.

@@ -54,17 +54,32 @@ const GRUPO_SEVERIDAD = new Map([
 ]);
 
 /**
- * Toxicidad: TRES estados y ninguno verde. No hay ni una planta con «no tóxica»
+ * Toxicidad: tres estados y ninguno verde. No hay ni una planta con «no tóxica»
  * confirmada, así que un icono verde mentiría en cinco fichas. Y «sin datos en
  * ASPCA» no es «segura»: es que nadie lo ha mirado.
+ *
+ * En casa de Carlos no hay mascotas, así que esto es informativo, no urgente:
+ * el rojo queda reservado a la severidad crítica. El color significa «haz algo
+ * hoy» y una planta tóxica en una casa sin gato no pide nada hoy.
  */
-function grupoToxicidad(tox) {
-  if (!tox.verificado) return "sin_identificar";
-  const t = normalizar([tox.nivel, tox.texto].filter(Boolean).join(" "));
+const ORDEN_TOX = ["segura", "sin_datos_aspca", "sin_identificar", "toxica"];
+
+function estadoToxico(valor) {
+  if (valor == null) return null;
+  const t = normalizar(valor);
   if (t.includes("sin datos")) return "sin_datos_aspca";
   if (/(no toxica|atoxica|segura)/.test(t)) return "segura";
   if (t.includes("toxica")) return "toxica";
   return "sin_datos_aspca";  // lado prudente: nunca se asume seguridad
+}
+
+/** El distintivo toma la peor de las dos especies. Hoy coinciden en las siete,
+ *  pero el esquema permite que diverjan y entonces manda la peor. */
+function grupoToxicidad(tox) {
+  if (!tox.verificado) return "sin_identificar";
+  const estados = [estadoToxico(tox.gatos), estadoToxico(tox.perros)].filter(Boolean);
+  if (estados.length === 0) return estadoToxico(tox.nivel ?? tox.texto) ?? "sin_identificar";
+  return estados.reduce((a, b) => (ORDEN_TOX.indexOf(b) > ORDEN_TOX.indexOf(a) ? b : a));
 }
 
 export function grupoSeveridad(valor) {

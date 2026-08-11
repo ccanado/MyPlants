@@ -134,58 +134,80 @@ export function diagramaRiego(riego) {
   return svg;
 }
 
-/* ══ 2 · La mañana del salón ════════════════════════════════════════════════
-   Eje de un día con sus tramos de luz reales. No es una categoría de vivero:
-   es lo que le entra por la ventana a esta planta en esta casa. Si solo hay
-   `nivel`, los tramos se dibujan en trama de «sin dato» y el texto lo dice. */
+/* ══ 2 · Lo que quiere y lo que tiene ═══════════════════════════════════════
+   La escala de luz de 1 a 5 con DOS marcas y el hueco entre ellas. Deja de
+   decir «vive en el escalón 3» y dice «le falta un escalón», que es lo
+   accionable. Sale de los propios textos: el coleo grande «quiere más luz de la
+   que tiene», el poto «está más oscura de lo ideal».
 
+   Devuelve un fragmento —SVG + su equivalente en texto— porque el SVG va
+   `aria-hidden` y la frase tiene que existir de verdad en el DOM. */
+
+const PASOS_LUZ = 5;
 const NOMBRE_NIVEL = new Map([
   [1, "sombra"], [2, "semisombra"], [3, "luz indirecta"],
   [4, "mucha luz"], [5, "sol directo"],
 ]);
 
 export function diagramaLuz(luz) {
-  const tramos = Array.isArray(luz?.tramos) ? luz.tramos : null;
-  const solDirecto = texto0(luz?.sol_directo);
-  const nivel = numero(luz?.nivel);
-  if (!tramos && !solDirecto && nivel == null) return sinDato("Sin dato de luz.");
+  const actual = numero(luz?.nivel_actual) ?? numero(luz?.nivel);
+  const ideal = numero(luz?.nivel_ideal);
+  if (actual == null && ideal == null) return sinDato("Sin dato de luz.");
 
-  const svg = lienzo("0 0 120 52", "diagrama--luz");
-  const eje = { x: 10, y: 22, w: 100, h: 10 };
-
+  const frag = document.createDocumentFragment();
+  const svg = lienzo("0 0 120 46", "diagrama--luz");
   svg.append(hachurado());
 
-  // Horas de referencia del eje: de que amanece a que anochece.
-  svg.append(e("rect", { class: "dia__eje", x: eje.x, y: eje.y, width: eje.w, height: eje.h, rx: 2 }));
+  const x0 = 10, ancho = 100, y = 18, alto = 12, hueco = 2;
+  const paso = ancho / PASOS_LUZ;
+  const centro = (n) => x0 + paso * (n - 0.5);
 
-  if (tramos) {
-    // Cada tramo trae su fracción del día y su tipo de luz.
-    let x = eje.x;
-    for (const tramo of tramos) {
-      const frac = limitar(numero(tramo?.fraccion) ?? 0, 0, 1);
-      const ancho = eje.w * frac;
-      svg.append(e("rect", {
-        class: `dia__tramo dia__tramo--${normalizarClase(tramo?.tipo)}`,
-        x, y: eje.y, width: ancho, height: eje.h, rx: 2,
-      }));
-      x += ancho;
-    }
-  } else {
-    // Sin los tramos reales no se inventa el reparto del día: se hachura.
-    svg.append(e("rect", { class: "dia__sin-dato", x: eje.x, y: eje.y, width: eje.w, height: eje.h, rx: 2, fill: "url(#hachurado)" }));
+  // Los cinco escalones. Sin los dos números, los que no se saben van
+  // hachurados: no se rellena la escala a ojo.
+  for (let n = 1; n <= PASOS_LUZ; n += 1) {
+    const conocido = ideal != null ? true : n === actual;
+    const dentro = ideal != null && actual != null && n > Math.min(actual, ideal) && n <= Math.max(actual, ideal);
+    const clases = ["escala__paso"];
+    if (dentro) clases.push("escala__paso--hueco");
+    if (!conocido) clases.push("escala__paso--incierto");
+    svg.append(e("rect", {
+      class: clases.join(" "),
+      x: x0 + paso * (n - 1) + hueco / 2,
+      y, width: paso - hueco, height: alto, rx: 1,
+      fill: conocido ? null : "url(#hachurado)",
+    }));
   }
 
-  svg.append(txt(eje.x, eje.y - 5, "amanece", "dia__hora", { "font-size": CUERPO.micro }));
-  svg.append(txt(eje.x + eje.w, eje.y - 5, "anochece", "dia__hora", { "text-anchor": "end", "font-size": CUERPO.micro }));
+  // Las dos marcas. Cada una lleva su palabra debajo: sin leer color se sabe
+  // cuál es cuál.
+  const marca = (n, clase, etiqueta, arriba) => {
+    if (n == null) return;
+    const x = centro(n);
+    svg.append(e("path", {
+      class: `escala__marca ${clase}`,
+      d: arriba ? `M${x} ${y - 2} l4 -6 h-8 Z` : `M${x} ${y + alto + 2} l4 6 h-8 Z`,
+    }));
+    svg.append(txt(x, arriba ? y - 10 : y + alto + 15, etiqueta, "escala__rotulo",
+      { "text-anchor": "middle", "font-size": CUERPO.micro }));
+  };
+  marca(ideal, "escala__marca--quiere", "quiere", true);
+  marca(actual, "escala__marca--tiene", "tiene", false);
 
-  const pie = tramos
-    ? null
-    : nivel != null
-      ? `Nivel ${formatear(nivel)} de 5 · ${NOMBRE_NIVEL.get(Math.round(nivel)) ?? "sin clasificar"}`
-      : solDirecto;
-  if (pie) svg.append(txt(60, eje.y + eje.h + 12, pie, "dia__pie", { "text-anchor": "middle", "font-size": CUERPO.micro }));
+  frag.append(svg);
 
-  return svg;
+  // El equivalente en texto: el SVG es la segunda vista, no la única.
+  const p = document.createElement("p");
+  p.className = "diagrama__equivalente";
+  if (ideal != null && actual != null) {
+    const falta = Math.abs(ideal - actual);
+    p.textContent = falta === 0
+      ? `Quiere nivel ${ideal} de 5 y lo tiene: está en su sitio.`
+      : `Quiere nivel ${ideal} de 5 y tiene ${actual}: le ${falta === 1 ? "falta un escalón" : `faltan ${falta} escalones`} de luz.`;
+  } else {
+    p.textContent = `Está en el nivel ${actual} de 5 (${NOMBRE_NIVEL.get(Math.round(actual)) ?? "sin clasificar"}). Sin dato de cuál sería el ideal.`;
+  }
+  frag.append(p);
+  return frag;
 }
 
 /** Patrón de diagonales para «no hay dato». El CSS le da el color con tokens. */
@@ -197,12 +219,6 @@ function hachurado() {
   defs.append(patron);
   return defs;
 }
-
-const normalizarClase = (v) =>
-  String(v ?? "sin-tipo").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().replace(/[^a-z0-9]+/g, "-");
-
-const texto0 = (v) => (v == null || v === "" ? null : String(v));
 
 /* ══ 3 · Rango térmico ══════════════════════════════════════════════════════
    Eje de 0 a 40 °C: lo que tolera, lo que le gusta, dónde se muere, y las dos

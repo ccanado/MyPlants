@@ -149,20 +149,51 @@ function etiquetaCorta(texto_) {
   return cabeza.length <= 20 ? cabeza : null;
 }
 
-/** Datos de la etiqueta térmica del vivero. Helecho y poto no tienen etiqueta:
- *  no es un fallo, es que no existe el original. Se distingue de «falta el dato». */
+/**
+ * La pegatina del vivero, tal y como la transcribió `botanist` en
+ * `etiqueta_vivero`. Es transcripción de una foto, no dato verificado en fuente,
+ * y la ficha lo dice.
+ *
+ * `helecho` y `poto` traen `etiqueta_vivero: null`: no es que falte el dato, es
+ * que no hay pegatina. Los dos casos se distinguen a propósito.
+ */
 function normalizarVivero(p) {
-  const precio = texto(p.precio);
-  const maceta = texto(p.maceta);
-  const fito = texto(p.fitosanitario ?? p.p_fitosanitario);
-  const ean = texto(p.ean);
+  const e = objeto(p.etiqueta_vivero);
+  const hay = p.etiqueta_vivero != null;
+
+  // La begonia no es de Projardín: trae pasaporte fitosanitario de Almería.
+  // El rótulo sale del dato, no de una constante escrita a mano.
+  const emisor = texto(e.vivero) ?? texto(e.productor);
+  const procedencia = texto(e.procedencia);
+
   return {
-    precio,
-    maceta,
-    fitosanitario: fito,
-    ean,
-    tiene: Boolean(precio || maceta || fito || ean || p.foto_etiqueta),
+    tiene: hay,
+    emisor,
+    procedencia,
+    nombre_etiqueta: texto(e.nombre_etiqueta),
+    precio: formatearEuros(e.precio_eur),
+    maceta: texto(e.maceta_texto) ?? (e.maceta_cm ? `Maceta ${e.maceta_cm} cm` : null),
+    ean: texto(e.ean),
+    codigo: texto(e.codigo_vivero),
+    fitosanitario: texto(e.fitosanitario ?? e.pasaporte_fitosanitario),
   };
+}
+
+/** 6.95 → «6,95 €». Coma decimal y espacio fino antes del símbolo, en español. */
+function formatearEuros(v) {
+  if (v == null || v === "") return null;
+  const n = Number(v);
+  if (!Number.isFinite(n)) return texto(v);
+  return `${n.toFixed(2).replace(".", ",")} €`;
+}
+
+/** `ubicacion` es un objeto, no una cadena: aplanarlo con String() daba
+ *  «[object Object]» en el pie de la foto. */
+function normalizarUbicacion(u) {
+  if (u == null) return null;
+  if (typeof u === "string") return texto(u);
+  const partes = [texto(u.habitacion), texto(u.relacion_ventana)].filter(Boolean);
+  return partes.length > 0 ? partes.join(" · ") : null;
 }
 
 /** Medidas numéricas para los diagramas. Todo opcional: sin dato, sin diagrama. */
@@ -179,10 +210,12 @@ function normalizarMedidas(p) {
     },
     luz: {
       nivel: luz.nivel ?? p.luz_nivel ?? null,
+      nivel_actual: luz.nivel_actual ?? null,
+      nivel_ideal: luz.nivel_ideal ?? null,
       tramos: Array.isArray(luz.tramos) ? luz.tramos : null,
       sol_directo: texto(luz.sol_directo),
       orientacion: texto(p.ventana ?? p.orientacion ?? luz.orientacion ?? luz.ventana),
-      distancia_m: p.distancia_ventana_m ?? luz.distancia_m ?? null,
+      distancia_m: p.distancia_ventana_m ?? luz.distancia_m ?? objeto(p.ubicacion).distancia_m ?? null,
     },
     temperatura: {
       min_tolerado: temp.min_tolerado ?? temp.min_c ?? p.temp_min ?? null,
@@ -201,8 +234,8 @@ function objeto(v) {
 }
 
 function normalizarToxicidad(t) {
-  if (t == null) return { nivel: null, texto: null, detalle: null, verificado: false };
-  if (typeof t === "string") return { nivel: null, texto: t.trim(), detalle: null, verificado: true };
+  if (t == null) return { gatos: null, perros: null, nivel: null, texto: null, detalle: null, verificado: false };
+  if (typeof t === "string") return { gatos: null, perros: null, nivel: null, texto: t.trim(), detalle: null, verificado: true };
 
   // El formato real distingue gatos de perros, y eso no se puede aplanar a un
   // "tóxica" genérico: quien tiene gato necesita leer gato.
@@ -211,6 +244,8 @@ function normalizarToxicidad(t) {
   const porEspecie = [gatos && `Gatos: ${gatos}`, perros && `Perros: ${perros}`].filter(Boolean);
 
   return {
+    gatos,
+    perros,
     nivel: texto(t.nivel ?? t.severidad ?? t.toxica) ?? gatos ?? perros,
     texto: porEspecie.length > 0 ? porEspecie.join(" · ") : texto(t.resumen ?? t.texto),
     detalle: texto(t.detalle),
@@ -268,7 +303,9 @@ function normalizarPlanta(p) {
     nivel_luz: palabraNivelLuz(p.luz_nivel ?? p.nivel_luz ?? objeto(p.luz).nivel),
     historia: texto(p.historia),
     notas_carlos: texto(p.notas_carlos ?? p.notas),
-    ubicacion: texto(p.ubicacion ?? p.donde ?? p.sala),
+    ubicacion: normalizarUbicacion(p.ubicacion ?? p.donde ?? p.sala),
+    fecha_llegada: texto(p.fecha_llegada),
+    procedencia_nota: texto(p.procedencia_nota ?? p.origen),
     vivero: normalizarVivero(p),
     medidas: normalizarMedidas(p),
     estado: normalizarEstado(p.estado),

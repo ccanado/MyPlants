@@ -248,7 +248,7 @@ todo lo demás en la página se calla para que se vea. No hay ninguna otra flori
 Sostiene el examen del brief: nadie llega a una etiqueta de vivero de Móstoles con código
 fitosanitario partiendo del prompt "haz una web de plantas".
 
-### Los cinco SVG explicativos
+### Los diagramas explicativos
 
 Regla que los gobierna a todos, y es eliminatoria: **si el SVG se puede borrar sin perder
 información, es decoración y se borra**. El dato va siempre también en texto, al lado, y el SVG
@@ -256,25 +256,22 @@ lleva `role="img"` con `<title>`/`<desc>`, o `aria-hidden="true"` cuando el text
 dice todo. Sin librerías: SVG en línea + CSS, y `@property` para animar valores numéricos.
 **Nada arranca solo y nada va en bucle infinito.**
 
-> ### ⚠ Conflicto de datos abierto — el sol de la mañana
+> ### ✔ Conflicto del sol: resuelto — y el diagrama vuelve, encima del otro
 >
-> El lead me trasladó de Carlos que **"por la mañana les da sol directo y luego se va"**, y sobre
-> eso rediseñé este diagrama como "la mañana del salón", con un tramo de sol y otro de sombra.
-> Al verificarlo contra `content/plantas.json` resulta que **`botanist` afirma lo contrario**, y no
-> de pasada: `meta.contexto` dice "ventanal grande orientado a **noreste** (luz suave de mañana,
-> **sin sol directo duro**)", y las fichas lo repiten planta por planta — *"nada de sol directo"*
-> (helecho), *"cero sol directo"* (begonia).
+> Retiré este diagrama al ver que el JSON decía "cero sol directo". **El JSON estaba caduco**: la
+> frase venía de una deducción a partir de la orientación NE, no de una observación, y `botanist`
+> la propagó porque se la dieron como contexto. Carlos, que es quien vive en la casa, dice
+> **"por la mañana da sol directo donde están, luego se va"**. Sobre ese hecho no hay fuente más
+> fuerte que el dueño mirando su propio salón.
 >
-> **No lo resuelvo yo eligiendo el que me conviene.** Ese diagrama habría dibujado un tramo de sol
-> directo en las siete fichas basándome en una frase de segunda mano, que es exactamente lo que
-> `CLAUDE.md` prohíbe. **Así que retiro mi propio cambio del turno anterior** y el diagrama vuelve
-> a la escala de luz, que se apoya en `luz.nivel` — dato que existe, está en las siete y tiene su
-> escala documentada en `meta.escalas`.
+> Retirarlo fue correcto igualmente: tenía una frase de segunda mano contra la fuente escrita del
+> proyecto, y la frase de segunda mano era la que mejoraba mi diagrama. Elegir la que me convenía
+> habría sido el error aunque hubiera acertado.
 >
-> Las dos versiones pueden ser compatibles: un ventanal NE en Madrid **sí** recibe sol directo a
-> primera hora en verano, y "sin sol directo **duro**" no es "sin sol directo". Pero eso lo cierra
-> Carlos mirando por la ventana a las nueve de la mañana, no yo deduciéndolo. Si lo confirma, el
-> tramo de sol entra como **capa adicional** sobre esta escala, no en su lugar.
+> **Los dos diagramas no compiten, se apilan:** la escala con el hueco es **el dato** —cuánta luz
+> le falta— y el tramo de sol es **el porqué** —de dónde viene la que tiene—. Van en el mismo SVG,
+> en dos filas. Y con el matiz que sigue siendo bueno: sol directo de primera hora en un NE de
+> Madrid es de incidencia baja. Es "sol directo", no "sol directo duro".
 
 **Se dibujan sobre los datos que existen de verdad.** `botanist` confirmó los ejes numéricos
 reales del JSON, y los cinco diagramas se han reescrito para usarlos. Un diagrama de centímetros
@@ -284,13 +281,13 @@ tiene nadie, y `CLAUDE.md` prohíbe rellenarlos a ojo.
 | # | SVG | Campo del JSON que consume | Qué dato explica | Animación completa | Versión reducida (obligatoria) |
 | --- | --- | --- | --- | --- | --- |
 | 1 | **El reloj de riego** — corte vertical del tiesto | `riego.dias_verano` · `riego.dias_invierno` (2–10 días) · `riego.ml_aprox` | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
-| 2 | **Lo que quiere y lo que tiene** — la escala de 1 a 5 con dos marcas | `luz.nivel_actual` · `luz.nivel_ideal` (escala documentada en `meta.escalas`) | No en qué escalón vive, sino **cuánto le falta**: los dos coleos quieren más luz de la que tienen y el poto está más oscuro de lo ideal. Cuando las dos marcas coinciden, no hay nada que hacer, y eso también es información | La marca de "lo que tiene" entra en su sitio y el hueco hasta "lo que quiere" se rellena después, 260 ms | Las dos marcas y el hueco ya dibujados, solo opacidad |
+| 2 | **Lo que quiere y lo que tiene** — dos filas: la escala de 1 a 5 con dos marcas, y debajo la tira del día | `luz.nivel_actual` · `luz.nivel_ideal` · el tramo de sol directo de la mañana | **Arriba, el dato**: cuánto le falta — los dos coleos quieren más de la que tienen, el poto está más oscuro de lo ideal, y cuando las marcas coinciden no hay nada que hacer. **Abajo, el porqué**: de dónde sale esa luz — sol directo de primera hora y después claridad sin sol | La marca de "lo que tiene" entra, el hueco hasta "lo que quiere" se rellena, y el tramo de sol se dibuja de izquierda a derecha; 260 ms + 900 ms, **una vez** | Las dos marcas, el hueco y los dos tramos ya dibujados; solo opacidad |
 | 3 | **Rango térmico** — eje de 0 a 40 °C | `temperatura.min_c` · `max_c` (7–30 °C) + las dos temperaturas reales del salón | La banda que aguanta, y **dónde cae la casa dentro de ella**: 28 °C de tope en verano (el aire acondicionado) y la de calefacción en invierno | La banda crece de `min_c` a `max_c` y los dos marcadores de casa entran después, 260 ms | Banda y marcadores ya en su sitio, solo opacidad |
 | 4 | **Curso de recuperación** — línea de tiempo | `estado.tratamiento[]` · `estado.revisar_en` · `estado.fecha_foto` | Solo en las 3 plantas tocadas: de la fecha del diagnóstico a la revisión, con cada paso y la señal observable de cada hito | La línea se traza de izquierda a derecha (`--recorrido`, 900 ms) y el hito de hoy late **una sola vez** | Línea completa desde el principio, sin latido |
 | 5 | **El calendario del domingo** — eje compartido de 2 a 10 días | `riego.dias_verano` de **las siete** | Cuál toca antes. Es la respuesta a "voy a regar y no me acuerdo de a cuál", que es el trabajo primario de la página | Los siete marcadores entran escalonados, 160 ms + `--retardo-*` | Los siete ya en su sitio, sin escalonar |
 
 Redundancia textual obligatoria, por SVG: (1) "cada 4 días en verano, cada 9 en invierno · 250 ml";
-(2) "quiere nivel 4 de 5 y tiene 3: le falta un escalón de luz"; (3) "7–30 °C · en casa,
+(2) "quiere nivel 4 de 5 y tiene 3: le falta un escalón · sol directo a primera hora, después claridad"; (3) "7–30 °C · en casa,
 28 °C tope en verano"; (4) el mismo tratamiento como `<ol>`
 numerado, del que el SVG es una segunda vista; (5) cada marcador es un `<button>` real con nombre
 accesible ("Poto — cada 7 días"), así que el diagrama es una vista redundante de una lista que ya
@@ -307,6 +304,156 @@ más importa, es legible entero sin una sola animación.
 > calendario del domingo deja de ser una comparación y pasa a ser lo que de verdad es: una sola
 > escena de riego**, siete plantas en el mismo sitio y el mismo aire. Y la luz deja de ser una
 > categoría abstracta por planta y pasa a ser una historia común, que es lo que arregla el SVG 2.
+
+### Más superficie visual — tres sistemas nuevos
+
+Carlos pide, y es su criterio nº 1: *"iconos SVG, animaciones, gráficos… todo muy útil para
+entender todo visualmente"*. La regla eliminatoria no cambia —**si se puede borrar sin perder
+información, es decoración y se borra**— pero se aplica a más superficie. Lo que sigue son tres
+sistemas nuevos, y los tres salen de material que existe, no de ganas de dibujar.
+
+#### 6. La cronología — "cuánto lleva aquí"
+
+Ocupa el hueco que dejó el plano de casa, y lo ocupa mejor de lo que lo habría ocupado el plano.
+La cronología real de las siete abarca **tres órdenes de magnitud**:
+
+| | Llegó | Lleva |
+| --- | --- | --- |
+| poto | hace más de 20 años | **décadas** |
+| begonia, helecho | 29 mayo 2026, regalo de Vanesa a Noah | **74 días** |
+| coleo pequeño, coleo grande, ficus, margarita | 11 agosto 2026, Projardín | **horas** |
+
+Décadas, semanas y horas en siete macetas del mismo salón. **Un eje lineal es inservible aquí**:
+el poto ocuparía el ancho entero y las otras seis serían un borrón en el extremo derecho. Así que
+el eje es **logarítmico**, con las marcas rotuladas —`hoy · 1 semana · 1 mes · 1 año · 10 años`—
+porque un eje logarítmico sin rótulos miente sobre las proporciones.
+
+**Qué explica, y por qué no es decoración:** que las cuatro impecables lo están, en parte, porque
+**no han tenido tiempo de que nada les salga mal**, y que el poto es el único con dos décadas de
+prueba de que ese sitio funciona. Eso reencuadra las otras fichas y no está dicho en ningún otro
+sitio. La comparación entre tres órdenes de magnitud solo es legible como gráfico; en texto son
+siete frases que nadie relaciona.
+
+- **Animación:** los siete marcadores entran de derecha a izquierda —de lo más reciente a lo más
+  antiguo—, 160 ms escalonados con `--retardo-*`. **Reducida:** los siete ya en su sitio.
+- **Texto redundante:** cada marcador es un `<button>` con nombre accesible ("Poto — más de 20 años
+  en casa"). El diagrama es una vista redundante de una lista que funciona sin él.
+- **Degradado:** sin `fecha_llegada`, ese marcador va a la zona `--trama-sin-dato` del eje, con su
+  rótulo. No se omite la planta: faltar en un censo de siete es información falsa.
+
+#### Las siete siluetas de hoja — y esto arregla un agujero mío
+
+Decidí que en la rejilla cerrada no hubiera fotos, porque una miniatura de hoja verde no
+identifica nada: todas se parecen. Eso era cierto y dejó un agujero que no había visto —**las
+siete fichas se distinguen solo por el texto del nombre**—. La idea de la silueta de línea lo
+cierra, y es mejor que la foto por la razón que la hace legítima: **la forma de la hoja es la
+clave de identificación botánica**, no un adorno con tema vegetal. Es el dato que usa cualquiera
+para saber qué planta tiene delante.
+
+Y hay un anclaje que la vuelve inevitable en este proyecto: **la etiqueta real de la begonia ya
+trae una fila de pictogramas de cuidado**. El sistema de iconos no se importa de fuera, se
+levanta del propio artefacto que es la signature.
+
+Siete dibujos, un solo trazo (`--trazo`), silueta cerrada, sin relleno, en `--texto-principal`:
+
+| Planta | Qué tiene que leerse |
+| --- | --- |
+| begonia | base **asimétrica** —las dos mitades no coinciden— y margen ondulado. Es su rasgo diagnóstico |
+| coleo (×2) | margen **serrado** profundo y punta acuminada. Los dos comparten silueta y los distingue el tamaño |
+| ficus pumila | **diminuta**, oval, nervio marcado. Dibujada a la misma escala que las demás para que se vea que es pequeña |
+| margarita | lámina **lobulada** de crisantemo |
+| poto | **acorazonada**, entera, con el ápice en punta |
+| helecho | **fronde**, no hoja: raquis con pinnas. Y ver abajo |
+
+**El helecho es el caso que hace honesto el sistema.** Está `sin identificar`: no podemos dibujar
+la hoja de una especie que no sabemos cuál es. Su silueta se dibuja **con `--trama-sin-dato`
+dentro del contorno** y `aria-label` "fronde de helecho sin identificar". El dibujo dice
+exactamente lo que sabemos —que es un helecho— y marca lo que no. Si algún día `botanist` cierra
+la identificación, se rellena. Un dibujo bonito de *Adiantum* ahí sería afirmar una especie con un
+lápiz, que es la misma mentira que rellenar un campo a ojo.
+
+- **Sitio:** en el troquel de la etiqueta, arriba a la derecha, a `--silueta-tam`. Nunca sustituye
+  al nombre: acompaña.
+- **Animación: ninguna.** Es un elemento de identificación y tiene que estar quieto para servir
+  de ancla al escanear. Aquí menos es más y no hay versión reducida porque no hay versión.
+- **`aria-hidden="true"`** cuando el nombre de la planta está al lado, que es siempre — salvo la
+  del helecho, que sí lleva `role="img"` porque su trama comunica algo que el texto no repite.
+
+#### El sistema de iconos de campo
+
+`RIEGO`, `LUZ`, `TEMPERATURA`, `SUSTRATO`, `ABONADO`, `TRASPLANTE`, `PLAGAS`, `TOXICIDAD`,
+`DIFICULTAD` son hoy rótulos en versalitas. Un icono delante los hace escaneables, que es
+literalmente el trabajo primario de la página: encontrar el campo con la regadera en la mano.
+
+**El texto no se sustituye, se acompaña.** Un icono solo obliga a aprender un vocabulario antes de
+poder usar la web, y esta se abre con prisa y una vez cada quince días. Icono + versalita.
+
+Especificación única para los nueve: caja de `--icono-tam`, trazo `--trazo`, `currentColor`,
+`stroke-linecap: round`, sin relleno, **sin detalle interior** —a 20 px el detalle es ruido—, y
+`aria-hidden="true"` siempre, porque la palabra está al lado.
+
+| Campo | Icono |
+| --- | --- |
+| riego | regadera con una gota |
+| luz | sol de medio disco con rayos cortos |
+| temperatura | termómetro de bulbo |
+| humedad | gota sola |
+| sustrato | tres bandas horizontales, la de arriba granulada |
+| abonado | cuchara de medida |
+| trasplante | maceta con flecha ascendente |
+| plagas | insecto de seis patas, muy esquemático |
+| toxicidad | triángulo de aviso |
+| dificultad | uno, dos o tres círculos rellenos según `fácil` / `media` / `exigente` |
+
+`dificultad` es el único que **codifica un valor** en vez de nombrar un campo, y por eso es el
+único que necesita la palabra al lado sí o sí: uno, dos o tres puntos no dicen cuál es cuál. La
+regla de siempre — nada depende solo de la forma, igual que nada depende solo del color.
+
+#### Nota de manejo — el aviso que sí va en el tratamiento
+
+Con savia irritante, el riesgo real no es la ingestión: es **manipular la planta** al podar o
+trasplantar. Eso no pertenece al campo de toxicidad, que describe la especie: pertenece **al paso
+del tratamiento donde toca**, junto a la acción que lo provoca.
+
+Va como una línea dentro del `<li>` del `<ol>` de tratamiento, marcada con el icono de toxicidad a
+`--icono-tam`, en `--texto-secundario`, sin relleno de color y sin borde. No es alarma: es cómo se
+hace la tarea que ya se ha decidido hacer. Ejemplo: en el trasplante de la begonia, *"la savia
+irrita piel y ojos: guantes, y no te toques la cara"*.
+
+**Y esto no reabre lo de la toxicidad.** El campo se queda como está — tinta sobre superficie
+hundida, borde, icono y la palabra `TÓXICA`— porque en este sistema **el color significa "haz algo
+hoy"** y tres fichas en rojo se comerían al helecho, que es el único que se está muriendo de
+verdad. Con Noah en veinte años no hay riesgo de ingestión accidental. Si alguien vuelve a
+empujar hacia el rojo, este párrafo es la respuesta.
+
+### La voz del panel de cuaderno: una superficie, el nombre variable
+
+El lector de esta web **no es Carlos: es Noah**, que tiene veinte años, cuida las plantas, y es el
+dueño de las dos que están tocadas. Eso pone en cuestión el rótulo fijo `CARLOS`.
+
+**Criterio: una sola superficie personal, con el nombre de quien habla tomado del dato.** El
+rótulo pasa de `CARLOS` a `nota.autor`. Ni un token nuevo, ni una superficie nueva.
+
+Por qué una y no dos:
+
+1. **El panel no codifica una persona, codifica un registro.** La itálica, el azul de bolígrafo y
+   el papel cuadriculado dicen *"esto no tiene fuente y no la necesita, lo dice alguien que estaba
+   aquí"*. Eso es igual de cierto en boca de Carlos —"el poto lleva veinte años con la familia"—
+   que de Noah —"no quiero que se me muera otra vez"—. Dos superficies para el mismo tipo de
+   enunciado obligan a aprender dos cosas para entender una.
+2. **La distinción se gasta donde hace falta.** Es el mismo principio que el color: hay una sola
+   planta crítica y por eso el rojo no se reparte. Quien abre esto va a regar, no a auditar quién
+   dijo qué; separar por autor gasta jerarquía visual en una diferencia que no cambia ninguna
+   decisión.
+3. **Con el nombre en el dato, escala gratis.** Vanesa regaló las dos plantas de mayo. Si algún
+   día habla ella, ya cabe. Con dos superficies fijas habría que inventar una tercera.
+
+Lo que sí cambia, y es más importante que el rótulo: **la segunda persona de los textos apunta a
+quien riega.** "Riega cuando…", "no te toques la cara". Eso ya era así y ahora se sabe por qué.
+
+`notas_carlos` debería llamarse `notas` y traer `{ autor, texto }`. Es cosa de `botanist`; se lo
+paso, y mientras el campo se llame como se llame, el rótulo sale del `autor` y no del nombre del
+campo.
 
 ### Estados degradados — qué se dibuja cuando falta el dato
 
