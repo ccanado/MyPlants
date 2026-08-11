@@ -66,12 +66,24 @@ de falsarse:
 
 1. **Ocupación** — ninguna ficha con más del **20 %** de sus bandas de 100 px donde el contenido
    pare antes del **62 %** del ancho. Es la métrica de «la mitad está vacía», que era el
-   hallazgo real, y no se aprueba a ojo.
-2. **Altura por severidad**, a 1280×900 — **≤ 3 pantallas (2.700 px)** en `critica` y
-   `atencion`, **≤ 2 (1.800 px)** en `sana`. Dos tramos a propósito, y es la parte que mi número
-   único hacía imposible: un solo umbral obliga a que una planta sin problema y una que se muere
-   quepan en lo mismo, y la única forma de lograrlo es recortarle contenido a la que lo necesita
-   o inventárselo a la que no.
+   hallazgo real, y no se aprueba a ojo. `ux-lead` publicó después su **algoritmo completo**
+   (`5f3282e`): referencia, ancho de caja de contenido, qué cuenta como contenido, y que las
+   bandas vacías se excluyen del numerador **y** del denominador. Mi instrumento mide esa
+   definición y no la mía, porque el objetivo es suyo.
+2. **Ninguna carrera de más de 600 px sin un ancla de navegación** — un rótulo de bloque, una
+   entrada del índice o un diagrama. Es lo que «muro de texto» significa de verdad: una ficha de
+   2.886 px con un rótulo cada 400 px se lee bien y una de 1.800 de un solo bloque no.
+3. **La columna de acción tiene que pegar de verdad.** Sin `sticky` funcionando se cumple la
+   ocupación y se pierde el motivo del reparto en dos columnas.
+
+**Y la altura en píxeles pasó a observación, no a objetivo** — porque `ux-lead` retiró también su
+propio tope de 1.800 px, en el mismo documento y por el mismo defecto que le había reprochado al
+mío: lo había derivado de «dos pantallas», un número redondo de viewports y no del contenido. Lo
+comprobó midiendo: una ficha sana borrando el bloque de causas **entero** seguiría en ~2.527 px,
+así que el tope no se alcanzaba maquetando — solo recortando contenido. Es más de lo que exige el
+proceso, y conviene que quede escrito que lo hizo sin que nadie se lo pidiera.
+
+La distinción que quiero heredar: **el objetivo manda cortar, la observación manda mirar.**
 
 Y su línea roja, que he metido como punto **bloqueante 13.14** y no como comentario: estos
 objetivos se cumplen ocupando el ancho, quitando rótulos falsos y borrando gráficos que no
@@ -216,14 +228,324 @@ correcto siendo de bandas regulares: sus categorías son ordinales, no tiempo.
 
 ---
 
-## PENDIENTE — la pasada sobre el trabajo de `builder`
+---
 
-`builder` está construyendo `js/tareas.js` y `js/cronologia.js`. **No se mide hasta que sea
-atribuible a un commit.** Queda por rellenar, con captura y dueño:
+## Veredicto de la pasada 3
 
-- §13.1–13.5 · la franja `HOY`: vencida única con `VA TARDE`, ninguna condicionada presentada
-  como debida (caso afilado `helecho`/`abonado`), fecha del navegador.
-- §13.6–13.9 · el expediente después: ocupación, altura por severidad, siete fichas, columnas.
-- §13.10–13.15 · los diagramas en normal y en `reduce`.
-- §10 con cronómetro · §11 crítica visual · la ficha del helecho para `ux-lead`.
-- La pasada contra `https://ccanado.github.io/MyPlants/` con el trabajo ya publicado.
+**Medido sobre la web publicada**, `2a35d2d @origin/main`, `index.html` sha256 `4cc2e619d8ea`.
+
+| | informe 1 | informe 2 | **informe 3** |
+| --- | --- | --- | --- |
+| Bloqueantes | 0 (+1 aparecido) | 0 | **0** |
+| Altas | 2 | 1 | **1** |
+| Medias | 6 | 0 | **1** |
+| Nodos de texto bajo AA | 0 de 844 | 0 de 1.055 | **0 de 1.280** |
+| Bordes de control < 3:1 | 8 | 0 | **0** |
+| Saltos de orden de Tab | 0 | 0 de 194 | **0 de 234** |
+
+**La ALTA que venía de los informes 1 y 2 está cerrada**, y esta vez con los objetivos de su
+dueño y medida en las siete fichas. Queda **una ALTA nueva** y **una MEDIA**, las dos de
+`movimiento` con `reduce`, y las dos aparecidas con el trabajo de hoy.
+
+---
+
+## CERRADA · El expediente ocupa el ancho, y ya no hay muros de texto
+
+Contra los objetivos de `ux-lead` (`4f1b350`, `69ce939`, `5f3282e`), las siete:
+
+| planta | sev. | ocupación (tope 20 %) | por tinta | carrera máx (tope 600) | sticky | alto (observación) |
+| --- | --- | --- | --- | --- | --- | --- |
+| begonia-elatior | atencion | **0 %** | 3 % | 552 px | ✓ `top:16px` | 4.049 px |
+| coleo-grande | atencion | **3 %** | 6 % | 379 px | ✓ | 3.375 px |
+| ficus-sunny | sana | **0 %** | 6 % | 424 px | ✓ | 3.307 px |
+| coleo-pequeno | sana | **0 %** | 3 % | 200 px | ✓ | 3.229 px |
+| poto | sana | **3 %** | 7 % | 169 px | ✓ | 3.037 px |
+| margarita | sana | **0 %** | 4 % | 326 px | ✓ | 2.845 px |
+| helecho | critica | **0 %** | 4 % | 401 px | ✓ | 2.802 px |
+
+- **Ocupación: 0–3 % contra un tope del 20 %**, viniendo de 53–65 %. Y por mi perfil de tinta
+  —el estricto— 3–7 %, así que las dos definiciones coinciden en que está cumplido. Los dos
+  números están porque divergen en un caso concreto: un `<p>` a ancho completo cuya última línea
+  llena la mitad. Hoy no se da.
+- **Carreras sin ancla: la mayor son 552 px**, por debajo de los 600, viniendo de 1.109 px. Es la
+  métrica que sustituyó a la altura y es la que de verdad medía «muro de texto».
+- **La columna de acción pega de verdad** en las siete: `div.expediente__accion` con
+  `position: sticky` y `top: 16px`. Comprobado que tiene desplazamiento y no un `top: auto`, que
+  es el `sticky` declarado que no pega y no da ningún error. Que se quede pegada al scrollear no
+  lo mido —hace falta scroll real y el runner usa viewport alto— y me abstengo en vez de firmarlo.
+- **La altura bajó sola**, sin ser objetivo: de 3.543–4.719 a 2.802–4.049. Y **el helecho pasó a
+  ser la más corta de las siete**, que es coherente con que su contenido no se tocó y lo que
+  cambió fue el reparto.
+
+**`docs/qa/p3-1280-helecho-expediente.png`** — las dos columnas, `QUÉ HAGO AHORA` a la izquierda
+con los tres diagramas y el plan de seis pasos, `EN QUÉ ME BASO` a la derecha con el diagnóstico,
+las causas plegadas con su `Por qué`, `LO QUE LA FOTO NO DICE` y la foto como prueba. El bloque
+crítico va en rosa pálido con texto oscuro: el 1,19:1 del informe 1 sigue enterrado.
+
+---
+
+## VERIFICADA · La franja `HOY` no afirma nada que el JSON no sostenga
+
+Texto literal de la franja publicada:
+
+> **HOY** · MARTES, 11 DE AGOSTO — 10 TAREAS · 3 DE 7 PIDEN MIRADA.
+> **VA TARDE** · BEGONIA ELATIOR · Cambiarla de la maceta de vivero a una de 15-17 cm con agujero
+> · Debería haberse hecho hace 57 días.
+> **HOY** · HELECHO · Cortar a ras los tocones secos de la poda — y 8 más, cada una en su ficha.
+
+Cuatro comprobaciones, y las cuatro cierran con número:
+
+1. **La fecha es la del navegador.** «martes, 11 de agosto» — y el 11/08/2026 **es** martes.
+2. **«hace 57 días» es exacto.** De `desde: 2026-06-15` a hoy hay 57 días justos.
+3. **Una sola vencida, y es la que toca.** Hay **3 rótulos «VA TARDE»** en pantalla y eso
+   *parecía* un fallo, pero al atribuirlos son **1 sola planta**: begonia-elatior, mostrada en el
+   chip, en el expediente y en la prosa. Mostrar la misma tarea en tres sitios es correcto. Mi
+   test lo dejó como **indicio y no como fallo** precisamente para no mandar a nadie a arreglar
+   esto, y luego lo cerré haciéndole contar plantas distintas en vez de rótulos.
+4. **Las condicionadas están excluidas, y lo demuestra la aritmética.** La franja declara
+   **10 tareas**:
+
+   ```
+   1 vencida + 4 de hoy + 5 de temporada sin condición   = 10   ← lo que dice la página
+   … + las 8 condicionadas                               = 18   ← lo que diría el defecto
+   ```
+
+   Un solo entero decide si el render filtra por condición o solo por mes. **Filtra bien.** Y con
+   eso queda cerrado el caso afilado: **`helecho`/`abonado` no aparece.** Es `tipo: temporada` con
+   `meses: [4,5,6,7,8]`, agosto entra, el calendario cuadra perfectamente — y su `condicion` pide
+   3 o 4 frondes sanas cuando al helecho le queda menos del 5 % de masa foliar. Abonarlo le
+   quemaría las raíces. Es el único punto de esta web donde un fallo de filtrado **daña la
+   planta**, y está bien resuelto.
+
+### NO VERIFICADO (no «aprobado») · 13.1, el riego sin ancla
+
+El punto que vigila que la página no diga «hoy le toca» para un riego que nadie marcó **se ha
+quedado sin sujeto**: a mediodía helecho, begonia y poto tenían `ancla: null`, y Carlos dio las
+fechas (`3a5b2da`), así que las siete están en `calculable: true`. No hay ninguna planta contra la
+que probarlo, y no existe ningún «hoy toca regar» en la página.
+
+**Va como no verificado a propósito.** La comprobación sigue viva y saltará sola si alguna planta
+vuelve a quedarse sin ancla; decir «cumple» cuando no hay caso que lo pruebe sería exactamente lo
+que denuncia este informe. `tests/autoprueba.js` lo declara `NO INYECTADO` en vez de contarlo.
+
+---
+
+## VERIFICADO · La cronología tiene un eje logarítmico de verdad
+
+`ux-lead` sostenía que este diagrama era sólido, y lo es. Medido con la regresión, no con la
+vista:
+
+```
+marcas del eje    1 semana → 388 px    1 mes → 518 px    1 año → 755 px    10 años → 949 px
+R² contra log(valor)   0,9993     ← gana
+R² contra el valor     0,7102
+R² contra el índice    0,9885
+veredicto              logarítmico
+```
+
+Y lleva la nota que hace legible la escala, que es la mitad del trabajo: *«El eje es logarítmico:
+cada marca es diez veces la anterior. Sin eso, el poto ocuparía el ancho entero y las cuatro de
+agosto serían un solo punto.»* Marcas rotuladas `HOY · 1 SEMANA · 1 MES · 1 AÑO · 10 AÑOS`, una
+pista por planta —así los cuatro del día 0 no se apilan— y el valor en texto a la derecha.
+
+Comprobado además que **«ayer» es correcto** y no un desfase: `fecha_llegada: 2026-08-10` y
+`dias_en_casa: 1` en los cuatro. Iba a levantarlo como fallo y lo verifiqué antes.
+
+**Los cinco diagramas: 0 fallos en normal y 0 en `reduce`.** Ninguno se queda invisible con
+`reduce`, que era el fallo silencioso que buscaba: `animation: none` sin fijar el estado final.
+
+---
+
+## ALTA-2 (abierta) · Con `reduce`, abrir una ficha lanza dos animaciones de JS
+
+**Dueño: `builder`.** Reproducible sobre la web publicada:
+
+```
+python3 tests/runner.py --url https://ccanado.github.io/MyPlants/ \
+    --abrir 0 --reduce --alto 3200 --test movimiento
+```
+
+```
+bloqueante  con reduce sigue corriendo una animación en article#helecho   — WAAPI, 1 ms
+bloqueante  con reduce sigue corriendo una animación en div.despegada     — «aparecer», 120 ms
+alta        con reduce, div.despegada anima «aparecer» 0,12 s (máx. tolerable 0,05 s)
+```
+
+**`prefers-reduced-motion` es una media query de CSS y no toca `element.animate()`.** El bloque de
+`css/app.css` está bien escrito y no alcanza a las animaciones creadas desde JS: hay que consultar
+`matchMedia('(prefers-reduced-motion: reduce)').matches` antes de llamar a `.animate()`.
+
+Dos matices, porque las dos no son lo mismo:
+
+- **La de `article#helecho` dura 1 ms.** Eso no es respetar `reduce`, es el atajo que **parpadea**:
+  el elemento salta del estado inicial al final en un frame. Si la intención era anularla con
+  `reduce`, el arreglo es no lanzarla.
+- **La de `.despegada` son 120 ms de opacidad**, y `ux-lead` dejó escrito que del despegue se
+  conserva a propósito solo la opacidad, «que orienta sin desplazar». **Estoy de acuerdo con esa
+  decisión**: una transición de opacidad sola no dispara vestibular. Mi umbral está en 50 ms y
+  `--dur-corta` son 120. Le he preguntado a `builder` si mantiene el criterio; **si lo mantiene,
+  esto baja a criterio aceptado y no a fallo**, igual que hice en el informe 2 con el orden de Tab
+  en los bloques multicolumna. Lo dejo como **MEDIA-1** a la espera de su respuesta, no como alta.
+
+Por qué no salió antes: sin abrir ficha, `movimiento --reduce` da **26 efectos y 0 fallos**. Las
+dos animaciones se crean al desplegar, así que solo aparecen con `--abrir`.
+
+---
+
+## Batería completa sobre la web publicada
+
+```
+estructura   0 fallos · 12 img · 7 article · 234 enfocables
+contraste    1.280 nodos · 0 bajo AA · 0 bordes < 3:1 · 24 no medibles
+foco         234 enfocables · 0 saltos · 2 bloques multicolumna (abstención) · 0 problemas
+movimiento   26 efectos · 0 fallos (portada) · 3 al abrir ficha con reduce → ALTA-2
+terceros     31 recursos, 2.222 KB · 0 externos · 69 <a> externos legítimos
+consola      0 errores, 0 warnings, 0 recursos caídos
+
+check-tokens · check-estatico · validar-plantas · peso-assets · coherencia   los cinco en verde
+```
+
+`coherencia.py` incluye ya la regla nueva de `ux-lead`: **toda ficha `sana` lleva al menos una
+`afirmacion`**. Verde en las cuatro. Es el defecto simétrico del rótulo `CAUSAS PROBABLES` — aquel
+manufacturaba contenido, y una ficha sana que solo enseña riesgos manufactura alarma.
+
+---
+
+## §10 · El cronómetro
+
+**10.1 — cuánto regar una planta concreta, en menos de 10 s.** Sobre `p3-1280-portada.png`, sin
+scroll: el buscador está arriba a la derecha con su rótulo `BUSCAR PLANTA, SALA O SÍNTOMA` y el
+placeholder *«poto, salón, hojas amarillas…»*, y la cronología nombra las siete. La ruta es
+escribir el nombre → desplegar → `RIEGO` es el **primer** campo de `QUÉ HAGO AHORA`, con el reloj
+de riego y el volumen en ml. **Tres acciones y el dato es el primero de la columna: cumple.**
+
+**10.2 — de un vistazo, cuáles están mal.** La franja dice `3 DE 7 PIDEN MIRADA` con los tres
+chips priorizados (`!! Helecho`, `! Begonia Elatior`, `! Coleo grande`) y el filtro `CÓMO VA` da
+`Crítica 1 · Atención 2 · Sana 4`. **Cumple, y sin abrir nada.**
+
+**10.5 — los `null` se muestran, no se rellenan.** El helecho: `nombre_cientifico` en `null` y la
+ficha dice *«hace falta una fronde desarrollada, fotografiada de día, del haz y del envés»* en vez
+de inventar la especie. `SIN ETIQUETA DE VIVERO` en helecho y poto. **Cumple.**
+
+**10.6 — toxicidad.** Sin cambios respecto al informe 2, donde se verificó en las siete: cero
+elementos legibles como aprobación y la frase «No significa que sea segura» literal en las cuatro
+sin datos.
+
+---
+
+## §11 · Crítica visual, sin cortarme
+
+El criterio de éxito nº1 es que sea **visualmente excelente**, y esto es lo que no automatiza
+ningún script.
+
+**Lo que está bien, y no por defecto:**
+
+- **La paleta no es ninguno de los tres clichés del brief.** No es verde salvia sobre blanco, no
+  es crema con serif y terracota de acento, no es casi-negro con verde ácido. Es **terracota
+  saturado a sangre** —el barro de la maceta, no un acento— con las fichas como etiquetas de
+  vivero en papel claro encima. La decisión de que el fondo sea el color de la maceta y no un
+  neutro es la que salva la página de parecer generada.
+- **La signature se puede nombrar, que es la prueba del 11.5: la etiqueta de vivero.** Código de
+  barras, `Cód. 2040 1849`, precio, calibre, número de fitosanitario. Y lo que la hace buena es
+  que **es honesta**: las dos plantas sin pegatina dicen `SIN ETIQUETA DE VIVERO / PROCEDENCIA SIN
+  REGISTRAR` en vez de llevar un precio inventado. La signature no es decoración, es un dato.
+- **La cronología logarítmica es lo mejor de la portada.** Enseña de un golpe algo que ninguna
+  ficha cuenta —que en esta casa conviven una planta de veinte años y cuatro de ayer— y lo hace
+  con la representación correcta en vez de la fácil. Con su nota explicando la escala. Es un
+  gráfico que informa, no que decora, y son pocos.
+- **La jerarquía tipográfica es una decisión.** Display condensada en mayúsculas para los
+  rótulos, monoespaciada para todo lo que es dato (ml, °C, cm, €, EAN, fechas), y serif para la
+  prosa del diagnóstico. Tres voces con tres trabajos. Lo de meter la cifra en monoespaciada es lo
+  que le da el aire de cuaderno de campo y no de landing.
+- **El expediente a dos columnas con los rótulos `QUÉ HAGO AHORA` / `EN QUÉ ME BASO`** es la mejor
+  decisión de estructura de la sesión. Separa la acción de la justificación con palabras del
+  dominio y no con jerga («resumen»/«detalle»), y hace que la columna izquierda se pueda leer sola
+  cuando llevas la regadera en la mano.
+
+**Lo que criticaría, en orden de cuánto me molesta:**
+
+1. **La franja `HOY` está tipográficamente plana para ser lo primero que se lee.** `10 TAREAS · 3
+   DE 7 PIDEN MIRADA` compite en peso con `VA TARDE` y con el nombre de la planta, y los tres van
+   en tamaños parecidos. Lo que quiero saber al llegar es *qué hago hoy*, y ahora mismo hay que
+   leer tres líneas para extraer «cambia la begonia de maceta». La cifra `57` de «hace 57 días»
+   debería tener el peso que tiene el dato, no el del cuerpo de texto.
+2. **`ayer` cuatro veces seguidas en la cronología pide una agrupación.** Cuatro filas con el
+   mismo marcador en la misma x y la misma palabra a la derecha son cuatro filas diciendo lo
+   mismo. Es correcto y es redundante; agrupar las cuatro en una banda («las cuatro de agosto»)
+   contaría lo mismo con una cuarta parte de la tinta y dejaría el contraste real —20 años contra
+   un día— más limpio.
+3. **A 1280 el buscador queda visualmente descolgado.** Está en una tarjeta propia arriba a la
+   derecha, alineada con el título pero sin relación de ritmo con él ni con la franja; parece
+   pegada después. Es el único elemento de la portada que no participa de la retícula.
+4. **La cronología ocupa una tarjeta enorme para siete filas de dato.** Mucho aire vertical entre
+   pistas para lo poco que hay en cada una. Con las cuatro de agosto agrupadas y las pistas más
+   apretadas, el mismo gráfico cabría en la mitad y ganaría densidad.
+
+**11.9 — a 320 px sigue siendo bonita**, no solo funcional: la etiqueta aguanta porque su diseño
+es vertical de origen. Sin scroll horizontal (`p3-320-portada.png`).
+
+**Veredicto de §11:** esto **no** parece hecho por una IA, y la razón concreta es que las
+decisiones que más se notan —el barro a sangre, la pegatina de vivero, el eje logarítmico, la
+monoespaciada para las cifras— salen del mundo del sujeto y no del catálogo de defaults. Lo que le
+falta para «excelente» sin matices es una vuelta de jerarquía en la franja `HOY` y densificar la
+cronología. Las dos son de `ux-lead` y ninguna es bloqueante.
+
+---
+
+## Lo que sigue sin poder cerrarse, y lo digo en vez de firmarlo
+
+1. **Escape sobre una ficha desplegada y el retorno de foco al disparador** (2.6). Necesita Tab y
+   Escape reales; el runner no teclea. Tercer informe con esto abierto.
+2. **Que la columna `sticky` se quede pegada al scrollear.** Compruebo que la propiedad está y que
+   tiene desplazamiento —lo que descarta el `top: auto` que no pega— pero no el comportamiento,
+   porque mido con viewport alto y sin scroll.
+3. **Orden de Tab dentro de los 2 bloques multicolumna.** Mi test se abstiene a propósito: no
+   puede decidir si el orden correcto es por filas o por columnas. Criterio de `builder` aceptado.
+4. **FOUT en carga fría.** Medido siempre con fuentes cacheadas.
+5. **El sello remoto solo huellea `index.html`.** Si cambian `css/`, `js/` o el JSON sin tocar el
+   HTML, el sha256 no se mueve. En esta pasada el `index.html` publicado fue el mismo
+   (`4cc2e619d8ea`) en todas las mediciones, así que son comparables entre sí — pero la garantía
+   es más débil de lo que parece y conviene arreglarla antes de apoyarse en ella otra vez.
+
+---
+
+## La nota de método que quiero que sobreviva a la sesión
+
+Esta pasada me ha cazado **cuatro falsos positivos propios**, todos antes de mandárselos a nadie,
+y los cuatro del mismo tronco: **generalizar un instrumento sin generalizar sus criterios.**
+
+| # | qué «detectó» | qué era en realidad |
+| --- | --- | --- |
+| 1 | el eje de recuperación codifica el índice | `01/09/2026` parseado como el valor `1` |
+| 2 | ídem, otra vez, tras el primer arreglo | `+21 días` colado entre los pasos `1…6` |
+| 3 | la cronología no se ajusta a nada (R² 0,18) | metí los nombres de planta como marcas de eje |
+| 4 | la cronología es un SVG sin `role`/`<title>` | es un `<div>`: le aplicaba la regla de SVG |
+
+El nº1 es el que da más miedo, y no por el bug: **coincidía con una conclusión que `ux-lead` había
+alcanzado a mano, así que llegó disfrazado de verificación cruzada independiente.** Estuve a punto
+de escribirlo como una victoria del instrumento. **Un acierto por el motivo equivocado es un fallo
+que todavía no se ha manifestado**, y el sesgo de confirmación es más peligroso en QA que un bug,
+porque el bug no te felicita.
+
+El nº2 enseña la corrección de la corrección: arreglé el caso (las fechas) en vez del criterio, y
+el mismo diagrama volvió a colarse por otra puerta. La regla buena no era «rechaza fechas» sino
+«si la mayoría de las marcas son ordinales consecutivos, esto no es una escala».
+
+Y el nº3 y el nº4 vienen de haber ampliado el auditor a diagramas HTML sin preguntarme qué de lo
+que medía seguía aplicando. La cronología ni siquiera se veía al principio: informaba de 28
+diagramas y de ella **nada, ni fallo ni abstención**. Silencio, que es el peor resultado posible —
+un instrumento que no encuentra algo y no dice que no lo encuentra.
+
+De ahí `tests/autoprueba.js`, que existe por el error simétrico del que esta sesión no había
+hablado. Los cinco falsos positivos de ayer eran de tests que opinaban sin poder saber; el falso
+**negativo** es un test en verde que no mira nada, y no deja rastro en ninguna parte. **Un test que
+nunca se ha visto fallar no está verificado: es una intención.**
+
+Y me lo demostró a mí misma: cuando Carlos dio las fechas de riego, mi comprobación 13.1 se quedó
+sin sujeto y la autoprueba siguió diciendo «4 defectos inyectados» inyectando 3. En verde y sin
+decirlo. Ahora elige la planta leyendo el JSON y declara `NO INYECTADO` cuando no hay caso.
+
+**La formulación del informe 2 sigue siendo la buena, y esta vez me la he aplicado a mí:** el coste
+de un falso positivo en un equipo de agentes no es el de quien lo emite, es el del teammate al que
+manda a arreglar lo que no está roto. El 2.400 px lo pagó `builder` durante dos pasadas. Los
+cuatro de hoy no los ha pagado nadie, y esa es toda la diferencia.

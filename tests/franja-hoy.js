@@ -273,11 +273,45 @@
       rotulos_va_tarde_encontrados: rotuloVaTarde.length,
     });
     if (rotuloVaTarde.length) {
+      /* Contar rótulos y compararlos con el número de tareas vencidas es una trampa:
+         **la misma tarea puede aparecer en varios sitios** —el chip de la franja, la
+         lista del expediente y la prosa del diagnóstico— y eso es correcto, no son
+         tres invenciones. Lo que hay que contar son **plantas distintas**: si los tres
+         rótulos hablan de la begonia, hay una vencida mostrada tres veces; si hablan
+         de tres plantas, dos se las ha inventado el render.
+
+         Sin esta distinción el indicio decía «3 rótulos y el JSON justifica 1», que
+         suena a fallo y no lo es. Es exactamente la clase de número que manda a un
+         teammate a arreglar algo que está bien. */
+      const porPlanta = {};
+      for (const el of rotuloVaTarde) {
+        const id = plantaDe(el) || '(no atribuible)';
+        porPlanta[id] = (porPlanta[id] || 0) + 1;
+      }
+      const plantasVistas = Object.keys(porPlanta).filter((k) => k !== '(no atribuible)');
+      const esperadas = esperadasVencidas.map((v) => v.planta);
+      const sobran = plantasVistas.filter((p) => !esperadas.includes(p));
+      const faltan = esperadas.filter((p) => !plantasVistas.includes(p));
+
+      if (sobran.length) {
+        fallos.push({
+          caso: 'vencida inventada',
+          que: 'hay rótulo «VA TARDE» sobre plantas que el JSON no da por vencidas',
+          plantas_de_mas: sobran,
+          esperadas,
+          gravedad: 'alta', dueño: 'builder',
+        });
+      }
       indicios.push({
         caso: 'vencidas por rótulo',
-        que: `${rotuloVaTarde.length} rótulo(s) «VA TARDE» en pantalla; el JSON solo justifica ${esperadasVencidas.length}`,
-        coincide: rotuloVaTarde.length === esperadasVencidas.length,
-        textos: rotuloVaTarde.slice(0, 6).map((el) => textoDe(el.parentElement || el).slice(0, 90)),
+        que: `${rotuloVaTarde.length} rótulo(s) «VA TARDE» sobre ` +
+             `${plantasVistas.length} planta(s) distinta(s); el JSON justifica ${esperadas.length}`,
+        por_planta: porPlanta,
+        coincide: sobran.length === 0 && faltan.length === 0,
+        lectura: sobran.length === 0 && faltan.length === 0
+          ? 'la misma tarea mostrada en varios sitios (chip, expediente, prosa), que es correcto'
+          : 'revisar: las plantas no cuadran',
+        no_atribuibles: porPlanta['(no atribuible)'] || 0,
       });
     }
   }
@@ -355,6 +389,57 @@
     });
   }
 
+  /* ── 6b. el recuento de la franja, que cierra por aritmética lo que no
+           se puede cerrar por atributo ──────────────────────────────────────── */
+
+  /* Sin `data-tarea` no puedo señalar qué tarea concreta se presenta como debida. Pero
+     si la franja **declara un total** («10 tareas»), ese número sí se puede falsar, y
+     resulta que distingue exactamente el caso que importa:
+
+         vencidas (1) + de hoy (4) + temporada sin condición (5)  = 10   ✓ correcto
+         … + las 8 condicionadas                                  = 18   ✗ el defecto
+
+     O sea que un solo entero decide si el render filtra por condición o solo por mes.
+     Es el caso `helecho`/`abonado`: agosto entra en sus meses, así que un filtro por
+     calendario lo colaría, y abonar un helecho sin hoja quema raíces.
+
+     Preferible al atributo no, pero mucho preferible a abstenerse: la evidencia
+     estaba en la pantalla y solo hacía falta sumar. */
+  let recuento = null;
+  if (franja) {
+    const m = textoDe(franja).match(/(\d+)\s+tareas?\b/i);
+    if (m) {
+      const declarado = Number(m[1]);
+      const debidas = esperado.vencidas.length + esperado.hoy.length +
+                      esperado.temporada_sin_condicion.length;
+      const conCondicionadas = debidas + esperado.condicionadas.length;
+      recuento = {
+        declarado_en_pantalla: declarado,
+        esperado_sin_condicionadas: debidas,
+        seria_con_condicionadas: conCondicionadas,
+        cuadra: declarado === debidas,
+      };
+      if (declarado === conCondicionadas && conCondicionadas !== debidas) {
+        fallos.push({
+          caso: 'condicionada presentada como debida',
+          que: 'el total de la franja coincide con incluir las tareas condicionadas: el render ' +
+               'filtra por calendario y no por condición',
+          declarado: declarado, sin_condicionadas: debidas,
+          el_caso_afilado: 'helecho/abonado — agosto entra en meses [4,5,6,7,8] pero la condición ' +
+                           'exige 3-4 frondes sanas, y el helecho está sin hoja: abonarlo quema raíces',
+          gravedad: 'bloqueante', dueño: 'builder',
+        });
+      } else if (declarado !== debidas) {
+        indicios.push({
+          caso: 'el total de la franja no cuadra con ninguna de las dos cuentas',
+          declarado, sin_condicionadas: debidas, con_condicionadas: conCondicionadas,
+          por_que_es_indicio: 'puede contar otra cosa (p. ej. incluir próximas). No firmo un ' +
+                              'fallo sin saber qué está contando',
+        });
+      }
+    }
+  }
+
   /* ── 7. la fecha es la del navegador, no una constante ──────────────────── */
 
   let fechaEnPantalla = null;
@@ -392,6 +477,7 @@
     ok: fallos.length === 0,
     resumen:
       `hoy ${hoyISO} · ${fallos.length} fallo(s), ${indicios.length} indicio(s), ` +
+      (recuento ? `recuento ${recuento.declarado_en_pantalla} ${recuento.cuadra ? '✓ cuadra' : '✗ NO cuadra'} (sería ${recuento.seria_con_condicionadas} con las condicionadas) · ` : '') +
       `${abstenciones.length} abstención(es) · ` +
       (conAtributos ? `${items.length} tarea(s) con data-tarea` : 'sin data-tarea: medido a medias'),
     hoy: hoyISO,
@@ -399,7 +485,13 @@
     franja_presente: !!franja,
     franja_visible: visible(franja),
     fecha_en_pantalla: fechaEnPantalla,
+    recuento_de_la_franja: recuento,
     tareas_en_el_dom: items.length,
+    /* El texto literal de la franja va en el informe. Sin `data-tarea` el test se
+       abstiene en varios puntos, y una abstención sin la evidencia al lado obliga a
+       quien lee el informe a volver a abrir el navegador. Con el texto delante, un
+       humano cierra en diez segundos lo que el test no puede firmar. */
+    franja_texto: textoDe(franja).slice(0, 1200),
     esperado_del_json: {
       vencidas: esperado.vencidas.map((t) => t.planta + '/' + t.tarea),
       hoy: esperado.hoy.map((t) => t.planta + '/' + t.tarea),

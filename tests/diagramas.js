@@ -84,6 +84,21 @@
     ? 'la ficha desplegada (' + ((fichaAbierta.closest('article') || {}).id || '?') + ')'
     : 'todo el documento (ninguna ficha desplegada)';
 
+  /* Diagramas dibujados con HTML+CSS, que un buscador de `<svg>` no ve. Se identifican
+     por clase y se exige que tengan estructura de eje (marcas o tics), para no contar
+     cualquier contenedor con un nombre sugestivo. */
+  const htmlDiagramas = [...raiz.querySelectorAll(
+    '[class*="cronologia"], [class*="crono"], [class*="linea-tiempo"], [data-diagrama]')]
+    .filter((el) => el.tagName.toLowerCase() !== 'svg')
+    .filter((el) => !el.parentElement || !el.parentElement.closest('[class*="cronologia"]'))
+    .filter((el) => el.querySelectorAll('[class*="tic"], [class*="marca"], [class*="pista"]').length >= 2)
+    .filter((el) => {
+      const c = getComputedStyle(el);
+      if (c.display === 'none' || c.visibility === 'hidden') return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 60 && r.height > 20;
+    });
+
   const svgs = [...raiz.querySelectorAll('svg')].filter((s) => {
     if (s.closest('svg') !== s) return false;             // no anidados
     const r = s.getBoundingClientRect();
@@ -93,16 +108,20 @@
     return s.querySelectorAll('*').length >= 6;
   });
 
-  if (!svgs.length) {
+  const graficos = [...svgs, ...htmlDiagramas];
+
+  if (!graficos.length) {
     const informe = {
       ok: true, no_medible: true, modo,
-      motivo: 'no hay ningún SVG grande en el DOM. ¿Se lanzó con --abrir 0?',
+      motivo: 'no hay ningún diagrama (ni SVG ni HTML) en el DOM. ¿Se lanzó con --abrir 0?',
       resumen: 'no medible: sin diagramas en pantalla',
     };
     console.log('· diagramas — no medible:', informe.motivo);
     window.qaDiagramas = () => informe;
     return informe;
   }
+
+  const esSVGDiagrama = (el) => el.tagName.toLowerCase() === 'svg';
 
   const familia = (s) => {
     const clases = norm(s.getAttribute('class') || '') + ' ' +
@@ -122,10 +141,13 @@
 
   const inventario = [];
 
-  for (const s of svgs) {
+  for (const s of graficos) {
     const f = familia(s);
     const titulo = texto(s.querySelector('title'));
-    const rotulos = [...s.querySelectorAll('text')].map(texto).filter(Boolean);
+    const rotulos = (esSVGDiagrama(s)
+      ? [...s.querySelectorAll('text')]
+      : [...s.querySelectorAll('[class*="tic"], [class*="nombre"], [class*="valor"]')]
+      ).map(texto).filter(Boolean);
 
     // Equivalente en texto: el propio title cuenta, los <text> internos cuentan, y
     // un párrafo hermano cuenta. Si no hay ninguno, el dato vive solo en el dibujo.
@@ -147,7 +169,15 @@
     }
 
     const decorativo = s.getAttribute('aria-hidden') === 'true';
-    if (!decorativo && (!s.getAttribute('role') || !titulo)) {
+    /* El punto 6.5 es una regla de **SVG**: `role="img"` + `<title>` dentro. Aplicarla a
+       un diagrama hecho con HTML no tiene sentido y era un falso positivo propio — la
+       cronología es un `<div>` con `cronologia__tic`, así que `querySelector('title')`
+       no devuelve nada y el test la acusaba de no tener título. Su accesibilidad se
+       resuelve de otra forma y ya la tiene: la `<section>` va con `aria-labelledby`, y
+       cada fila es texto real («Poto, más de 20 años»), no un gráfico que haya que
+       describir. Cuarta corrección de este auditor y todas de la misma raíz:
+       generalizarlo a más diagramas sin generalizar sus criterios. */
+    if (esSVGDiagrama(s) && !decorativo && (!s.getAttribute('role') || !titulo)) {
       fallos.push({
         caso: 'SVG informativo sin role/title (6.5)',
         diagrama: f,
@@ -248,7 +278,40 @@
   };
 
   function auditarEje(s, f) {
-    const rotulos = [...s.querySelectorAll('text')];
+    /* No todo diagrama es un SVG. La cronología está dibujada con HTML y CSS
+       —`cronologia__pista`, `cronologia__marca`, `cronologia__tic`— y mi primera
+       versión, que buscaba `<text>`, no la veía: informaba de 28 diagramas (7×4, los
+       de las fichas) y de la cronología nada, ni como fallo ni como abstención.
+       Silencio, que es el peor resultado posible — un instrumento que no encuentra
+       algo y no dice que no lo encuentra. */
+    const esSVG = s.tagName.toLowerCase() === 'svg';
+    let rotulos;
+    let fuenteRotulos;
+    if (esSVG) {
+      rotulos = [...s.querySelectorAll('text')];
+      fuenteRotulos = '<text> del SVG';
+    } else {
+      /* **Solo las marcas del eje.** Tercera vez que este auditor se contamina por la
+         misma razón, así que aquí va explícito: en la cronología conviven
+         `cronologia__tic` (las marcas del eje: «1 semana», «1 mes», «1 año»…) con
+         `cronologia__nombre` y `cronologia__valor` (el nombre de cada planta y su
+         antigüedad). Los segundos NO están en el eje: están en la posición de su
+         marcador, y varios comparten la misma x. Metiéndolos en la regresión salían
+         diez «marcas» con tres pares en la misma coordenada, R² 0,18 contra log, y el
+         veredicto «no se ajusta a nada» — que habría entrado en el informe como un
+         defecto del diagrama cuando era un defecto de mi selector.
+         Si hay clase de tic explícita, se usa **esa y nada más**. */
+      const tics = [...s.querySelectorAll('[class*="tic"]')]
+        .filter((el) => (el.textContent || '').trim());
+      if (tics.length >= 3) {
+        rotulos = tics;
+        fuenteRotulos = 'elementos con clase *tic* (marcas del eje)';
+      } else {
+        rotulos = [...s.querySelectorAll('[class*="rotulo"], [class*="marca"], [class*="valor"]')]
+          .filter((el) => (el.textContent || '').trim());
+        fuenteRotulos = 'sin clase de tic: rótulos/marcas/valores, mezcla posible';
+      }
+    }
     const marcas = [];
     let fuente = null;
     for (const t of rotulos) {
@@ -270,7 +333,8 @@
     if (marcas.length < 3) {
       return { diagrama: f, medible: false, marcas_con_valor: marcas.length,
                marcas_graficas: marcasGraficas,
-               motivo: marcas.length === 0
+               fuente_de_los_rotulos: fuenteRotulos,
+        motivo: marcas.length === 0
                  ? 'ningún rótulo con valor legible: puede ser categórico (ordinal), y entonces está bien'
                  : 'solo ' + marcas.length + ' marca(s) con valor; hacen falta 3 para regresar' };
     }
@@ -285,19 +349,50 @@
        semana / 3 semanas / 2-3 meses) no son regulares, y eso **no está en ningún
        `<text>` del SVG**: no es medible desde aquí, y decir lo contrario sería inventar.
        Lo encontró `ux-lead` leyendo el contenido, que es donde estaba el dato. */
-    const enteros = marcas.map((m) => m.valor);
-    const ordenados = enteros.slice().sort((a, b) => a - b);
-    const esSecuencia = ordenados.length >= 3 &&
-      ordenados.every((v, i) => Number.isInteger(v) && v === ordenados[0] + i) &&
-      ordenados[0] >= 0 && ordenados[ordenados.length - 1] <= 30;
-    if (esSecuencia) {
+    /* La detección tiene que aguantar rótulos MEZCLADOS, y esto lo aprendí fallando
+       dos veces con el mismo diagrama. La primera versión se contaminó con una fecha
+       (`01/09/2026` → 1). Arreglé eso exigiendo que **todos** los valores fueran una
+       tirada consecutiva… y el mismo diagrama volvió a colarse, ahora con
+       `'+21 días'` (→ 1.814.400 s) entre los pasos `1…6`: un solo valor fuera de la
+       tirada rompía la condición «todos», la regresión corría sobre datos sucios y
+       salía otra vez «índice» con R² 0,98.
+
+       Dos veces el mismo falso positivo por endurecer el caso concreto en vez del
+       criterio. Así que ahora la regla es por **mayoría**: si la tirada ordinal
+       consecutiva más larga cubre la mitad o más de las marcas, el eje es ordinal y se
+       abstiene, listando los rótulos que sobran para que se puedan mirar. Un diagrama
+       de pasos numerados con una anotación de duración encima sigue siendo un diagrama
+       de pasos numerados. */
+    const ordenados = marcas.map((m) => m.valor).slice().sort((a, b) => a - b);
+    let mejorTirada = [];
+    for (let i = 0; i < ordenados.length; i++) {
+      const tirada = [ordenados[i]];
+      for (let j = i + 1; j < ordenados.length; j++) {
+        if (ordenados[j] === tirada[tirada.length - 1] + 1) tirada.push(ordenados[j]);
+      }
+      if (tirada.length > mejorTirada.length) mejorTirada = tirada;
+    }
+    const esOrdinal = mejorTirada.length >= 3 &&
+      mejorTirada.length >= marcas.length / 2 &&
+      mejorTirada.every((v) => Number.isInteger(v)) &&
+      mejorTirada[0] >= 0 && mejorTirada[mejorTirada.length - 1] <= 40;
+    if (esOrdinal) {
+      const sobrantes = marcas
+        .filter((m) => !mejorTirada.includes(m.valor))
+        .map((m) => m.rotulo);
       return {
         diagrama: f, medible: false, marcas_con_valor: marcas.length,
         marcas_graficas: marcasGraficas,
-        motivo: 'los rótulos son ordinales consecutivos (' + ordenados[0] + '…' +
-                ordenados[ordenados.length - 1] + '): son números de paso, no valores de ' +
-                'una escala, y espaciarlos regularmente es correcto. Si lo que representan ' +
-                'son duraciones desiguales, el dato no está en el SVG y hay que leerlo en el contenido',
+        tirada_ordinal: mejorTirada[0] + '…' + mejorTirada[mejorTirada.length - 1],
+        rotulos_fuera_de_la_tirada: sobrantes,
+        motivo: 'los rótulos son ordinales consecutivos (' + mejorTirada[0] + '…' +
+                mejorTirada[mejorTirada.length - 1] + ' en ' + mejorTirada.length + ' de ' +
+                marcas.length + ' marcas): son números de paso, no valores de una escala, y ' +
+                'espaciarlos regularmente es correcto' +
+                (sobrantes.length ? '. Fuera de la tirada: ' + sobrantes.join(', ') +
+                 ' — anotaciones, no marcas de eje' : '') +
+                '. Si lo que representan son duraciones desiguales, el dato no está en el ' +
+                'dibujo y hay que leerlo en el contenido',
       };
     }
 
@@ -331,6 +426,7 @@
     return {
       diagrama: f, medible: true, eje: horizontal ? 'horizontal' : 'vertical',
       fuente_del_valor: fuente,
+      fuente_de_los_rotulos: fuenteRotulos,
       marcas: orden.map((m) => ({ rotulo: m.rotulo, valor: m.valor, px: Math.round(horizontal ? m.x : m.y) })),
       marcas_graficas: marcasGraficas,
       r2_log: Number(rLog.toFixed(4)),
@@ -341,7 +437,7 @@
     };
   }
 
-  const ejes = svgs.map((s) => auditarEje(s, familia(s)));
+  const ejes = graficos.map((s) => auditarEje(s, familia(s)));
 
   for (const e of ejes) {
     if (!e.medible) {
@@ -387,13 +483,13 @@
   }
 
   function s0Clase(f) {
-    const s = svgs.find((x) => familia(x) === f);
+    const s = graficos.find((x) => familia(x) === f);
     return s ? (s.getAttribute('class') || '') + ' ' + texto(s.querySelector('title')) : '';
   }
 
   /* La cronología, si existe, tiene que llevar marcas rotuladas: es la petición
      explícita del encargo, y un log sin rótulos miente sobre las proporciones. */
-  const crono = svgs.find((s) => familia(s) === 'cronología');
+  const crono = graficos.find((s) => familia(s) === 'cronología');
   const ejeCrono = crono ? ejes.find((e) => e.diagrama === 'cronología') : null;
   if (!crono) {
     abstenciones.push({
@@ -419,7 +515,7 @@
   /* ── 3. animación: parpadeo de 1 ms y estado final sin pintar ───────────── */
 
   const animables = [];
-  for (const s of svgs) {
+  for (const s of graficos) {
     animables.push(s, ...s.querySelectorAll('*'));
   }
   // Los contenedores desplegados también animan (el propio despegue).
@@ -501,11 +597,13 @@
     ok: fallos.length === 0,
     modo,
     resumen:
-      `[${modo}] ${svgs.length} diagrama(s) en ${ambito} · ${conAnimacion.length} con animación · ` +
+      `[${modo}] ${graficos.length} diagrama(s) (${svgs.length} svg + ${htmlDiagramas.length} html) en ${ambito} · ${conAnimacion.length} con animación · ` +
       `${fallos.length} fallo(s) · ${abstenciones.length} abstención(es)` +
       (ejeLog && ejeLog.medible ? ` · eje log R²=${ejeLog.r2_contra_log}` : ' · eje log: no medible'),
     ambito,
-    diagramas_encontrados: svgs.length,
+    diagramas_encontrados: graficos.length,
+    diagramas_svg: svgs.length,
+    diagramas_html: htmlDiagramas.length,
     ejes: ejes,
     inventario,
     eje_logaritmico: ejeLog,
