@@ -96,6 +96,21 @@ def estado_del_arbol(raiz: Path) -> dict:
     }
 
 
+def alto_png(ruta: Path) -> int | None:
+    """Lee el alto de un PNG de su cabecera IHDR, sin dependencias.
+
+    Hace falta para poder comprobar que `--completa` ha hecho algo. Los 8 primeros
+    bytes son la firma, luego un chunk IHDR con ancho y alto en big-endian.
+    """
+    try:
+        datos = ruta.read_bytes()[:33]
+    except OSError:
+        return None
+    if len(datos) < 33 or datos[:8] != b"\x89PNG\r\n\x1a\n":
+        return None
+    return int.from_bytes(datos[20:24], "big")
+
+
 def chrome() -> str:
     for c in CHROME_CANDIDATOS:
         if c and Path(c).exists():
@@ -406,12 +421,71 @@ def main() -> int:
     ap.add_argument("--url", default=None,
                     help="audita una URL publicada en vez del repo local, haciendo de espejo. "
                          "Ej.: --url https://ccanado.github.io/MyPlants/")
+    ap.add_argument("--raiz", default=None,
+                    help="mide otro directorio en vez de este repo. Es lo que hace posible el "
+                         "flujo de worktree: `git worktree add /tmp/qa HEAD` y medir ahí un "
+                         "commit sin tocar el árbol de trabajo de nadie.")
+    ap.add_argument("--sucio", action="store_true",
+                    help="permite medir con el árbol sucio. Estampa en cada línea que el "
+                         "número NO es atribuible a ningún commit. Elección declarada, no descuido.")
     ap.add_argument("--verboso", action="store_true")
     args = ap.parse_args()
 
     tests = args.test or ORDEN
+
+    # `--raiz` reapunta el módulo entero: el servidor sirve de ahí, el sello lee ESE
+    # git y los tests se siguen inyectando desde `tests/` de este repo, que es lo que
+    # se quiere — auditar otro estado del producto con el instrumental de ahora.
+    global RAIZ
+    if args.raiz:
+        RAIZ = Path(args.raiz).resolve()
+        if not (RAIZ / "index.html").is_file():
+            sys.exit(f"--raiz {RAIZ} no contiene index.html")
+
     buzon = {"informe": None, "listo": threading.Event()}
     sello_antes = sello_remoto(args.url) if args.url else estado_del_arbol(RAIZ)
+    # ── El sello se NIEGA, no avisa ──────────────────────────────────────────
+    #
+    # Antes esta información salía como `commit X + N fichero(s) sin commitear` y la
+    # pasada continuaba. `ux-lead` diagnosticó por qué eso no basta, y tiene razón:
+    # **la línea estaba escrita para quien ya sospecha.** Nombraba primero lo que
+    # tranquiliza —el hash— y dejaba la advertencia detrás de un `+`, así que quien
+    # mide esperando una buena noticia lee el commit y sigue.
+    #
+    # No es teórico: el lead reportó «ocupación 9 %, el problema del ancho está
+    # resuelto» a tres personas, con `+ 10 fichero(s) sin commitear` en pantalla y sin
+    # procesarlo. El expediente que medía no estaba en ningún commit. Y `ux-lead`
+    # confesó haber pasado de largo por la misma línea esa misma mañana.
+    #
+    # Así que ahora el árbol sucio **al empezar** se trata igual que el cambio en
+    # vuelo, que ya se negaba: sin número. Con dos condiciones para que la negativa no
+    # se vuelva inútil — que sea accionable (dice qué fichero y cómo desbloquearse) y
+    # que exista una salida declarada y ruidosa (`--sucio`), porque si negarse cuesta
+    # averiguar cómo seguir, alguien le pondrá un flag para saltárselo en silencio.
+    if sello_antes.get("arbol_sucio") and not args.sucio:
+        print(f"\n{'═' * 78}")
+        print("  ⚠  NO HAY NÚMERO: el árbol está sucio antes de empezar a medir")
+        print(f"{'═' * 78}")
+        print(f"\n  commit {sello_antes['commit']} + {sello_antes['ficheros_modificados']} fichero(s) sin commitear.")
+        print("  Un resultado que no se puede atribuir a un commit no es una medición.\n")
+        estado = _sp.run(["git", "status", "--porcelain", "--",
+                          "index.html", "css", "js", "content"],
+                         cwd=RAIZ, capture_output=True, text=True).stdout.strip()
+        for linea in estado.splitlines()[:12]:
+            print(f"     {linea}")
+        print("\n  Tres formas de desbloquearse, de mejor a peor:\n")
+        print("    1. Commitea y repite. Es lo que quieres el 90 % de las veces.")
+        print("    2. Mide un commit sin tocar el árbol de nadie:")
+        print("         git worktree add /tmp/qa HEAD")
+        print("         python3 tests/runner.py --raiz /tmp/qa   (o sirve /tmp/qa)")
+        print("    3. Mide la web publicada, que es un estado commiteado por definición:")
+        print("         python3 tests/runner.py --url https://ccanado.github.io/MyPlants/")
+        print("\n    Y si de verdad quieres medir el árbol de trabajo mientras desarrollas,")
+        print("    que es legítimo:  --sucio")
+        print("    Estampa en cada línea que el número no es atribuible. Es una elección")
+        print("    declarada, no un descuido.\n")
+        return 3
+
     inyeccion = construir_inyeccion(tests)
     if args.abrir_todas:
         inyeccion = "<script>window.__QA_ABRIR_TODAS__=true;</script>" + inyeccion
@@ -448,6 +522,10 @@ def main() -> int:
         cap.parent.mkdir(parents=True, exist_ok=True)
         cmd.append(f"--screenshot={cap}")
         if args.completa:
+            # `--full-page-screenshot` NO funciona junto a `--screenshot` en este
+            # Chrome: la captura sale siempre con el alto de la ventana. Se pasa
+            # igualmente por si una versión futura lo respeta, y se VERIFICA después
+            # comparando el alto del PNG con --alto. Ver la comprobación al final.
             cmd.append("--full-page-screenshot")
     else:
         cmd.append("--screenshot=" + str(Path(perfil) / "descartar.png"))
@@ -466,8 +544,42 @@ def main() -> int:
             proc.kill()
         srv.shutdown()
         if args.captura:
-            print(f"captura → {args.captura}")
+            # ── `--completa` tiene que fallar en voz alta ────────────────────────
+            #
+            # Chrome ignora `--full-page-screenshot` cuando va junto a `--screenshot`,
+            # así que la captura salía SIEMPRE con el alto de la ventana. Eso no
+            # produce un dato falso: produce **un dato ausente disfrazado de
+            # completo**, que es peor de detectar porque no hay nada raro que mirar.
+            #
+            # Costó dos veces lo mismo: el lead capturó la ficha del helecho con este
+            # flag, vio los primeros 900 px de una ficha de 4.000 y sacó conclusiones
+            # como si la hubiera visto entera; y a `ux-lead` se le encargó revisar el
+            # expediente con `--completa` para no depender del MCP, y de haberse
+            # fiado habría firmado el 22 % de una ficha.
+            #
+            # Es el propio principio de esta suite —decir "no medible" en vez de
+            # inventar un veredicto— aplicado a una captura. Si el PNG mide exactamente
+            # lo que mide la ventana, `--completa` no ha hecho nada y hay que decirlo.
+            alto_real = alto_png(Path(args.captura))
+            if args.completa and alto_real is not None and alto_real <= args.alto:
+                print(f"\n  ⚠  --completa NO HA FUNCIONADO: el PNG mide {alto_real} px de alto,")
+                print(f"     que es el alto de la ventana ({args.alto}). Chrome ignora")
+                print("     --full-page-screenshot junto a --screenshot.")
+                print("\n     NO uses esta captura como prueba de haber visto la página entera.")
+                print(f"     Alternativa que sí funciona: --alto N con N mayor que el alto real")
+                print("     de lo que quieras ver (p. ej. --alto 6000 para una ficha desplegada),")
+                print("     porque con la ventana alta no hay nada fuera de captura.")
+                fallo_captura = True
+            else:
+                fallo_captura = False
+            print(f"captura → {args.captura}"
+                  + (f" ({alto_real} px de alto)" if alto_real else ""))
         shutil.rmtree(perfil, ignore_errors=True)
+
+    if args.captura and locals().get("fallo_captura"):
+        # Se propaga como incidencia: una captura que no prueba lo que dice no puede
+        # dejar la puerta de salida en verde.
+        print("\n✗ la captura pedida con --completa no es completa (ver arriba)")
 
     if not recibido or buzon["informe"] is None:
         print("No se pudo recoger el informe. ¿La página cargó?", file=sys.stderr)
@@ -499,10 +611,13 @@ def main() -> int:
         if sello.get("commit_local") and sello["commit"].split(" ")[0] != sello["commit_local"]:
             print(f"  ⚠  el remoto sirve {sello['commit'].split(' ')[0]} y en local estás en "
                   f"{sello['commit_local']}: NO es el mismo código")
+    elif sello["arbol_sucio"]:
+        print(f"  NO ATRIBUIBLE · árbol sucio ({sello['ficheros_modificados']} fichero(s)) "
+              f"sobre {sello['commit']} · medido con --sucio")
+        print("  NO ATRIBUIBLE · estos números no valen para un informe")
     else:
-        print(f"  commit {sello['commit']}"
-              + (f" + {sello['ficheros_modificados']} fichero(s) sin commitear" if sello["arbol_sucio"] else " (árbol limpio)")
-              + f" · {sello['ficheros_medidos']} ficheros medidos")
+        print(f"  commit {sello['commit']} (árbol limpio) · "
+              f"{sello['ficheros_medidos']} ficheros medidos")
     print(f"{'═' * 78}")
     if informe["codigo_movido_durante_la_medida"]:
         print("\n⚠  EL CÓDIGO CAMBIÓ MIENTRAS SE MEDÍA — este resultado no es atribuible:")
@@ -540,6 +655,14 @@ def main() -> int:
 
     for e in informe.get("errores", []):
         print(f"\n!! error ejecutando {e}")
+        fallo = True
+
+    if sello.get("arbol_sucio") and args.sucio:
+        print("\n  ⚠  NO ATRIBUIBLE: medido con --sucio sobre un árbol con "
+              f"{sello['ficheros_modificados']} fichero(s) sin commitear.")
+        print("     No uses estos números en un informe: no describen ningún commit.")
+
+    if args.captura and locals().get("fallo_captura"):
         fallo = True
 
     print()

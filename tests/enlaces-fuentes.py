@@ -43,6 +43,22 @@ DOMINIOS_CITABLES = {
     "gbif.org": "GBIF — distribución",
     "www.aspca.org": "ASPCA — toxicidad en mascotas",
     "aspca.org": "ASPCA — toxicidad en mascotas",
+    # IPNI (International Plant Names Index) — autoría y publicación original del nombre.
+    #
+    # Lo levantó este script como «no está en la lista» y era un aviso correcto: el
+    # dominio no estaba. Lo que faltaba era la decisión, no la justificación, y la ha
+    # cerrado `botanist` con comprobación en vez de de memoria: IPNI es el índice
+    # nomenclatural de la misma casa que POWO —Kew, con Harvard y el ANH— y es de donde
+    # POWO toma la autoría y la referencia de publicación de cada nombre. El reparto es
+    # que POWO decide qué nombre es el aceptado e IPNI aporta autoría y publicación, y
+    # por eso las dos citas van juntas en cada ficha.
+    #
+    # Y está ahí precisamente por lo que este script clasifica como MANUAL: POWO
+    # devuelve 403 a clientes automáticos, así que IPNI es la comprobación **auditable**
+    # del mismo dato. Verificados los cinco registros citados: 200 los cinco, y nombre y
+    # familia coinciden con las fichas.
+    "www.ipni.org": "IPNI/Kew — autoría y publicación del nombre",
+    "ipni.org": "IPNI/Kew — autoría y publicación del nombre",
 }
 
 AGENTE = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " \

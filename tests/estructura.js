@@ -147,6 +147,44 @@
   // --- 10. fichas de planta: article + heading + lista ----------------------------------
   const articles = [...document.querySelectorAll('article')];
   notas.push({ punto: 'fichas', detalle: `${articles.length} <article> en el DOM` });
+
+  /* ── SUELO MÍNIMO: sin fichas, esto es un fallo y no un dato ────────────────
+     Este test aprobaba una página **completamente en blanco.** El 11/08 `main`
+     sirvió durante horas un `SyntaxError` en `js/ficha.js:730` que impedía cargar el
+     módulo entero, así que no se pintaba ni una ficha — y esta comprobación devolvió
+     `✓ 0 fallos · 0 img · 0 article · 2 enfocables`, con los otros cuatro
+     comprobadores también en verde. **El test más importante del proyecto habría
+     firmado el cierre sobre una página vacía.**
+
+     Es el mismo tronco que los falsos positivos de esta sesión, por el extremo
+     opuesto: no una herramienta que opina cuando no puede saber, sino una que
+     **calla cuando sí podría saber**. Cada comprobación individual era correcta —no
+     hay `<img>` sin `alt` si no hay `<img>`— y la conjunción de todas ellas era
+     absurda. Un checker que aprueba el caso peor no protege de nada.
+
+     El suelo se lee del propio JSON y no se escribe a mano: si `botanist` añade una
+     planta, el suelo sube solo. La idea es de `builder`, que lo cazó comparando el
+     antes y el después de su arreglo. */
+  let plantasEsperadas = null;
+  try {
+    const x = new XMLHttpRequest();
+    x.open('GET', './content/plantas.json', false);
+    x.send(null);
+    const d = JSON.parse(x.responseText);
+    const lista = Array.isArray(d) ? d : (d.plantas || []);
+    if (lista.length) plantasEsperadas = lista.length;
+  } catch (e) { /* se trata abajo */ }
+
+  if (plantasEsperadas === null) {
+    avi('fichas', 'no he podido leer content/plantas.json, así que no puedo exigir un ' +
+                  'suelo de fichas. Si la página estuviera vacía, este test no lo vería');
+  } else if (articles.length < plantasEsperadas) {
+    err('fichas',
+      `SUELO MÍNIMO: hay ${articles.length} <article> y el JSON trae ${plantasEsperadas} ` +
+      `planta(s). Si el número es 0, la página está ROTA y el resto de esta auditoría no ` +
+      `significa nada: no hay <img> sin alt porque no hay <img>. Mira la consola primero ` +
+      `— un SyntaxError en un módulo deja la página en blanco sin que falle nada más`);
+  }
   for (const a of articles) {
     if (!a.querySelector('h1,h2,h3,h4,h5,h6')) err('fichas', `${selector(a)} es un <article> sin encabezado propio`);
     if (!a.getAttribute('aria-labelledby') && !a.getAttribute('aria-label')) {

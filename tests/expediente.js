@@ -296,6 +296,12 @@
        índice o un diagrama. Se recogen sus posiciones verticales, se ordenan, y se
        mide el hueco mayor entre dos consecutivas — contando también el tramo desde
        el principio de la región a la primera y desde la última al final. */
+    /* Cada ancla guarda su elemento, no solo su `y`. `builder` lo pidió con razón: mi
+       salida daba «peor carrera 707 px» y nombraba la planta, pero no el bloque, así
+       que un fallo de prosa de `botanist` y uno de maquetación mía llegaban
+       indistinguibles — y el informe se lo mandaba al teammate equivocado, que es
+       literalmente la lección del informe 2. Ahora cada carreta larga dice entre qué
+       dos anclas cae. */
     const anclas = [];
     const ES_ANCLA = 'h2, h3, h4, h5, h6, dt, summary, svg, ' +
       '[class*="rotulo"], [class*="titulo"], [class*="indice"], [class*="epigrafe"]';
@@ -307,19 +313,28 @@
       }
       if (el.closest('.oculto-visual')) continue;        // no ancla nada visualmente
       const r = el.getBoundingClientRect();
-      if (r.height > 0) anclas.push(r.top);
+      if (r.height > 0) {
+        const cls = String(el.getAttribute('class') || '').split(' ')[0];
+        anclas.push({ y: r.top, que: el.tagName.toLowerCase() + (cls ? '.' + cls : '') });
+      }
     }
-    anclas.sort((a, b) => a - b);
+    anclas.sort((a, b) => a.y - b.y);
 
     const carreras = [];
     let cursor = region.top;
-    for (const y of anclas) {
-      if (y - cursor > 0) carreras.push(y - cursor);
-      cursor = Math.max(cursor, y);
+    let desde = '(principio de la región)';
+    for (const a of anclas) {
+      if (a.y - cursor > 0) carreras.push({ px: a.y - cursor, desde, hasta: a.que });
+      if (a.y > cursor) { cursor = a.y; desde = a.que; }
     }
-    if (region.bottom - cursor > 0) carreras.push(region.bottom - cursor);
-    const carreraMax = carreras.length ? Math.max(...carreras) : Math.round(region.height);
-    const carrerasLargas = carreras.filter((c) => c > MAX_CARRERA);
+    if (region.bottom - cursor > 0) {
+      carreras.push({ px: region.bottom - cursor, desde, hasta: '(final de la región)' });
+    }
+    const carreraMax = carreras.length
+      ? Math.max(...carreras.map((c) => c.px)) : Math.round(region.height);
+    const carrerasLargas = carreras.filter((c) => c.px > MAX_CARRERA)
+      .sort((a, b) => b.px - a.px)
+      .map((c) => ({ px: Math.round(c.px), desde: c.desde, hasta: c.hasta }));
 
     /* ── ¿la columna de acción pega de verdad? ────────────────────────────
        Es la mitad del argumento del reparto en dos columnas: sin `sticky`
@@ -351,6 +366,7 @@
       pantallas: Number((alto / PANTALLA).toFixed(2)),
       carrera_max_px: Math.round(carreraMax),
       carreras_largas: carrerasLargas.length,
+      carreras_largas_detalle: carrerasLargas.slice(0, 6),
       cumple_carreras: carrerasLargas.length === 0,
       anclas: anclas.length,
       sticky,
@@ -419,6 +435,7 @@
         objetivo: 'ninguna carrera de más de ' + MAX_CARRERA + ' px sin ancla de navegación',
         planta: m.planta,
         medido: m.carreras_largas + ' carrera(s) larga(s) · la mayor ' + m.carrera_max_px + ' px',
+        donde: m.carreras_largas_detalle,
         anclas_encontradas: m.anclas,
         que_cuenta_como_ancla: 'un rótulo de bloque, una entrada del índice o un diagrama',
         dueño: 'builder',
