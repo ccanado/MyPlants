@@ -1,108 +1,86 @@
-# Alcance congelado y lo que queda fuera
+# Alcance y lo que queda fuera
 
-Escrito por el lead el **11 de agosto de 2026**, por decisión de Carlos, después de
-constatar que el proyecto no tenía definición de "terminado" y se estaba alimentando a sí mismo.
+Escrito el **11 de agosto de 2026** por decisión de Carlos, después de constatar que el proyecto no
+tenía definición de "terminado" y se estaba alimentando a sí mismo. **Actualizado el 12 de agosto**,
+al aplicar la piel oscura.
 
-Este fichero manda sobre las colas de todos los teammates. **Nada que no esté en la sección
-"Alcance de v1" genera trabajo.**
+Este fichero manda sobre las colas de todos. **Nada que no esté en la sección de alcance genera
+trabajo.**
 
 ## Por qué existe
 
-El proyecto tenía una definición de terminado por tarea —que `qa-visual` la vea en captura— y
-ninguna para el conjunto. El equipo desarrolló además un hábito excelente que es a la vez el
-motor del bucle: cada hallazgo genera un meta-hallazgo sobre el instrumento que lo encontró, ese
-genera una regla de proceso, y esa genera otra auditoría. Solo el 11 de agosto hubo **siete**
-casos. Mejora la calidad de verdad y **no converge solo**.
+El proyecto tenía una definición de terminado por tarea —que se vea en captura— y ninguna para el
+conjunto. El equipo desarrolló además un hábito excelente que es a la vez el motor del bucle: cada
+hallazgo genera un meta-hallazgo sobre el instrumento que lo encontró, ese genera una regla de
+proceso, y esa genera otra auditoría. Solo el 11 de agosto hubo **siete** casos. Mejora la calidad
+de verdad y **no converge solo**.
 
-## Alcance de v1 — esto y nada más
+## v1 — cerrada el 12 de agosto de 2026
 
-| # | Qué | Dueño | Estado |
-| --- | --- | --- | --- |
-| 1 | `overflow: clip` en `.etiqueta` para que `.expediente__accion` pegue | `builder` | abierto |
-| 2 | `data-tarea`, `data-planta`, `data-tarea-estado`, `data-tick` | `builder` | abierto |
-| 3 | **Vuelta de riqueza visual** — ver abajo, ampliada por Carlos el 11 de agosto | `ux-lead` especifica, `builder` implementa | spec pendiente |
-| 4 | La franja `HOY` muestra **todas** las tareas del día, no dos y un recuento | `ux-lead` → `builder` | abierto |
-| 5 | El tiempo relativo sale del contenido y se **calcula** en el render | `botanist` + `builder` | abierto |
-| 6 | Firma del expediente: ocupación medida en **worktree limpio** | `ux-lead` | bloqueado por 1 |
-| 7 | Pasada final con capturas y §10/§11 | `qa-visual` | bloqueado por 1–5 |
+| # | Qué | Estado |
+| --- | --- | --- |
+| 1 | `overflow: clip` en la tarjeta para que la columna de acción pegue | **hecho** |
+| 2 | `data-tarea`, `data-planta`, `data-tarea-estado` | **hecho** |
+| 3 | **Vuelta de riqueza visual** — las cuatro palancas de Carlos | **hecho**: piel oscura aplicada a la web entera |
+| 4 | La franja `HOY` muestra **todas** las tareas del día | **hecho** |
+| 5 | El tiempo relativo se **calcula** en el render | **hecho** |
+| 6 | Firma del expediente: ocupación medida en worktree limpio | **hecho** |
+| 7 | Pasada final con capturas y §10/§11 | **hecho** — `docs/qa/informe-4.md` |
 
-Condiciones que no se negocian en ninguno de los siete: cero nodos de texto por debajo de AA,
-cero bordes de control por debajo de 3:1, cero saltos de orden de foco, cero desborde
-horizontal, cero recursos de terceros, `prefers-reduced-motion` con **versión alternativa** y no
-solo duración corta, y consola limpia. **Si una idea cuesta una de esas cifras, la idea está
-mal, no la cifra.**
+Las cuatro cosas que Carlos echaba en falta el 11 de agosto —las fotos, el color, la profundidad y
+el movimiento— están resueltas, y las cuatro por el mismo cambio: **el sujeto vuelve a su propia
+portada.** Las fotos traen el color real de las plantas sin añadir un acento de paleta; la
+profundidad la dan tres superficies, un filo de luz y la oclusión; el movimiento son la entrada
+escalonada, el revelado del veredicto y el descubrimiento del expediente, los tres con versión
+alternativa bajo `prefers-reduced-motion`.
+
+Condiciones que no se negociaron en ninguno de los siete, y siguen sin negociarse: cero nodos de
+texto por debajo de AA, cero bordes de control por debajo de 3:1, cero saltos de orden de foco,
+cero desborde horizontal, cero recursos de terceros, `prefers-reduced-motion` con **versión
+alternativa** y no solo duración corta, y consola limpia. **Si una idea cuesta una de esas cifras,
+la idea está mal, no la cifra.**
 
 Y la regla de contenido, que tampoco: esto se cumple ocupando el ancho, añadiendo anclas de
-navegación y borrando gráficos que no informan. **Nunca recortando observaciones, causas,
-límites ni fuentes.**
+navegación y borrando gráficos que no informan. **Nunca recortando observaciones, causas, límites
+ni fuentes.**
 
-## El punto 3, con detalle: Carlos afloja el brief
+## Lo que queda, y por qué no está hecho
 
-El **11 de agosto**, tras decir tres veces que la web se ve "muy pobre y simple", Carlos ha
-decidido dos cosas que cambian el punto 3:
+Por orden. El detalle de cada uno, en `docs/retomar.md`.
 
-**Le faltan las cuatro:** las fotos, que hoy no se ven en la rejilla; el color, que existe solo
-como alarma; la profundidad y la suavidad; y el movimiento.
-
-**Y las prohibiciones del brief se aflojan donde estorben.** Sus palabras recogidas: si una
-prohibición concreta está dejando la web pobre, se levanta y se anota. **Su criterio manda sobre
-el brief**, que lo escribió un agente para servir a un fin —que la web sea visualmente
-excelente— y no es el fin en sí.
-
-Eso pone en revisión, por primera vez, decisiones que hasta ahora eran intocables: que en la
-rejilla cerrada no haya fotos, que solo exista un acento y esté reservado a la severidad, y la
-austeridad tipográfica general.
-
-### Lo que NO se afloja, y esto sí es duro
-
-- **El suelo medido de accesibilidad.** Cero nodos de texto por debajo de AA, cero bordes de
-  control por debajo de 3:1, cero saltos de orden de foco, cero desborde horizontal,
-  `prefers-reduced-motion` con **versión alternativa** y no solo duración corta, y consola limpia.
-- **Cero recursos de terceros** en runtime.
-- **Ninguna información transmitida solo por color.** Si entra color decorativo, la severidad
-  sigue necesitando borde e icono además del tono.
-- **Las fotos de diagnóstico no se filtran.** Ni duotono, ni grado, ni viñeta. Pueden verse más
-  grandes, mejor encuadradas y mejor presentadas; no pueden verse **mejor de lo que están**. En la
-  única planta que se muere, embellecer la foto corrompe la prueba.
-- **Nada de datos inventados** para que un elemento visual quede bonito.
-
-### Y una consecuencia técnica que hay que decidir con número
-
-Hoy la carga inicial son **218 KB con cero bytes de foto**, porque la rejilla no lleva imágenes.
-Meter siete fotos en la rejilla cambia eso materialmente: pesan ~200 KB cada una. Se resuelve con
-recortes pequeños para la rejilla y `loading="lazy"` por debajo del pliegue, pero **hay que
-medirlo y decirlo**, no descubrirlo.
-
-## Fuera de v1 — backlog, especificado y sin dueño activo
-
-- **El índice de síntomas.** Aprobado en concepto y con la decisión de construcción tomada: se
-  genera de `senales` y `patron`, no de una taxonomía fija, así que cada entrada tiene al menos
-  una planta por construcción. Va en el buscador, no en la portada. Es la única promesa
-  incumplida que queda: el placeholder dice "planta, sala o síntoma" y el contenido no está
-  organizado así.
-- **Que el hero funcione el día bueno.** Diseñar qué dice la portada cuando ninguna planta
-  necesita mirada, sin inventar urgencia. Es el estado que el proyecto existe para producir.
-- **Revisar el umbral de la métrica de ocupación.** El 62 % y el tope del 20 % no están
-  derivados. La mejora medida (del 73–87 % al 9 %) es sólida; el criterio de aprobado no.
-- **Revisar el tope de 600 px** de carrera sin ancla de navegación, con la derivación delante,
-  después de tener la primera lectura post-expediente.
-- **Las notas personales de Carlos.** `notas` está vacío en las siete. El panel de cuaderno solo
-  se renderiza con contenido, así que no se ve ningún hueco, pero es la capa por la que ese
-  panel existe.
-- **Fotos nuevas** cuando Carlos quiera un estado nuevo. El esquema ya es histórico.
-- **Pasar la prueba del imperativo a los dos skills.** `.claude/skills/vanilla-web-craft/` y
-  `plant-expert/` están escritos en imperativo y **son el vehículo más peligroso del ascenso de
-  calificadores**, porque se leen como el manual del proyecto. La prueba es barata: leer cada
-  imperativo y preguntar *"¿esto tiene dueño humano, o soy yo con voz de norma?"*. Lo que no lo
-  tenga, se reescribe como propuesta con su motivo. No entra en v1 por decisión propia del lead:
-  sería exactamente el meta-trabajo que el congelado corta.
-
+1. **Las `notas` de la casa.** Vacías en las siete. **No lo puede hacer un agente**: es la voz de
+   quien riega. Una frase por planta basta. No se inventan nunca.
+2. **El índice de síntomas como lista navegable.** El nivel 1 está hecho —el buscador ya indexa
+   `senales`, `causas[].resumen` y `patron`, así que el placeholder dejó de mentir—. Falta la
+   entrada por síntoma como lista, generada de esos campos y no de una taxonomía fija: así cada
+   entrada tiene al menos una planta por construcción. Va en el buscador, no en la portada.
+3. **Los presupuestos de peso sin derivar.** `css/app.css` pesa 78,8 KB contra un tope de 60 y
+   `js/` 156,6 KB contra 60. Los dos topes son números redondos sin procedencia, igual que el
+   20/62/600. **Un tope que se incumple en verde no es un tope**: o se deriva o se retira.
+4. **Los tres umbrales sin derivar.** El 62 % de la ocupación, el tope del 20 % y los 600 px de
+   carrera sin ancla. Cumplen los tres; el criterio de aprobado no está justificado.
+5. **La prueba del imperativo a los dos skills.** `.claude/skills/vanilla-web-craft/` y
+   `plant-expert/` están escritos en imperativo y **son el vehículo más peligroso del ascenso de
+   calificadores**, porque se leen como el manual del proyecto. La prueba es barata: leer cada
+   imperativo y preguntar *«¿esto tiene dueño humano, o soy yo con voz de norma?»*.
+6. **La propuesta de `botanist`** para hacer comprobable una cita correcta que apunta al taxón
+   equivocado.
+7. **Fotos nuevas** cuando Carlos quiera registrar un estado nuevo. El esquema ya es histórico, y
+   la ficha diagnostica un momento fechado y no el presente.
+8. **`docs/inventario.md` sigue siendo una plantilla en blanco** mientras `CLAUDE.md` lo presenta
+   como el input humano del contenido. O se rellena o se sustituye por un puntero que diga que el
+   inventario se recogió hablando. Decide Carlos.
 
 ## Qué hacer con los hallazgos de instrumental
 
-Van a `docs/aprendizaje.md` y **no generan tarea para nadie**, con una sola excepción: que
-impidan verificar algo del alcance de v1. Un test que miente sobre un punto que hay que firmar
-sí se arregla; un test que miente sobre algo que está fuera de alcance se anota.
+Van a `docs/aprendizaje.md` y **no generan tarea para nadie**, con una sola excepción: que impidan
+verificar algo del alcance. Un test que miente sobre un punto que hay que firmar sí se arregla; un
+test que miente sobre algo fuera de alcance se anota.
 
-Esto no es desprecio por ese trabajo — es de lo mejor que ha producido el equipo. Es que su
-valor está en quedar escrito para el próximo proyecto, no en consumir este.
+El 12 de agosto hubo cinco hallazgos y **dos cayeron en la excepción**: que el runner no pueda
+medir 320 px de verdad (impedía firmar «cero desborde a 320») y que ningún comprobador mire si un
+`background-image` llega a pintarse (había un código de barras que no se pintaba desde el primer
+día). Los otros tres están anotados y no generaron trabajo.
+
+Esto no es desprecio por ese trabajo — es de lo mejor que ha producido el proyecto. Es que su valor
+está en quedar escrito para el próximo, no en consumir este.

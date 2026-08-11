@@ -344,35 +344,24 @@ function frasePisoTermico(tol, opt, invMin, invMax, verano) {
   return partes.length > 0 ? `${partes.join(", ")}.` : "Sin rango de temperatura verificado.";
 }
 
-/* ══ 4 · Curso de recuperación ══════════════════════════════════════════════
-   El diagrama que más importa: solo en las plantas tocadas. Es una segunda vista
-   del <ol> de tratamiento que tiene justo debajo, así que es legible entero sin
-   una sola animación — que es exactamente lo que pide el brief. */
+/* ══ 4 · Curso de recuperación — BORRADO, y conviene saber por qué ═════════
+   Aquí vivía `diagramaRecuperacion()`. Se retiró porque **afirmaba algo falso**:
+   sus círculos iban a espaciado regular para pasos cuyos horizontes son
+   *inmediato, inmediato, esta semana, 3 semanas, 2-3 meses* y *cuando haya una
+   fronde adulta*, o sea que el eje codificaba el índice 1…6 y no el tiempo — y
+   encima iba rotulado `hoy` … `01/09/2026`, con lo que decía que el paso 6 cae el
+   1 de septiembre cuando esa fecha es el `revisar_fecha` y no corresponde a
+   ningún paso.
 
-export function diagramaRecuperacion(pasos, revisarEn) {
-  if (!Array.isArray(pasos) || pasos.length === 0) return null;
+   Y no se arregla: dos pasos en el instante 0 no tienen posición en un eje
+   logarítmico, y uno sin fecha no la tiene en ninguno. La lista numerada que va
+   debajo ya rotula cada paso con su horizonte en palabras, que es MÁS preciso
+   que un eje.
 
-  const n = pasos.length;
-  const svg = lienzo(`0 0 120 ${34 + (revisarEn ? 8 : 0)}`, "diagrama--recuperacion");
-  const y = 16, x0 = 10, x1 = 110;
-
-  svg.append(e("line", { class: "recup__rail", x1: x0, y1: y, x2: x1, y2: y }));
-  // Se traza de izquierda a derecha con stroke-dashoffset; el CSS decide cuándo.
-  svg.append(e("line", { class: "recup__trazo", x1: x0, y1: y, x2: x1, y2: y, pathLength: 100 }));
-
-  pasos.forEach((_, i) => {
-    const x = n === 1 ? (x0 + x1) / 2 : x0 + (x1 - x0) * (i / (n - 1));
-    const g = e("g", { class: "recup__hito", style: `--i:${i}` });
-    g.append(e("circle", { class: "recup__punto", cx: x, cy: y, r: 4 }));
-    g.append(txt(x, y + 1, String(i + 1), "recup__numero", { "text-anchor": "middle", dy: 2, "font-size": CUERPO.micro }));
-    svg.append(g);
-  });
-
-  svg.append(txt(x0, 8, "hoy", "recup__extremo", { "font-size": CUERPO.micro }));
-  if (revisarEn) svg.append(txt(x1, 8, String(revisarEn), "recup__extremo", { "text-anchor": "end", "font-size": CUERPO.micro }));
-
-  return svg;
-}
+   El dibujo se borró en su día y la función se quedó exportada sin que la
+   llamara nadie: código muerto de un gráfico retirado por mentir. Se va con la
+   piel oscura del 12 de agosto de 2026.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── utilidades ─────────────────────────────────────────────────────────────── */
 

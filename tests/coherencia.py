@@ -154,6 +154,37 @@ def main() -> int:
         elif alt_et:
             errores.append(f"«{pid}»: tiene alt_etiqueta pero no foto_etiqueta")
 
+        # ─── el derivado de rejilla ──────────────────────────────────────────
+        # Desde la piel oscura del 12/08/2026 la rejilla cerrada lleva foto, y no
+        # la de 800×1067 —siete de esas son ~1 MB de carga inicial— sino un
+        # derivado a 480×640 en assets/img/rejilla/. La ruta la DERIVA
+        # js/datos.js del campo `foto`; no hay campo nuevo en el JSON, porque cuál
+        # es el fichero pequeño de una foto es presentación y no contenido.
+        #
+        # Y por eso hay que comprobarlo aquí: un derivado que falte no da error en
+        # consola ni rompe nada, deja un hueco negro en la tarjeta. Es justo la
+        # clase de fallo silencioso que este fichero existe para cazar.
+        foto = p.get("foto")
+        if foto and "/" not in str(foto):
+            der = (raiz / "assets" / "img" / "rejilla" / str(foto)).resolve()
+            if not der.is_file():
+                errores.append(
+                    f"«{pid}»: falta el derivado de rejilla assets/img/rejilla/{foto} — "
+                    f"la tarjeta se quedaría sin foto y sin error en consola"
+                )
+            elif dimensiones:
+                d = dimensiones(der)
+                if d and abs(d[0] / d[1] - 0.75) > 0.02:
+                    errores.append(
+                        f"«{pid}»: el derivado {foto} es {d[0]}×{d[1]} — se esperaba el "
+                        f"MISMO encuadre 3:4 que la foto grande, no otro recorte"
+                    )
+                elif d and d[0] > 640:
+                    avisos.append(
+                        f"«{pid}»: el derivado {foto} mide {d[0]} px de ancho; la tarjeta "
+                        f"más grande se pinta a ~420 px, así que sobra resolución y peso"
+                    )
+
     # ─── 4. datos de pegatina inventados ─────────────────────────────────────────
     CAMPOS_PEGATINA = ("precio_eur", "ean", "codigo_vivero", "num_fitosanitario",
                        "pasaporte", "maceta_texto", "maceta_cm", "nombre_etiqueta")

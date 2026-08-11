@@ -79,6 +79,23 @@ const FRONDE = {
 /** Los dos coleos comparten silueta: los distingue el tamaño, no la forma. */
 const ALIAS = { "coleo-pequeno": "coleo-grande" };
 
+/**
+ * El rasgo en palabras, que es el que hace que la silueta sea información.
+ *
+ * Vive aquí y no en `content/plantas.json` a propósito: es la lectura del
+ * dibujo, o sea qué hay que mirar en él, y el dibujo es de este fichero. El dato
+ * botánico que lo respalda —la especie, la familia, el margen de la hoja— sí
+ * está en el JSON con su fuente.
+ */
+export function lecturaDe(id) {
+  if (id === "helecho") {
+    return "Fronde de helecho, con la trama de «sin dato» dentro del contorno: " +
+      "que es un helecho está confirmado; el género, no. Sin una fronde adulta " +
+      "desarrollada no hay evidencia para llegar a especie.";
+  }
+  return (SILUETAS[ALIAS[id] ?? id]?.lectura) ?? null;
+}
+
 export function siluetaDe(id, { grande = false } = {}) {
   if (id === "helecho") return frondeSinIdentificar(grande);
 

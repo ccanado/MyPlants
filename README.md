@@ -7,7 +7,7 @@ alguien riega de verdad — y ese alguien es Noah, que es quien las cuida. La p�
 para dos momentos: cuando una planta tiene un problema **ahora mismo**, y cuando vas a regar
 y no te acuerdas de cuánto.
 
-**Web:** pendiente de activar GitHub Pages → `https://ccanado.github.io/MyPlants/`
+**Web:** https://ccanado.github.io/MyPlants/ (Pages desde `main`, se actualiza en cada push)
 
 ## Verla en local
 
@@ -92,7 +92,7 @@ css/app.css             layout y componentes, solo var(--…)
 js/                     ES modules: datos, render de ficha, filtros, estado, SVG
 content/plantas.json    única fuente de verdad del contenido
 assets/fonts/           tipografías self-hosted (woff2, subseteadas a latín)
-assets/img/             fotos
+assets/img/             fotos de ficha; assets/img/rejilla/ son sus derivados de 480×640
 docs/brief.md           dirección visual y de contenido
 docs/decisiones.md      log de decisiones, con las alternativas descartadas
 docs/qa/                checklist de aceptación, capturas e informes
@@ -115,6 +115,7 @@ reparto **estricto** de ficheros, porque dos agentes editando el mismo fichero s
 | `builder` | HTML semántico, CSS de componentes, JS | `index.html`, `css/app.css`, `js/`, `assets/img/` |
 | `botanist` | Contenido: especies, cuidados, toxicidad, fuentes | `content/plantas.json` |
 | `qa-visual` | Screenshots, a11y, rendimiento, revisión visual | `tests/`, `docs/qa/` |
+| `ui-designer` | La piel oscura que hoy tiene la web, propuesta como versión alternativa a comparar | — |
 
 Dos skills propios (`.claude/skills/`) codifican el criterio en lugar de repetirlo en cada
 prompt: **`vanilla-web-craft`** para construir sin build step, y **`plant-expert`** para no
@@ -126,11 +127,24 @@ que merecen contarse: los teammates se corrigieron entre ellos y las correccione
 un distintivo verde habría mentido en cinco de siete fichas—, y el lead se equivocó al menos dos
 veces con datos que había deducido en vez de preguntar. Los mensajes de commit registran las dos.
 
+## Cómo se ve
+
+Campo oscuro cálido, las siete fotos llevando la página y chartreuse ácido —el borde de hoja del
+coleo grande real— como único acento. El veredicto del día a escala de display, y las fichas en dos
+bandas: **piden mirada** y **están bien**. Cuando ninguna necesite nada, la primera desaparece y la
+página dice `ESTÁN BIEN · 7 DE 7` sin inventar urgencia — que es el estado que esto existe para
+producir.
+
+La paleta no sale de un moodboard: sale de las mismas fotos. El campo es el marrón casi negro de la
+encimera y de la foto nocturna del helecho; el ácido, el borde de hoja del coleo; el rosa de la
+alarma, la vena de ese mismo coleo.
+
 ## Estado
 
-En construcción. El contenido está verificado y validado; el diseño está cerrado y aprobado;
-la maqueta funciona. Falta cerrar el bucle de QA visual, y en este proyecto nada se considera
-terminado hasta que `qa-visual` lo ha visto en captura: "compila" no es "está bien".
+El contenido está verificado y validado, el diseño elegido por Carlos entre dos versiones
+renderizadas y aplicado, y los diez comprobadores en verde. Lo que queda está en
+`docs/retomar.md`, y lo primero de la lista no lo puede hacer un agente: las notas de la casa,
+que son la voz de quien riega.
 
 ## Licencias
 

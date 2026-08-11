@@ -86,13 +86,27 @@ export function filtrar(plantas, estado) {
 const CACHE = new WeakMap();
 
 /**
- * Texto buscable de una planta, cacheado por objeto. Incluye nombre común,
- * binomio, familia, plagas y el resumen de cada cuidado: quien busca «araña»
- * espera encontrar la que tiene araña roja, no solo la que se llame así.
+ * Texto buscable de una planta, cacheado por objeto.
+ *
+ * EL PLACEHOLDER DICE «planta, sala o síntoma» Y HASTA HOY MENTÍA EN LO TERCERO.
+ * El índice llevaba nombre, binomio, familia, dificultad, luz, ubicación y los
+ * resúmenes de cuidado — ni un síntoma. Buscar «hojas amarillas» no encontraba
+ * nada, y era la única promesa incumplida que le quedaba a la web.
+ *
+ * Ahora entran las tres cosas donde vive un síntoma en el JSON: las `senales`
+ * observadas, el `resumen` de cada causa y su `patron`, que es justo la frase
+ * escrita para reconocer algo mirando la planta. Quien busca «araña» encuentra
+ * la que tiene araña roja, y quien busca «amarillas» encuentra a la que se le
+ * están poniendo amarillas.
+ *
+ * Y un punto muerto que se va con esto: `p.estado?.diagnostico` no existe —
+ * `normalizarEstado()` nunca lo ha producido—, así que llevaba desde el primer
+ * día metiendo un `undefined` en el índice.
  */
 function indice(p) {
   let cache = CACHE.get(p);
   if (cache === undefined) {
+    const e = p.estado;
     const partes = [
       p.nombre_comun,
       p.nombre_cientifico,
@@ -100,9 +114,11 @@ function indice(p) {
       p.dificultad,
       p.nivel_luz,
       p.ubicacion,
-      p.estado?.titulo,
-      p.estado?.diagnostico,
-      ...p.plagas,
+      e?.titulo_estado,
+      e?.severidad,
+      ...(e?.senales ?? []),
+      ...(e?.causas ?? []).flatMap((c) => [c.resumen, c.patron]),
+      ...p.plagas.flatMap((x) => [x.nombre, x.senal]),
       ...[...p.cuidados.values()].map((c) => c.resumen),
     ];
     cache = normalizar(partes.filter(Boolean).join(" "));

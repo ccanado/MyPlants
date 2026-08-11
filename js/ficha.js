@@ -4,31 +4,36 @@
  * El markup vive en los <template> de index.html. Aquí solo se clona y se rellena
  * con textContent — nunca innerHTML, ni siquiera con datos propios.
  *
- * La ficha es la etiqueta térmica del vivero, y se «despega» con <details> nativo:
- * ni una línea de JS en abrir y cerrar, así que el foco, Enter/Espacio y el
- * comportamiento de teclado son los del navegador y no una imitación.
+ * La tarjeta se abre con <details> nativo: ni una línea de JS en abrir y cerrar,
+ * así que el foco, Enter/Espacio y el comportamiento de teclado son los del
+ * navegador y no una imitación.
  *
  * Las tres capas del contenido se marcan en el DOM para que el CSS las distinga:
- * el dato verificado, el estado de la planta y la voz de Carlos no son lo mismo
- * y el brief exige que no lo parezcan.
+ * el dato verificado, el estado de la planta y la voz de la casa no son lo mismo
+ * y no pueden parecerlo.
+ *
+ * ── Qué cambió con la piel oscura del 12 de agosto de 2026 ──────────────────
+ * La cara de la tarjeta era la pegatina térmica del vivero y ahora es la FOTO de
+ * la planta más sus datos. La pegatina no se ha perdido: se reconstruye dentro
+ * del expediente, en el bloque `LA PRUEBA`, junto a la fotografía de la etiqueta
+ * real — que es donde la etiqueta está de verdad, pegada al tiesto. Lo mismo con
+ * la silueta de hoja, que baja al bloque de identificación porque ya no es el
+ * único modo de distinguir una ficha de otra.
  */
 
-import { FOTO, FOTO_ETIQUETA, slug } from "./datos.js";
+import { FOTO, FOTO_ETIQUETA, RUTA_REJILLA, slug } from "./datos.js";
 import { humanizar, normalizar } from "./filtros.js";
 import { iconoDe, iconoDificultad } from "./iconos.js";
-import { siluetaDe } from "./siluetas.js";
+import { lecturaDe, siluetaDe } from "./siluetas.js";
 import { conCifras, diaDeHoy, tareasDePlanta } from "./tareas.js";
-import {
-  diagramaLuz,
-  diagramaRiego,
-  diagramaTemperatura,
-} from "./svg.js";
+import { diagramaLuz, diagramaRiego, diagramaTemperatura } from "./svg.js";
 
 const tpl = (id) => document.getElementById(id);
 const TPL_FICHA = tpl("tpl-ficha");
 const TPL_CAMPO = tpl("tpl-campo-diagrama");
 const TPL_DATO = tpl("tpl-dato");
 const TPL_TAREA = tpl("tpl-tarea-ficha");
+const TPL_PASTILLA = tpl("tpl-pastilla");
 
 /**
  * El «hoy» con el que se calculan los plazos de la ficha. Lo fija `app.js` con
@@ -41,38 +46,14 @@ export function fijarHoy(hoy) { if (hoy) HOY = hoy; }
 
 const SIN_DATO = "Sin dato";
 
-/** Campos que van en la cara de la etiqueta, con la regadera en la mano. */
-const EN_LA_CARA = ["riego", "luz", "temperatura"];
-/** Campos con diagrama al despegar. Mismo orden que arriba, no es casualidad. */
+/** Campos con diagrama en la columna de acción. El orden es el de las preguntas
+ *  que se hace alguien con una regadera en la mano, no el alfabético. */
 const CON_DIAGRAMA = [
   ["riego", (p) => diagramaRiego(p.medidas.riego)],
   ["luz", (p) => diagramaLuz(p.medidas.luz)],
   ["temperatura", (p) => diagramaTemperatura(p.medidas.temperatura)],
 ];
 
-/**
- * EL RESUMEN DUPLICADO, y cuál de los dos sobra.
- *
- * El brief lo dice exacto: *«el resumen existe para la rejilla cerrada, donde es
- * lo único que hay. Hoy se pinta dos veces la misma frase en la misma pantalla»*.
- * Y las dos veces son estas, que es lo que hay que ver para no equivocarse de
- * bulto:
- *
- *   1. `.resumen__valor` — en la CARA de la pegatina, a --texto-m. Es el resumen
- *      de la rejilla cerrada, y la cara sigue ahí cuando la ficha se abre.
- *   2. `.campo__resumen` — dentro del expediente, a --texto-s, encima de su
- *      diagrama y su «Más detalle».
- *
- * Es **la misma cadena** (`cuidado.resumen`) pintada dos veces, una debajo de la
- * otra, en la misma pantalla. El duplicado NO es «resumen contra diagrama»: si lo
- * fuera, suprimirlo sí perdería contenido, porque el dial de riego no dice «saca
- * la maceta del cachepot» ni la escala de luz dice «sepárala del cristal».
- *
- * Así que el que sobra es el 2, y solo en los tres campos que están en la cara:
- * el 1 se queda intacto, más grande y más arriba, con la frase entera. No se
- * pierde ni una palabra — solo deja de estar dos veces.
- */
-const RESUMEN_YA_ESTA_EN_LA_CARA = new Set(EN_LA_CARA);
 /** El resto de datos verificados, en el bloque de abajo. */
 const RESTO = ["humedad", "sustrato", "abonado", "trasplante"];
 
@@ -89,14 +70,18 @@ const GRUPO_SEVERIDAD = new Map([
   ["alerta", "critica"], ["urgente", "critica"],
 ]);
 
+/** La palabra que acompaña siempre al color. Ninguna información va solo por
+ *  color: el punto es redundancia del texto, no al revés. */
+const PALABRA_SEVERIDAD = new Map([
+  ["critica", "Crítica"],
+  ["atencion", "Atención"],
+  ["sana", "Sana"],
+]);
+
 /**
  * Toxicidad: tres estados y ninguno verde. No hay ni una planta con «no tóxica»
  * confirmada, así que un icono verde mentiría en cinco fichas. Y «sin datos en
  * ASPCA» no es «segura»: es que nadie lo ha mirado.
- *
- * En casa de Carlos no hay mascotas, así que esto es informativo, no urgente:
- * el rojo queda reservado a la severidad crítica. El color significa «haz algo
- * hoy» y una planta tóxica en una casa sin gato no pide nada hoy.
  */
 const ORDEN_TOX = ["segura", "sin_datos_aspca", "sin_identificar", "toxica"];
 
@@ -113,7 +98,6 @@ function estadoToxico(valor) {
  *  pero el esquema permite que diverjan y entonces manda la peor. */
 function grupoToxicidad(tox) {
   // `clave` es un conjunto cerrado que mantiene `botanist`: si está, manda.
-  // Olfatear la cadena era un apaño de cuando no existía el campo.
   if (tox.clave) return normalizar(tox.clave).replace(/\s+/g, "_");
   if (!tox.verificado) return "sin_identificar";
   const estados = [estadoToxico(tox.gatos), estadoToxico(tox.perros)].filter(Boolean);
@@ -128,24 +112,32 @@ export function grupoSeveridad(valor) {
 
 /* ══ ficha ═══════════════════════════════════════════════════════════════════ */
 
-export function fichaDe(planta) {
+export function fichaDe(planta, indice = 0) {
   const nodo = TPL_FICHA.content.cloneNode(true);
   const q = (sel) => nodo.querySelector(sel);
 
   const idTitulo = `n-${planta.id}`;
-  const articulo = q(".etiqueta");
+  const idAbrir = `abrir-${planta.id}`;
+  const grupo = grupoSeveridad(planta.estado?.severidad);
+
+  const celda = nodo.querySelector(".rejilla__celda");
+  // El escalonado de entrada va sobre la TARJETA y no sobre la carga de la
+  // imagen: con `loading=lazy` el gesto se rompería distinto en cada visita.
+  celda.style.setProperty("--i", String(indice));
+  celda.dataset.severidad = grupo;
+
+  const articulo = q(".planta");
   articulo.id = planta.id;
   articulo.setAttribute("aria-labelledby", idTitulo);
   articulo.dataset.planta = planta.id;
-  articulo.dataset.severidad = grupoSeveridad(planta.estado?.severidad);
+  articulo.dataset.severidad = grupo;
   articulo.dataset.etiquetaVivero = planta.vivero.tiene ? "si" : "no";
 
-  caraEtiqueta(q, planta, idTitulo);
-  resumenesDeCara(q, planta);
-  tirador(q, planta);
+  caraDeLaTarjeta(q, planta, grupo, idTitulo, idAbrir);
   bloqueEstado(q, planta);
   bloqueFoto(q, planta);
   bloqueProcedencia(q, planta);
+  bloqueIdentificacion(q, planta);
   /* Qué fuentes se han pintado ya junto a su campo, para que el bloque de abajo
      recoja EXACTAMENTE el resto y ninguna se quede fuera de la pantalla. Se crea
      por render, no por planta: la rejilla se repinta al filtrar. */
@@ -153,7 +145,7 @@ export function fichaDe(planta) {
   camposConDiagrama(q, planta, citadas);
   bloqueCalendario(q, planta);
   bloqueMasDatos(q, planta, citadas);
-  bloqueCarlos(q, planta);
+  bloqueCasa(q, planta);
   // El índice va al final: cuenta lo que los demás han dejado en el DOM, así que
   // no puede adelantarse a ellos. Cuenta nodos pintados, no campos del JSON —
   // un recuento que no cuadre con lo que hay debajo es peor que no ponerlo.
@@ -162,126 +154,121 @@ export function fichaDe(planta) {
   return nodo;
 }
 
-/* ── la pegatina ────────────────────────────────────────────────────────────── */
+/* ── la cara de la tarjeta ──────────────────────────────────────────────────── */
 
 /** El vivero sale de `meta`, no de una constante: la begonia no es de Projardín
  *  y la pegatina tiene que decir la verdad de cada planta. */
 let META = {};
 export function fijarMeta(meta) { META = meta ?? {}; }
 
-function caraEtiqueta(q, planta, idTitulo) {
-  // El nombre se imprime idéntico en las siete: es lo que se busca con prisa.
-  const silueta = siluetaDe(planta.id);
-  if (silueta) q(".etiqueta__silueta").append(silueta);
-  else q(".etiqueta__silueta").remove();
+function caraDeLaTarjeta(q, planta, grupo, idTitulo, idAbrir) {
+  /* EL NOMBRE ACCESIBLE DEL SUMMARY SE FIJA A MANO, y no es un capricho.
+     Toda la cara es el `<summary>` —la tarjeta entera es la diana—, así que el
+     nombre calculado del contenido serían cuarenta palabras: severidad, familia,
+     nombre, binomio, titular del diagnóstico y cinco pastillas de datos, por
+     cada una de las siete. Con `aria-labelledby` el botón se llama «Poto ·
+     abrir la ficha» y el resto sigue siendo contenido, legible en modo lectura. */
+  const cara = q(".planta__cara");
+  cara.setAttribute("aria-labelledby", `${idTitulo} ${idAbrir}`);
 
-  const titulo = q(".etiqueta__nombre");
+  // La foto de la rejilla: el MISMO encuadre que la de la ficha, más pequeño.
+  // Sin ningún filtro. Si no hay foto, la tarjeta se queda sin ventana en vez de
+  // enseñar un hueco gris con aspecto de error.
+  const foto = q(".planta__foto");
+  if (planta.foto_rejilla) {
+    const img = q(".planta__img");
+    img.src = planta.foto_rejilla;
+    img.alt = planta.foto_alt || "";
+  } else {
+    foto.remove();
+  }
+
+  marcaDeSeveridad(q(".planta__cara .marca"), grupo);
+
+  const familia = q(".planta__familia");
+  if (planta.familia) familia.textContent = planta.familia;
+  else familia.remove();
+
+  const titulo = q(".planta__nombre");
   titulo.id = idTitulo;
   /* El nombre grande existe para encontrar la planta de un vistazo, y el estado
      de identificación no ayuda a encontrarla: baja al renglón del binomio, que
-     es el que existe para decir qué es. De paso la cadena más larga de la
-     rejilla pasa de 25 caracteres a 7. */
+     es el que existe para decir qué es. */
   titulo.textContent = planta.nombre_comun.replace(/\s*\((sin identificar|sin determinar)\)\s*$/i, "");
 
-  const binomio = q(".etiqueta__binomio");
+  const binomio = q(".planta__binomio");
   if (planta.nombre_cientifico) {
-    q(".etiqueta__binomio-texto").textContent = planta.nombre_cientifico;
+    q(".planta__binomio-texto").textContent = planta.nombre_cientifico;
   } else {
     binomio.dataset.sinIdentificar = "si";
-    q(".etiqueta__binomio-texto").textContent = "Especie sin identificar";
-  }
-  if (planta.vivero.fitosanitario) segmentar(q(".etiqueta__fito"), planta.vivero.fitosanitario);
-  else if (!planta.vivero.pasaporte) q(".etiqueta__fito").remove();
-
-  // Lo único que cambia entre las dos variantes es el bloque de procedencia,
-  // que es justo el dato que falta.
-  const v = META.vivero ?? {};
-  const esDelVivero = planta.vivero.emisor && planta.vivero.emisor === v.nombre;
-
-  if (!planta.vivero.tiene) {
-    q(".etiqueta__vivero-nombre").textContent = "Sin etiqueta de vivero";
-    q(".etiqueta__vivero-dir").textContent = "Procedencia sin registrar";
-    q(".etiqueta__vivero-tfno").remove();
-  } else if (esDelVivero) {
-    q(".etiqueta__vivero-nombre").textContent = v.nombre;
-    q(".etiqueta__vivero-dir").textContent = v.direccion ?? "";
-    q(".etiqueta__vivero-tfno").textContent = v.telefono ? `Tfno. ${v.telefono}` : "";
-  } else {
-    // La begonia viene de otro productor y trae pasaporte europeo.
-    q(".etiqueta__vivero-nombre").textContent = planta.vivero.emisor ?? "Productor sin identificar";
-    q(".etiqueta__vivero-dir").textContent = planta.vivero.procedencia ?? "";
-    q(".etiqueta__vivero-tfno").remove();
+    q(".planta__binomio-texto").textContent = "Especie sin identificar";
   }
 
-  /* Los dígitos impresos NO son un EAN salvo en la begonia. El rótulo tiene que
-     decir cuál es cuál: `CÓD.` para el código interno del vivero y `EAN` solo
-     para el de trece dígitos. La palabra EAN sobre un número que no lo es
-     convierte la signature en atrezo. */
-  const linea = q(".etiqueta__linea-precio");
+  /* El titular del diagnóstico en la cara: es lo que convierte la rejilla en un
+     parte y no en un catálogo. En las sanas también lo hay —qué vigilar—, y por
+     eso no se esconde en las cuatro que están bien. */
+  const titular = q(".planta__titular");
+  if (planta.estado?.titulo_estado) titular.textContent = planta.estado.titulo_estado;
+  else titular.remove();
 
-  if (!planta.vivero.tiene) {
-    /* Sin etiqueta de vivero NO va trama ni raya. `--trama-sin-dato` significa
-       «no lo sabemos», y que estas dos no traigan pegatina es un hecho
-       conocido, no un dato desconocido: son cosas opuestas. El espacio lo
-       ocupa el texto de procedencia, como contenido normal. */
-    linea.remove();
-  } else {
-    const esEan = Boolean(planta.vivero.ean);
-    const digitos = planta.vivero.ean ?? planta.vivero.codigo;
+  pastillasDeCara(q, planta);
 
-    if (digitos) {
-      q(".etiqueta__digitos").textContent = `${esEan ? "EAN" : "Cód."} ${digitos}`;
-    } else {
-      q(".etiqueta__digitos").remove();
-      q(".etiqueta__barras").remove();
-    }
-
-    // La begonia es etiqueta de productor: no lleva precio, y su celda la ocupa
-    // la procedencia. No es un hueco, es otro dato.
-    ponerOQuitar(q(".etiqueta__precio"), q(".etiqueta__precio"), planta.vivero.precio);
-    ponerOQuitar(q(".etiqueta__calibre"), q(".etiqueta__calibre"), planta.vivero.maceta);
-  }
-
-  // El pasaporte de la begonia ocupa el renglón del fitosanitario de las otras.
-  if (!planta.vivero.fitosanitario && planta.vivero.pasaporte) {
-    const fito = q(".etiqueta__fito");
-    if (fito) segmentar(fito, planta.vivero.pasaporte);
-  }
+  q(".planta__abrir-texto").textContent = "Abrir la ficha";
+  q(".planta__abrir-texto").id = idAbrir;
 }
 
-/** Parte un código de trazabilidad por sus separadores y hace cada segmento
- *  indivisible: un código partido por la mitad deja de ser un código. */
-function segmentar(destino, texto_) {
-  destino.textContent = "";
-  const trozos = String(texto_).split(/\s*·\s*/);
-  trozos.forEach((t, i) => {
-    const span = document.createElement("span");
-    span.className = "segmento";
-    span.textContent = t;
-    destino.append(span);
-    if (i < trozos.length - 1) destino.append(document.createTextNode(" · "));
-  });
+/** La marca de severidad: punto de color + PALABRA. Nunca una sin la otra. */
+function marcaDeSeveridad(nodo, grupo) {
+  if (!nodo) return;
+  nodo.dataset.severidad = grupo;
+  nodo.querySelector(".marca__texto").textContent = PALABRA_SEVERIDAD.get(grupo) ?? humanizar(grupo);
 }
 
-function resumenesDeCara(q, planta) {
-  for (const clave of EN_LA_CARA) {
-    const bloque = q(`.resumen[data-campo="${clave}"]`);
-    const cuidado = planta.cuidados.get(clave);
-    const valor = bloque.querySelector(".resumen__valor");
-    if (cuidado?.resumen) {
-      valor.textContent = cuidado.resumen;
-    } else {
-      valor.textContent = SIN_DATO;
-      valor.classList.add("sin-dato");
-      bloque.dataset.verificado = "no";
-    }
+/**
+ * Las pastillas de la cara: las cifras con las que se llega con la regadera.
+ *
+ * Van en monoespaciada porque son cifras, que es la voz mecánica del proyecto —
+ * la de báscula de vivero—, y llevan su rótulo al lado: «4 d» sin «riego verano»
+ * no es un dato, es un número suelto.
+ *
+ * Ojo con lo que NO está aquí: la frase entera del riego («…y saca la maceta del
+ * cachepot») vive en el expediente, a un clic. La pastilla da el intervalo y el
+ * volumen, que es lo que se pregunta de pie delante de la planta.
+ */
+function pastillasDeCara(q, planta) {
+  const lista = q(".planta__datos");
+  const r = planta.medidas.riego;
+  const t = planta.medidas.temperatura;
+
+  const filas = [
+    [r.dias_verano != null ? `${r.dias_verano} d` : null, "riego verano"],
+    [r.ml != null ? `${r.ml} ml` : null, "por riego"],
+    [planta.nivel_luz ? humanizar(planta.nivel_luz).toLowerCase() : null, "luz"],
+    [rangoCorto(t), "temp"],
+    [planta.dificultad ? humanizar(planta.dificultad).toLowerCase() : null, "nivel"],
+  ];
+
+  let puestas = 0;
+  for (const [valor, clave] of filas) {
+    if (valor == null || valor === "") continue;
+    const nodo = TPL_PASTILLA.content.cloneNode(true);
+    nodo.querySelector(".pastilla__valor").textContent = valor;
+    nodo.querySelector(".pastilla__clave").textContent = clave;
+    lista.append(nodo);
+    puestas += 1;
   }
+  if (puestas === 0) lista.remove();
 }
 
-function tirador(q, planta) {
-  // El texto del tirador nombra la planta: un lector de pantalla que salte de
-  // botón en botón oiría siete veces «despegar» sin saber de cuál.
-  q(".despegue__texto").textContent = `Despegar ${planta.nombre_comun}`;
+/** «10–28 °C», «≥ 10 °C» si no hay máximo publicado. El hueco se dice con la
+ *  misma gramática que el eje térmico: abierto por el lado que no se sabe. */
+function rangoCorto(t) {
+  if (!t) return null;
+  const min = t.min_tolerado, max = t.max_tolerado;
+  if (min != null && max != null) return `${min}–${max} °C`;
+  if (min != null) return `≥ ${min} °C`;
+  if (max != null) return `≤ ${max} °C`;
+  return null;
 }
 
 /* ── capa 1 · estado ────────────────────────────────────────────────────────── */
@@ -291,10 +278,6 @@ function bloqueEstado(q, planta) {
   const estado = planta.estado;
   if (!estado) {
     seccion.remove();
-    /* El tratamiento ya no vive dentro de `.estado` —está en la columna de
-       acción—, así que quitar la sección ya no se lo lleva por delante. Sin
-       estado no hay pasos, y un bloque «Qué hacer» vacío en la columna que
-       existe para decir qué hacer es lo peor que puede quedarse ahí. */
     q(".estado__tratamiento")?.remove();
     return;
   }
@@ -304,18 +287,18 @@ function bloqueEstado(q, planta) {
   seccion.dataset.severidad = g;
 
   /* Las cuatro sanas también tienen estado poblado: preventivo, plazo y qué
-     mirar. Siguen sin distintivo, pero su contenido tiene que verse, y «Qué le
-     pasa» sobre una planta sana sería un titular equivocado. */
+     mirar. «Qué le pasa» sobre una planta sana sería un titular equivocado. */
   q(".estado__titulo").textContent = g === "sana" ? "Qué vigilar" : "Qué le pasa";
-  if (estado.titulo_estado) q(".estado__severidad").before(subtitulo(estado.titulo_estado));
 
-  // El texto va siempre: el color no puede ser el único portador de la señal.
-  q(".estado__severidad-valor").textContent = humanizar(estado.severidad);
-  q(".estado__marca").dataset.marca = g;
+  marcaDeSeveridad(q(".estado__severidad"), g);
 
   const fecha = q(".estado__fecha");
   if (estado.fecha_foto) fecha.textContent = `Visto el ${fechaLegible(estado.fecha_foto)}`;
   else fecha.remove();
+
+  const cabecera = q(".estado__cabecera");
+  if (estado.titulo_estado) cabecera.textContent = estado.titulo_estado;
+  else cabecera.remove();
 
   listaEn(seccion, ".estado__bloque--senales", estado.senales);
   bloqueCausas(seccion, estado.causas, g);
@@ -328,7 +311,6 @@ function bloqueEstado(q, planta) {
   }
   tratamiento.hidden = false;
 
-  // El <ol> es la fuente; el diagrama es una segunda vista de esta misma lista.
   const pasos = q(".estado__pasos");
   for (const paso of estado.pasos) {
     const li = document.createElement("li");
@@ -365,23 +347,6 @@ function bloqueEstado(q, planta) {
   } else {
     revisar.remove();
   }
-
-  /* EL DIAGRAMA DE RECUPERACIÓN SE BORRA, y no es una poda por altura: afirmaba
-     algo falso. `ux-lead` retiró su propia especificación al medirlo.
-     Los seis círculos iban en cx 10/30/50/70/90/110 —espaciado regular— para
-     pasos cuyos horizontes son *inmediato, inmediato, esta semana, 3 semanas, 2-3
-     meses* y *cuando haya una fronde adulta*. O sea que el eje codificaba el
-     índice 1…6 y no el tiempo, y encima iba rotulado `hoy` … `01/09/2026`, con lo
-     que **afirmaba que el paso 6 cae el 1 de septiembre cuando esa fecha es el
-     `revisar_fecha` y no corresponde a ningún paso**.
-     Y no se arregla: dos pasos en el instante 0 no tienen posición en un eje
-     logarítmico, y uno sin fecha no la tiene en ninguno. La lista numerada que va
-     justo debajo ya rotula cada paso con su horizonte en palabras (`INMEDIATO`,
-     `3 SEMANAS`, `2-3 MESES`), que es MÁS preciso que un eje.
-     Por la regla eliminatoria de `svg.js` —si se puede borrar sin perder
-     información, es decoración— aquí el que se borra es el dibujo, porque todas
-     sus palabras están en el texto y el texto además no miente. */
-  q(".estado__diagrama")?.remove();
 }
 
 /* ── el calendario de la planta ──────────────────────────────────────────────── */
@@ -392,9 +357,7 @@ function bloqueEstado(q, planta) {
  * las cinco clases, porque la ficha es donde se hacen y donde caben los matices:
  *
  *   - El riego lleva su **comprobación**, no una fecha, y dice `sin registrar`
- *     en el hueco donde iría la última vez. La ausencia se dice como ausencia,
- *     igual que un campo botánico sin verificar: la página no cambia de estándar
- *     de honestidad porque el dato sea de uso en vez de botánico.
+ *     en el hueco donde iría la última vez. La ausencia se dice como ausencia.
  *   - Las condicionadas llevan la **condición delante**, en forma de
  *     comprobación, y nunca «toca este mes».
  */
@@ -414,8 +377,10 @@ function bloqueCalendario(q, planta) {
     const li = nodo.querySelector(".tarea");
     li.dataset.tono = t.tono;
     if (t.tarea.tipo) li.dataset.tipo = t.tarea.tipo;
-    /* Los mismos `data-*` que en la franja: `qa-visual` mide las dos superficies,
-       porque una tarea condicionada mal pintada es igual de dañina en la ficha. */
+    /* Los `data-*` no son lógica ni estilo: son la forma de que el test pueda
+       AFIRMAR en vez de abstenerse, y lo que queda sin verificar sin ellos es
+       justo la guarda del abonado del helecho — la única capaz de matar una
+       planta. */
     if (t.tarea.id) li.dataset.tarea = t.tarea.id;
     li.dataset.planta = planta.id;
     if (t.estado) li.dataset.tareaEstado = t.estado;
@@ -434,7 +399,7 @@ function bloqueCalendario(q, planta) {
     const trozos = [t.cuando];
     /* «Última vez: sin registrar». No es un hueco que tapar: es el dato que
        impide convertir el ritmo en un vencimiento, y por tanto la razón de que
-       aquí no haya una cuenta atrás. Se dice, y se dice en su gris. */
+       aquí no haya una cuenta atrás. */
     if (t.sinRegistro && !t.tarea.ultimo) trozos.push("última vez: sin registrar");
     if (trozos.filter(Boolean).length > 0) {
       cuando.append(conCifras(trozos.filter(Boolean).join(" · ")));
@@ -448,8 +413,7 @@ function bloqueCalendario(q, planta) {
       nota.hidden = false;
       /* El rótulo distingue las dos cosas que pueden ocupar esta línea, y no son
          lo mismo: una condición es un requisito que hay que cumplir antes, y una
-         comprobación es algo que hay que mirar. Sin rótulo, «comprobar que los 2
-         cm de arriba están secos» se leería como una condición de calendario. */
+         comprobación es algo que hay que mirar. */
       nodo.querySelector(".tarea__nota-rotulo").textContent =
         t.tarea.tipo === "ritmo" ? "Comprobar" : "Solo si";
       nodo.querySelector(".tarea__nota-texto").textContent = t.nota;
@@ -466,16 +430,10 @@ function bloqueCalendario(q, planta) {
 /**
  * El índice con recuento de la columna de acción.
  *
- * Dos decisiones que lo gobiernan y no son de maquetación:
- *
- *  1. **No está para esconder, está para entrar.** Nada se pliega detrás de él:
- *     las cuatro secciones que enumera siguen enteras y abiertas en la otra
- *     columna. Con dos columnas y un índice, esconder además sería cobrar dos
- *     veces por la misma decisión.
+ *  1. **No está para esconder, está para entrar.** Nada se pliega detrás de él.
  *  2. **El recuento se cuenta del DOM, no del JSON.** «Lo que se ve · 13» es una
- *     afirmación sobre lo que hay debajo, y si se contara del JSON bastaría con
- *     que un `filter()` del render descartara un elemento para que el número
- *     mintiera. Se cuenta lo pintado, así que no puede desalinearse.
+ *     afirmación sobre lo que hay debajo; contándolo del JSON bastaría con que un
+ *     `filter()` del render descartara un elemento para que el número mintiera.
  *
  * Y si una sección no existe en esta planta, no sale del índice con un 0: sale
  * fuera. Un índice de siete líneas con cuatro ceros no informa, decora.
@@ -486,9 +444,7 @@ const SECCIONES_INDICE = [
   { rotulo: "Lo que la foto no dice", bloque: ".estado__bloque--limites", item: ".estado__item" },
   /* Las fuentes van repartidas por campo a propósito —son contenido, no letra
      pequeña—, así que no hay un bloque «Fuentes» al que apuntar. Se cuentan las
-     citas realmente pintadas en TODA la ficha (`enToda`) y se entra por «Más
-     datos», que es donde está la mayoría y donde vive el grupo de las que no
-     cuelgan de ningún campo. El número es el que se puede contar en pantalla. */
+     citas realmente pintadas en TODA la ficha y se entra por «Más datos». */
   { rotulo: "Fuentes", bloque: ".mas-datos", item: ".fuente", enToda: true },
 ];
 
@@ -546,28 +502,16 @@ function indiceDelExpediente(q, planta) {
 
   /* Siete índices en la misma página son siete <nav>, y un <nav> sin nombre
      entre varios no se distingue de sus hermanos: un lector de pantalla que
-     liste las regiones oiría «navegación» siete veces. El rótulo visible dice
-     «En el expediente» en las siete, así que el nombre accesible tiene que
-     llevar además de qué planta es. Lo cazó `tests/runner.py`, no una lectura. */
+     liste las regiones oiría «navegación» siete veces. */
   indice.setAttribute("aria-label", `En el expediente de ${planta.nombre_comun}`);
 }
 
 /**
- * Las causas probables: una línea por causa y el razonamiento plegado detrás.
- * Con siete párrafos largos volcados de golpe el bloque se vuelve un muro y el
- * brief pide leer el dato concreto sin scroll infinito.
- *
- * `patron` va aparte y con su rótulo: no es una afirmación más, es una
- * instrucción para mirar la planta, y es lo que convierte un listado de causas
- * en algo usable delante del tiesto.
- */
-/**
  * EL RÓTULO DEL `patron` VARÍA POR `tipo`, y no es cosmético.
  *
- * `PATRÓN PARA RECONOCERLA` era correcto cuando el campo solo vivía en `causa`.
- * Con `tipo` puesto hay `patron` en afirmaciones, y ahí ese rótulo no significa
- * nada: lo que dice el texto es **qué desmentiría** la afirmación, no cómo
- * reconocerla. Un rótulo por clase, no un rótulo por bloque.
+ * Con `tipo` puesto hay `patron` en afirmaciones, y ahí «patrón para
+ * reconocerla» no significa nada: lo que dice el texto es **qué desmentiría** la
+ * afirmación. Un rótulo por clase, no un rótulo por bloque.
  */
 const ROTULO_PATRON = new Map([
   ["causa", "Patrón para reconocerla"],
@@ -576,28 +520,16 @@ const ROTULO_PATRON = new Map([
 ]);
 
 /**
- * Qué se pliega, por clase. El contrato es de `ux-lead` y la lógica es la misma
- * regla de siempre: **no se pliegan ni las afirmaciones ni los límites de lo que
- * sabemos; el razonamiento sí puede.** Una `mejora` es una propuesta, no una
- * afirmación sobre un problema, así que puede ir plegada sin romper nada.
+ * Qué se pliega, por clase: **no se pliegan ni las afirmaciones ni los límites
+ * de lo que sabemos; el razonamiento sí puede.** Una `mejora` es una propuesta,
+ * no una afirmación sobre un problema, así que puede ir plegada.
  */
 const SE_PLIEGA_ENTERA = new Set(["mejora"]);
 
 /**
- * El rótulo del bloque, y por qué no puede ser fijo.
- *
- * `CAUSAS PROBABLES` sobre una planta sana le pide la causa de un problema que no
- * tiene — y el hueco se rellenaba, porque `botanist` responde bien: el poto sano
- * cargaba 5 «causas» y 1.955 caracteres, el mismo peso que el helecho que se
- * muere. Pero «mejoras opcionales» tampoco servía: en esas cuatro plantas los
- * ítems no son todos del mismo tipo — el poto trae tres afirmaciones, **un riesgo**
- * (podredumbre de raíz en maceta sin drenaje visible) y una mejora, y filar un
- * riesgo bajo «opcionales» es peor que filarlo bajo «causas probables».
- *
- * Así que el rótulo del bloque deja de adivinar y solo dice de qué va el bloque;
- * la clase la dice cada ítem. Es el criterio general que salió cuatro veces hoy:
- * **no dejes que el contenedor adivine de qué clase es su contenido; deja que la
- * clase escrita en el dato decida la forma.**
+ * El rótulo del bloque no adivina de qué clase es su contenido: solo dice de qué
+ * va el bloque, y la clase la dice cada ítem. `CAUSAS PROBABLES` sobre una planta
+ * sana le pide la causa de un problema que no tiene.
  */
 function rotuloDeCausas(grupo) {
   return grupo === "sana" ? "Lo que hay que saber" : "Causas probables";
@@ -622,14 +554,16 @@ function bloqueCausas(raiz, causas, grupo) {
     // La clase va al DOM para que el CSS pueda distinguirlas sin adivinar.
     li.dataset.tipo = causa.tipo ?? "causa";
 
+    const rotulo = document.createElement("span");
+    rotulo.className = "causa__clase";
+    rotulo.textContent = nombreDeClase(causa.tipo ?? "causa");
+    li.append(rotulo);
+
     const linea = document.createElement("p");
     linea.className = "causa__resumen";
     linea.textContent = causa.resumen ?? causa.detalle;
 
     if (causa.detalle && causa.resumen && SE_PLIEGA_ENTERA.has(causa.tipo)) {
-      /* Una `mejora` se pliega ENTERA, afirmación incluida: es una propuesta, y
-         una propuesta no es ni un hallazgo ni un límite de lo que sabemos. El
-         rótulo lleva su propio resumen, así que plegada sigue diciendo de qué es. */
       const det = document.createElement("details");
       det.className = "causa__mas causa__mas--entera";
       const sum = document.createElement("summary");
@@ -659,15 +593,14 @@ function bloqueCausas(raiz, causas, grupo) {
     if (causa.patron) {
       const patron = document.createElement("p");
       patron.className = "causa__patron";
-      const rotulo = document.createElement("span");
-      rotulo.className = "causa__patron-rotulo";
+      const rot = document.createElement("span");
+      rot.className = "causa__patron-rotulo";
       /* Sin entrada en el mapa no se inventa un rótulo: se pinta el patrón sin
-         él. `aclaracion` y `mejora` hoy no traen `patron`, y si un día lo traen
-         `ux-lead` decide cómo se llama — no lo decide un `??` de este fichero. */
+         él. `aclaracion` y `mejora` hoy no traen `patron`. */
       const nombre = ROTULO_PATRON.get(causa.tipo ?? "causa");
       if (nombre) {
-        rotulo.textContent = nombre;
-        patron.append(rotulo);
+        rot.textContent = nombre;
+        patron.append(rot);
       }
       const texto = document.createElement("span");
       texto.textContent = causa.patron;
@@ -678,6 +611,15 @@ function bloqueCausas(raiz, causas, grupo) {
     ul.append(li);
   }
 }
+
+const NOMBRES_CLASE = new Map([
+  ["causa", "Causa probable"],
+  ["afirmacion", "Afirmación"],
+  ["riesgo", "Riesgo"],
+  ["mejora", "Mejora"],
+  ["aclaracion", "Aclaración"],
+]);
+const nombreDeClase = (tipo) => NOMBRES_CLASE.get(tipo) ?? "Causa probable";
 
 /** Rellena un <ul> de un bloque del estado, o quita el bloque si no hay nada. */
 function listaEn(raiz, selectorBloque, elementos) {
@@ -695,13 +637,6 @@ function listaEn(raiz, selectorBloque, elementos) {
     li.textContent = item;
     ul.append(li);
   }
-}
-
-function subtitulo(texto_) {
-  const p = document.createElement("p");
-  p.className = "estado__cabecera";
-  p.textContent = texto_;
-  return p;
 }
 
 /** «2026-08-11» → «11/08/2026». Sin librerías de fechas para esto. */
@@ -731,23 +666,15 @@ function bloqueFoto(q, planta) {
   // Sin alt útil, la foto no le aporta nada a un lector de pantalla.
   img.alt = planta.foto_alt || "";
 
-  /* La banda de la foto: fecha primero, porque es lo que fija de QUÉ momento
-     habla el diagnóstico. `estados[].fecha_foto` existe en las siete. */
   const fecha = q(".foto__fecha");
   const cuando = planta.estado?.fecha_foto;
   if (cuando) fecha.textContent = `Foto del ${fechaLegible(cuando)}`;
   else fecha.remove();
 
-  /* La limitación de ESTA foto, cuando el contenido la trae.
-     `limitacion_foto` es un campo que le he pedido a `botanist` y que hoy no
-     existe todavía: el texto del helecho —«la foto está tomada de noche y con
-     poca luz: el color real de la fronde nueva y el detalle del envés no se
-     pueden juzgar en ella»— vive hoy enterrado como una observación entre trece.
-     Y NO se saca de ahí olfateando la prosa: buscar «foto» en las señales sería
-     un heurístico sobre texto, que es justo lo que este proyecto no hace.
-     Mientras el campo no exista, la banda muestra solo la fecha. Y **no se
-     escribe «sin limitaciones conocidas»**: eso afirmaría algo que nadie ha
-     comprobado. */
+  /* La limitación de ESTA foto, cuando el contenido la trae. NO se saca
+     olfateando la prosa de las señales: buscar «foto» en el texto sería un
+     heurístico, que es justo lo que este proyecto no hace. Y no se escribe «sin
+     limitaciones conocidas»: eso afirmaría algo que nadie ha comprobado. */
   const limite = q(".foto__limite");
   if (planta.estado?.limitacion_foto) {
     limite.hidden = false;
@@ -760,19 +687,66 @@ function bloqueFoto(q, planta) {
   if (planta.ubicacion) lugar.textContent = planta.ubicacion;
   else lugar.remove();
 
-  // Si la banda se ha quedado sin nada, se va: una caja vacía no es una banda.
   if (!q(".foto__pie").hasChildNodes()) q(".foto__pie").remove();
 }
 
 /**
- * El bloque de procedencia. Para cinco de las siete, la pegatina del vivero es
- * la fuente más fuerte que existe de qué compró Carlos: POWO dice qué es una
- * especie, no qué hay en ese tiesto. Para las otras dos, la ausencia se dice.
+ * La procedencia, y aquí vive ahora la pegatina.
+ *
+ * Para cinco de las siete plantas la pegatina del vivero es la fuente más fuerte
+ * que existe de qué compró Carlos: POWO dice qué es una especie, no qué hay en
+ * ese tiesto. Se reconstruye en HTML y CSS —el código de barras es un gradiente
+ * repetido, cero imágenes— al lado de la fotografía de la etiqueta real.
+ *
+ * Para las otras dos, la ausencia se dice y **no se decora**: `--trama-sin-dato`
+ * significa «no lo sabemos», y que el helecho y el poto no traigan pegatina es un
+ * hecho conocido. Son cosas opuestas.
  */
 function bloqueProcedencia(q, planta) {
+  const pegatina = q(".pegatina");
   const figura = q(".prueba__figura");
   const sin = q(".prueba__sin");
   const nota = q(".prueba__nota");
+
+  if (planta.vivero.tiene) {
+    pegatina.hidden = false;
+
+    const v = META.vivero ?? {};
+    const esDelVivero = planta.vivero.emisor && planta.vivero.emisor === v.nombre;
+    if (esDelVivero) {
+      q(".pegatina__vivero-nombre").textContent = v.nombre;
+      ponerOQuitar(q(".pegatina__vivero-dir"), v.direccion);
+      ponerOQuitar(q(".pegatina__vivero-tfno"), v.telefono ? `Tfno. ${v.telefono}` : null);
+    } else {
+      // La begonia viene de otro productor y trae pasaporte europeo.
+      q(".pegatina__vivero-nombre").textContent = planta.vivero.emisor ?? "Productor sin identificar";
+      ponerOQuitar(q(".pegatina__vivero-dir"), planta.vivero.procedencia);
+      q(".pegatina__vivero-tfno").remove();
+    }
+
+    ponerOQuitar(q(".pegatina__nombre"), planta.vivero.nombre_etiqueta ?? planta.nombre_comun);
+    ponerOQuitar(q(".pegatina__maceta"), planta.vivero.maceta);
+
+    /* Los dígitos impresos NO son un EAN salvo en la begonia: «2040 2174» es
+       código interno del vivero, de ocho dígitos. El rótulo tiene que decir cuál
+       es cuál — la palabra EAN sobre un número que no lo es convierte la
+       signature en atrezo. */
+    const digitos = planta.vivero.ean ?? planta.vivero.codigo;
+    if (digitos) {
+      q(".pegatina__digitos").textContent = `${planta.vivero.ean ? "EAN" : "Cód."} ${digitos}`;
+    } else {
+      q(".pegatina__digitos").remove();
+      q(".pegatina__barras").remove();
+    }
+
+    ponerOQuitar(q(".pegatina__precio"), planta.vivero.precio);
+
+    const fito = planta.vivero.fitosanitario ?? planta.vivero.pasaporte;
+    if (fito) segmentar(q(".pegatina__fito"), fito);
+    else q(".pegatina__fito").remove();
+  } else {
+    pegatina.remove();
+  }
 
   if (planta.foto_etiqueta) {
     figura.hidden = false;
@@ -787,8 +761,7 @@ function bloqueProcedencia(q, planta) {
     figura.remove();
     sin.hidden = false;
     /* No llevar pegatina no es un hueco de datos: en estas dos es antigüedad, y
-       eso es contenido normal. Por eso NO va en gris de «sin dato». El texto lo
-       da el JSON; si no está, se dice lo único que consta. */
+       eso es contenido normal. Por eso NO va en gris de «sin dato». */
     sin.textContent = planta.procedencia_nota ?? "Sin etiqueta de vivero: no se conserva.";
   }
 
@@ -810,6 +783,41 @@ function bloqueProcedencia(q, planta) {
     p.textContent = "Recién llegada, en aclimatación.";
     q(".prueba").append(p);
   }
+}
+
+/**
+ * El rasgo de la hoja. La silueta era el ancla para escanear una rejilla sin
+ * fotos; con fotos deja de hacer ese trabajo y pasa a hacer el suyo, que es
+ * mejor: **la forma de la hoja es la clave de identificación botánica**. En la
+ * margarita es literalmente la prueba de que la etiqueta miente, y en el helecho
+ * la trama dentro del contorno dice dónde está exactamente la duda.
+ */
+function bloqueIdentificacion(q, planta) {
+  const seccion = q(".identificacion");
+  if (!seccion) return;
+  const dibujo = siluetaDe(planta.id, { grande: true });
+  const texto = lecturaDe(planta.id);
+  if (!dibujo || !texto) {
+    seccion.remove();
+    return;
+  }
+  seccion.hidden = false;
+  q(".identificacion__silueta").append(dibujo);
+  q(".identificacion__texto").textContent = texto;
+}
+
+/** Parte un código de trazabilidad por sus separadores y hace cada segmento
+ *  indivisible: un código partido por la mitad deja de ser un código. */
+function segmentar(destino, texto_) {
+  destino.textContent = "";
+  const trozos = String(texto_).split(/\s*·\s*/);
+  trozos.forEach((t, i) => {
+    const span = document.createElement("span");
+    span.className = "segmento";
+    span.textContent = t;
+    destino.append(span);
+    if (i < trozos.length - 1) destino.append(document.createTextNode(" · "));
+  });
 }
 
 /** Días transcurridos desde una fecha ISO, o null si no hay fecha válida. */
@@ -850,12 +858,15 @@ function campoDe(cuidado, diagrama, fuente) {
   // El icono acompaña a la versalita, no la sustituye.
   if (icono) clave.prepend(icono);
 
+  /* EL RESUMEN COMPLETO VUELVE AL EXPEDIENTE, y hay que decir por qué cambia.
+     Antes se suprimía aquí porque la cara de la pegatina ya lo imprimía entero
+     unos centímetros más arriba, en la misma pantalla: era la misma cadena dos
+     veces. Con la piel nueva la cara lleva pastillas de cifras («3 d», «100 ml»)
+     y no la frase, así que **este ya no es un duplicado: es el único sitio donde
+     se lee «saca la maceta del cachepot»**. Suprimirlo ahora sí perdería
+     contenido. */
   const resumen = nodo.querySelector(".campo__resumen");
-  if (cuidado.resumen && RESUMEN_YA_ESTA_EN_LA_CARA.has(cuidado.clave)) {
-    /* Ya está impreso en la cara de la pegatina, más grande y unos centímetros
-       más arriba en la misma pantalla. Aquí solo sería la segunda vez. */
-    resumen.remove();
-  } else if (cuidado.resumen) {
+  if (cuidado.resumen) {
     resumen.textContent = cuidado.resumen;
   } else {
     resumen.textContent = SIN_DATO;
@@ -913,8 +924,6 @@ function bloqueMasDatos(q, planta, citadas) {
     g === "sin_identificar"
       ? "Sin identificar la especie, no se puede valorar. No significa que sea segura."
       : sinDatos
-        // El aviso viene del JSON y se pinta entero. Si no cabe, se agranda la
-        // caja: recortar una frase de seguridad es peor que no ponerla.
         ? [tox.texto, tox.aviso].filter(Boolean).join(" ")
         : tox.texto ?? (tox.nivel ? humanizar(tox.nivel) : null);
   const nodoTox = datoDe(
@@ -925,18 +934,17 @@ function bloqueMasDatos(q, planta, citadas) {
     "toxicidad"
   );
   const bloqueTox = nodoTox.querySelector(".dato");
-  // El modificador lo pone el render, no la plantilla: este bloque se genera.
   bloqueTox.classList.add("dato--toxicidad");
-  bloqueTox.dataset.toxicidad = grupoToxicidad(tox);
+  bloqueTox.dataset.toxicidad = g;
 
   /* El aviso del casi-homónimo va aparte y visible: ASPCA tiene ficha de otra
      especie de nombre casi idéntico, y la trampa va en las dos direcciones —
      en el coleo invita a bajar la guardia, en el ficus a subirla. */
   if (tox.aviso_homonimo) {
-    const nota = document.createElement("p");
-    nota.className = "aviso-homonimo";
-    nota.textContent = tox.aviso_homonimo;
-    bloqueTox.querySelector(".dato__valor").append(nota);
+    const notaH = document.createElement("p");
+    notaH.className = "aviso-homonimo";
+    notaH.textContent = tox.aviso_homonimo;
+    bloqueTox.querySelector(".dato__valor").append(notaH);
   }
   lista.append(nodoTox);
 
@@ -946,21 +954,13 @@ function bloqueMasDatos(q, planta, citadas) {
   /* TODAS las fuentes que no se han pintado ya junto a su campo.
    *
    * Esto era un filtro por `!f.respalda` y ahí había un agujero grande y callado:
-   * en el JSON real **las 34 fuentes del helecho traen `campo`**, así que ninguna
-   * era «suelta», el bloque no se creaba nunca, y de las 34 solo llegaban a la
-   * pantalla las 10 que `fuenteDe()` engancha a un campo renderizado. Las otras
-   * 24 —`nombre_cientifico`, `familia`, `estado`, `historia`, `fecha_llegada`,
-   * `etiqueta_vivero`, `riego.ultimo`, `temperatura.minima_letal_c`… y la SEGUNDA
-   * fuente de `riego` y de `plagas_comunes`, que `.find()` descarta— no se veían
-   * en ningún sitio. Unas 170 citas en las siete fichas.
+   * en el JSON real las 34 fuentes del helecho traen `campo`, así que ninguna era
+   * «suelta», el bloque no se creaba nunca, y de las 34 solo llegaban a pantalla
+   * las 10 enganchadas a un campo renderizado. Unas 170 citas invisibles en las
+   * siete fichas, en un proyecto cuya regla central es que los datos se citan.
    *
-   * Y es el peor sitio donde podía pasar: `CLAUDE.md` dice que los datos se
-   * verifican y se citan, y el brief dice que las fuentes son contenido y no
-   * letra pequeña. Una cita que no llega a la pantalla no respalda nada.
-   *
-   * Lo cazó el recuento del índice: «Fuentes · 10» contra 34 en el JSON. Es el
-   * argumento de `ux-lead` a favor del recuento, cumpliéndose el primer día —
-   * un número que se puede contrastar es un número que delata. */
+   * Lo cazó el recuento del índice: «Fuentes · 10» contra 34 en el JSON. Un
+   * número que se puede contrastar es un número que delata. */
   const resto = planta.fuentes.filter((f) => !citadas.has(f));
   if (resto.length > 0) {
     const div = document.createElement("div");
@@ -971,19 +971,10 @@ function bloqueMasDatos(q, planta, citadas) {
     const dd = document.createElement("dd");
     dd.className = "dato__valor";
 
-    /* Y AQUÍ HAY UN CHOQUE ENTRE DOS REGLAS DEL PROYECTO, así que conviene decir
-       cuál gana y con qué argumento.
-       Sacar estas 24 citas del limbo cuesta ~600 px por ficha, o sea que se come
-       casi todo lo que ganaron las dos columnas. Pero el brief da la regla que lo
-       resuelve, y es suya, no mía:
-         «Plegar por longitud es razonable; plegar los límites de lo que sabemos,
-          no.»
-       Una lista de 24 citas es un problema de LONGITUD, no un límite de lo que
-       sabemos: lo que no se puede esconder es «esto no lo podemos afirmar», y eso
-       vive en `LO QUE LA FOTO NO DICE`, que sigue entero y abierto.
-       Además el rótulo lleva el número, así que plegado se sabe cuántas hay antes
-       de abrirlo — que es la condición que el brief le pone a un índice para no
-       engañar, y vale igual aquí. Antes de esto no estaban plegadas: no estaban. */
+    /* Plegar por longitud es razonable; plegar los límites de lo que sabemos, no.
+       Una lista de 24 citas es longitud; lo que no se puede esconder es «esto no
+       lo podemos afirmar», y eso vive en LO QUE LA FOTO NO DICE, abierto. Y el
+       rótulo lleva el número, así que plegado se sabe cuántas hay. */
     const det = document.createElement("details");
     det.className = "fuentes-resto";
     const sum = document.createElement("summary");
@@ -999,9 +990,9 @@ function bloqueMasDatos(q, planta, citadas) {
     for (const f of resto) {
       const span = document.createElement("span");
       span.className = "dato__fuente";
-      /* El campo que respalda va delante de la cita: sin él, veinticuatro
-         «RHS ↗» seguidos son una lista de logos. Con él, cada línea dice qué
-         afirmación sostiene, que es para lo que existe una fuente. */
+      /* El campo que respalda va delante de la cita: sin él, veinticuatro «RHS ↗»
+         seguidos son una lista de logos. Con él, cada línea dice qué afirmación
+         sostiene, que es para lo que existe una fuente. */
       if (f.respalda) {
         const campo = document.createElement("span");
         campo.className = "dato__fuente-campo";
@@ -1050,8 +1041,8 @@ function datoDe(etiqueta, valor, detalle, fuente, campoIcono) {
  * La fuente que respalda un campo, y el registro de cuál se ha usado.
  *
  * `citadas` es un Set POR RENDER, no una marca en el objeto de datos: la rejilla
- * se vuelve a pintar cada vez que se filtra o se busca, y una bandera pegada a
- * la fuente sobreviviría al re-render y dejaría el bloque de resto vacío a la
+ * se vuelve a pintar cada vez que se filtra o se busca, y una bandera pegada a la
+ * fuente sobreviviría al re-render y dejaría el bloque de resto vacío a la
  * segunda pasada.
  */
 function fuenteDe(planta, campo, citadas) {
@@ -1100,7 +1091,7 @@ function enlaceFuente(f) {
   return a;
 }
 
-/** Una observación propia o una frase de Carlos no es un enlace: sin flecha,
+/** Una observación propia o una frase de la casa no es un enlace: sin flecha,
  *  sin subrayado, y con la fecha de consulta al lado. */
 function sinEnlace(titulo, consultado) {
   const span = document.createElement("span");
@@ -1109,12 +1100,9 @@ function sinEnlace(titulo, consultado) {
   return span;
 }
 
-/* `dominio()` se retiró: las fuentes se citan por nombre corto («RHS ↗»),
-   así que ya no hace falta extraer el host de la URL. */
+/* ── capa 3 · la voz de la casa ─────────────────────────────────────────────── */
 
-/* ── capa 3 · el cuaderno de Carlos ─────────────────────────────────────────── */
-
-function bloqueCarlos(q, planta) {
+function bloqueCasa(q, planta) {
   const panel = q(".cuaderno");
   const notas = planta.notas ?? [];
   if (!planta.historia && !planta.notas_carlos && notas.length === 0) {
@@ -1129,7 +1117,7 @@ function bloqueCarlos(q, planta) {
   const autores = [...new Set(notas.map((n) => n.autor).filter(Boolean))];
   q(".cuaderno__rotulo").textContent = autores.length > 0 ? autores.join(" y ") : "En casa";
 
-  ponerOQuitar(q(".cuaderno__historia"), q(".cuaderno__historia"), planta.historia);
+  ponerOQuitar(q(".cuaderno__historia"), planta.historia);
 
   const destinoNotas = q(".cuaderno__notas");
   const sueltas = [planta.notas_carlos, ...notas.map((n) => n.texto)].filter(Boolean);
@@ -1141,15 +1129,16 @@ function bloqueCarlos(q, planta) {
 
 /** Rellena un nodo con texto, o lo quita del DOM si no hay nada que poner.
  *  Un párrafo vacío ocupa espacio y el lector de pantalla lo recorre igual. */
-function ponerOQuitar(contenedor, destino, valor) {
+function ponerOQuitar(destino, valor) {
+  if (!destino) return;
   if (valor) destino.textContent = valor;
-  else contenedor.remove();
+  else destino.remove();
 }
 
 /* ── lista completa ─────────────────────────────────────────────────────────── */
 
-export function renderLista(plantas, contenedor) {
+export function renderLista(plantas, contenedor, desde = 0) {
   const frag = document.createDocumentFragment();
-  for (const p of plantas) frag.append(fichaDe(p));
+  plantas.forEach((p, i) => frag.append(fichaDe(p, desde + i)));
   contenedor.replaceChildren(frag); // una sola inserción, sin parpadeo
 }

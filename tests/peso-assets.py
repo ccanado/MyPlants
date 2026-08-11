@@ -227,6 +227,14 @@ def main() -> int:
                             f"content/plantas.json: {campo} de '{p.get('id') or p.get('nombre_comun')}' "
                             f"→ {foto} NO EXISTE en disco"
                         )
+                    # El derivado de rejilla NO está escrito en ningún sitio: lo
+                    # compone js/datos.js con `RUTA_REJILLA + foto`, así que un
+                    # rastreador de literales no lo ve y lo daría por huérfano.
+                    # La regla del código se escribe aquí para que el instrumento
+                    # sepa lo que el código hace. Su existencia la exige
+                    # tests/coherencia.py; esto solo evita el falso positivo.
+                    if campo == "foto" and "/" not in foto:
+                        referenciados.add((raiz / "assets" / "img" / "rejilla" / foto).resolve())
 
     # --- imágenes en assets/ -----------------------------------------------------------
     img_dir = raiz / "assets" / "img"
@@ -239,15 +247,20 @@ def main() -> int:
             total_img += peso
             dim = dimensiones(f)
             d = f"{dim[0]}×{dim[1]}" if dim else "dimensiones ilegibles"
-            info.append(f"assets/img/{f.name}: {kb(peso)} KB, {d}")
+            # RELATIVO a assets/img y no `f.name`: desde que hay derivados en
+            # rejilla/ hay dos ficheros con el mismo nombre, y el aviso señalaba
+            # al que no era. Un instrumento que nombra mal el objeto manda a
+            # alguien a mirar donde no está.
+            rel = f.relative_to(img_dir).as_posix()
+            info.append(f"assets/img/{rel}: {kb(peso)} KB, {d}")
             if peso > MAX_IMG_KB * 1024:
-                errores.append(f"assets/img/{f.name} pesa {kb(peso)} KB (máximo {MAX_IMG_KB} KB)")
+                errores.append(f"assets/img/{rel} pesa {kb(peso)} KB (máximo {MAX_IMG_KB} KB)")
             if f.suffix.lower() in {".bmp", ".tif", ".tiff"}:
-                errores.append(f"assets/img/{f.name}: formato {f.suffix} no es para web")
+                errores.append(f"assets/img/{rel}: formato {f.suffix} no es para web")
             if dim and (dim[0] > 2400 or dim[1] > 2400):
-                avisos.append(f"assets/img/{f.name} es {d}: demasiado grande para una ficha")
+                avisos.append(f"assets/img/{rel} es {d}: demasiado grande para una ficha")
             if f.resolve() not in referenciados:
-                avisos.append(f"assets/img/{f.name} no lo referencia nadie (huérfano)")
+                avisos.append(f"assets/img/{rel} no lo referencia nadie (huérfano)")
         if total_img > MAX_TOTAL_IMG_KB * 1024:
             errores.append(f"assets/img/ suma {kb(total_img)} KB (presupuesto {MAX_TOTAL_IMG_KB} KB)")
     else:

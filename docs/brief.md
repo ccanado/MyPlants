@@ -11,11 +11,18 @@
 >   están muertas — y están escritas con el mismo tono que las vivas, porque casi todo lo escribí en
 >   imperativo antes de aprender que eso era el problema.
 >
-> ### ⚠ LA PIEL DE ESTE BRIEF ESTÁ SUSTITUIDA. El criterio, no.
+> ### ⚠ LA PIEL DE ESTE BRIEF ESTÁ SUSTITUIDA Y APLICADA. El criterio, no.
 >
-> **Carlos eligió la propuesta de `ui-designer`, en `alternativa/`.** Así que la dirección visual
-> concreta que defienden las mil seiscientas líneas siguientes **ya no es la de la web**. Están aquí
-> como registro de por qué se decidió cada cosa, no como especificación a cumplir.
+> **Carlos eligió la propuesta de `ui-designer` y el 12 de agosto de 2026 se aplicó a la web
+> entera**: campo oscuro cálido, las siete fotos llevando la página, chartreuse ácido del coleo
+> como único acento, veredicto a escala de display y las fichas en dos bandas —`PIDEN MIRADA` y
+> `ESTÁN BIEN`—. La carpeta `alternativa/` ya no existe: queda su captura en
+> `docs/qa/piel-elegida-alternativa-1280.png` y el porqué de cada cambio en la vigesimoctava vuelta
+> de `docs/decisiones.md`.
+>
+> Así que la dirección visual concreta que defienden las mil seiscientas líneas siguientes **ya no
+> es la de la web**. Están aquí como registro de por qué se decidió cada cosa, no como
+> especificación a cumplir.
 >
 > Lo digo yo, que la escribí, porque **nadie más sabe cuál de las dos cosas era cuál**:
 >

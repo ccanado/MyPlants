@@ -351,3 +351,85 @@ Formato: `- [quién] decisión — alternativa descartada y por qué`.
 - [ux-lead] Anillo de foco doble (2 px Tinta + halo 3 px Etiqueta) en un solo token — descartado el anillo de un color, porque ningún color de la paleta pasa 3:1 contra el blanco de la ficha y contra la teja del fondo a la vez.
 - [ux-lead] Sobre el fondo teja solo se escribe en blanco; Tinta sobre Maceta queda prohibido y anotado en `tokens.css` — el par da 2,05:1 y habría entrado por descuido en la primera cabecera que alguien escribiera.
 - [ux-lead] Los contrastes se calcularon con un script antes de fijar los hex, no después — descartado ajustar la paleta en QA, que siempre acaba en "casi pasa" y en repintar media web.
+
+## Vigesimoctava vuelta — la piel oscura: Carlos elige `alternativa/` y se aplica a toda la web
+
+Ejecutada el **12 de agosto de 2026** por el agente único. Carlos vio las dos versiones
+renderizadas y eligió: *«me gustan las imágenes que veo en alternativa; me gustaría que las
+utilizaras como base para diseñar acorde a ellas toda la web completa y todos los contenidos que
+hay ahora mismo»*. Es el procedimiento que el proyecto adoptó al descubrir que la restricción
+anti-genérico no la había escrito nadie: **dos versiones renderizadas y decide el dueño mirando.**
+
+- [agente/Carlos] **La piel pasa a campo oscuro cálido con las fotos llevando la página** —
+  descartado el camino de adoptar `alternativa/` como base de código: es una piel de portada y
+  ficha, y no reimplementaba la guarda de las tareas condicionadas (el único fallo capaz de matar
+  una planta), los diagramas, la cronología, el buscador, los filtros, las fuentes por campo ni el
+  expediente a dos columnas; además lee el estado con `estados[0]` en vez de por `fecha_foto`,
+  compone con `innerHTML` y escribe «siete macetas» a mano. **La piel se mueve en un fichero de
+  tokens; la funcionalidad no se mueve en ninguno.** Se trajo la dirección visual a la versión
+  principal.
+- [agente] **La unidad de la metáfora se cumple del todo: la planta, no la pegatina.** La tarjeta
+  cerrada es foto + datos, y la pegatina de Projardín **no se pierde**: se reconstruye en HTML y
+  CSS dentro del expediente, en `LA PRUEBA`, al lado de la fotografía de la etiqueta real — que es
+  donde la etiqueta está de verdad, pegada al tiesto. La signature sigue siendo nombrable, que es
+  lo que pide el punto 11.5 del checklist.
+- [agente] **Aparece un defecto que llevaba todo el proyecto escondido: el código de barras no se
+  pintaba nunca.** El HTML tenía `.etiqueta__barras` y el CSS estilizaba `.etiqueta__ean`, que no
+  existía en el DOM. Ningún comprobador mira si un `background-image` llega a pintarse, así que
+  pasó en verde desde el primer día. Se arregla al reconstruir la pegatina.
+- [agente] **Las dos bandas de `alternativa/` entran tal cual, y resuelven el día bueno.**
+  `PIDEN MIRADA` / `ESTÁN BIEN` con su recuento: el día que ninguna planta necesite nada, la
+  primera banda desaparece y la página dice `ESTÁN BIEN · 7 DE 7` sin inventar urgencia. Estaba en
+  el backlog como «diseñar qué dice la portada el día bueno» y ahora **sale por construcción**, sin
+  caso especial. El orden por urgencia se conserva dentro de cada banda.
+- [Carlos] **Al abrir una ficha se ensancha esa y solo esa.** Retirada la decisión de `ux-lead`
+  («mientras hay una ficha desplegada, la rejilla colapsa a una columna»): era coherente con
+  tarjetas de texto y deja de serlo con fotos —colapsarlo todo convertía siete fotos en siete
+  bandas y el ojo perdía la rejilla que estaba leyendo—. Sus palabras: *«debería abrirse la
+  clickada y el resto mantenerse en el grid de columnas que tienen»*. **La exclusividad se conserva
+  y no cuesta CSS**: son `<details name="planta">`, acordeón exclusivo nativo, y funciona incluso
+  entre las dos bandas.
+- [agente] **`severidad: sana` estrena color, y es un cambio de criterio con su motivo.** El
+  criterio viejo —«el color solo aparece cuando hay un problema»— era bueno sobre campo claro,
+  donde una planta sin distintivo simplemente no llamaba; sobre campo oscuro, sin marca, las cuatro
+  sanas se leían como fichas apagadas en vez de como fichas en orden. Carlos eligió la versión que
+  las marca. **La guarda no cambia y se mide, no se opina:** con las siete fotos puestas, la marca
+  del helecho tiene que seguir siendo lo primero que se ve, en color y en escala de grises.
+- [agente] **Las fotos entran con derivados propios, no con las de ficha.** 480×640, el MISMO
+  encuadre a la mitad, en `assets/img/rejilla/`. Las siete de ficha en la rejilla eran ~1 MB de
+  carga inicial; los derivados suman 468 KB y con `loading="lazy"` solo baja la primera fila. La
+  ruta la **deriva** `js/datos.js` del campo `foto` en vez de añadir un campo al JSON: cuál es el
+  fichero pequeño de una foto es presentación, y `content/plantas.json` es contenido. Y como un
+  derivado que falte no da error en consola —deja un hueco negro—, su existencia la exige
+  `tests/coherencia.py`.
+- [agente] **El resumen completo de riego, luz y temperatura vuelve al expediente.** Se había
+  suprimido allí porque la cara de la pegatina lo imprimía entero en la misma pantalla; con la
+  tarjeta nueva la cara lleva pastillas de cifras («3 d», «100 ml») y no la frase, así que ya no es
+  un duplicado: es el único sitio donde se lee «saca la maceta del cachepot».
+- [agente] **La cronología baja debajo de la rejilla.** Su argumento —que reencuadra lo que se
+  lee— se cumple igual detrás, y delante retrasaba justo lo único que Carlos echaba en falta.
+- [agente] **La silueta de hoja baja al expediente**, a un bloque de identificación con el rasgo
+  en palabras. Era el ancla para escanear una rejilla sin fotos; con fotos deja de hacer ese
+  trabajo y pasa a hacer el suyo, que es mejor: la forma de la hoja **es** la clave de
+  identificación, y en la margarita es la prueba de que la etiqueta miente.
+- [agente] **El punto de severidad deja de ser un `<span>` y pasa a pseudo-elemento.** Lo levantó
+  `tests/estructura.js` («17 marcas gráficas sin texto») y tenía razón aunque la palabra vaya al
+  lado: la forma de que un nodo no parezca un punto de color que codifica un estado no es
+  explicárselo al test, es que deje de ser un nodo. Es la segunda vez que este proyecto llega a la
+  misma conclusión; la primera fue con los puntos de la cronología.
+- [agente] **El buscador cumple por fin su placeholder.** Decía «planta, sala o síntoma» y el
+  índice no contenía ni un síntoma: ahora entran `senales`, el `resumen` de cada causa y su
+  `patron`. Era la única promesa incumplida que le quedaba a la web. De paso se van dos puntos
+  muertos del índice: `p.estado?.diagnostico`, campo que el normalizador nunca ha producido, y
+  `...p.plagas`, que metía `[object Object]` porque las plagas son objetos desde hace dos semanas.
+- [agente] **Desborde horizontal de 68 px a 1280, y la causa no era la que parecía.** El rótulo de
+  la franja iba con `hidden` y es hijo de un `subgrid`: `hidden` es `display: none`, así que la
+  fila perdía su primera celda y el nombre de la planta se corría a la columna de los títulos
+  largos. El comentario del código afirmaba lo contrario —«con `subgrid` la columna existe igual»—
+  y era falso. Ahora el rótulo se queda vacío en vez de oculto.
+- [agente] **Se borran 18 tokens definidos y sin usar, tres `@property` sin animación que las
+  interpole y `diagramaRecuperacion()`**, que seguía exportada después de que se borrara su
+  diagrama por afirmar algo falso. Paleta muerta y código muerto son deuda, y el checklist ya lo
+  pedía en su punto 12.2.
+- [agente] **`--color-sup-3` se borra por redundante**: valía exactamente lo mismo que
+  `--color-separador`. Dos nombres para un color son dos sitios donde equivocarse.

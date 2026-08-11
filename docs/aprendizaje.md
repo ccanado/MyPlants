@@ -319,3 +319,47 @@ de ocupación, la regla de la franja, el acento por planta, un diagrama, un rót
 perfil y la restricción fundacional— y añade que **cada retirada estaba bien y aun así el conjunto
 no convergía**. El rigor no era el problema; la ausencia de final sí. Y el final no lo pone quien
 está midiendo: lo pone quien puede decir "esto ya sirve".
+
+## Cinco del instrumental, del día de la piel oscura (12 de agosto de 2026)
+
+Van aquí y no como tarea, por la regla de Carlos. Dos de las cinco sí generaron trabajo, porque
+impedían verificar algo del alcance.
+
+- **Una medición se sella con el commit Y con el día.** `docs/retomar.md` firmaba «cero desborde a
+  320 y 1280» y era verdad el 11 de agosto. El 12 era falsa **sin que nadie tocara el código**: la
+  franja se calcula con `new Date()`, así que al pasar el día una tarea se volvió más larga
+  («debería haberse hecho hace 58 días») y la línea sacó 68 px de scroll horizontal. En una web
+  cuyo contenido depende del reloj, un ✓ de ayer no es un ✓.
+- **Chrome no baja de 500 px de ventana, así que `runner.py --ancho 320` mide 500.** El runner es
+  honesto —imprime el ancho real en la cabecera— pero la petición no ocurre y nadie lo mira. Y el
+  truco del zoom (`--ancho 640 --dpr 2`) **tampoco sirve para esto**: sube el device pixel ratio y
+  deja el viewport CSS en 640. Para 320 de verdad hace falta otro navegador conducido por fuera.
+  Cae en la excepción —impide verificar «cero desborde a 320», que es del alcance—, así que se hizo
+  con Playwright y se apunta en `docs/qa/como-ejecutar.md`.
+- **Ningún comprobador mira si un `background-image` llega a pintarse.** El código de barras de la
+  pegatina —la mitad de la signature del proyecto— **no se pintó nunca**: el HTML traía
+  `.etiqueta__barras` y el CSS estilizaba `.etiqueta__ean`, que no existía en el DOM. Pasó en verde
+  todo el proyecto porque los diez comprobadores miran texto, foco, movimiento, terceros y
+  estructura, y una clase que no casa con nada no es un error para ninguno. Solo se ve mirando la
+  captura, y en la captura parece que la pegatina «es así».
+- **El auditor de contraste se abstiene ante cualquier `background-image` ancestro, y con la piel
+  oscura eso pasó de 24 abstenciones a 112.** Su abstención es correcta —no puede componer un
+  degradado— pero el silencio caía sobre el texto más leído de la página. Aquí el peor caso SÍ era
+  calculable, porque los dos tonos del halo son más claros que el campo: se midió de verdad
+  poniendo el campo en el tono más claro y quitando los tres gradientes, y salió **1.788 nodos, 0
+  por debajo de AA, 0 no medibles**. La lección no es «el instrumento falla»: es que **cuando un
+  instrumento se abstiene, a veces el peor caso se puede construir a mano y medirlo de verdad**, y
+  entonces la abstención deja de ser un hueco.
+- **Un aviso que nombra mal el fichero manda a alguien a mirar donde no está.** `peso-assets.py`
+  informaba de siete «huérfanos» usando `f.name`, y desde que hay derivados en `rejilla/` hay dos
+  ficheros con el mismo nombre: señalaba a las fotos grandes, que sí se usan. Arreglado a ruta
+  relativa. Es el mismo tronco que el informe que decía «cronología» donde quería decir
+  «recuperación» y estuvo a punto de matar un diagrama correcto.
+
+Y una del método, que es la más incómoda de las cinco:
+
+> **Un comentario en el código puede afirmar lo contrario de lo que hace el código, y sobrevive
+> porque suena a explicación.** El de la franja decía *«sin rótulo se queda `hidden`, NO se borra:
+> con `subgrid` la columna existe igual»*. `hidden` es `display: none` y un elemento así **no es
+> ítem de la rejilla**, así que la columna no existía y la fila entera se corría. El comentario
+> estaba escrito para prevenir exactamente el fallo que causaba.

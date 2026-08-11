@@ -411,3 +411,32 @@ medición. Los dos avisos existen porque los dos fallos ocurrieron:
 Un número sin su estado no es una medición, es una anécdota. Y un resultado de QA solo vale si
 se puede atribuir a un commit concreto, porque medir mientras alguien edita produce conclusiones
 sobre el instrumento en lugar de sobre el objeto.
+
+
+## Medir 320 px de verdad (y por qué el runner no puede)
+
+`python3 tests/runner.py --ancho 320` **no mide 320**: Chrome no acepta ventanas por debajo de
+500 px y la recorta en silencio. El runner es honesto y lo imprime en su cabecera —`500×813`—, pero
+la petición no ocurre, así que hay que mirar esa línea antes de dar por bueno un «cero desborde a
+320».
+
+Y el truco del zoom **no vale para esto**: `--ancho 640 --dpr 2` equivale al 200 % de zoom sobre
+1280, que es otra cosa; sube el device pixel ratio y deja el viewport CSS en 640.
+
+Para 320 CSS reales hay que conducir un navegador por fuera. Con el MCP de Playwright:
+
+```
+browser_resize 320 800
+browser_navigate http://localhost:8000/
+browser_evaluate  → document.documentElement.scrollWidth <= document.documentElement.clientWidth
+browser_take_screenshot --fullPage
+```
+
+Dos avisos de la última pasada, para no perder el rato:
+
+- **Los descendientes de un `<details>` cerrado devuelven rectángulos con anchura** en Chrome
+  (conserva la última maquetación), así que un barrido de `getBoundingClientRect()` sobre `*`
+  produce cientos de falsos positivos. El dato que manda es `scrollWidth` del documento.
+- La captura de página completa **no dispara las imágenes `loading="lazy"`** que quedan por debajo:
+  salen huecos que no son huecos. Para comprobar que cargan, mirarlas en el viewport o contar
+  `naturalWidth`.

@@ -25,6 +25,24 @@ export const CAMPOS_CUIDADO = [
 const RUTA_IMG = "./assets/img/";
 
 /**
+ * Los derivados de rejilla, y por qué existen.
+ *
+ * Con la piel oscura las siete fotos entran en la rejilla cerrada, y las de
+ * ficha son 800×1067 y pesan entre 78 y 233 KB: las siete de golpe son ~1 MB de
+ * carga inicial. Los derivados son **el mismo encuadre a 480×640**, no otro
+ * recorte —así no hay que decidir un encuadre por planta y `object-fit: cover`
+ * hace el ajuste—, y bajan la rejilla completa a ~460 KB, de los que solo se
+ * transfiere la primera fila gracias a `loading="lazy"`.
+ *
+ * La ruta se DERIVA del campo `foto` en vez de añadir un campo al JSON: cuál es
+ * el fichero pequeño de una foto es una decisión de presentación, y
+ * `content/plantas.json` es contenido. `tests/coherencia.py` exige que existan
+ * las dos rutas, porque un derivado que falte es un hueco en la rejilla y no un
+ * error en consola.
+ */
+export const RUTA_REJILLA = "./assets/img/rejilla/";
+
+/**
  * `luz.nivel` llega como número (2, 3, 4). Un filtro que ofrezca «2» y «4» no
  * ayuda a nadie, así que se traduce a la palabra que usa la gente.
  * ⚠ Escala pendiente de confirmar con `botanist`: si su 1–5 no es este, se
@@ -52,6 +70,8 @@ function palabraNivelLuz(v) {
  *  la etiqueta se pinta a 9rem y 500 deja margen para inspeccionarla. */
 export const FOTO = { ancho: 800, alto: 1067 };
 export const FOTO_ETIQUETA = { ancho: 500, alto: 667 };
+/** El derivado de rejilla: mismo 3:4, a la mitad. Medido con `sips -g`. */
+export const FOTO_REJILLA = { ancho: 480, alto: 640 };
 
 export async function cargarPlantas(url = "./content/plantas.json") {
   const res = await fetch(url);
@@ -440,6 +460,10 @@ function normalizarPlanta(p) {
     familia: texto(p.familia),
     // El JSON puede traer solo el nombre de fichero o una ruta ya hecha.
     foto: foto ? (foto.includes("/") ? foto : RUTA_IMG + foto) : null,
+    // El derivado pequeño de la rejilla. Solo cuando `foto` es un nombre de
+    // fichero nuestro: si alguien pusiera una ruta completa a otro sitio, no hay
+    // derivado que derivar y la tarjeta se queda sin ventana, que es honesto.
+    foto_rejilla: foto && !foto.includes("/") ? RUTA_REJILLA + foto : null,
     foto_alt: texto(p.alt ?? p.foto_alt) ?? "",
     etiqueta_alt: texto(p.etiqueta_alt ?? p.alt_etiqueta),
     foto_etiqueta: etiquetaFoto

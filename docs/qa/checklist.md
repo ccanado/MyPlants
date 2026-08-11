@@ -158,8 +158,8 @@ se mira y se dice. Y el brief prohíbe explícitamente el "look de IA".
 | # | Gr | Punto | Cómo se comprueba |
 | --- | --- | --- | --- |
 | 11.1 | A | **No** es verde salvia sobre blanco con fotos de monstera | mirar la screenshot de 1280 y preguntarse: ¿es esto lo que saldría de pedirle "web de plantas" a cualquier generador? |
-| 11.2 | A | **No** es fondo crema `#F4F1EA` + serif de alto contraste + acento terracota | leer `css/tokens.css` y comparar con los tres clichés del brief |
-| 11.3 | A | **No** es fondo casi negro con un único acento verde ácido | ídem |
+| 11.2 | M | Las elecciones de paleta y tipografía **están elegidas y no heredadas**: cada una tiene su procedencia escrita en `css/tokens.css` | leer la cabecera de `tokens.css`: cada color dice de qué foto sale |
+| 11.3 | — | ~~**No** es fondo casi negro con un único acento verde ácido~~ · **RETIRADO el 12/08/2026: la web es exactamente eso, y por decisión de Carlos.** Este punto venía de la «restricción anti-genérico», que el propio brief degradó de prohibición a argumento al descubrir que no la había escrito ningún humano. Un checklist no puede suspender la decisión del dueño. El argumento que sobrevive es el de fondo —que un default no es una elección hasta que alguien lo elige a la vista de otra cosa— y **aquí alguien lo eligió mirando dos versiones renderizadas**, que es la condición que el propio proyecto puso | — |
 | 11.4 | A | **No** es layout tipo periódico con hairlines y `border-radius: 0` por defecto | ídem |
 | 11.5 | A | Hay una **signature** reconocible: un elemento por el que se recuerda esta página | señalarlo por su nombre. Si no se puede nombrar, no existe |
 | 11.6 | A | La dirección sale del mundo del sujeto (etiqueta de vivero, cuaderno de campo, lámina botánica, escala de riego), no del catálogo de defaults | contrastar con la sección "Restricción anti-genérico" de `docs/brief.md` |

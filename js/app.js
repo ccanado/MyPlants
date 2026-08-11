@@ -11,7 +11,11 @@ import { conCifras, diaDeHoy, fechaLarga, tareasDeHoyPorPlanta, ventanasDeTempor
 import { montarCronologia } from "./cronologia.js";
 
 const el = {
-  rejilla: document.getElementById("rejilla"),
+  grupoMirada: document.getElementById("grupo-mirada"),
+  grupoBien: document.getElementById("grupo-bien"),
+  rejillaMirada: document.getElementById("rejilla-mirada"),
+  rejillaBien: document.getElementById("rejilla-bien"),
+  contenido: document.getElementById("plantas"),
   facetas: document.getElementById("facetas"),
   busqueda: document.getElementById("busqueda"),
   resultado: document.getElementById("resultado"),
@@ -25,6 +29,8 @@ const el = {
   parteResumen: document.getElementById("parte-resumen"),
   parteTareas: document.getElementById("parte-tareas"),
   parteChips: document.getElementById("parte-chips"),
+  cabeceraMeta: document.getElementById("cabecera-meta"),
+  pieCuenta: document.getElementById("pie-cuenta"),
   cronologia: document.querySelector(".cronologia"),
 };
 
@@ -47,9 +53,11 @@ arrancar();
 
 async function arrancar() {
   let plantas;
+  let meta;
   try {
     const datos = await cargarPlantas();
-    fijarMeta(datos.meta);
+    meta = datos.meta;
+    fijarMeta(meta);
     fijarHoy(HOY);
     plantas = ordenarPorUrgencia(datos.plantas);
   } catch (err) {
@@ -72,6 +80,7 @@ async function arrancar() {
     (s) => pintar(plantas, s)
   );
 
+  montarCabecera(plantas, meta);
   montarParteDelDia(plantas);
   /* La cronología es un censo de las SIETE, así que se monta con la lista
      completa y no se refiltra: un censo que se recorta con el buscador deja de
@@ -79,19 +88,53 @@ async function arrancar() {
      solo existe estando las siete. */
   if (!montarCronologia(el.cronologia, plantas, HOY)) el.cronologia?.remove();
   montarFacetas(plantas);
+  montarPie(plantas);
   conectarEventos(estado);
   estado.refrescar();
 }
 
 /* ── render ─────────────────────────────────────────────────────────────────── */
 
+/**
+ * LAS DOS BANDAS: lo que pide mirada primero, lo que está bien después.
+ *
+ * La separación es el trabajo de la página, y de paso resuelve el problema que
+ * llevaba meses en el backlog sin solución: **el día bueno**. Cuando ninguna
+ * planta necesite nada, la banda de arriba no aparece pidiendo perdón —
+ * desaparece—, y la página dice `ESTÁN BIEN · 7 DE 7` sin inventar urgencia. Ese
+ * estado es el que el proyecto existe para producir, y ahora sale por
+ * construcción en vez de por un caso especial diseñado a mano.
+ *
+ * El orden por urgencia se conserva DENTRO de cada banda: el DOM sigue estando
+ * ordenado como se lee, así que el orden de foco no se despega del visual.
+ */
 function pintar(plantas, s) {
   const visibles = filtrar(plantas, s);
-  renderLista(visibles, el.rejilla);
+  const mirada = visibles.filter((p) => grupoSeveridad(p.estado?.severidad) !== "sana");
+  const bien = visibles.filter((p) => grupoSeveridad(p.estado?.severidad) === "sana");
+
+  banda(el.grupoMirada, el.rejillaMirada, mirada, plantas.length, 0);
+  // El índice del escalonado sigue contando desde donde lo dejó la banda de
+  // arriba: si se reiniciara, las dos bandas entrarían a la vez y el gesto se
+  // leería como dos animaciones distintas en vez de una lectura de arriba abajo.
+  banda(el.grupoBien, el.rejillaBien, bien, plantas.length, mirada.length);
 
   el.resultado.textContent = resumenResultados(visibles.length, plantas.length, s);
   el.limpiar.hidden = !hayFiltros(s);
-  el.rejilla.dataset.vacio = visibles.length === 0 ? "si" : "no";
+  el.contenido.dataset.vacio = visibles.length === 0 ? "si" : "no";
+}
+
+function banda(seccion, lista, plantas, total, desde) {
+  if (!seccion || !lista) return;
+  if (plantas.length === 0) {
+    seccion.hidden = true;
+    lista.replaceChildren();
+    return;
+  }
+  seccion.hidden = false;
+  renderLista(plantas, lista, desde);
+  const cuenta = seccion.querySelector(".grupo__cuenta");
+  if (cuenta) cuenta.textContent = `${plantas.length} de ${total}`;
 }
 
 function resumenResultados(n, total, s) {
@@ -107,14 +150,45 @@ function mostrarAviso(texto) {
   el.aviso.hidden = false;
 }
 
+/* ── cabecera y pie ─────────────────────────────────────────────────────────── */
+
+/** La bajada de la cabecera dice de cuándo son los diagnósticos, y la fecha sale
+ *  de `meta`, no de una constante: una web que afirma un estado tiene que decir
+ *  de qué momento habla. */
+function montarCabecera(plantas, meta) {
+  if (!el.cabeceraMeta) return;
+  const trozos = [`Móstoles · ${plantas.length} macetas`];
+  const visto = fechaLargaISO(meta?.fecha_diagnostico);
+  if (visto) trozos.push(`visto el ${visto}`);
+  el.cabeceraMeta.textContent = trozos.join(" · ");
+}
+
+function montarPie(plantas) {
+  if (!el.pieCuenta) return;
+  const citas = plantas.reduce((n, p) => n + (p.fuentes?.length ?? 0), 0);
+  el.pieCuenta.textContent =
+    `${plantas.length} plantas, ninguna inventada · ${citas} fuentes citadas`;
+}
+
+/** «2026-08-11» → «11 de agosto de 2026», con el formateador del navegador. */
+function fechaLargaISO(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso ?? ""));
+  if (!m) return null;
+  try {
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+      .toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+  } catch {
+    return null;   // navegador sin datos de locale: mejor sin fecha que con una fea
+  }
+}
+
 /* ── parte del día ──────────────────────────────────────────────────────────── */
 
 /**
  * La franja `HOY`: qué hay que hacer hoy, con la fecha real del navegador.
  *
- * Sube de categoría la franja que antes contaba severidades estáticas. Los dos
- * ejes conviven porque son independientes y hay que leerlos como tales: la
- * `critica` es el helecho y la `vencida` es la begonia, plantas distintas. Uno
+ * Los dos ejes conviven porque son independientes y hay que leerlos como tales:
+ * la `critica` es el helecho y la `vencida` es la begonia, plantas distintas. Uno
  * dice cómo están; el otro, qué toca.
  */
 function montarParteDelDia(plantas) {
@@ -129,35 +203,43 @@ function montarParteDelDia(plantas) {
   if (fecha) el.parteFecha.textContent = fecha;
   else el.parteFecha.remove();
 
-  /* EL VEREDICTO: la tesis del día, y la forma es fija aunque el contenido cambie.
-     El día bueno dice «LAS 7 ESTÁN BIEN» con el mismo tamaño y el mismo color: no
-     se encoge y no estrena color. No hay token de severidad «sana» en este sistema
-     a propósito, y un verde de celebración sería inventar uno para decir lo que la
-     tipografía ya dice. Nada de rachas, porcentajes ni felicitaciones. */
-  el.parteVeredicto.textContent =
+  /* EL VEREDICTO: la tesis del día, y la forma es fija aunque el contenido
+     cambie. El día bueno dice «LAS 7 ESTÁN BIEN» con el mismo tamaño: no se
+     encoge y no estrena color. Nada de rachas, porcentajes ni felicitaciones. */
+  el.parteVeredicto.replaceChildren(
     tocadas.length === 0
-      ? `Las ${plantas.length} están bien`
-      : `${tocadas.length} de ${plantas.length} ${plural(tocadas.length, "pide", "piden")} mirada`;
+      ? conCifras(`Las ${plantas.length} están bien`)
+      : conCifras(`${tocadas.length} de ${plantas.length} ${plural(tocadas.length, "pide", "piden")} mirada`)
+  );
 
   /* Y debajo, en cuerpo pequeño, cuántas cosas hay que hacer. Cero tareas NO es
      «no hay nada que hacer»: es que hoy no hay nada que se pueda afirmar desde el
-     calendario. El riego y las condicionadas siguen ahí, en sus fichas, y decir lo
-     contrario sería el error que esta franja existe para no cometer. */
+     calendario. El riego y las condicionadas siguen ahí, en sus fichas, y decir
+     lo contrario sería el error que esta franja existe para no cometer. */
   el.parteResumen.textContent = cuantas > 0
     ? `${cuantas} ${plural(cuantas, "cosa", "cosas")} que hacer hoy`
     : "Nada con fecha para hoy";
 
   montarTareasDeLaFranja(porPlanta, ventanas);
 
+  /* Las entradas: una por planta tocada, con su severidad EN PALABRA y el
+     titular de su diagnóstico. Son enlaces y no botones porque lo que hacen es
+     navegar: así funcionan con el JS a medio cargar, con el botón central del
+     ratón y copiando la dirección. */
   const frag = document.createDocumentFragment();
   for (const p of tocadas) {
     const nodo = TPL_CHIP.content.cloneNode(true);
-    const boton = nodo.querySelector(".chip__boton");
     const g = grupoSeveridad(p.estado.severidad);
-    boton.dataset.planta = p.id;
-    boton.dataset.severidad = g;
-    nodo.querySelector(".chip__marca").dataset.marca = g;
+    const enlace = nodo.querySelector(".chip__enlace");
+    enlace.href = `#${p.id}`;
+    enlace.dataset.planta = p.id;
+    const marca = nodo.querySelector(".marca");
+    marca.dataset.severidad = g;
+    marca.querySelector(".marca__texto").textContent = humanizar(p.estado.severidad);
     nodo.querySelector(".chip__nombre").textContent = p.nombre_comun;
+    const que = nodo.querySelector(".chip__que");
+    if (p.estado.titulo_estado) que.textContent = p.estado.titulo_estado;
+    else que.remove();
     frag.append(nodo);
   }
   el.parteChips.replaceChildren(frag);
@@ -181,19 +263,15 @@ function montarTareasDeLaFranja(porPlanta, ventanas) {
     li.dataset.tono = tareas[0].tono;
 
     /* El rótulo es el de la más urgente y va uno por línea, no uno por tarea:
-       tres «HOY» en el mismo renglón no informan tres veces. */
+       tres «HOY» en el mismo renglón no informan tres veces. Sin rótulo se queda
+       VACÍO y no `hidden`: es un hijo de `subgrid` y `hidden` lo saca de la
+       rejilla, con lo que la fila pierde su primera celda y todo se corre una
+       columna. Vacío ocupa su sitio y el CSS le quita el marco. */
     const rotulo = nodo.querySelector(".tarea-hoy__rotulo");
-    if (tareas[0].rotulo) {
-      rotulo.hidden = false;
-      rotulo.textContent = tareas[0].rotulo;
-    }
-    /* Sin rótulo se queda `hidden`, NO se borra: con `subgrid` la columna existe
-       igual, pero borrar el nodo en unas filas y no en otras hacía que el nombre
-       de la planta cambiara de columna según la fila. */
+    if (tareas[0].rotulo) rotulo.textContent = tareas[0].rotulo;
 
     /* El enlace es un <a> con href al id de la ficha, no un botón con JS: lo que
-       navega es un enlace. Y así funciona con el JS a medio cargar, con el botón
-       central del ratón y copiando la dirección. */
+       navega es un enlace. */
     const enlace = nodo.querySelector(".tarea-hoy__planta");
     enlace.href = `#${planta.id}`;
     nodo.querySelector(".tarea-hoy__nombre").textContent = planta.nombre_comun;
@@ -202,11 +280,10 @@ function montarTareasDeLaFranja(porPlanta, ventanas) {
     for (const t of tareas) {
       const item = document.createElement("li");
       item.className = "tarea-hoy__cosa";
-      /* Los `data-*` que pidió `qa-visual`. No son lógica ni estilo: son la forma
-         de que su test pueda AFIRMAR en vez de abstenerse, y lo que queda sin
-         verificar sin ellos es justo la guarda del abonado del helecho — la única
-         que puede matar una planta. Deducirlo del texto era la clase de
-         herramienta que nos ha costado cinco falsos positivos. */
+      /* Los `data-*` no son lógica ni estilo: son la forma de que el test pueda
+         AFIRMAR en vez de abstenerse, y lo que queda sin verificar sin ellos es
+         justo la guarda del abonado del helecho — la única capaz de matar una
+         planta. */
       if (t.tarea.id) item.dataset.tarea = t.tarea.id;
       item.dataset.planta = planta.id;
       if (t.estado) item.dataset.tareaEstado = t.estado;
@@ -217,8 +294,7 @@ function montarTareasDeLaFranja(porPlanta, ventanas) {
       item.append(titulo);
 
       /* El «cuándo» solo se pinta si dice algo que el rótulo de la línea no
-         dice — «hace 57 días» sí, «Hoy» detrás de un rótulo `HOY` no. Ya viene
-         redactado y ya viene honesto de tareas.js. */
+         dice — «hace 57 días» sí, «Hoy» detrás de un rótulo `HOY` no. */
       if (t.cuando) {
         const cuando = document.createElement("span");
         cuando.className = "tarea-hoy__cuando";
@@ -231,6 +307,7 @@ function montarTareasDeLaFranja(porPlanta, ventanas) {
 
     frag.append(nodo);
   }
+
   /* LA VENTANA DE TEMPORADA, una sola línea al pie y agrupada POR TAREA.
      Los cinco «Abonar» eran el 50 % de la lista para algo que se puede hacer
      cualquier día de agosto, y cinco líneas idénticas diluían lo urgente. Aquí lo
@@ -355,57 +432,59 @@ function conectarEventos(estado) {
     el.busqueda.focus();
   });
 
-  // Los chips del parte del día llevan a la ficha y la abren ya despegada.
-  el.parteChips.addEventListener("click", (ev) => {
-    const boton = ev.target.closest(".chip__boton");
-    if (boton) irAFicha(boton.dataset.planta, estado);
-  });
+  /* Las entradas del parte, las tareas de la franja y los marcadores de la
+     cronología llevan todos a una ficha. Son enlaces de verdad, así que sin JS ya
+     funcionan: esto solo añade abrirla desplegada, que es lo que quieres si has
+     pulsado una tarea. Se respetan los modificadores del teclado y el botón del
+     medio — si alguien pide abrir en otra pestaña, no se le secuestra. */
+  for (const zona of [el.parteChips, el.parteTareas]) {
+    zona.addEventListener("click", (ev) => {
+      if (ev.defaultPrevented || ev.button !== 0) return;
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+      const enlace = ev.target.closest("a[href^='#']");
+      if (!enlace) return;
+      ev.preventDefault();
+      irAFicha(decodeURIComponent(enlace.hash.slice(1)), estado);
+    });
+  }
 
-  /* Las tareas de la franja son <a href="#id">, así que sin JS ya llevan a la
-     ficha correcta: esto solo añade abrirla despegada, que es lo que quieres si
-     has pulsado una tarea. Se respetan los modificadores del teclado y el botón
-     del medio — si alguien pide abrir en otra pestaña, no se le secuestra. */
-  // Los siete marcadores de la cronología llevan a su ficha, igual que los chips.
   el.cronologia?.addEventListener("click", (ev) => {
     const boton = ev.target.closest(".cronologia__marca");
     if (boton) irAFicha(boton.dataset.planta, estado);
-  });
-
-  el.parteTareas.addEventListener("click", (ev) => {
-    if (ev.defaultPrevented || ev.button !== 0) return;
-    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
-    const enlace = ev.target.closest(".tarea-hoy__planta");
-    if (!enlace) return;
-    ev.preventDefault();
-    irAFicha(decodeURIComponent(enlace.hash.slice(1)), estado);
   });
 
   /* Al abrir una ficha la rejilla colapsa a una columna, así que la ficha que
      acabas de tocar cambia de sitio bajo el cursor. Esto no reimplementa nada
      nativo: corrige un desplazamiento que provoca nuestro propio cambio de
      layout, que es otra cosa. */
-  el.rejilla.addEventListener("toggle", (ev) => {
+  el.contenido.addEventListener("toggle", (ev) => {
     const detalle = ev.target;
     if (!detalle.matches?.(".despegue") || !detalle.open) return;
-    detalle.querySelector(".despegue__tirador")?.scrollIntoView({
+    detalle.querySelector(".planta__cara")?.scrollIntoView({
       block: "start",
       behavior: prefiereMenosMovimiento() ? "auto" : "smooth",
     });
   }, true);  // en captura: `toggle` no burbujea
+
+  // Un enlace a #poto desde fuera (o un recargado con hash) abre esa ficha.
+  addEventListener("hashchange", () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id) irAFicha(id, estado);
+  });
 }
 
 /**
  * Llevar a una ficha concreta. Si estaba filtrada fuera, primero se quitan los
- * filtros: es peor que el botón no haga nada visible que perder el filtro.
+ * filtros: es peor que el enlace no haga nada visible que perder el filtro.
  */
 function irAFicha(id, estado) {
-  if (!el.rejilla.querySelector(`#${CSS.escape(id)}`)) {
+  if (!buscarFicha(id)) {
     el.formFiltros.reset();
     el.busqueda.value = "";
     estado.actualizar({ busqueda: "", filtros: filtrosVacios() });
   }
 
-  const ficha = el.rejilla.querySelector(`#${CSS.escape(id)}`);
+  const ficha = buscarFicha(id);
   if (!ficha) return;
 
   const despegue = ficha.querySelector(".despegue");
@@ -413,10 +492,16 @@ function irAFicha(id, estado) {
 
   ficha.scrollIntoView({ block: "start", behavior: prefiereMenosMovimiento() ? "auto" : "smooth" });
 
-  // El foco va al tirador, que es lo interactivo: así Tab sigue desde ahí y no
+  // El foco va a la cara, que es lo interactivo: así Tab sigue desde ahí y no
   // desde el principio de la página.
-  const tirador = ficha.querySelector(".despegue__tirador");
-  if (tirador) tirador.focus({ preventScroll: true });
+  const cara = ficha.querySelector(".planta__cara");
+  if (cara) cara.focus({ preventScroll: true });
+}
+
+/** La ficha puede estar en cualquiera de las dos bandas. */
+function buscarFicha(id) {
+  if (!id) return null;
+  return el.contenido.querySelector(`.planta#${CSS.escape(id)}`);
 }
 
 const prefiereMenosMovimiento = () =>

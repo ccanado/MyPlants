@@ -1,14 +1,14 @@
 /* =============================================================================
    MyPlants · layout y componentes
-   Dueño: builder. La paleta, la escala y el motion viven en css/tokens.css
-   (dueño: ux-lead) y aquí solo se componen: en este fichero no hay ni un color,
-   ni un tamaño de fuente, ni un espaciado escrito literal. Solo var(--…).
+   La paleta, la escala y el motion viven en css/tokens.css y aquí solo se
+   componen: en este fichero no hay ni un color, ni un tamaño de fuente, ni un
+   espaciado escrito literal. Solo var(--…).
 
    El orden de capas se declara una vez y decide toda la especificidad. Con esto
    bien puesto no hace falta subir selectores ni usar !important en ningún sitio.
    ============================================================================= */
 
-@layer reset, base, layout, componentes, diagramas, utilidades;
+@layer reset, base, layout, componentes, diagramas, movimiento, utilidades;
 
 
 /* ══ reset ═══════════════════════════════════════════════════════════════════ */
@@ -16,9 +16,9 @@
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
 
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
-  body, h1, h2, h3, h4, h5, p, figure, dl, dd, ol, ul {
+  body, h1, h2, h3, h4, h5, h6, p, figure, dl, dd, ol, ul {
     margin: var(--space-0);
     padding: var(--space-0);
   }
@@ -31,18 +31,26 @@
 
   button { background: none; border: var(--space-0); cursor: pointer; }
 
-  /* El triángulo por defecto del <details> no encaja con una pegatina troquelada.
-     Se quita el marcador, pero NO el comportamiento: sigue siendo <summary>. */
-  summary { list-style: none; cursor: pointer; }
+  /* El marcador por defecto del <details> no encaja con nada de esta página. Se
+     quita el triángulo, pero NO el comportamiento: sigue siendo <summary>, así
+     que Enter, Espacio, el foco y el anuncio de estado son los del navegador. */
+  summary { list-style: none; cursor: pointer; display: block; }
   summary::-webkit-details-marker { display: none; }
+  summary::marker { content: ""; }
 
-  /* Foco visible SIEMPRE, y diseñado. El anillo es doble porque ningún color de
-     la paleta contrasta a la vez contra la ficha blanca y contra la teja. */
+  /* Foco visible SIEMPRE, y diseñado. El anillo es doble porque ningún color
+     contrasta a la vez contra el campo oscuro y contra el papel claro. */
   :focus-visible {
     outline: var(--borde-foco);
     outline-offset: var(--foco-separacion);
     box-shadow: var(--anillo-foco);
-    border-radius: var(--radio-chip);
+    border-radius: var(--radio-s);
+  }
+
+  /* Dentro del papel el anillo se invierte: el ácido sobre papel da 1,18. */
+  .cuaderno :focus-visible {
+    outline: var(--borde-foco-papel);
+    box-shadow: var(--anillo-foco-papel);
   }
 }
 
@@ -51,44 +59,39 @@
 
 @layer base {
   body {
-    /* El tiesto: brillo satinado del plástico sobre el anillo moldeado. */
     background-color: var(--fondo-pagina);
-    background-image: var(--brillo-maceta), var(--anillo-maceta);
+    /* El halo cálido detrás del contenido: es fondo de PÁGINA, no un filtro
+       sobre ninguna foto. Fijo, para que no viaje con el scroll y se lea como
+       la luz de la habitación y no como una mancha que persigue. */
+    background-image: var(--halo-campo);
     background-repeat: no-repeat;
     background-attachment: fixed;
 
-    color: var(--texto-sobre-maceta);
+    color: var(--texto-principal);
     font-family: var(--fuente-cuerpo);
     font-size: var(--texto-m);
     line-height: var(--interlinea-base);
     min-height: 100vh;
   }
 
-  h1, h2, h3, h4, h5 { line-height: var(--interlinea-titulo); font-weight: var(--peso-fuerte); }
-
-  /* Acotado a propósito: --texto-fuente es el azul del plant passport y sobre
-     el fondo teja da 1,44:1. Un `a` global sería ilegible el día que alguien
-     ponga un enlace en el pie o la cabecera. Ahí va --texto-fuente-sobre-maceta. */
-  .etiqueta a,
-  .cuaderno a,
-  .prueba a,
-  /* La franja NO está sobre la teja: tiene fondo de etiqueta blanca propio, así
-     que sus enlaces van en el azul normal. Estaba en la lista de abajo y al
-     meterle enlaces de verdad salió --color-etiqueta sobre --color-etiqueta:
-     **blanco sobre blanco, texto invisible**. Es la trampa que la matriz de
-     validez por superficie de tokens.css describe entera — el token estaba bien
-     medido, contra OTRO fondo. Lo cazó el runner; leyendo el CSS parecía
-     correcto, porque «franja» sonaba a algo que va sobre el fondo. */
-  .parte a { color: var(--texto-fuente); }
-
-  .cabecera a,
-  .pie a { color: var(--texto-fuente-sobre-maceta); }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: var(--interlinea-titulo);
+    font-weight: var(--peso-fuerte);
+  }
 
   em { font-style: italic; }
 
+  /* Los enlaces son ácido en todo el campo oscuro… */
+  a { color: var(--texto-enlace); }
+
+  /* …y azul de bolígrafo dentro del papel, porque el ácido sobre el papel da
+     1,18:1 y es el par prohibido del sistema. Está aquí y no en el componente
+     para que la excepción viva al lado de la regla que excepciona. */
+  .cuaderno a { color: var(--texto-enlace-personal); }
+
   ::selection {
-    background: var(--color-tinta);
-    color: var(--color-etiqueta);
+    background: var(--color-acido);
+    color: var(--color-campo);
   }
 }
 
@@ -96,60 +99,90 @@
 /* ══ layout ══════════════════════════════════════════════════════════════════ */
 
 @layer layout {
-  .cabecera,
-  .parte,
-  .filtros,
-  .contenido,
-  .pie {
+  /* Una banda es una tira a lo ancho de la ventana; el marco es la columna de
+     contenido dentro de ella. Separarlos es lo que permite que un fondo llegue a
+     sangre mientras el texto respeta la medida. */
+  .marco {
+    width: 100%;
     max-width: var(--ancho-pagina);
     margin-inline: auto;
     padding-inline: var(--canal-pagina);
   }
 
-  .cabecera {
+  .cabecera__fila {
     display: flex;
     flex-wrap: wrap;
-    align-items: end;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--space-4);
-    padding-block: var(--space-7) var(--space-5);
+    padding-block: var(--space-6) var(--space-5);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
   }
 
-  .contenido { padding-block: var(--space-5) var(--space-8); }
+  .parte { padding-block: var(--aire-banda) var(--space-6); }
 
-  .pie { padding-block: var(--space-6) var(--space-8); }
+  .filtros { padding-block: var(--space-2) var(--space-5); }
 
+  .contenido { padding-block: var(--space-2) var(--space-9); }
+
+  .grupo { padding-block-end: var(--aire-banda); }
+
+  /* LA REJILLA. `auto-fill` con `min()` y no columnas fijas: el `min()` es
+     obligatorio, porque a 320 px el canal lateral deja menos hueco que el mínimo
+     de columna y sin él la rejilla fuerza scroll horizontal.
+
+     Las dos bandas tienen densidades distintas y eso es información: las que
+     piden mirada van más grandes —foto mayor y sitio para el titular del
+     diagnóstico—, y las sanas van más pequeñas. Siguen siendo fotos de verdad;
+     simplemente no compiten con lo urgente. */
   .rejilla {
     display: grid;
-    /* El min() es obligatorio: a 320 px el canal lateral deja menos hueco que
-       --ancho-minimo, y sin él la columna fuerza scroll horizontal. */
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--ancho-minimo), 100%), 1fr));
     gap: var(--hueco-rejilla);
-    /* `stretch`, no `start`: iguala la altura de las etiquetas de una misma fila
-       y alinea los tiradores «despegar». Con alturas distintas el tirador de la
-       ficha alta queda por debajo del de sus vecinas y el orden de tabulación
-       deja de coincidir con lo que se lee, aunque el DOM esté bien. */
     align-items: stretch;
   }
 
-  .rejilla__celda { display: grid; }
+  .rejilla--mirada {
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--ancho-minimo-mirada), 100%), 1fr));
+  }
 
-  /* La página hace dos trabajos y necesita dos formas.
-     · Modo estantería (nada abierto): rejilla de columnas para buscar y comparar.
-     · Modo ficha (algo abierto): UNA columna, porque estás leyendo una planta y
-       la rejilla de al lado es ruido alrededor de lo que has decidido leer.
-     Descartado `grid-auto-flow: dense`, que rellenaba el hueco pero desacopla
-     el orden visual del orden del DOM y con él el de foco. */
-  .rejilla:has(details[open]) { grid-template-columns: 1fr; }
+  .rejilla--bien {
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--ancho-minimo), 100%), 1fr));
+  }
 
+  .rejilla__celda { display: grid; min-width: 0; }
+
+  /* AL ABRIR UNA FICHA SE ENSANCHA ESA, Y SOLO ESA.
+     La celda abierta ocupa la fila entera —el expediente necesita las dos
+     columnas semánticas— y **el resto de la rejilla se queda como está**.
+
+     Esto retira la decisión anterior de `ux-lead` («mientras hay una ficha
+     desplegada, la rejilla colapsa a una columna»), que era coherente cuando las
+     tarjetas eran pegatinas de texto y deja de serlo con fotos: colapsarlo todo
+     convertía siete fotos en siete bandas a ancho completo y el ojo perdía la
+     rejilla que estaba leyendo. Lo pidió Carlos mirándolo: *«debería abrirse la
+     clickada y el resto mantenerse en el grid de columnas que tienen»*.
+
+     Lo que SÍ se conserva de aquella decisión es la exclusividad, y no cuesta
+     CSS: las fichas son `<details name="planta">`, o sea un acordeón exclusivo
+     NATIVO. Abrir una cierra la otra sin una línea de JS. */
   .rejilla__celda:has(.despegue[open]) {
     grid-column: 1 / -1;
     z-index: var(--z-ficha);
   }
 
   /* Al colapsar, la ficha que acabas de tocar cambia de sitio: el margen evita
-     que la franja sticky la tape cuando el JS la trae a la vista. */
-  .despegue__tirador { scroll-margin-block-start: var(--space-7); }
+     que la cabecera pegajosa del móvil la tape cuando el JS la trae a la vista. */
+  .planta__cara { scroll-margin-block-start: var(--space-5); }
+
+  .pie__fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: space-between;
+    align-items: baseline;
+    padding-block: var(--space-6) var(--space-8);
+    border-block-start: var(--trazo-fino) solid var(--color-separador);
+  }
 }
 
 
@@ -157,200 +190,223 @@
 
 @layer componentes {
 
+  /* ── voces tipográficas ─────────────────────────────────────────────────── */
+
+  /* El display: condensada, caja alta, apretada. Es la voz de la etiquetadora. */
+  .display {
+    font-family: var(--fuente-etiqueta);
+    font-weight: var(--peso-fuerte);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  /* El rótulo de campo: mono en versalita ancha. Solo para DATO, nunca para voz. */
+  .rotulo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  /* Las cifras en la voz mecánica del proyecto — la de báscula de vivero. Es la
+     regla general del sistema: ml, °C, cm, €, EAN, fechas. */
+  .cifra {
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-medio);
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+  }
+
   /* ── cabecera ───────────────────────────────────────────────────────────── */
 
-  /* El h1 baja de tamaño y SIGUE SIENDO EL h1. Se pinta como antetítulo porque la
-     tesis del día manda visualmente, pero el nivel semántico no se toca: el
-     tamaño es jerarquía visual y el nivel es estructura del documento, y cambiar
-     el segundo para conseguir el primero rompe el esquema de encabezados. */
+  /* El h1 se pinta como antetítulo y SIGUE SIENDO EL h1. La tesis del día manda
+     visualmente, pero el nivel semántico no se toca: el tamaño es jerarquía
+     visual y el nivel es estructura del documento, y cambiar el segundo para
+     conseguir el primero rompe el esquema de encabezados. */
   .cabecera__titulo {
     font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-l);
-    letter-spacing: var(--tracking-caja-alta);
-    line-height: var(--interlinea-apretada);
+    font-size: var(--texto-m);
+    letter-spacing: var(--tracking-micro);
+    line-height: var(--interlinea-titulo);
     text-transform: uppercase;
-    color: var(--texto-sobre-maceta);
+    color: var(--texto-principal);
   }
+
+  .cabecera__punto { color: var(--color-acido); }
 
   .cabecera__bajada {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
-    color: var(--texto-sobre-maceta);
-    margin-block-start: var(--space-2);
-    opacity: 0.85;
-  }
-
-  /* ── buscador ───────────────────────────────────────────────────────────── */
-
-  .buscador {
-    display: grid;
-    gap: var(--space-1);
-    max-width: var(--medida-corta);
-    /* Ancho propio: dentro de la franja la columna es `auto`, así que sin esto el
-       campo se encogería al ancho de su etiqueta. */
-    inline-size: 100%;
-    min-inline-size: var(--medida-corta);
-  }
-
-  /* El buscador ya NO necesita fondo ni sombra propios: vive dentro de la franja,
-     que ya es una etiqueta blanca. Su borde da 3,60:1 sobre `--fondo-ficha` por la
-     matriz de validez, así que cumple el 3:1 de bordes de control de sobra — y el
-     fallo histórico de 1,92:1 era por tenerlo SOBRE LA TEJA, o sea que meterlo
-     aquí lo aleja de ese caso en vez de acercarlo. Se quita la tarjeta que
-     flotaba: era el único elemento de la portada que no participaba de la
-     retícula. */
-
-  .buscador__label {
-    font-family: var(--fuente-dato);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
+    letter-spacing: var(--tracking-dato);
     color: var(--texto-meta);
   }
 
-  .buscador__input {
-    background: var(--fondo-ficha);
-    color: var(--texto-principal);
-    border: var(--trazo-fino) solid var(--color-borde-control);
-    border-radius: var(--radio-troquel);
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--texto-m);
-    width: 100%;
+  /* ── el parte del día ───────────────────────────────────────────────────── */
 
-    &::placeholder { color: var(--texto-secundario); }
-  }
-
-  /* ── parte del día ──────────────────────────────────────────────────────── */
-
-  /* LA FRANJA EN DOS COLUMNAS, con áreas explícitas y sin un solo `order`.
-     El reparto cierra el hueco de 325 px que abrió el hero: la lista de tareas
-     —lo más alto de la franja— pasa a ocupar las DOS columnas en su fila, así que
-     no queda mitad derecha vacía debajo de los chips. Y las áreas colocan, no
-     reordenan: el orden del DOM ya es el del barrido en Z, así que el foco sigue
-     a lo que se ve.
-
-       ┌────────────────────────────┬──────────────┐
-       │ HOY · martes 11 de agosto  │ chips        │
-       │ 3 DE 7 PIDEN MIRADA        │ buscador     │
-       ├────────────────────────────┴──────────────┤
-       │ las líneas de tareas, a lo ancho          │
-       └───────────────────────────────────────────┘ */
-  .parte {
+  .parte__marco {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    gap: var(--space-3) var(--space-5);
-    background: var(--fondo-ficha);
-    color: var(--texto-principal);
-    border-radius: var(--radio-troquel);
-    box-shadow: var(--sombra-franja);
-    padding-block: var(--space-3);
-    /* La franja es una tira pegada al ancho de la página, no una tarjeta suelta. */
-    max-width: var(--ancho-pagina);
-    margin-inline: auto;
+    gap: var(--space-5);
+    justify-items: start;
   }
 
-  .parte__cabeza { display: grid; gap: var(--space-1); }
-
-  /* EL RÓTULO Y EL VEREDICTO SE INTERCAMBIAN LOS PAPELES.
-     Antes `PARTE DEL DÍA` iba a --texto-xl y la tesis de la página a --texto-m:
-     el rótulo que la encabeza era más grande que lo que encabezaba. */
-  .parte__titulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
+  .parte__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
   }
 
-  /* La fecha va en mono: es un dato del navegador, no un titular. */
+  .parte__titulo,
   .parte__fecha {
     font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
+    font-weight: var(--peso-medio);
     letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
     color: var(--texto-meta);
   }
 
-  .parte__cuerpo {
-    display: grid;
-    gap: var(--space-2);
-    min-width: 0;
-  }
+  .parte__cuerpo { display: grid; gap: var(--space-3); }
 
-  /* Los chips y el buscador, apilados en la columna derecha. */
-  .parte__lateral {
-    display: grid;
-    gap: var(--space-3);
-    align-content: start;
-    justify-items: end;
-  }
-
-  /* Las áreas. Solo desde 48rem: por debajo se apila en una columna y el orden
-     del DOM ya deja el buscador ENTRE el veredicto y las tareas, o sea ni
-     descolgado arriba ni enterrado al fondo.
-     Es media query y no container query a propósito: la franja es una banda de
-     página y no tiene ancestro con `container-type` — el mismo motivo por el que
-     `--texto-parte` va en `vw`. */
-  @media (min-width: 48rem) {
-    .parte__cabeza { grid-area: 1 / 1; }
-    .parte__cuerpo { grid-area: 2 / 1; }
-    .parte__lateral { grid-area: 1 / 2 / 3 / 3; }
-    .parte__tareas { grid-area: 3 / 1 / 4 / 3; }
-  }
-
-  /* El veredicto del día, a escala de display. `--texto-parte` va en `vw` y no en
-     `cqi` a propósito: la franja no tiene ancestro con `container-type`, así que
-     con `cqi` el valor caería al viewport pequeño sin dar error. */
+  /* EL VEREDICTO DEL DÍA, y es lo más grande de la web a propósito. `--texto-
+     veredicto` va en `vw` y no en `cqi`: la franja no tiene ancestro con
+     `container-type`, así que con `cqi` el valor caería al viewport pequeño sin
+     dar error. */
   .parte__veredicto {
     font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-parte);
+    font-weight: var(--peso-fuerte);
+    font-size: var(--texto-veredicto);
     line-height: var(--interlinea-apretada);
-    letter-spacing: var(--tracking-nombre);
+    letter-spacing: var(--tracking-display);
     text-transform: uppercase;
     color: var(--texto-principal);
     text-wrap: balance;
+    /* 22ch: lo justo para que «3 DE 7 PIDEN MIRADA» quepa en un renglón a 1280 y
+       para que «LAS 7 ESTÁN BIEN» —el día bueno— se componga igual de ancho. Si
+       rompe en dos líneas, rompe por donde `balance` decida, no por el tope. */
+    max-width: 22ch;
 
-    /* EL GESTO: se revela como se imprime una etiqueta térmica, una banda que
-       resuelve DE ARRIBA ABAJO. No un cursor que teclea letra a letra —ése es el
-       tic que hay que evitar y además no es como imprime una térmica—.
-       Cinco condiciones, y si alguna se rompe el gesto se cae:
-         · un disparo, al cargar. No lo repite ningún filtro (la animación va en el
-           elemento, no en una clase que el render vuelva a poner).
-         · sobre texto que YA está en el DOM: es una máscara `clip-path`, no
-           contenido que llegue tarde.
-         · cero desplazamiento de layout: `clip-path` no reserva ni libera espacio.
-         · `reduce` → la banda aparece entera. Versión alternativa, no duración
-           corta, y no un fade de 1 ms, que parpadea.
-         · duración `--dur-media`. */
-    animation: imprimir-termica var(--dur-media) var(--ease-salida) both;
-  }
-
-  @keyframes imprimir-termica {
-    from { clip-path: inset(0 0 100% 0); }
-    to { clip-path: inset(0 0 0 0); }
+    /* La cifra del veredicto es lo único de la portada que va en acento: «3 DE 7»
+       en ácido y «PIDEN MIRADA» en tinta. El acento entra por el dato, no por el
+       adorno. */
+    & .cifra {
+      font-family: inherit;
+      font-weight: inherit;
+      color: var(--color-acido);
+    }
   }
 
   .parte__resumen {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
-    letter-spacing: var(--tracking-micro);
+    letter-spacing: var(--tracking-dato);
     text-transform: uppercase;
     color: var(--texto-meta);
   }
 
-  /* ── las dos tareas de la franja ────────────────────────────────────────── */
+  /* ── las entradas del parte ─────────────────────────────────────────────── */
+
+  .parte__chips {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .chip__enlace {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+    background: var(--fondo-ficha);
+    border: var(--trazo-fino) solid var(--color-borde-control);
+    border-radius: var(--radio-chip);
+    padding: var(--space-2) var(--space-4);
+    min-block-size: var(--diana-min);
+    text-decoration: none;
+    color: var(--texto-principal);
+    box-shadow: var(--sombra-1), var(--filo-luz);
+    transition:
+      background-color var(--dur-corta) var(--ease-estandar),
+      border-color var(--dur-corta) var(--ease-estandar),
+      transform var(--dur-corta) var(--ease-estandar);
+
+    &:hover {
+      background: var(--fondo-hundido);
+      border-color: var(--color-acido);
+      transform: translateY(-2px);
+    }
+  }
+
+  .chip__nombre {
+    font-family: var(--fuente-etiqueta);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caja-alta);
+  }
+
+  .chip__que {
+    color: var(--texto-secundario);
+    font-size: var(--texto-s);
+  }
+
+  /* ── la marca de severidad: color Y palabra, nunca una sin la otra ──────── */
+
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &[data-severidad="critica"] { color: var(--texto-alerta); }
+    &[data-severidad="atencion"] { color: var(--texto-aviso); }
+    &[data-severidad="sana"] { color: var(--texto-sana); }
+  }
+
+  /* El punto es un PSEUDO-ELEMENTO y no un `<span>`, y el motivo lo levantó
+     `tests/estructura.js`: siete nodos pequeños con fondo y sin texto son
+     indistinguibles, para un auditor, de un punto de color que codifica un
+     estado — que es justo lo que este proyecto no hace. Y tenía razón aunque
+     aquí la palabra vaya al lado: **la forma de que un nodo no parezca eso no es
+     explicárselo al test, es que deje de ser un nodo.** El punto es redundancia
+     de la palabra; si se borrara, la palabra seguiría diciendo lo mismo. */
+  .marca::before {
+    content: "";
+    inline-size: var(--space-2);
+    block-size: var(--space-2);
+    border-radius: var(--radio-punto);
+    background: currentColor;
+    flex: none;
+  }
+
+  /* ── las tareas de la franja ────────────────────────────────────────────── */
 
   /* Tres columnas —rótulo · planta · lo que le toca— compartidas por todas las
      filas vía `subgrid`. Sin esto cada fila calcula sus propias columnas, los
      nombres no se alinean y la lista se lee como un párrafo picado en vez de
-     como un parte. Mismo mecanismo que la cronología. */
+     como un parte.
+
+     `minmax(0, …)` en las TRES: la tercera ya lo tenía, y las dos primeras iban
+     en `auto`, que es contenido mínimo sin tope. Con un título largo —y los de
+     `botanist` llegan a 85 caracteres— la fila empujaba la rejilla y sacaba 68 px
+     de scroll horizontal a 1280. Medido el 12 de agosto: el desborde no lo
+     provocaba el título, lo provocaba que la columna no tuviera permiso para
+     encogerse. Un título que envuelve se lee; uno truncado miente, así que la
+     salida es dejarle envolver, no recortarlo. */
   .parte__tareas {
     display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr);
-    gap: var(--space-2) var(--space-3);
+    grid-template-columns: minmax(0, auto) minmax(0, auto) minmax(0, 1fr);
+    gap: var(--space-3);
+    width: 100%;
   }
 
   .tarea-hoy {
@@ -359,6 +415,28 @@
     grid-template-columns: subgrid;
     align-items: baseline;
     font-size: var(--texto-s);
+    padding-block-end: var(--space-3);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
+  }
+
+  .tarea-hoy:last-child { border-block-end: 0; padding-block-end: 0; }
+
+  /* En pantalla estrecha el `subgrid` se retira y la fila se apila. La alineación
+     en columnas es lo que hace que la lista se lea como un parte y no como un
+     párrafo picado, pero eso solo vale mientras las tres columnas caben: a 320 px
+     el «debería haberse hecho hace 58 días» empujaba la tercera columna y sacaba
+     47 px de scroll horizontal. Cero desborde no se negocia, y la alineación sí. */
+  @media (max-width: 40rem) {
+    .parte__tareas { grid-template-columns: minmax(0, 1fr); }
+
+    .tarea-hoy {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-1) var(--space-2);
+    }
+
+    .tarea-hoy__cosas { flex-basis: 100%; }
   }
 
   /* El nombre de la planta es el ancla de lectura: se busca primero. */
@@ -367,11 +445,24 @@
     font-size: var(--texto-2xs);
     letter-spacing: var(--tracking-caja-alta);
     text-transform: uppercase;
-    /* Diana de 24 px sin tocar el cuerpo tipográfico, que es una decisión de
-       diseño y no de ergonomía. */
+    color: var(--texto-principal);
+    text-decoration: none;
+    /* Diana sin tocar el cuerpo tipográfico, que es una decisión de diseño y no
+       de ergonomía. */
     min-block-size: var(--diana-min);
     display: inline-flex;
     align-items: center;
+    min-width: 0;
+
+    &:hover { color: var(--color-acido); }
+  }
+
+  .tarea-hoy__faena {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-principal);
   }
 
   /* Las cosas que le tocan a esta planta, en el mismo renglón. Se separan con un
@@ -387,6 +478,7 @@
 
   .tarea-hoy__cosa {
     display: inline flow-root;
+    min-width: 0;
 
     & + &::before {
       content: "·";
@@ -395,16 +487,9 @@
     }
   }
 
-  .tarea-hoy__titulo { text-wrap: pretty; }
-
-  /* Las cifras en la voz mecánica del proyecto — la de báscula de vivero. Es la
-     regla general de este sistema (ml, °C, cm, €, EAN, fechas) y estaba sin
-     aplicar en el renglón que más se lee. */
-  .cifra {
-    font-family: var(--fuente-dato);
-    font-weight: var(--peso-medio);
-    font-variant-numeric: tabular-nums;
-    color: var(--texto-dato);
+  .tarea-hoy__titulo {
+    text-wrap: pretty;
+    color: var(--texto-secundario);
   }
 
   .tarea-hoy__cuando {
@@ -414,74 +499,66 @@
     margin-inline-start: var(--space-2);
   }
 
-  /* `VA TARDE` en aviso, NUNCA en rojo: el rojo es del helecho crítico y son dos
-     ejes independientes. Una planta que necesita trasplante no está en el mismo
-     apuro que una que se secó entera, y si las dos gritan igual, ninguna grita. */
+  /* `VA TARDE` en aviso, NUNCA en la severidad crítica: son dos ejes
+     independientes. Una planta que necesita trasplante no está en el mismo apuro
+     que una que se secó entera, y si las dos gritan igual, ninguna grita. */
   .tarea-hoy__rotulo,
   .tarea__rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
+    border: var(--trazo-fino) solid currentColor;
     border-radius: var(--radio-chip);
     padding: var(--space-1) var(--space-2);
-    background: var(--color-aviso-relleno);
-    color: var(--texto-sobre-aviso);
+    color: var(--texto-aviso);
     white-space: nowrap;
+    justify-self: start;
   }
 
-  /* Las de fecha cumplida no compiten con la vencida: mismo sitio, sin relleno
-     de aviso. Es la misma economía que deja a las cuatro sanas sin insignia. */
+  /* Vacío ocupa su columna del `subgrid` y no se ve: sin marco, sin relleno y
+     sin borde. Es lo que mantiene alineados los nombres de todas las filas. */
+  .tarea-hoy__rotulo:empty {
+    border: 0;
+    padding: 0;
+  }
+
+  /* Las de fecha cumplida no compiten con la vencida: mismo sitio, sin el ocre
+     del aviso. Es la misma economía que deja a las sanas sin insignia. */
   .tarea-hoy[data-tono="hoy"] .tarea-hoy__rotulo,
   .tarea[data-tono="hoy"] .tarea__rotulo {
-    background: var(--fondo-hundido);
-    color: var(--texto-principal);
-  }
-
-  .parte__resto {
-    font-family: var(--fuente-dato);
-    font-size: var(--texto-xs);
     color: var(--texto-meta);
   }
 
-  /* Los chips de severidad se alinean ARRIBA, con el renglón del recuento: son
-     el otro eje del parte y se leen a la vez que él. Centrados verticalmente
-     quedaban flotando a media altura de la lista de tareas, que ahora puede
-     tener seis renglones, y parecían caídos ahí por accidente. */
-  .parte__chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: end;
+  /* ── buscador ───────────────────────────────────────────────────────────── */
+
+  .buscador {
+    display: grid;
     gap: var(--space-2);
+    width: 100%;
+    max-width: var(--medida-corta);
   }
 
-  .chip__boton {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    border: var(--trazo-fino) solid currentColor;
-    border-radius: var(--radio-chip);
-    padding: var(--space-1) var(--space-3);
+  .buscador__label {
     font-family: var(--fuente-dato);
-    font-size: var(--texto-xs);
-    letter-spacing: var(--tracking-dato);
-    transition: background-color var(--dur-corta) var(--ease-estandar);
-
-    &[data-severidad="critica"] { color: var(--color-alerta); background: var(--color-alerta-relleno); }
-    &[data-severidad="atencion"] { color: var(--color-aviso); background: var(--color-aviso-relleno); }
-    &:hover { background: color-mix(in oklab, currentColor 12%, var(--fondo-ficha)); }
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
   }
 
-  /* La marca no es solo color: cada severidad tiene su signo, y se lee sin
-     distinguir un tono de otro. */
-  .chip__marca,
-  .estado__marca {
-    font-family: var(--fuente-dato);
-    font-weight: var(--peso-fuerte);
+  .buscador__input {
+    background: var(--fondo-hundido);
+    color: var(--texto-principal);
+    border: var(--trazo-fino) solid var(--color-borde-control);
+    border-radius: var(--radio-s);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--texto-m);
+    width: 100%;
 
-    &[data-marca="critica"]::before { content: "!!"; }
-    &[data-marca="atencion"]::before { content: "!"; }
-    /* «sana» no lleva marca: no hay nada que señalar. */
+    &::placeholder { color: var(--texto-meta); }
+    &:hover { border-color: var(--color-acido); }
   }
 
   /* ── filtros ────────────────────────────────────────────────────────────── */
@@ -489,15 +566,14 @@
   .filtros__form {
     display: flex;
     flex-wrap: wrap;
-    align-items: start;
-    gap: var(--space-4);
-    padding-block: var(--space-5) var(--space-2);
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
   }
 
   .filtros__facetas {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: var(--space-3) var(--space-5);
   }
 
   .faceta {
@@ -514,13 +590,12 @@
     float: left;   /* un <legend> no participa en el flex del <fieldset> */
     width: 100%;
     font-family: var(--fuente-dato);
-    font-size: var(--texto-2xs);
+    font-size: var(--texto-3xs);
     letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
-    color: var(--texto-sobre-maceta);
+    color: var(--texto-meta);
     padding: var(--space-0);
     margin-block-end: var(--space-2);
-    opacity: 0.85;
   }
 
   .faceta__opciones {
@@ -547,9 +622,9 @@
     }
 
     &:checked + .opcion__label {
-      background: var(--color-tinta);
-      color: var(--color-etiqueta);
-      border-color: var(--color-tinta);
+      background: var(--color-acido);
+      color: var(--color-campo);
+      border-color: var(--color-acido);
     }
   }
 
@@ -561,370 +636,384 @@
     color: var(--texto-principal);
     border: var(--trazo-fino) solid var(--color-borde-control);
     border-radius: var(--radio-chip);
-    padding: var(--space-1) var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    min-block-size: var(--diana-min);
     font-size: var(--texto-s);
     cursor: pointer;
-    transition: background-color var(--dur-corta) var(--ease-estandar);
+    transition: background-color var(--dur-corta) var(--ease-estandar),
+                border-color var(--dur-corta) var(--ease-estandar);
 
-    &:hover { background: color-mix(in oklab, var(--color-tinta) 10%, var(--fondo-ficha)); }
+    &:hover { border-color: var(--color-acido); }
   }
 
   .opcion__cuenta {
     font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
-    opacity: 0.7;
+    opacity: 0.75;
   }
 
   .boton--limpiar {
-    align-self: end;
-    color: var(--texto-sobre-maceta);
-    border: var(--trazo-fino) solid currentColor;
+    color: var(--texto-principal);
+    border: var(--trazo-fino) solid var(--color-borde-control);
     border-radius: var(--radio-chip);
-    padding: var(--space-1) var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    min-block-size: var(--diana-min);
     font-size: var(--texto-s);
 
-    &:hover { background: color-mix(in oklab, var(--color-etiqueta) 18%, transparent); }
+    &:hover { border-color: var(--color-acido); }
   }
 
   /* ── avisos y recuento ──────────────────────────────────────────────────── */
 
-  .resultado,
-  .aviso {
+  .resultado {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
     letter-spacing: var(--tracking-dato);
-    color: var(--texto-sobre-maceta);
-    margin-block-end: var(--space-4);
+    color: var(--texto-meta);
+    margin-block-end: var(--space-5);
   }
 
   .aviso {
     background: var(--fondo-ficha);
     color: var(--texto-principal);
-    border-inline-start: var(--filete-personal) solid var(--color-alerta);
-    border-radius: var(--radio-troquel);
-    padding: var(--space-4);
+    border-inline-start: var(--filete-severidad) solid var(--color-alerta);
+    border-radius: var(--radio-panel);
+    padding: var(--relleno-panel);
     font-size: var(--texto-s);
     max-width: var(--medida);
+    margin-block-end: var(--space-5);
   }
 
-  /* ══ LA ETIQUETA ════════════════════════════════════════════════════════════
-     La signature: la pegatina térmica de Viveros Projardín, reconstruida en HTML
-     y CSS. Sin una sola imagen — el código de barras es un gradiente repetido. */
+  /* ── los rótulos de banda ───────────────────────────────────────────────── */
 
-  .etiqueta {
-    /* Container query: la misma etiqueta sirve en la rejilla cerrada, abierta a
-       ancho completo y a 320 px. No pregunta cuánto mide la ventana. */
-    container-type: inline-size;
-    container-name: etiqueta;
-
-    background: var(--fondo-ficha);
-    color: var(--texto-principal);
-    border: var(--trazo-fino) solid var(--color-troquel);
-    border-radius: var(--radio-troquel);
-    box-shadow: var(--sombra-pegatina);
-    /* `clip` Y NO `hidden`, y la diferencia es toda la columna sticky.
-       `overflow: hidden` crea un CONTENEDOR DE SCROLL, y `position: sticky` se
-       posiciona respecto al contenedor de scroll más cercano. Como `.etiqueta` no
-       scrollea, `.expediente__accion` no tenía recorrido y se iba con la página
-       como si fuera estática. Medido por `ux-lead` scrolleando 0/400/900 px:
-       `hidden` → 16 · −384 · −884 (no pega) · `clip` → 16 · 16 · 16 (pega).
-       `clip` recorta igual —el troquel de 3 px se mantiene— pero no crea
-       contenedor de scroll. El síntoma estaba a 400 líneas de la causa: nadie
-       mira `overflow` cuando el bug parece de `position: sticky`. */
-    overflow: clip;
-    transition: box-shadow var(--dur-media) var(--ease-salida);
-
-    /* Columna para que el tirador caiga al fondo y todas las fichas de la fila
-       lo tengan a la misma altura. */
+  .grupo__titulo {
     display: flex;
-    flex-direction: column;
-
-    &:has(.despegue[open]) { box-shadow: var(--sombra-despegada); }
-
-    /* El canto izquierdo marca la severidad ya en la rejilla cerrada, antes de
-       despegar nada. Nunca va solo: la ficha lleva además marca y palabra. */
-    /* Solo la crítica lleva filete. Con una sola planta crítica y dos en
-       atención, si «atención» grita la crítica deja de destacar. */
-    &[data-severidad="critica"] { border-inline-start: var(--filete-severidad) solid var(--color-alerta); }
+    align-items: baseline;
+    gap: var(--space-4);
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-banda);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+    color: var(--texto-principal);
+    margin-block-end: var(--space-5);
+    padding-block-end: var(--space-3);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
   }
 
-  .etiqueta__cara {
-    padding: var(--etiqueta-canal);
-  }
+  /* El canto de la banda urgente se marca, y no solo por color: el rótulo dice
+     «piden mirada» con todas sus letras. */
+  #grupo-mirada .grupo__titulo { border-block-end-color: var(--color-borde-control); }
 
-  .etiqueta__vivero {
-    display: grid;
+  .grupo__cuenta {
+    margin-inline-start: auto;
     font-family: var(--fuente-dato);
-    font-size: var(--texto-3xs);
+    font-size: var(--texto-2xs);
+    font-weight: var(--peso-medio);
     letter-spacing: var(--tracking-micro);
-    line-height: var(--interlinea-titulo);
     text-transform: uppercase;
     color: var(--texto-meta);
-    border-block-end: var(--trazo-fino) solid var(--color-separador);
-    padding-block-end: var(--etiqueta-hueco-micro);
-    margin-block-end: var(--space-3);
-    gap: var(--etiqueta-hueco-micro);
+    white-space: nowrap;
   }
 
-  .etiqueta__vivero-nombre { font-weight: var(--peso-fuerte); }
+  /* ══ LA TARJETA DE PLANTA ═══════════════════════════════════════════════════
+     La foto arriba y los datos debajo, sobre superficie elevada. La foto es la
+     vuelta grande de esta piel: el sujeto estaba ausente de su propia portada, y
+     las siete fotos traen el color real de sus plantas sin añadir un solo token
+     de paleta. El color entra por donde tiene procedencia —el sujeto— en vez de
+     por la paleta. */
 
-  /* La silueta de hoja: la forma es la clave de identificación botánica, así
-     que aquí es información. NO se anima ninguna — son el ancla para escanear
-     la rejilla, y algo que se mueve no ancla nada. */
-  .etiqueta__silueta {
-    float: inline-end;
-    margin-inline-start: var(--space-3);
-    margin-block-end: var(--space-2);
-    color: var(--texto-secundario);
+  .planta {
+    /* Container query: la misma tarjeta sirve en la rejilla de tres, en la de
+       cuatro y abierta a ancho completo. No pregunta cuánto mide la ventana. */
+    container-type: inline-size;
+    container-name: planta;
+
+    display: flex;
+    min-width: 0;
+    background: var(--fondo-ficha);
+    border: var(--trazo-fino) solid var(--color-separador);
+    border-radius: var(--radio-tarjeta);
+    box-shadow: var(--sombra-1), var(--filo-luz);
+    /* `clip` Y NO `hidden`, y la diferencia es toda la columna sticky.
+       `overflow: hidden` crea un CONTENEDOR DE SCROLL, y `position: sticky` se
+       posiciona respecto al contenedor de scroll más cercano, así que la columna
+       de acción no tendría recorrido y se iría con la página. Medido scrolleando
+       0/400/900 px: `hidden` → 16 · −384 · −884 (no pega) · `clip` → 16 · 16 · 16.
+       `clip` recorta igual y no crea contenedor de scroll. El síntoma estaba a
+       400 líneas de la causa: nadie mira `overflow` cuando el bug parece de
+       `position: sticky`. */
+    overflow: clip;
+    transition:
+      box-shadow var(--dur-media) var(--ease-salida),
+      border-color var(--dur-media) var(--ease-salida),
+      transform var(--dur-media) var(--ease-salida);
+
+    &:hover {
+      box-shadow: var(--sombra-3), var(--filo-luz);
+      transform: translateY(-3px);
+    }
+
+    &:has(.despegue[open]) {
+      box-shadow: var(--sombra-3), var(--filo-luz);
+      border-color: var(--color-borde-control);
+      transform: none;
+    }
   }
 
-  .silueta {
-    width: var(--silueta-tam);
-    height: var(--silueta-tam);
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: var(--trazo);
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  .despegue { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+
+  /* El canto superior: la severidad se lee ya en la rejilla, antes de abrir nada.
+     Nunca va sola — la tarjeta lleva además punto y palabra — y **el grosor la
+     codifica igual que el tono**, así que la escala sobrevive a la escala de
+     grises y al daltonismo. Ver el porqué medido en `tokens.css`. */
+  .planta[data-severidad="critica"] { border-block-start: var(--filete-critica) solid var(--color-alerta); }
+  .planta[data-severidad="atencion"] { border-block-start: var(--filete-atencion) solid var(--color-aviso); }
+  .planta[data-severidad="sana"] { border-block-start: var(--filete-sana) solid var(--color-sana); }
+
+  /* La cara entera es el `<summary>`: la tarjeta es la diana. */
+  .planta__cara {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
   }
 
-  .silueta--grande { width: var(--silueta-tam-l); height: var(--silueta-tam-l); }
+  /* LA FOTO NO LLEVA TEXTO ENCIMA Y NO LLEVA NINGÚN FILTRO. Son fotos de
+     diagnóstico: se recortan y se agrandan; no se tocan. Ni duotono, ni grado,
+     ni viñeta — en la única planta que se muere, embellecer la foto corrompe la
+     prueba. Y el texto sobre fotografía es contraste no medible, así que todo el
+     texto vive debajo, sobre superficie sólida. */
+  .planta__foto {
+    position: relative;
+    overflow: hidden;
+    background: var(--fondo-hundido);
+    flex: none;
+    aspect-ratio: var(--aspecto-tarjeta);
+  }
 
-  .silueta__nervio,
-  .silueta__pinna { stroke-width: var(--trazo-fino); opacity: 0.75; }
+  .rejilla--mirada .planta__foto { aspect-ratio: var(--aspecto-tarjeta-mirada); }
 
-  .silueta__raquis { stroke-width: var(--trazo); }
+  .planta__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 45%;
+    transition: transform var(--dur-larga) var(--ease-salida);
+  }
 
-  /* Aquí la trama SÍ corresponde: la especie es un dato desconocido de verdad,
-     y va dentro del contorno para marcar dónde está la duda exactamente. */
-  .silueta__trama { stroke: none; }
-  .silueta__trama-linea { stroke: var(--color-sin-dato-trama); stroke-width: var(--trazo-fino); }
+  .planta:hover .planta__img { transform: scale(1.03); }
 
-  /* El nombre a sangre de caja: dimensionado contra el contenedor, no la ventana. */
-  .etiqueta__nombre {
+  .planta__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--relleno-ficha);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .planta__alto {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-3);
+  }
+
+  .planta__familia {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-dato);
+    color: var(--texto-meta);
+  }
+
+  /* El nombre a sangre de caja: dimensionado contra el CONTENEDOR y no contra la
+     ventana, con `hyphens: auto` y `lang="es"` como red para que un nombre largo
+     no rompa la rejilla mañana. */
+  .planta__nombre {
     font-family: var(--fuente-etiqueta);
     font-size: var(--texto-nombre);
     line-height: var(--interlinea-apretada);
-    letter-spacing: var(--tracking-nombre);
+    letter-spacing: var(--tracking-display);
     text-transform: uppercase;
     text-wrap: balance;
+    hyphens: auto;
   }
 
-  .etiqueta__binomio {
+  .planta__binomio {
+    font-style: italic;
     font-size: var(--texto-s);
     color: var(--texto-secundario);
-    margin-block-start: var(--space-1);
 
     /* Aquí la especie SÍ es un dato desconocido, así que aquí sí manda el gris
        de «sin dato». Es el mismo renglón que en las otras dice qué es. */
     &[data-sin-identificar="si"] {
       font-family: var(--fuente-dato);
+      font-style: normal;
+      font-size: var(--texto-xs);
       color: var(--texto-sin-dato);
 
       & em { font-style: normal; }
     }
   }
 
-  .etiqueta__maceta,
-  .etiqueta__fito {
-    font-family: var(--fuente-dato);
-    font-size: var(--texto-3xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
-    color: var(--texto-meta);
+  .planta__titular {
+    color: var(--texto-secundario);
+    text-wrap: pretty;
+    max-width: 46ch;
   }
 
-  .etiqueta__maceta { margin-block-start: var(--space-2); }
+  .rejilla--bien .planta__titular { font-size: var(--texto-s); }
 
-  /* Cada segmento de un código de trazabilidad es indivisible: partido por la
-     mitad deja de ser un código. El salto ocurre ENTRE segmentos. */
-  .segmento { white-space: nowrap; }
-
-  .etiqueta__linea-precio {
+  /* Las pastillas de dato: cifra en mono + rótulo en versalita. */
+  .planta__datos {
     display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: var(--space-4);
-    margin-block: var(--space-3) var(--etiqueta-hueco-pie);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-1);
   }
 
-  /* El EAN: repeating-linear-gradient, cero imágenes y cero peso. */
-  .etiqueta__ean {
-    /* Un EAN real mide lo que mide: estirado al ancho de la ficha abierta deja
-       de leerse como código de barras y pasa a ser una cebra decorativa. */
-    flex: 0 1 var(--etiqueta-ancho-barras);
-    height: var(--etiqueta-alto-barras);
-    background-image: var(--barras-codigo);
-    background-repeat: repeat-x;
-    align-self: end;
+  .pastilla {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    background: var(--fondo-hundido);
+    border: var(--trazo-fino) solid var(--color-separador);
+    border-radius: var(--radio-s);
+    padding: var(--space-1) var(--space-2);
   }
 
-  /* Rótulo del hueco: sin él la raya se lee como un descuido. */
-  .etiqueta__sin-codigo {
+  .pastilla__valor {
     font-family: var(--fuente-dato);
-    font-size: var(--texto-3xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
-    color: var(--texto-sin-dato);
-    align-self: center;
-  }
-
-  .etiqueta__precio {
-    font-family: var(--fuente-dato);
-    font-weight: var(--peso-fuerte);
-    font-size: var(--texto-precio);
-    line-height: var(--interlinea-apretada);
-    letter-spacing: var(--tracking-nombre);
+    font-weight: var(--peso-medio);
+    font-size: var(--texto-2xs);
+    color: var(--texto-dato);
     white-space: nowrap;
   }
 
-  /* Helecho y poto no vinieron con pegatina. La signature no se rompe: la
-     pegatina se dibuja igual e imprime lo que sabe. Las barras pasan a trama de
-     «sin dato» y el precio a una raya — un carácter, no un hueco en blanco. */
-  /* Sin etiqueta de vivero NO va trama ni raya. `--trama-sin-dato` significa
-     «no lo sabemos», y que estas dos no traigan pegatina es un hecho conocido:
-     son cosas opuestas. Un hueco limpio es más honesto que uno decorado. */
-  .etiqueta[data-etiqueta-vivero="no"] .etiqueta__vivero { color: var(--texto-secundario); }
-
-  /* ── los tres datos de la cara ──────────────────────────────────────────── */
-
-  .resumenes {
-    display: grid;
-    gap: var(--space-2);
-    border-block-start: var(--trazo-fino) solid var(--color-separador);
-    padding: var(--space-3) var(--relleno-ficha);
-    background: var(--fondo-hundido);
-  }
-
-  .resumen {
-    display: grid;
-    grid-template-columns: minmax(min-content, 5rem) 1fr;
-    gap: var(--space-3);
-    align-items: baseline;
-  }
-
-  .resumen__clave {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
+  .pastilla__clave {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
     color: var(--texto-meta);
   }
 
-  .resumen__valor {
-    /* En la rejilla cerrada el resumen se lee con la regadera en la mano: es el
-       texto más importante de la página y no baja de la base. */
-    font-size: var(--texto-m);
-    text-wrap: pretty;
-  }
-
-  /* ── el tirador: despegar ───────────────────────────────────────────────── */
-
-  /* El hueco de igualar alturas lo absorbe el bloque hundido, que tiene fondo
-     propio: una ficha con menos contenido debe verse más vacía por dentro, no
-     rota por fuera. */
-  .resumenes { flex: 1 0 auto; align-content: start; }
-
-  .despegue__tirador {
-    display: flex;
+  /* El tirador. Va al fondo de la tarjeta con `margin-top: auto`, así que todas
+     las de una fila lo tienen a la misma altura aunque su texto mida distinto. */
+  .planta__abrir {
+    display: inline-flex;
     align-items: center;
-    justify-content: end;
     gap: var(--space-2);
-    padding: var(--space-3) var(--relleno-ficha);
-    font-family: var(--fuente-etiqueta);
+    margin-block-start: auto;
+    padding-block-start: var(--space-3);
+    align-self: start;
+    font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
-    color: var(--texto-principal);
-    /* --color-borde y no --color-separador: el tirador es EL control de la
-       ficha, y el sutil está documentado como filete decorativo que no
-       comunica nada (1,49:1). Un borde que delimita un control necesita 3:1. */
-    border-block-start: var(--trazo-fino) solid var(--color-borde-control);
-    background: var(--fondo-hundido);
-    transition: background-color var(--dur-corta) var(--ease-estandar);
-
-    &:hover { background: color-mix(in oklab, var(--color-tinta) 8%, var(--fondo-hundido)); }
+    color: var(--color-acido);
   }
 
-  .despegue__flecha::before { content: "▾"; }
-
-  .despegue[open] > .despegue__tirador .despegue__flecha::before { content: "▴"; }
-
-  /* ── QUE EL DESPEGUE DESPEGUE ────────────────────────────────────────────
-     Antes la `.etiqueta` NUNCA se movía: solo se profundizaba la sombra y el panel
-     hacía un fade con `scaleY(0.97)`. Un desplegable corriente. Y el tell estaba
-     en los propios tokens: **`--ease-troquel`, cuyo comentario dice «el rebote
-     mínimo del despegue», se estaba gastando en una opacidad.** El sistema
-     documentaba un gesto que nadie había construido.
-
-     Lo que hace una pegatina de verdad: se levanta por un borde, y lo que aparece
-     es LO QUE ESTABA DEBAJO. Así que la etiqueta bisagra por su canto superior y
-     el expediente se descubre por debajo — el canto se queda donde está.
-
-     Y una cosa verificada, para que nadie la rediseñe por miedo: **un `transform`
-     aquí NO rompe el `position: sticky` de la columna de acción.** Un `transform`
-     crea containing block para `fixed` y `absolute`, pero **no crea contenedor de
-     scroll**, y `sticky` se posiciona respecto al contenedor de scroll más
-     cercano. Lo que lo rompía era el `overflow: hidden` de `.etiqueta`, ya en
-     `clip`. Medido scrolleando, no deducido. */
-  .despegue[open] {
-    animation: bisagra var(--dur-media) var(--ease-troquel) both;
-    /* La bisagra está en el canto de arriba de la parte que se levanta. */
-    transform-origin: top center;
+  /* La flecha es geometría y no un glifo: un carácter «▾» se lee en voz alta en
+     algunos lectores y aquí no dice nada que el texto no diga. */
+  .planta__abrir-flecha {
+    inline-size: var(--space-2);
+    block-size: var(--space-2);
+    flex: none;
+    border-inline-end: var(--trazo-grueso) solid currentColor;
+    border-block-end: var(--trazo-grueso) solid currentColor;
+    rotate: 45deg;
+    translate: 0 -15%;
+    transition: rotate var(--dur-media) var(--ease-salida);
   }
 
-  @keyframes bisagra {
-    from { transform: perspective(1200px) rotateX(-1.6deg); }
-    to { transform: none; }
-  }
+  .despegue[open] .planta__abrir-flecha { rotate: 225deg; }
 
-  /* El expediente se DESCUBRE por debajo: no entra desde fuera, se revela. Una
-     máscara de arriba abajo, sin desplazamiento — es la misma gramática que el
-     revelado del veredicto, y por el mismo motivo: cero salto de layout. */
-  .despegue[open] > .despegada {
-    animation: descubrir var(--dur-media) var(--ease-salida) both;
-  }
+  .despegue[open] .planta__abrir-texto::after { content: " (abierta)"; }
 
-  @keyframes descubrir {
-    from { clip-path: inset(0 0 100% 0); }
-    to { clip-path: inset(0 0 0 0); }
-  }
+  /* ── el expediente ──────────────────────────────────────────────────────── */
 
   .despegada {
-    display: grid;
-    gap: var(--space-5);
-    padding: var(--relleno-ficha);
     border-block-start: var(--trazo-fino) solid var(--color-separador);
+    padding: var(--relleno-ficha);
+  }
+
+  /* Por debajo del ancho de dos columnas se apila y ACCIÓN queda arriba, que es
+     lo que ya hace el orden del DOM sin ayuda de nadie. */
+  .expediente {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .expediente__accion,
+  .expediente__base {
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
+    /* `min-width: 0` contra el `auto` implícito de los hijos de grid: sin esto un
+       diagrama o un código largo empujan la columna y desbordan a 320 px. */
+    min-width: 0;
+  }
+
+  /* Los dos rótulos de columna son el encabezado del expediente, y tienen que
+     leerse como rótulos de archivador. */
+  .expediente__rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--color-acido);
+    padding-block-end: var(--space-2);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
+  }
+
+  /* Los títulos de sección del expediente */
+  .cuidados__titulo,
+  .calendario__titulo,
+  .indice__rotulo,
+  .estado__titulo,
+  .mas-datos__titulo,
+  .prueba__rotulo,
+  .identificacion__rotulo,
+  .cuaderno__rotulo,
+  .estado__sub {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
   }
 
   /* ── capa 1 · estado ────────────────────────────────────────────────────── */
 
   .estado {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
     border-radius: var(--radio-panel);
     padding: var(--relleno-panel);
+    background: var(--fondo-hundido);
+    box-shadow: var(--filo-luz);
 
-    /* El BLOQUE va en relleno pálido con tinta normal (11,57:1). La inversión
-       es para el DISTINTIVO, nunca para un contenedor de texto: sobre
-       --color-alerta sólido el único color legible es el blanco, así que un
-       bloque invertido obliga a que TODO lo de dentro sea blanco — y basta con
-       que alguien añada un párrafo en secundario para caer a 1,19:1. Ya pasó. */
+    /* El BLOQUE va en relleno teñido con tinta normal encima. La inversión es
+       para el DISTINTIVO, nunca para un contenedor de texto: sobre un color
+       sólido el único token legible sería uno, y eso obliga a enumerar cada
+       descendiente a mano — el día que alguien añada un párrafo, desaparece.
+       Ya pasó una vez, en la única planta que se está muriendo. */
     &[data-severidad="critica"] {
-      background: var(--fondo-critica);
-      color: var(--texto-principal);
+      background: var(--fondo-alerta);
+      border-inline-start: var(--filete-severidad) solid var(--color-alerta);
     }
-    /* Atención: relleno suave y sin invertir. Un escalón por debajo, a propósito. */
     &[data-severidad="atencion"] {
-      background: var(--color-aviso-relleno);
-      color: var(--texto-sobre-aviso);
+      background: var(--fondo-aviso);
+      border-inline-start: var(--filete-severidad) solid var(--color-aviso);
     }
-    /* Sana: sin distintivo ninguno. Cuatro insignias de «todo bien» son ruido
-       alrededor de lo único urgente. */
     &[data-severidad="sana"] {
-      background: var(--fondo-hundido);
-      color: var(--texto-principal);
+      background: var(--fondo-sana);
+      border-inline-start: var(--filete-severidad) solid var(--color-sana);
     }
   }
 
@@ -936,59 +1025,101 @@
     gap: var(--space-2) var(--space-4);
   }
 
-  /* El distintivo SÍ va invertido: es un chip, no un contenedor de texto. */
-  .estado[data-severidad="critica"] .estado__severidad {
-    display: inline-flex;
-    align-self: start;
-    background: var(--fondo-distintivo-critica);
-    color: var(--texto-sobre-alerta);
-    border-radius: var(--radio-chip);
-    padding: var(--space-1) var(--space-3);
-  }
-
-  .estado__titulo,
-  .mas-datos__titulo,
-  .estado__sub {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-  }
-
-  .estado__severidad {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-2);
-    font-family: var(--fuente-dato);
-    font-weight: var(--peso-fuerte);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
-  }
-
   .estado__fecha {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
-    font-weight: var(--peso-normal);
     color: var(--texto-meta);
     letter-spacing: var(--tracking-dato);
   }
 
-  .estado__bloque { display: grid; gap: var(--space-2); }
+  /* El titular del diagnóstico: lo primero que se lee de la columna de consulta.
+     Sigue siendo un `<p>` por grande que se pinte. */
+  .estado__cabecera {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-xl);
+    line-height: var(--interlinea-titulo);
+    letter-spacing: var(--tracking-display);
+    color: var(--texto-principal);
+    text-wrap: balance;
+    max-width: var(--medida);
+  }
 
-  .estado__sub { color: currentColor; }
+  .estado__bloque { display: grid; gap: var(--space-3); }
 
   .estado__lista {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
     color: var(--texto-principal);
     max-width: var(--medida);
   }
 
-  .causa { display: grid; gap: var(--space-1); }
+  .estado__item {
+    font-size: var(--texto-s);
+    padding-inline-start: var(--space-4);
+    border-inline-start: var(--trazo-fino) solid var(--color-borde-control);
+    text-wrap: pretty;
+    color: var(--texto-secundario);
+  }
 
-  .causa__resumen { font-weight: var(--peso-fuerte); }
+  /* Los límites del diagnóstico se leen distinto del diagnóstico: no son
+     hallazgos, son la frontera de lo que la foto permite afirmar. Marco
+     discontinuo, que es la gramática de «hasta aquí sabemos». */
+  .estado__bloque--limites .estado__lista {
+    border: var(--trazo-fino) dashed var(--color-borde-control);
+    border-radius: var(--radio-panel);
+    padding: var(--relleno-panel);
+  }
+
+  .estado__bloque--limites .estado__item {
+    border-inline-start: 0;
+    padding-inline-start: var(--space-4);
+    position: relative;
+
+    &::before {
+      content: "?";
+      position: absolute;
+      inset-inline-start: 0;
+      font-family: var(--fuente-dato);
+      font-weight: var(--peso-medio);
+      color: var(--texto-meta);
+    }
+  }
+
+  /* Las causas: cada una en su caja, con su CLASE escrita. El rótulo no lo
+     adivina el contenedor — lo dice el `tipo` del dato. */
+  .causa {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    background: var(--fondo-ficha);
+    border: var(--trazo-fino) solid var(--color-separador);
+    border-inline-start-width: var(--trazo-fino);
+    border-radius: var(--radio-panel);
+    color: var(--texto-principal);
+
+    /* Una aclaración no es un hallazgo: se dibuja con el marco roto, que es la
+       misma gramática que «lo que la foto no dice». */
+    &[data-tipo="aclaracion"] {
+      background: transparent;
+      border-style: dashed;
+    }
+  }
+
+  .causa__clase {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .causa__resumen {
+    font-weight: var(--peso-fuerte);
+    font-size: var(--texto-l);
+    line-height: var(--interlinea-titulo);
+    color: var(--texto-principal);
+    text-wrap: pretty;
+  }
 
   .causa__detalle {
     font-size: var(--texto-s);
@@ -997,95 +1128,36 @@
     text-wrap: pretty;
   }
 
-  /* El patrón no es una afirmación más: es una instrucción para mirar la
-     planta, y es lo que hace usable un listado de causas delante del tiesto.
-     Sin color — es método, no alarma. */
+  /* El patrón no es una afirmación más: es una instrucción para mirar la planta,
+     y es lo que hace usable un listado de causas delante del tiesto. Sin color —
+     es método, no alarma. */
   .causa__patron {
     display: grid;
     gap: var(--space-1);
     margin-block-start: var(--space-2);
     padding-inline-start: var(--space-3);
-    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
+    border-inline-start: var(--trazo-grueso) solid var(--color-acido-hondo);
     font-size: var(--texto-s);
+    color: var(--texto-secundario);
     text-wrap: pretty;
   }
 
   .causa__patron-rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-  }
-
-  .estado__item {
-    font-size: var(--texto-s);
-    padding-inline-start: var(--space-4);
-    position: relative;
-    text-wrap: pretty;
-
-    &::before {
-      content: "—";
-      position: absolute;
-      left: var(--space-0);
-      color: var(--texto-meta);
-    }
-  }
-
-  /* Los límites del diagnóstico se leen distinto del diagnóstico: no son
-     hallazgos, son la frontera de lo que la foto permite afirmar. Van en
-     secundario, no en gris de «sin dato»: son contenido, no una ausencia. */
-  .estado__bloque--limites .estado__lista { color: var(--texto-secundario); }
-
-  .estado__revisar {
-    font-size: var(--texto-s);
-    color: var(--texto-principal);
-    max-width: var(--medida);
-    border-inline-start: var(--trazo-grueso) solid currentColor;
-    padding-inline-start: var(--space-3);
-    text-wrap: pretty;
-  }
-
-  .estado__revisar-rotulo {
-    font-family: var(--fuente-etiqueta);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caja-alta);
-    font-size: var(--texto-2xs);
-  }
-
-  .paso__plazo {
     font-family: var(--fuente-dato);
-    font-size: var(--texto-2xs);
-    text-transform: uppercase;
+    font-size: var(--texto-3xs);
     letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
     color: var(--texto-meta);
   }
 
-  .estado__cabecera {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-xl);
-    line-height: var(--interlinea-titulo);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-nombre);
-  }
+  /* ── el tratamiento ─────────────────────────────────────────────────────── */
 
-  .estado__diagnostico {
-    color: var(--texto-principal);
-    max-width: var(--medida);
-    text-wrap: pretty;
-  }
-
-  .estado__tratamiento {
-    margin-block-start: var(--space-2);
-    display: grid;
-    gap: var(--space-3);
-  }
+  .estado__tratamiento { display: grid; gap: var(--space-3); }
 
   .estado__pasos {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-4);
     counter-reset: paso;
-    color: var(--texto-principal);
     max-width: var(--medida);
   }
 
@@ -1093,48 +1165,86 @@
     counter-increment: paso;
     display: grid;
     gap: var(--space-1);
-    padding-inline-start: var(--space-6);
+    padding-inline-start: var(--space-7);
     position: relative;
     font-size: var(--texto-s);
 
     &::before {
       content: counter(paso);
       position: absolute;
-      left: var(--space-0);
+      inset-inline-start: 0;
+      inset-block-start: 0;
+      inline-size: var(--space-6);
+      block-size: var(--space-6);
+      display: grid;
+      place-items: center;
+      border-radius: var(--radio-punto);
+      background: var(--color-acido);
+      color: var(--color-campo);
       font-family: var(--fuente-dato);
-      font-weight: var(--peso-fuerte);
-      color: var(--texto-meta);
+      font-weight: var(--peso-medio);
+      font-size: var(--texto-xs);
     }
   }
+
+  .paso__plazo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-micro);
+    color: var(--texto-meta);
+  }
+
+  .paso__accion { color: var(--texto-principal); text-wrap: pretty; }
 
   .paso__senal {
     font-size: var(--texto-xs);
     color: var(--texto-secundario);
+    padding-inline-start: var(--space-3);
+    border-inline-start: var(--trazo-grueso) solid var(--color-acido-hondo);
+    margin-block-start: var(--space-1);
 
-    &::before { content: "Señal: "; font-family: var(--fuente-dato); text-transform: uppercase; }
+    &::before { content: "Va bien si: "; font-family: var(--fuente-dato); text-transform: uppercase; font-size: var(--texto-3xs); letter-spacing: var(--tracking-micro); }
   }
 
-  /* ── foto ───────────────────────────────────────────────────────────────── */
-
-  .foto {
-    display: grid;
-    max-width: var(--medida-corta);
+  .estado__revisar {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    max-width: var(--medida);
+    border-inline-start: var(--trazo-grueso) solid var(--color-borde-control);
+    padding-inline-start: var(--space-3);
+    text-wrap: pretty;
   }
+
+  .estado__revisar-rotulo {
+    font-family: var(--fuente-dato);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-micro);
+    font-size: var(--texto-3xs);
+    color: var(--texto-meta);
+
+    &::after { content: " "; }
+  }
+
+  /* ── foto del diagnóstico ───────────────────────────────────────────────── */
+
+  .foto { display: grid; }
 
   .foto__img {
-    /* Las doce imágenes son 3:4, así que el encuadre no recorta nada.
-       Con width/height en el HTML tampoco hay salto de layout. */
     aspect-ratio: var(--aspecto-foto);
     object-fit: cover;
     width: 100%;
     height: auto;
-    border-radius: var(--radio-panel);
+    border-start-start-radius: var(--radio-panel);
+    border-start-end-radius: var(--radio-panel);
     border: var(--trazo-fino) solid var(--color-separador);
+    border-block-end: 0;
   }
 
   /* LA BANDA DE LA FOTO. Pegada al borde inferior de la imagen y compartiendo su
-     ancho, en superficie sólida propia. El `--radio-panel` solo abajo, para que
-     imagen y banda se lean como una sola pieza y no como dos cajas apiladas. */
+     ancho, en superficie sólida propia. Nunca sobre los píxeles: texto sobre
+     fotografía es contraste NO MEDIBLE, y sobre la foto nocturna del helecho
+     sería ilegible. Con fondo propio se mide como cualquier otro texto. */
   .foto__pie {
     display: grid;
     gap: var(--space-1);
@@ -1143,22 +1253,14 @@
     border-block-start: 0;
     border-end-start-radius: var(--radio-panel);
     border-end-end-radius: var(--radio-panel);
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3);
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
     color: var(--texto-meta);
   }
 
-  /* La imagen pierde el radio de abajo: es la banda la que lo lleva ahora. */
-  .foto:has(.foto__pie) .foto__img {
-    border-end-start-radius: 0;
-    border-end-end-radius: 0;
-    border-block-end: 0;
-  }
-
-  /* La limitación no es un pie de foto más: es lo que la foto NO permite afirmar,
-     así que va en cuerpo de texto y no en mono de metadato. En secundario y no en
-     gris de «sin dato»: es contenido, no una ausencia. */
+  /* La limitación no es un pie de foto más: es lo que la foto NO permite
+     afirmar, así que va en cuerpo de texto y no en mono de metadato. */
   .foto__limite {
     font-family: var(--fuente-cuerpo);
     font-size: var(--texto-s);
@@ -1166,21 +1268,98 @@
     text-wrap: pretty;
   }
 
-  /* ── procedencia: la prueba documental ──────────────────────────────────── */
+  /* ── la prueba: la pegatina reconstruida y la fotografiada ──────────────── */
 
   .prueba {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
     justify-items: start;
   }
 
-  .prueba__rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
+  /* LA SIGNATURE: la etiqueta térmica de Viveros Projardín, reconstruida en HTML
+     y CSS. Sin una sola imagen — el código de barras es un gradiente repetido.
+     Es el único sitio de la web, junto al cuaderno, donde el fondo se aclara, y
+     aquí tiene un motivo distinto: una pegatina de vivero es blanca. */
+  .pegatina {
+    display: grid;
+    gap: var(--space-2);
+    inline-size: 100%;
+    max-inline-size: var(--medida-corta);
+    background: var(--color-papel);
+    background-image: var(--papel-degradado);
+    color: var(--color-tinta-papel);
+    border-radius: var(--radio-s);
+    padding: var(--relleno-panel);
+    box-shadow: var(--sombra-2);
   }
+
+  .pegatina__vivero {
+    display: grid;
+    gap: var(--space-1);
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    line-height: var(--interlinea-titulo);
+    text-transform: uppercase;
+    border-block-end: var(--trazo-fino) solid var(--color-papel-linea);
+    padding-block-end: var(--space-2);
+  }
+
+  .pegatina__vivero-nombre { font-weight: var(--peso-medio); }
+
+  .pegatina__nombre {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-xl);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+  }
+
+  .pegatina__maceta,
+  .pegatina__fito {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+  }
+
+  .pegatina__linea {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .pegatina__codigo { display: grid; gap: var(--space-1); }
+
+  /* El EAN: repeating-linear-gradient, cero imágenes y cero peso. Un EAN real
+     mide lo que mide: estirado deja de leerse como código de barras y pasa a ser
+     una cebra decorativa, así que tiene ancho propio. */
+  .pegatina__barras {
+    display: block;
+    inline-size: 9rem;
+    block-size: var(--space-7);
+    background-image: var(--barras-codigo);
+    background-repeat: repeat-x;
+  }
+
+  .pegatina__digitos,
+  .pegatina__precio {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-dato);
+  }
+
+  .pegatina__precio {
+    font-weight: var(--peso-fuerte);
+    font-size: var(--texto-precio);
+    line-height: var(--interlinea-apretada);
+    white-space: nowrap;
+  }
+
+  /* Cada segmento de un código de trazabilidad es indivisible: partido por la
+     mitad deja de ser un código. El salto ocurre ENTRE segmentos. */
+  .segmento { white-space: nowrap; }
 
   /* Sin duotono, sin recorte artístico, sin sombra: una prueba retocada no
      prueba nada. Solo se acota el tamaño, que no es estilizar. */
@@ -1190,10 +1369,11 @@
     object-fit: cover;
     height: auto;
     border: var(--trazo-fino) solid var(--color-separador);
+    border-radius: var(--radio-s);
   }
 
-  /* La frase de «sin etiqueta» NO va en gris de sin-dato: en estas dos plantas
-     la ausencia de pegatina es antigüedad, y eso es contenido, no un hueco. */
+  /* La frase de «sin etiqueta» NO va en gris de sin-dato: en estas dos plantas la
+     ausencia de pegatina es antigüedad, y eso es contenido, no un hueco. */
   .prueba__sin {
     font-size: var(--texto-s);
     color: var(--texto-secundario);
@@ -1209,29 +1389,65 @@
     max-width: var(--medida-corta);
   }
 
+  /* ── el rasgo de la hoja ────────────────────────────────────────────────── */
+
+  .identificacion { display: grid; gap: var(--space-3); }
+
+  .identificacion__cuerpo {
+    display: flex;
+    align-items: start;
+    gap: var(--space-4);
+  }
+
+  .identificacion__texto {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    max-width: var(--medida);
+    text-wrap: pretty;
+  }
+
+  /* La silueta de hoja: la forma es la clave de identificación botánica, así que
+     aquí es información. NO se anima: algo que se mueve no ancla nada. */
+  .silueta {
+    width: var(--silueta-tam);
+    height: var(--silueta-tam);
+    display: block;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--trazo);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--texto-secundario);
+  }
+
+  .silueta--grande { width: var(--silueta-tam-l); height: var(--silueta-tam-l); }
+
+  .silueta__nervio,
+  .silueta__pinna { stroke-width: var(--trazo-fino); opacity: 0.75; }
+
+  .silueta__raquis { stroke-width: var(--trazo); }
+
+  /* Aquí la trama SÍ corresponde: la especie es un dato desconocido de verdad, y
+     va dentro del contorno para marcar dónde está la duda exactamente. */
+  .silueta__trama { stroke: none; }
+  .silueta__trama-linea { stroke: var(--color-sin-dato-trama); stroke-width: var(--trazo-fino); }
+
   /* ── capa 2 · campos con diagrama ───────────────────────────────────────── */
 
   .cuidados { display: grid; gap: var(--space-3); }
 
-  .cuidados__titulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-  }
-
-  .campos-diagrama {
-    display: grid;
-    gap: var(--space-4);
-  }
+  .campos-diagrama { display: grid; gap: var(--space-4); }
 
   .campo {
     display: grid;
     gap: var(--space-2);
     background: var(--fondo-hundido);
+    border: var(--trazo-fino) solid var(--color-separador);
     border-radius: var(--radio-panel);
     padding: var(--relleno-panel);
+    box-shadow: var(--filo-luz);
+    min-width: 0;
   }
 
   /* Los iconos de campo: un trazo, sin relleno, y siempre junto a su palabra. */
@@ -1252,27 +1468,32 @@
   .icono--dificultad .icono__punto--lleno { fill: currentColor; }
 
   .campo__clave,
-  .dato__clave { display: flex; align-items: center; gap: var(--space-2); }
-
-  .campo__clave {
-    font-family: var(--fuente-etiqueta);
+  .dato__clave {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
     color: var(--texto-meta);
   }
 
-  .campo__resumen { font-size: var(--texto-s); text-wrap: pretty; }
+  .campo__resumen {
+    font-size: var(--texto-s);
+    color: var(--texto-principal);
+    text-wrap: pretty;
+  }
 
-  /* Alto mínimo de diana: iban a 20 px y van apiladas con poco aire, así que no
-     salvaban la excepción de espaciado de WCAG 2.5.8. */
-  /* WCAG 2.2 · 2.5.8: 24×24 de área pulsable. Crece el PADDING, no el
-     `font-size`: la microtipografía de la cita es pequeña a propósito. Y van
-     apiladas con poco aire —24 fuentes por ficha—, así que no salvaban la
-     excepción de espaciado. */
+  /* WCAG 2.2 · 2.5.8: área pulsable de 24×24 como mínimo, y aquí van a 28.
+     Crece el PADDING, no el `font-size`: la microtipografía de la cita es
+     pequeña a propósito, y el tamaño de diana es una decisión de ergonomía. Las
+     dos cosas son independientes. */
   .campo__mas-tirador,
   .dato__mas-tirador,
   .causa__mas-tirador,
+  .fuentes-resto__tirador,
   .fuente {
     min-block-size: var(--diana-min);
     display: inline-flex;
@@ -1281,71 +1502,35 @@
   }
 
   /* Separación vertical entre dianas contiguas, que es la otra mitad del
-     criterio: sin aire, dos enlaces de 24 px siguen siendo fáciles de fallar. */
+     criterio: sin aire, dos enlaces de 28 px siguen siendo fáciles de fallar. */
   .campo__fuente,
-  .dato__fuente { margin-block-start: var(--espacio-diana); }
-
-  .fuentes__lista { display: grid; gap: var(--espacio-diana); }
-
-  /* El bloque del resto de fuentes son ~24 líneas por ficha: una rejilla de dos
-     o tres columnas, no una columna de veinticuatro renglones. Cada línea es
-     «campo → cita», así que se lee por el campo.
-
-     `grid-column: 1 / -1` no es cosmético: sin él el bloque cae en UNA celda de
-     `.mas-datos__lista` (~217 px), su rejilla interior colapsa a una columna y
-     las 24 citas se apilan — 1.255 px de alto medidos, más que lo que costaba
-     toda la ficha antes. Cruzando la fila son ~8 renglones de tres columnas. */
-  .dato--fuentes { grid-column: 1 / -1; }
-
-  .fuentes-resto__lista {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    gap: var(--espacio-diana) var(--space-4);
-    margin-block-start: var(--space-2);
-  }
-
-  /* El tirador lleva el número, así que plegado ya dice cuántas hay. */
-  .fuentes-resto__tirador {
-    font-family: var(--fuente-dato);
-    font-size: var(--texto-xs);
-    color: var(--texto-secundario);
-    text-decoration: underline;
-    text-underline-offset: var(--space-1);
-    min-block-size: var(--diana-min);
-    display: inline-flex;
-    align-items: center;
-    padding-block: var(--space-1);
-  }
-
-  .dato--fuentes .dato__fuente {
-    margin-block-start: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-1) var(--space-2);
-  }
-
-  /* El campo que la cita respalda. En mono y en versalitas: es una clave, no
-     prosa, y así la columna se escanea por el campo. */
-  .dato__fuente-campo {
-    font-family: var(--fuente-dato);
-    font-size: var(--texto-3xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-
-    &::after { content: " ·"; }
-  }
+  .dato__fuente { display: block; margin-block-start: var(--espacio-diana); }
 
   .campo__mas-tirador,
   .dato__mas-tirador,
-  .causa__mas-tirador {
+  .causa__mas-tirador,
+  .fuentes-resto__tirador {
     font-family: var(--fuente-dato);
-    font-size: var(--texto-xs);
-    color: var(--texto-secundario);
-    text-decoration: underline;
-    text-underline-offset: var(--space-1);
+    font-size: var(--texto-2xs);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--color-acido);
+    gap: var(--space-2);
+    padding-inline: var(--space-2);
+    margin-inline-start: calc(var(--space-2) * -1);
+    border-radius: var(--radio-s);
+    transition: background-color var(--dur-corta) var(--ease-estandar);
+
+    &:hover { background: var(--fondo-acento); }
+
+    &::after { content: "+"; font-weight: var(--peso-normal); }
   }
+
+  details[open] > .campo__mas-tirador::after,
+  details[open] > .dato__mas-tirador::after,
+  details[open] > .causa__mas-tirador::after,
+  details[open] > .fuentes-resto__tirador::after { content: "–"; }
 
   .campo__detalle,
   .dato__detalle {
@@ -1353,7 +1538,10 @@
     font-size: var(--texto-s);
     color: var(--texto-secundario);
     max-width: var(--medida);
-    margin-block-start: var(--space-1);
+    margin-block-start: var(--space-2);
+    padding: var(--relleno-panel);
+    background: var(--fondo-ficha);
+    border-radius: var(--radio-panel);
     text-wrap: pretty;
   }
 
@@ -1361,49 +1549,39 @@
 
   .mas-datos { display: grid; gap: var(--space-3); }
 
-  .mas-datos__lista {
-    display: grid;
-    gap: var(--space-3);
-  }
+  .mas-datos__lista { display: grid; gap: var(--space-4); }
 
   .dato {
     display: grid;
-    gap: var(--space-1);
-    padding-block-end: var(--space-3);
+    gap: var(--space-2);
+    padding-block-end: var(--space-4);
     border-block-end: var(--trazo-fino) solid var(--color-separador);
+    min-width: 0;
   }
 
-  .dato__clave {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-  }
-
-  .dato__valor { font-size: var(--texto-s); }
+  .dato__valor { font-size: var(--texto-s); color: var(--texto-principal); }
 
   /* Toxicidad: tres estados que se distinguen por BORDE e ICONO además de por
      color, así que en escala de grises siguen siendo tres cosas distintas.
 
-     Sin rojo, y es deliberado: en esta casa no hay mascotas, así que la
-     toxicidad es informativa y no urgente. --color-alerta queda EXCLUSIVAMENTE
-     para la severidad crítica. En este sistema el color significa «haz algo
+     Sin el color de la alarma, y es deliberado: en esta casa no hay mascotas, así
+     que la toxicidad es informativa y no urgente. El color de severidad queda
+     EXCLUSIVAMENTE para la crítica. En este sistema el color significa «haz algo
      hoy», y una planta tóxica en una casa sin gato no pide nada hoy. */
   .dato--toxicidad {
     background: var(--fondo-hundido);
+    border: var(--trazo-fino) solid var(--color-separador);
     border-radius: var(--radio-panel);
     padding: var(--relleno-panel);
 
     & .dato__texto::before {
       font-family: var(--fuente-dato);
-      font-weight: var(--peso-fuerte);
+      font-weight: var(--peso-medio);
     }
   }
 
   .dato[data-toxicidad="toxica"] {
-    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
-    & .dato__texto { color: var(--texto-principal); }
+    border-inline-start: var(--trazo-grueso) solid var(--color-borde-control);
     & .dato__texto::before { content: "▲ "; }
   }
 
@@ -1433,181 +1611,220 @@
   /* ── fuentes: contenido, no letra pequeña ───────────────────────────────── */
 
   .fuente {
-    display: inline-flex;
-    align-items: baseline;
     gap: var(--space-1);
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
-    color: var(--texto-fuente);
+    color: var(--texto-enlace);
     text-decoration-thickness: var(--trazo-fino);
     text-underline-offset: var(--space-1);
   }
 
   .fuente--sin-url { color: var(--texto-meta); text-decoration: none; }
 
-  .campo__fuente,
-  .dato__fuente { display: block; margin-block-start: var(--space-1); }
+  /* El bloque del resto de fuentes son ~24 líneas por ficha: una rejilla de dos
+     o tres columnas, no una columna de veinticuatro renglones.
 
-  /* ── capa 3 · el cuaderno de Carlos ─────────────────────────────────────── */
+     `grid-column: 1 / -1` no es cosmético: sin él el bloque cae en UNA celda de
+     `.mas-datos__lista`, su rejilla interior colapsa a una columna y las 24 citas
+     se apilan — 1.255 px de alto medidos, más de lo que costaba la ficha entera. */
+  .dato--fuentes { grid-column: 1 / -1; }
 
+  .fuentes-resto__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--espacio-diana) var(--space-4);
+    margin-block-start: var(--space-3);
+  }
+
+  .dato--fuentes .dato__fuente {
+    margin-block-start: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  /* El campo que la cita respalda. En mono y en versalitas: es una clave, no
+     prosa, y así la columna se escanea por el campo. */
+  .dato__fuente-campo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+
+    &::after { content: " ·"; }
+  }
+
+  /* ── el calendario de la ficha ──────────────────────────────────────────── */
+
+  .calendario { display: grid; gap: var(--space-3); }
+
+  .calendario__lista { display: grid; gap: var(--space-3); }
+
+  .tarea {
+    display: grid;
+    gap: var(--space-1);
+    justify-items: start;
+    padding-inline-start: var(--space-3);
+    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
+  }
+
+  /* La única vencida lleva filete de aviso. Sin invertir nada: la inversión es
+     solo para un distintivo, nunca para un contenedor de texto. */
+  .tarea[data-tono="tarde"] {
+    border-inline-start-color: var(--color-aviso);
+  }
+
+  .tarea__titulo { font-size: var(--texto-s); text-wrap: pretty; }
+
+  .tarea__cuando {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
+  }
+
+  /* «sin registrar» va en el gris de ausencia de dato, igual que un campo
+     botánico sin verificar. El estándar de honestidad no cambia porque el dato
+     sea de uso en vez de de fuente. */
+  .tarea__cuando--sin-dato { color: var(--texto-sin-dato); }
+
+  .tarea__nota {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    text-wrap: pretty;
+  }
+
+  /* El rótulo distingue una condición («solo si») de una comprobación
+     («comprobar»), que no son lo mismo y ocupan la misma línea. */
+  .tarea__nota-rotulo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+
+    &::after { content: ": "; }
+  }
+
+  /* ── el índice con recuento ─────────────────────────────────────────────── */
+
+  .indice {
+    display: grid;
+    gap: var(--space-2);
+    padding-block-start: var(--space-3);
+    border-block-start: var(--trazo-fino) solid var(--color-separador);
+  }
+
+  .indice__lista { display: grid; gap: var(--espacio-diana); }
+
+  /* La línea de puntos entre rótulo y número es de índice de expediente, y se
+     hace con un `border-block-end` sobre un hueco flexible: cero pseudo-elemento
+     con doscientos puntos escritos a mano. */
+  .indice__enlace {
+    display: flex;
+    align-items: end;
+    gap: var(--space-2);
+    min-block-size: var(--diana-min);
+    font-size: var(--texto-s);
+    color: var(--texto-principal);
+    text-decoration: none;
+
+    &::after {
+      content: "";
+      flex: 1 1 auto;
+      border-block-end: var(--trazo-fino) dotted var(--color-borde-control);
+      margin-block-end: var(--space-1);
+      order: 1;
+    }
+
+    &:hover { color: var(--color-acido); }
+  }
+
+  .indice__texto { text-wrap: pretty; }
+
+  /* El número en mono y con peso: es un dato, y es la mitad del mensaje. */
+  .indice__cuenta {
+    order: 2;
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-medio);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-acido);
+  }
+
+  /* ── capa 3 · la voz de la casa ─────────────────────────────────────────── */
+
+  /* El ÚNICO sitio de la ficha donde el fondo se aclara para leer texto largo, y
+     por eso se lee como material distinto del dato verificado. La separación usa
+     cuatro señales a la vez —superficie, itálica, tinta azul y el nombre de quien
+     habla—, no solo el color: ninguna información depende de distinguir tonos. */
   .cuaderno {
     background-color: var(--fondo-personal);
     background-image: var(--trama-cuaderno);
     border-inline-start: var(--filete-personal) solid var(--color-boli);
     border-radius: var(--radio-panel);
-    padding: var(--relleno-panel);
+    padding: var(--space-5);
     display: grid;
     gap: var(--space-3);
     max-width: var(--medida);
-  }
-
-  .cuaderno__rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-micro);
-    text-transform: uppercase;
+    box-shadow: var(--sombra-2);
     color: var(--texto-personal);
   }
 
-  /* La itálica es la voz de Carlos, un escalón por encima del cuerpo. */
+  .cuaderno__rotulo { color: var(--color-boli); }
+
+  /* La itálica es la voz de la casa, un escalón por encima del cuerpo. */
   .cuaderno__historia,
   .cuaderno__notas {
     font-style: italic;
-    font-size: var(--texto-l);
+    font-size: var(--texto-voz);
     line-height: var(--interlinea-suelta);
     color: var(--texto-personal);
     text-wrap: pretty;
+  }
+
+  .cuaderno__firma {
+    font-size: var(--texto-xs);
+    font-style: italic;
+    color: var(--color-tinta-papel);
+    border-block-start: var(--trazo-fino) solid var(--color-papel-linea);
+    padding-block-start: var(--space-3);
+    opacity: 0.85;
   }
 
   /* ── pie ────────────────────────────────────────────────────────────────── */
 
   .pie__texto {
     font-size: var(--texto-s);
-    color: var(--texto-sobre-maceta);
+    color: var(--texto-secundario);
     max-width: var(--medida);
-    opacity: 0.9;
+    text-wrap: pretty;
   }
 
-  /* ── container queries: el componente reacciona a SU hueco ──────────────── */
-
-  /* Container query y no media query: la etiqueta reacciona al hueco que le dan,
-     no al ancho de la ventana. Así funciona igual en la rejilla de dos columnas,
-     en la de cuatro y abierta a ancho completo, sin tocar nada. */
-  @container etiqueta (min-width: 52rem) {
-
-    /* ── EL EXPEDIENTE EN DOS COLUMNAS SEMÁNTICAS ─────────────────────────
-       2fr / 3fr. Y el reparto no es estético: la columna de acción lleva los
-       diagramas, que son gráficos con ancho propio, y la de consulta lleva la
-       prosa, que necesita su medida de lectura entera.
-
-       Esto resuelve DOS cosas que eran la misma: `qa-visual` midió la ficha del
-       helecho en 4.042 px con **600 px de ancho sin usar durante 2.208 px de
-       alto** — 1,3 millones de px² vacíos al lado de una columna de texto. La
-       altura y el hueco eran el mismo problema visto por dos lados, y ocupar la
-       mitad vacía es lo que parte la altura. */
-    .expediente {
-      display: grid;
-      grid-template-columns: 2fr 3fr;
-      gap: var(--space-5) var(--space-6);
-      align-items: start;
-    }
-
-    /* La columna de acción se queda a la vista mientras se lee el porqué.
-       El tope de alto y el `overflow` no son opcionales: sin ellos, en cuanto la
-       columna es más alta que la pantalla, `sticky` deja de pegar y además se
-       come el viewport entero. */
-    .expediente__accion {
-      position: sticky;
-      inset-block-start: var(--space-4);
-      max-block-size: calc(100dvh - var(--space-7));
-      overflow: auto;
-      /* Un panel con scroll propio necesita aire interior, o el texto queda
-         pegado a su propia barra. */
-      padding-inline-end: var(--space-2);
-    }
-
-    /* En la columna estrecha caben dos diagramas por fila. Apilados de uno en
-       uno la columna se iba a mil y pico píxeles y desequilibraba el reparto. */
-    .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
-
-    .mas-datos__lista { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
-
-    /* LAS DOS PRUEBAS, EN PARALELO.
-       La foto del diagnóstico y la foto de la pegatina del vivero son las dos
-       piezas documentales de esta columna, y apiladas sumaban 650 px de alto con
-       media columna vacía al lado de cada una. Puestas en paralelo ocupan lo que
-       ocupa la más alta, y de paso se leen como lo que son: la prueba de qué le
-       pasa y la prueba de de dónde viene.
-
-       El ancho de la foto lo fija la fracción de la rejilla, no un `max-width`
-       nuevo: así su alto sale del `aspect-ratio` sin que haga falta inventarse
-       una medida que no está en los tokens. */
-    .expediente__base {
-      grid-template-columns: 2fr 3fr;
-    }
-
-    .expediente__rotulo,
-    .estado,
-    .mas-datos,
-    .cuaderno { grid-column: 1 / -1; }
-
-    .foto { grid-column: 1; }
-    .prueba { grid-column: 2; }
-
-    /* La foto ya no la acota `--medida-corta` sino su celda, que es más
-       estrecha; sin esto se quedaría en 42ch y dejaría el hueco de antes. */
-    .foto { max-width: 100%; }
-  }
-
-  /* Por debajo de 52rem se apila en una sola columna y ACCIÓN queda arriba, que
-     es lo que ya hace el orden del DOM sin ayuda de nadie. Lo único que hace
-     falta es no dejar el `sticky` puesto: pegado en una sola columna taparía
-     justo lo que hay que leer debajo. */
-  .expediente {
-    display: grid;
-    gap: var(--space-5);
-  }
-
-  .expediente__accion,
-  .expediente__base {
-    display: grid;
-    gap: var(--space-5);
-    align-content: start;
-    /* `min-width: 0` contra el `auto` implícito de los hijos de grid: sin esto
-       un diagrama o un código largo empujan la columna y desbordan a 320 px. */
-    min-width: 0;
-  }
-
-  /* Los dos rótulos de columna son el encabezado del expediente, y tienen que
-     leerse como rótulos de archivador, no como títulos de sección cualquiera. */
-  .expediente__rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
+  .pie__cuenta {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    letter-spacing: var(--tracking-dato);
     color: var(--texto-meta);
-    padding-block-end: var(--space-2);
-    border-block-end: var(--trazo-fino) solid var(--color-separador);
   }
 
-  /* ── la cronología: décadas, semanas y horas en el mismo salón ──────────── */
+  /* ── la cronología ──────────────────────────────────────────────────────── */
 
   .cronologia {
     display: grid;
     gap: var(--space-3);
     background: var(--fondo-ficha);
-    color: var(--texto-principal);
-    border: var(--trazo-fino) solid var(--color-troquel);
-    border-radius: var(--radio-troquel);
-    box-shadow: var(--sombra-pegatina);
+    border: var(--trazo-fino) solid var(--color-separador);
+    border-radius: var(--radio-panel);
+    box-shadow: var(--sombra-1), var(--filo-luz);
     padding: var(--relleno-ficha);
-    margin-block-end: var(--space-5);
   }
 
   .cronologia__titulo {
-    font-family: var(--fuente-etiqueta);
+    font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
+    font-weight: var(--peso-medio);
+    letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
     color: var(--texto-meta);
   }
@@ -1621,12 +1838,10 @@
     text-wrap: pretty;
   }
 
-  /* LA REJILLA DEL GRÁFICO, y `subgrid` es lo que la hace posible sin JS.
-     Las tres columnas se declaran UNA vez aquí; la lista, cada fila, cada botón
-     y el eje las heredan. Sin subgrid, cada fila calculaba sus propias columnas
-     —«74 días (2 meses)» es más ancho que «llegó hoy»— y las pistas terminaban
-     en sitios distintos, con lo que el eje de abajo rotulaba una posición que en
-     la mitad de las filas no era esa. */
+  /* LA REJILLA DEL GRÁFICO, y `subgrid` es lo que la hace posible sin JS. Las
+     tres columnas se declaran UNA vez aquí; la lista, cada fila, cada botón y el
+     eje las heredan. Sin subgrid cada fila calcula sus propias columnas y el eje
+     de abajo rotula una posición que en la mitad de las filas no es esa. */
   .cronologia__grafico {
     display: grid;
     grid-template-columns: minmax(6rem, auto) minmax(0, 1fr) minmax(5rem, auto);
@@ -1655,7 +1870,7 @@
     cursor: pointer;
     font: inherit;
 
-    &:hover .cronologia__nombre { text-decoration: underline; }
+    &:hover .cronologia__nombre { color: var(--color-acido); }
   }
 
   .cronologia__nombre {
@@ -1665,8 +1880,8 @@
     text-transform: uppercase;
   }
 
-  /* La pista es el eje: una línea fina de borde de control, porque sin ella no
-     se entiende el gráfico y 1.4.11 habla de «graphical objects required to
+  /* La pista es el eje: una línea de borde de control, porque sin ella no se
+     entiende el gráfico y 1.4.11 habla de «graphical objects required to
      understand the content», no solo de controles. */
   .cronologia__pista {
     position: relative;
@@ -1676,22 +1891,20 @@
   }
 
   /* El punto es un pseudo-elemento a propósito: es la posición del dato, no el
-     dato — que va en texto en `.cronologia__valor`, al lado. Así no hay ningún
-     nodo pequeño con fondo y sin texto que pueda leerse como un «punto de color»
-     que codifica un estado. */
+     dato — que va en texto al lado. Así no hay ningún nodo pequeño con fondo y
+     sin texto que pueda leerse como un «punto de color» que codifica un estado. */
   .cronologia__pista[style]::before {
     content: "";
     position: absolute;
     inset-block-end: 0;
     /* --x lo calcula js/cronologia.js. El translate centra el punto en su
-       coordenada en vez de colgarlo a la derecha de ella, que en «10 años» se
-       nota. */
+       coordenada en vez de colgarlo a su derecha, que en «10 años» se nota. */
     inset-inline-start: var(--x);
     translate: -50% 50%;
     inline-size: var(--space-3);
     block-size: var(--space-3);
     border-radius: var(--radio-punto);
-    background: var(--color-tinta);
+    background: var(--color-acido);
   }
 
   /* El mínimo no es una medida: el poto lleva «más de 20 años» y eso es un suelo.
@@ -1703,7 +1916,7 @@
     inset-inline-start: var(--x);
     inset-block-end: 0;
     inline-size: var(--space-5);
-    border-block-start: var(--trazo-grueso) solid var(--color-tinta);
+    border-block-start: var(--trazo-grueso) solid var(--color-acido);
     translate: 0 50%;
   }
 
@@ -1723,14 +1936,14 @@
 
   .cronologia__fila[data-certeza="sin"] .cronologia__valor { color: var(--texto-sin-dato); }
 
-  /* El eje ocupa exactamente la columna de las pistas: si no cae debajo de lo
-     que rotula, no rotula nada. */
+  /* El eje ocupa exactamente la columna de las pistas: si no cae debajo de lo que
+     rotula, no rotula nada. */
   .cronologia__eje { grid-column: 2; }
 
   /* La pista del eje es el contenedor de posicionamiento de los rótulos. Hace
      falta de verdad: sin `position: relative` aquí, los tics absolutos se
-     resolvían contra el bloque contenedor inicial y aparecían pegados al borde
-     de arriba de la PÁGINA, encima de la cabecera. */
+     resuelven contra el bloque contenedor inicial y aparecen pegados al borde de
+     arriba de la PÁGINA, encima de la cabecera. */
   .cronologia__eje-pista {
     position: relative;
     display: block;
@@ -1741,7 +1954,6 @@
     position: absolute;
     inset-block-start: 0;
     inset-inline-start: var(--x);
-    /* Centrado sobre su coordenada… */
     translate: -50% 0;
     /* Lo que impide que el eje mienta: el rótulo, que es texto de verdad. */
     font-family: var(--fuente-dato);
@@ -1754,19 +1966,17 @@
 
     /* …salvo el primero y el último, que se anclan por su extremo. Un rótulo
        centrado en el 0 % o en el 100 % se sale del eje por la mitad de su ancho
-       —y «10 años» desbordaba la página a 1.280 px, lo cazó el runner—. La marca
-       en sí sigue en su coordenada exacta: la compensa el `::before`. */
+       —y «10 años» desbordaba la página a 1.280 px—. La marca en sí sigue en su
+       coordenada exacta: la compensa el `::before`. */
     &:first-child { translate: 0 0; }
     &:last-child { translate: -100% 0; }
 
-    /* La marca del eje: 1px estructural, no un color ni un espaciado. Va donde
-       de verdad cae el valor, pase lo que pase con el rótulo. */
     &::before {
       content: "";
       position: absolute;
       inset-block-start: 0;
       inset-inline-start: 50%;
-      inline-size: 1px;
+      inline-size: var(--trazo-fino);
       block-size: var(--space-2);
       background: var(--color-borde-control);
     }
@@ -1775,123 +1985,65 @@
     &:last-child::before { inset-inline-start: 100%; }
   }
 
-  /* ── el calendario de la ficha ──────────────────────────────────────────── */
+  /* ── container queries: el componente reacciona a SU hueco ──────────────── */
 
-  .calendario {
-    display: grid;
-    gap: var(--space-3);
+  /* Container query y no media query: la tarjeta reacciona al hueco que le dan,
+     no al ancho de la ventana. Así funciona igual en la rejilla de dos columnas,
+     en la de cuatro y abierta a ancho completo, sin tocar nada. */
+  @container planta (min-width: 34rem) {
+    /* Abierta, la foto deja de ser ventana de mosaico y pasa a banda: a ancho
+       completo un recorte 4:5 mediría más de mil píxeles de alto. */
+    .despegue[open] .planta__foto {
+      aspect-ratio: auto;
+      block-size: var(--alto-foto-abierta);
+    }
   }
 
-  .calendario__titulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-  }
-
-  .calendario__lista { display: grid; gap: var(--space-3); }
-
-  .tarea {
-    display: grid;
-    gap: var(--space-1);
-    justify-items: start;
-    padding-inline-start: var(--space-3);
-    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
-  }
-
-  /* La única vencida lleva filete de aviso. Sin rojo, y sin invertir nada: la
-     inversión es solo para un distintivo, nunca para un contenedor de texto. */
-  .tarea[data-tono="tarde"] {
-    border-inline-start-color: var(--color-aviso);
-    background: var(--color-aviso-relleno);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radio-chip);
-  }
-
-  .tarea__titulo { font-size: var(--texto-s); text-wrap: pretty; }
-
-  .tarea__cuando {
-    font-family: var(--fuente-dato);
-    font-size: var(--texto-xs);
-    color: var(--texto-meta);
-  }
-
-  /* «sin registrar» va en el gris de ausencia de dato, igual que un campo
-     botánico sin verificar. El estándar de honestidad no cambia porque el dato
-     sea de uso en vez de de fuente. */
-  .tarea__cuando--sin-dato { color: var(--texto-sin-dato); }
-
-  .tarea__nota {
-    font-size: var(--texto-s);
-    color: var(--texto-secundario);
-    text-wrap: pretty;
-  }
-
-  /* El rótulo distingue una condición («solo si») de una comprobación
-     («comprobar»), que no son lo mismo y ocupan la misma línea. */
-  .tarea__nota-rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-
-    &::after { content: ": "; }
-  }
-
-  /* ── el índice con recuento ─────────────────────────────────────────────── */
-
-  .indice {
-    display: grid;
-    gap: var(--space-2);
-    padding-block-start: var(--space-3);
-    border-block-start: var(--trazo-fino) solid var(--color-separador);
-  }
-
-  .indice__rotulo {
-    font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xs);
-    letter-spacing: var(--tracking-caja-alta);
-    text-transform: uppercase;
-    color: var(--texto-meta);
-  }
-
-  .indice__lista { display: grid; gap: var(--espacio-diana); }
-
-  /* La línea de puntos entre rótulo y número es de índice de expediente, y se
-     hace con un `border-block-end` sobre un hueco flexible: cero pseudo-elemento
-     con doscientos puntos escritos a mano. */
-  .indice__enlace {
-    display: flex;
-    align-items: end;
-    gap: var(--space-2);
-    min-block-size: var(--diana-min);
-    font-size: var(--texto-s);
-    color: var(--texto-principal);
-    text-decoration: none;
-
-    &::after {
-      content: "";
-      flex: 1 1 auto;
-      border-block-end: var(--trazo-fino) dotted var(--color-borde-control);
-      /* Baja el filete a la línea base del texto en vez de al centro del renglón. */
-      margin-block-end: var(--space-1);
-      order: 1;
+  @container planta (min-width: 52rem) {
+    /* ── EL EXPEDIENTE EN DOS COLUMNAS SEMÁNTICAS ─────────────────────────
+       2fr / 3fr. Y el reparto no es estético: la columna de acción lleva los
+       diagramas, que son gráficos con ancho propio, y la de consulta lleva la
+       prosa, que necesita su medida de lectura entera. Bajó el hueco vacío del
+       expediente del 53–65 % al 0–7 %. */
+    .expediente {
+      grid-template-columns: 2fr 3fr;
+      gap: var(--space-5) var(--space-7);
+      align-items: start;
     }
 
-    &:hover .indice__texto { text-decoration: underline; }
-  }
+    /* La columna de acción se queda a la vista mientras se lee el porqué. El
+       tope de alto y el `overflow` no son opcionales: sin ellos, en cuanto la
+       columna es más alta que la pantalla, `sticky` deja de pegar y además se
+       come el viewport entero. */
+    .expediente__accion {
+      position: sticky;
+      inset-block-start: var(--space-4);
+      max-block-size: calc(100dvh - var(--space-7));
+      overflow: auto;
+      /* Un panel con scroll propio necesita aire interior, o el texto queda
+         pegado a su propia barra. */
+      padding-inline-end: var(--space-3);
+    }
 
-  .indice__texto { text-wrap: pretty; }
+    /* En la columna estrecha caben dos diagramas por fila. Apilados de uno en uno
+       la columna se iba a mil y pico píxeles y desequilibraba el reparto. */
+    .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
 
-  /* El número en mono y con peso: es un dato, y es la mitad del mensaje. */
-  .indice__cuenta {
-    order: 2;
-    font-family: var(--fuente-dato);
-    font-weight: var(--peso-medio);
-    font-variant-numeric: tabular-nums;
-    color: var(--texto-dato);
+    .mas-datos__lista { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+
+    /* LAS DOS PRUEBAS, EN PARALELO. La foto del diagnóstico y la pegatina son las
+       dos piezas documentales de esta columna, y apiladas sumaban 650 px de alto
+       con media columna vacía al lado de cada una. */
+    .expediente__base { grid-template-columns: 2fr 3fr; }
+
+    .expediente__rotulo,
+    .estado,
+    .identificacion,
+    .mas-datos,
+    .cuaderno { grid-column: 1 / -1; }
+
+    .foto { grid-column: 1; }
+    .prueba { grid-column: 2; }
   }
 }
 
@@ -1910,7 +2062,7 @@
     max-width: var(--medida-corta);
     background: var(--fondo-ficha);
     border: var(--trazo-fino) solid var(--color-separador);
-    border-radius: var(--radio-panel);
+    border-radius: var(--radio-s);
   }
 
   .diagrama text {
@@ -1922,52 +2074,42 @@
   .diagrama-sin-dato {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
-    color: var(--texto-meta);
+    color: var(--texto-sin-dato);
     background: var(--fondo-ficha);
     border: var(--trazo-fino) dashed var(--color-borde-control);
-    border-radius: var(--radio-panel);
+    border-radius: var(--radio-s);
     padding: var(--space-3);
   }
 
   /* ── 1 · el reloj de riego ──────────────────────────────────────────────── */
 
-  .reloj__pista { fill: none; stroke: var(--escala-1); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
+  .reloj__pista { fill: none; stroke: var(--escala-2); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
   .reloj__marca { stroke: var(--color-borde-control); stroke-width: var(--trazo-fino); }
-  .reloj__marca--mayor { stroke: var(--color-tinta); stroke-width: var(--trazo); }
-  .reloj__eje { fill: var(--color-tinta); }
+  .reloj__marca--mayor { stroke: var(--escala-4); stroke-width: var(--trazo); }
+  .reloj__eje { fill: var(--escala-4); }
 
   .reloj__aguja { stroke-width: var(--trazo-grueso); stroke-linecap: round; }
-  .reloj__aguja--verano { stroke: var(--color-tinta); }
+  .reloj__aguja--verano { stroke: var(--color-acido); }
   .reloj__aguja--invierno { stroke: var(--escala-3); stroke-dasharray: 3 2; }
 
   .reloj__punta { stroke: none; }
-  circle.reloj__aguja--verano { fill: var(--color-tinta); }
+  circle.reloj__aguja--verano { fill: var(--color-acido); }
   circle.reloj__aguja--invierno { fill: var(--escala-3); }
 
   .reloj__cifra { fill: var(--texto-dato); font-weight: var(--peso-fuerte); }
   .reloj__unidad, .reloj__rotulo, .reloj__ml { fill: var(--texto-meta); }
 
-  /* Las dos agujas entran girando desde el cero, una sola vez al despegar. */
-  .despegue[open] .reloj__aguja,
-  .despegue[open] .reloj__punta {
-    animation: aparecer-aguja var(--dur-media) var(--ease-salida) both;
-  }
-  @keyframes aparecer-aguja {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
   /* ── 2 · lo que quiere y lo que tiene ──────────────────────────────────── */
 
   /* El :not() es imprescindible: una regla CSS de `fill` pisa el atributo de
      presentación del SVG, así que sin esto el hachurado no se vería nunca. */
-  .escala__paso:not(.escala__paso--incierto) { fill: var(--escala-1); }
+  .escala__paso:not(.escala__paso--incierto) { fill: var(--escala-2); }
   .escala__paso--hueco { fill: var(--escala-3); }
   /* Exceso y déficit no son el mismo problema y no se pintan igual: al que le
      sobra sol hay que moverlo, al que le falta también, pero al revés. */
   .escala__paso--sobra { fill: var(--color-aviso); }
   .escala__paso--falta { fill: var(--escala-3); }
-  .escala__marca--quiere { fill: var(--color-tinta); }
+  .escala__marca--quiere { fill: var(--color-acido); }
   .escala__marca--tiene { fill: var(--color-aviso); }
   .escala__rotulo { fill: var(--texto-meta); }
 
@@ -1984,15 +2126,6 @@
     text-wrap: pretty;
   }
 
-  .despegue[open] .escala__paso--hueco {
-    animation: aparecer-hueco var(--dur-media) var(--ease-salida) both;
-    transform-origin: left center;
-  }
-  @keyframes aparecer-hueco {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
   /* ── 3 · rango térmico ──────────────────────────────────────────────────── */
 
   .temp__eje { fill: var(--escala-1); }
@@ -2000,74 +2133,148 @@
   .temp__optimo { fill: var(--escala-4); }
   .temp__letal { stroke: var(--color-alerta); stroke-width: var(--trazo-grueso); }
   .temp__letal-texto { fill: var(--color-alerta); }
-  .temp__casa { fill: var(--color-tinta); }
+  .temp__casa { fill: var(--color-acido); }
   .temp__abierto { fill: var(--escala-3); }
   .temp__casa-texto { fill: var(--texto-dato); }
   .temp__escala { fill: var(--texto-meta); }
+}
 
-  .despegue[open] .temp__casa {
-    animation: asentar var(--dur-media) var(--ease-salida) both;
+
+/* ══ movimiento ══════════════════════════════════════════════════════════════
+   Nada arranca solo y nada va en bucle. Cada animación tiene su versión
+   reducida, y es OTRA VERSIÓN y no la misma más corta: una animación de 1 ms
+   parpadea, que es peor que no animar. */
+
+@layer movimiento {
+
+  /* LA ENTRADA ESCALONADA de la rejilla. Un disparo, al cargar. El escalonado va
+     sobre la TARJETA y no sobre la carga de la imagen: con `loading=lazy` el
+     gesto se rompería distinto en cada visita. */
+  .revela {
+    animation: revelar var(--dur-larga) var(--ease-salida) both;
+    animation-delay: calc(var(--i, 0) * var(--retardo-paso));
   }
-  @keyframes asentar {
-    from { opacity: 0; transform: translateY(calc(var(--space-2) * -1)); }
+
+  @keyframes revelar {
+    from { opacity: 0; transform: translateY(18px) scale(0.99); }
     to { opacity: 1; transform: none; }
   }
 
-  /* ── 4 · curso de recuperación ──────────────────────────────────────────── */
-
-  .recup__rail { stroke: var(--escala-1); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
-  .recup__trazo { stroke: var(--color-tinta); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
-  .recup__punto { fill: var(--color-etiqueta); stroke: var(--color-tinta); stroke-width: var(--trazo); }
-  .recup__numero { fill: var(--texto-dato); }
-  .recup__extremo { fill: var(--texto-meta); }
-
-  /* La línea se traza de izquierda a derecha. Con reduce dura 1 ms: aparece
-     entera, que es exactamente la versión reducida que pide el brief. */
-  .despegue[open] .recup__trazo {
-    stroke-dasharray: 100;
-    animation: trazar var(--dur-dibujo) var(--ease-salida) both;
+  /* EL VEREDICTO se revela como se imprime una etiqueta térmica: una banda que
+     resuelve DE ARRIBA ABAJO. No un cursor que teclea letra a letra —ése es el
+     tic que delata lo generado y además no es como imprime una térmica—.
+     Cinco condiciones, y si alguna se rompe el gesto se cae:
+       · un disparo, al cargar; no lo repite ningún filtro
+       · sobre texto que YA está en el DOM: es una máscara, no contenido tardío
+       · cero desplazamiento de layout: `clip-path` no reserva ni libera espacio
+       · con `reduce` la banda aparece entera
+       · duración `--dur-media` */
+  .parte__veredicto {
+    animation: imprimir-termica var(--dur-media) var(--ease-salida) both;
   }
-  @keyframes trazar {
-    from { stroke-dashoffset: 100; }
-    to { stroke-dashoffset: 0; }
+
+  @keyframes imprimir-termica {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  .parte__chips {
+    animation: subir var(--dur-media) var(--ease-salida) var(--retardo-3) both;
+  }
+
+  @keyframes subir {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* El expediente se DESCUBRE por debajo: no entra desde fuera, se revela. Una
+     máscara de arriba abajo, sin desplazamiento — misma gramática que el
+     revelado del veredicto, y por el mismo motivo: cero salto de layout. */
+  .despegue[open] > .despegada {
+    animation: descubrir var(--dur-media) var(--ease-salida) both;
+  }
+
+  @keyframes descubrir {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  /* Los diagramas entran al abrir la ficha, una sola vez. */
+  .despegue[open] .reloj__aguja,
+  .despegue[open] .reloj__punta,
+  .despegue[open] .escala__paso--hueco,
+  .despegue[open] .temp__casa {
+    animation: aparecer var(--dur-media) var(--ease-salida) both;
+  }
+
+  @keyframes aparecer {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   /* ── movimiento reducido: no se apaga, se cambia de versión ─────────────── */
 
   @media (prefers-reduced-motion: reduce) {
-    /* Las de un solo disparo NO se animan en 1 ms: eso produce un parpadeo.
-       Se anula la animación y se pinta directamente el estado final. */
-    .despegue[open] .reloj__aguja,
-    .despegue[open] .reloj__punta,
-    .despegue[open] .escala__paso--hueco,
-    .despegue[open] .temp__casa,
-    .despegue[open] .recup__trazo {
+    html { scroll-behavior: auto; }
+
+    /* Escalonado → presencia directa. Las tarjetas están, sin retardo y sin
+       desplazamiento. Y no es `animation: none` a secas: el estado final se fija
+       explícitamente, porque `none` sobre un `@keyframes` que empieza en
+       `opacity: 0` deja el elemento invisible y sin un error en consola. */
+    .revela {
       animation: none;
       opacity: 1;
       transform: none;
-      stroke-dashoffset: 0;
     }
 
-    /* El veredicto aparece ENTERO, sin banda. Versión alternativa y no duración
-       corta: un `clip-path` de 1 ms parpadea, que es peor que no animar. */
+    /* El veredicto aparece ENTERO, sin banda: un `clip-path` de 1 ms parpadea. */
     .parte__veredicto { animation: none; clip-path: none; }
 
-    /* SIN BISAGRA: la sombra sola marca el estado. Versión alternativa, no
-       duración corta — una rotación de 1 ms es un tirón, no una animación. */
-    .despegue[open] { animation: none; transform: none; }
+    .parte__chips { animation: none; opacity: 1; transform: none; }
 
-    /* Y el expediente aparece entero, sin máscara. Del despegue se conserva solo
-       la opacidad, que orienta sin desplazar. */
+    /* El expediente aparece entero, sin máscara. Del despegue se conserva solo la
+       opacidad, que orienta sin desplazar y va por debajo del tope de latencia. */
     .despegue[open] > .despegada {
       animation: aparecer var(--dur-corta) linear both;
       clip-path: none;
       transform: none;
     }
 
-    @keyframes aparecer {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    /* Las de un solo disparo de los diagramas pintan su estado final. */
+    .despegue[open] .reloj__aguja,
+    .despegue[open] .reloj__punta,
+    .despegue[open] .escala__paso--hueco,
+    .despegue[open] .temp__casa {
+      animation: none;
+      opacity: 1;
+      transform: none;
     }
+
+    /* El hover deja de mover la tarjeta y pasa a marcar el borde, que es una
+       señal equivalente sin desplazamiento. El zoom de la foto se elimina.
+
+       Y no basta con `transform: none` en el `:hover`: hay que sacar `transform`
+       de la LISTA de propiedades que transicionan. `tests/movimiento.js` mira la
+       `transition-property` declarada, y tiene razón en mirarla — una transición
+       de `transform` declarada bajo `reduce` es una promesa de movimiento aunque
+       hoy el valor de destino coincida con el de origen. Basta con que alguien
+       añada un `translate` mañana. */
+    .planta,
+    .chip__enlace {
+      transition-property: box-shadow, border-color, background-color;
+    }
+
+    .planta:hover,
+    .chip__enlace:hover {
+      transform: none;
+    }
+
+    .planta:hover { border-color: var(--color-acido); }
+
+    .planta__img,
+    .planta:hover .planta__img { transition: none; transform: none; }
+
+    .planta__abrir-flecha { transition: none; }
   }
 }
 
@@ -2091,18 +2298,21 @@
     font-size: var(--texto-xs);
     text-transform: uppercase;
     letter-spacing: var(--tracking-micro);
-    color: var(--texto-meta);
+    color: var(--texto-sin-dato);
   }
 
   .salto-contenido {
     position: absolute;
-    left: var(--space-3);
-    top: var(--space-3);
+    left: var(--space-4);
+    top: var(--space-4);
     z-index: var(--z-salto);
-    background: var(--fondo-ficha);
-    color: var(--texto-principal);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radio-troquel);
+    background: var(--color-acido);
+    color: var(--color-campo);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radio-s);
+    font-family: var(--fuente-etiqueta);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caja-alta);
     text-decoration: none;
 
     &:not(:focus) {
@@ -2113,18 +2323,21 @@
       white-space: nowrap;
     }
   }
+
+  /* El `main` es enfocable por el skip link y no debe pintar anillo por ello:
+     el foco programático no es foco de teclado. */
+  .contenido:focus { outline: none; }
 }
 
 
 /* ══ decisiones de página (media queries, no de componente) ══════════════════ */
 
 @media (max-width: 40rem) {
-  /* En móvil el parte del día se queda a la vista: es el motivo de abrir esto. */
-  .parte {
+  /* En móvil el veredicto se queda a la vista: es el motivo de abrir esto. */
+  .cabecera {
     position: sticky;
     top: var(--space-0);
     z-index: var(--z-franja);
+    background: var(--fondo-pagina);
   }
-
-  .parte__chips { margin-inline-start: var(--space-0); }
 }
