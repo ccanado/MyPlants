@@ -237,15 +237,22 @@ correcto siendo de bandas regulares: sus categorías son ordinales, no tiempo.
 | | informe 1 | informe 2 | **informe 3** |
 | --- | --- | --- | --- |
 | Bloqueantes | 0 (+1 aparecido) | 0 | **0** |
-| Altas | 2 | 1 | **1** |
+| Altas | 2 | 1 | **0** |
 | Medias | 6 | 0 | **1** |
 | Nodos de texto bajo AA | 0 de 844 | 0 de 1.055 | **0 de 1.280** |
 | Bordes de control < 3:1 | 8 | 0 | **0** |
 | Saltos de orden de Tab | 0 | 0 de 194 | **0 de 234** |
 
 **La ALTA que venía de los informes 1 y 2 está cerrada**, y esta vez con los objetivos de su
-dueño y medida en las siete fichas. Queda **una ALTA nueva** y **una MEDIA**, las dos de
-`movimiento` con `reduce`, y las dos aparecidas con el trabajo de hoy.
+dueño y medida en las siete fichas.
+
+Queda **una sola MEDIA**, y no es un defecto del producto: es un choque entre mi umbral de
+movimiento con `reduce` (50 ms) y `--dur-corta` del proyecto (120 ms), que decide `ux-lead` y no
+su medidor.
+
+Levanté durante esta pasada una «ALTA-2» y **la he retirado: era un falso positivo mío y llegó
+hasta `builder`.** Está contada más abajo con su causa, porque es el hallazgo más instructivo del
+día y borrarla dejaría el informe más limpio y menos útil.
 
 ---
 
@@ -351,44 +358,96 @@ pista por planta —así los cuatro del día 0 no se apilan— y el valor en tex
 Comprobado además que **«ayer» es correcto** y no un desfase: `fecha_llegada: 2026-08-10` y
 `dias_en_casa: 1` en los cuatro. Iba a levantarlo como fallo y lo verifiqué antes.
 
+**Y retiro una MEDIA que sí llegué a mandar a `botanist`:** le dije que en las cuatro compradas
+`riego.ancla` (11) no cuadraba con `fecha_llegada` (10). Ya no ocurre — las anclas pasaron al 10 en
+`6506081`, el mismo commit que movió las llegadas, y **mi pasada lo pilló abierto**. Mi segunda
+hipótesis era la correcta («un arrastre de cuando `fecha_llegada` era el 11»), solo que el arrastre
+duró lo que tardó en escribirse ese commit. Es la lección 4 de `retomar.md` otra vez, y esta vez la
+provocó medir mientras se editaba el JSON. Retirada, y la invariante que sacó de ella —si
+`ancla_tipo` es `llegada_a_casa`, `ancla` == `fecha_llegada`— queda anotada como test futuro.
+
 **Los cinco diagramas: 0 fallos en normal y 0 en `reduce`.** Ninguno se queda invisible con
 `reduce`, que era el fallo silencioso que buscaba: `animation: none` sin fijar el estado final.
 
 ---
 
-## ALTA-2 (abierta) · Con `reduce`, abrir una ficha lanza dos animaciones de JS
+## RETIRADA · La «ALTA-2» era un falso positivo mío, y llegó hasta `builder`
 
-**Dueño: `builder`.** Reproducible sobre la web publicada:
-
-```
-python3 tests/runner.py --url https://ccanado.github.io/MyPlants/ \
-    --abrir 0 --reduce --alto 3200 --test movimiento
-```
+Este informe llevaba una ALTA que decía: *«con `reduce`, abrir una ficha lanza dos
+animaciones de JS»*, con dos bloqueantes citando `element.animate()`. **La mandé a `builder` y
+era falsa.** Él contestó lo único que hacía falta: en `js/` **no hay ni una llamada a
+`.animate()`**. Comprobado sobre los seis módulos publicados:
 
 ```
-bloqueante  con reduce sigue corriendo una animación en article#helecho   — WAAPI, 1 ms
-bloqueante  con reduce sigue corriendo una animación en div.despegada     — «aparecer», 120 ms
-alta        con reduce, div.despegada anima «aparecer» 0,12 s (máx. tolerable 0,05 s)
+app.js 0 · ficha.js 0 · tareas.js 0 · cronologia.js 0 · datos.js 0 · svg.js 0
 ```
 
-**`prefers-reduced-motion` es una media query de CSS y no toca `element.animate()`.** El bloque de
-`css/app.css` está bien escrito y no alcanza a las animaciones creadas desde JS: hay que consultar
-`matchMedia('(prefers-reduced-motion: reduce)').matches` antes de llamar a `.animate()`.
+El bug estaba en `tests/movimiento.js`. `document.getAnimations()` **no devuelve solo** las de
+`element.animate()`: devuelve también `CSSAnimation` y `CSSTransition`. Mi código llamaba
+«WAAPI» a todo lo que no tuviera `animationName` —o sea a cualquier transición de CSS— y después,
+con `reduce` activo, culpaba **siempre** a `element.animate()`. Lo que corría de verdad:
 
-Dos matices, porque las dos no son lo mismo:
+```
+article#helecho   box-shadow   transición CSS            1 ms
+div.despegada     aparecer     animación CSS @keyframes  120 ms
+```
 
-- **La de `article#helecho` dura 1 ms.** Eso no es respetar `reduce`, es el atajo que **parpadea**:
-  el elemento salta del estado inicial al final en un frame. Si la intención era anularla con
-  `reduce`, el arreglo es no lanzarla.
-- **La de `.despegada` son 120 ms de opacidad**, y `ux-lead` dejó escrito que del despegue se
-  conserva a propósito solo la opacidad, «que orienta sin desplazar». **Estoy de acuerdo con esa
-  decisión**: una transición de opacidad sola no dispara vestibular. Mi umbral está en 50 ms y
-  `--dur-corta` son 120. Le he preguntado a `builder` si mantiene el criterio; **si lo mantiene,
-  esto baja a criterio aceptado y no a fallo**, igual que hice en el informe 2 con el orden de Tab
-  en los bloques multicolumna. Lo dejo como **MEDIA-1** a la espera de su respuesta, no como alta.
+Una transición de sombra de 1 ms y la animación de opacidad que `ux-lead` conserva **a
+propósito** bajo `reduce`, porque orienta sin desplazar. Ninguna de las dos es lo que dije.
 
-Por qué no salió antes: sin abrir ficha, `movimiento --reduce` da **26 efectos y 0 fallos**. Las
-dos animaciones se crean al desplegar, así que solo aparecen con `--abrir`.
+**Es mi propio patrón en su forma más cara: una herramienta que opina sobre la CAUSA cuando solo
+puede ver el EFECTO.** El efecto era real —había animación viva con `reduce`— y la causa que
+nombré no existía, así que **el arreglo que pedía era imposible de hacer.** Un teammate que se
+hubiera fiado habría buscado durante media hora una llamada que no está en el código.
+
+Y encontré una incoherencia interna que lo agravaba: la rama de transiciones ya eximía
+`opacity`/`color` («el movimiento debe anularse, opacity/color sí puede quedarse») y la de
+animaciones no, así que suspendía cualquier `@keyframes` de más de 50 ms **aunque no moviera
+nada**. Dos reglas distintas para el mismo criterio en el mismo fichero. Ahora lee del CSSOM qué
+propiedades toca el keyframe: si ninguna desplaza, se anota como aceptada. Y si no puede leerlo,
+trata la duda como movimiento — en accesibilidad la duda se resuelve del lado seguro.
+
+Con eso, `movimiento --reduce` sobre la ficha desplegada queda en **0 fallos**, y `aparecer`
+aparece en el inventario como *«solo toca opacity: no desplaza, así que conservarla con reduce es
+legítimo»*.
+
+### Queda una MEDIA, y es un choque de especificaciones, no un bug
+
+Mi umbral de movimiento perceptible con `reduce` son **50 ms**; `--dur-corta` de este proyecto son
+**120**. La opacidad del despegue cae del lado suspendido por 70 ms. **Eso no lo decide el
+medidor: lo decide el dueño de la dirección visual.** Está anotado en el código con esa frase, y
+las animaciones que vienen de CSS bajan a `media` con la nota de que se citen en
+`docs/decisiones.md` — porque el bloque `@media (prefers-reduced-motion)` **sí** las alcanza, y si
+siguen vivas es porque alguien decidió conservarlas. Conservarlas puede ser correcto; lo que no
+puede es no estar escrito.
+
+---
+
+## Sobre si el expediente estaba commiteado cuando lo medí: sí, y aquí está la prueba
+
+`ux-lead` y el lead me dijeron —los dos, por separado y con buen argumento— que mi cierre de la
+ALTA no era atribuible, porque `git grep expediente` sobre `HEAD` daba **cero** y por tanto el
+reparto en dos columnas vivía solo en el árbol de trabajo de `builder`. Lo verifiqué antes de
+defenderme, porque es exactamente lo que pido a los demás:
+
+```
+5f3282e   expediente en css/js/index.html:  0     ← el HEAD que midió ux-lead
+347665d   expediente en css/js/index.html: 22     ← "Expediente, franja HOY y cronologia"
+54d8050   expediente en css/js/index.html: 22     ← el commit que yo medí
+2a35d2d   expediente en css/js/index.html: 22
+
+publicado ahora:  js/ficha.js 5 · css/app.css 10
+index.html publicado: 20.010 bytes (era 12.177 antes del expediente)
+```
+
+**Los dos teníamos razón sobre estados distintos.** `5f3282e` es anterior a `347665d`, que es
+donde el lead commiteó el trabajo de `builder`; entre uno y otro hay cinco commits. Yo medí
+`54d8050` y `2a35d2d`, los dos posteriores, y contra **producción**, que es un estado commiteado
+por definición. **El cierre de la ALTA se mantiene.**
+
+Y esto refuerza el argumento de `ux-lead` sobre por qué merece la pena auditar lo publicado
+aunque duplique trabajo: la costumbre que parecía más incómoda es la única que fue inmune a este
+fallo, porque producción no puede estar sucia.
 
 ---
 
@@ -520,6 +579,15 @@ y los cuatro del mismo tronco: **generalizar un instrumento sin generalizar sus 
 | 2 | ídem, otra vez, tras el primer arreglo | `+21 días` colado entre los pasos `1…6` |
 | 3 | la cronología no se ajusta a nada (R² 0,18) | metí los nombres de planta como marcas de eje |
 | 4 | la cronología es un SVG sin `role`/`<title>` | es un `<div>`: le aplicaba la regla de SVG |
+| 5 | dos bloqueantes de `element.animate()` con `reduce` | **no hay ni una llamada a `.animate()`** en `js/`: `getAnimations()` también devuelve animaciones y transiciones de CSS |
+
+**El nº5 es el único de los cinco que llegó a un teammate**, y es el más caro precisamente por lo
+que tiene de distinto: los otros cuatro afirmaban un defecto inexistente, y éste **afirmaba un
+efecto real con una causa inventada.** Había animación viva con `reduce` —eso era cierto— pero la
+llamada que yo señalaba no existe en el código, así que el arreglo que pedía era imposible de
+hacer. Lo cazó `builder` en una línea. **Una herramienta que opina sobre la causa cuando solo
+puede ver el efecto es peor que una que se calla, porque manda a alguien a buscar algo que no
+está.**
 
 El nº1 es el que da más miedo, y no por el bug: **coincidía con una conclusión que `ux-lead` había
 alcanzado a mano, así que llegó disfrazado de verificación cruzada independiente.** Estuve a punto
