@@ -399,6 +399,10 @@ def main() -> int:
     ap.add_argument("--puerto", type=int, default=8011)
     ap.add_argument("--abrir", type=int, default=None, help="abre la ficha N (0-based) antes de medir")
     ap.add_argument("--abrir-todas", action="store_true", help="abre TODOS los <details> antes de medir")
+    # No hay --abrir-fichas: las siete fichas son <details name="planta">, o sea el
+    # acordeón exclusivo nativo, y el navegador NO permite dos abiertas a la vez.
+    # Abrirlas en bucle deja una sola y mide 1 de 7 creyendo medir 7. Quien necesite
+    # las siete las abre y las mide de una en una: lo hace `tests/expediente.js`.
     ap.add_argument("--url", default=None,
                     help="audita una URL publicada en vez del repo local, haciendo de espejo. "
                          "Ej.: --url https://ccanado.github.io/MyPlants/")

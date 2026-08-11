@@ -1,56 +1,78 @@
 /* tests/expediente.js — MyPlants / qa-visual
  *
- * Mide la geometría de la ficha desplegada, que es la única incidencia ALTA que
- * queda abierta desde el informe 1. Responde a dos preguntas que hasta el informe 2
- * se contestaban por separado y resultaron ser la misma:
+ * Mide la geometría de las fichas desplegadas: cuánto del ancho se usa y cuánto miden
+ * de alto. Las dos cosas en la misma pasada porque son el mismo problema visto por dos
+ * lados — el diagnóstico se lee en una columna estrecha y a su derecha hay medio
+ * kilómetro de nada, así que ocupar esa mitad **es** partir la altura.
  *
- *   1. ¿Cuánto mide de alto la ficha abierta?   (objetivo de ux-lead: 2.400 px)
- *   2. ¿Cuánto del ancho se queda sin usar?     (informe 2: el 50 %, 2.208 px de alto)
+ * ── POR QUÉ ESTA VERSIÓN NO SE PARECE A LA PRIMERA ──────────────────────────────
  *
- * El hallazgo del informe 2 fue que no son dos problemas: el diagnóstico se lee en
- * una columna de 557 px y a su derecha hay 600 px de nada durante 2.208 px de alto.
- * Ocupar esa mitad **es** partir la altura. Por eso este test mide las dos cosas en
- * la misma pasada y con el mismo instrumento: si una mejora y la otra no, el arreglo
- * no era el arreglo.
+ * La primera versión medía contra «el objetivo de 2.400 px de `ux-lead`». **Ese
+ * objetivo no existía.** `git grep` y `git log -S` sobre todo el historial lo sitúan
+ * solo en `docs/qa/informe-2.md`, o sea en un informe mío que lo atribuía a `ux-lead`;
+ * no está en `docs/brief.md`, ni en `docs/decisiones.md`, ni en ningún commit. El único
+ * `2400` anterior en el repo es un límite de dimensiones de imagen en mi propio
+ * `peso-assets.py`, que no tiene nada que ver.
  *
- * MÉTODO — por qué escanea líneas y no cajas de elementos
+ * Lo escribí yo, se lo atribuí a otro, y sostuve un ALTA contra él durante dos pasadas.
+ * Una cita se volvió fuente. Y el coste no lo pagué yo: lo pagó `builder`, que se pasó
+ * la sesión rediseñando el expediente a dos columnas para acertar un número inventado.
+ * Es la formulación del informe 2 aplicada a su autora — el coste de un falso positivo
+ * en un equipo de agentes no es el de quien lo emite, es el del teammate al que manda a
+ * arreglar lo que no está roto.
  *
- * Medir `getBoundingClientRect()` de los elementos no sirve para esto: un `<p>` de
- * ancho completo cuya línea de texto solo llena la mitad devuelve la caja entera y
- * el hueco se vuelve invisible para el instrumento. Aquí se mide la **tinta**: los
- * rectángulos reales de los nodos de texto vía `Range.getClientRects()`, más las
- * cajas de `img`/`svg`/`canvas`. Después se barre la región en líneas horizontales
- * y en cada una se pregunta hasta dónde llega la tinta.
+ * Y había un segundo error de método, este puramente de instrumento: **se medía una
+ * sola ficha.** `--abrir 0` abre la primera, y como la rejilla va ordenada por urgencia
+ * la primera es siempre el helecho. `ux-lead` midió las siete y el helecho resultó ser
+ * de las más cortas: begonia 4.727 px, ficus sano 4.109, helecho crítico 3.718. Muestreo
+ * de uno sobre una población que varía, y encima el peor caso quedaba fuera. Esta
+ * versión mide **las siete** y reporta el peor caso además del detalle.
  *
- * Eso da tres números que se pueden defender:
- *   · `hueco_derecho_medio_pct`  — cuánto ancho sobra, de media, por línea
- *   · `superficie_vacia_pct`     — el área sin tinta a la derecha, sobre el total
- *   · `columnas`                 — cuántas columnas de tinta hay de verdad
+ * ── LOS DOS OBJETIVOS QUE SÍ ESTÁN DERIVADOS ────────────────────────────────────
  *
- * `columnas` es el que dice si el expediente a dos columnas está construido: si el
- * resultado es 1 columna, no lo está, por mucho que el CSS declare un `grid`.
+ * De `docs/brief.md` § "Los objetivos que sustituyen al de 2.400 px":
  *
- * SE ABSTIENE cuando no puede saber. Si no encuentra ninguna ficha abierta no
- * inventa un cero: devuelve `no_medible` con el motivo. Un informe de QA con un
- * número inventado cuesta más que un informe sin número.
+ *   1. **Ocupación.** Ninguna ficha con más del **20 %** de sus bandas de 100 px donde
+ *      el contenido pare antes del **62 %** del ancho disponible.
+ *   2. **Altura en pantallas y por severidad**, a 1280×900: **≤ 3 pantallas (2.700 px)**
+ *      en `critica` y `atencion`, **≤ 2 pantallas (1.800 px)** en `sana`.
+ *
+ * El segundo tiene dos tramos a propósito, y esa es la parte que mi número único hacía
+ * imposible: un solo umbral para las siete obliga a que una planta sin problema y una
+ * que se muere quepan en lo mismo, y la única forma de lograrlo es recortarle contenido
+ * a la que lo necesita o inventárselo a la que no. La severidad manda en cuánto hay que
+ * contar, así que tiene que estar en el objetivo.
+ *
+ * ── MÉTODO — por qué escanea tinta y no cajas ───────────────────────────────────
+ *
+ * `getBoundingClientRect()` de los elementos no sirve: un `<p>` de ancho completo cuya
+ * línea de texto llena la mitad devuelve la caja entera y el hueco se vuelve invisible
+ * para el instrumento. Aquí se mide la **tinta** — los rectángulos reales de los nodos
+ * de texto vía `Range.getClientRects()`, más las cajas de `img`/`svg`— y se barre la
+ * región en líneas horizontales de 4 px que luego se agrupan en las bandas de 100 px
+ * del objetivo de `ux-lead`.
+ *
+ * SE ABSTIENE cuando no puede saber: sin fichas desplegadas devuelve `no_medible` con
+ * el motivo en vez de inventar un cero.
  *
  * Uso:
- *   python3 tests/runner.py --abrir 0 --alto 3000 --test expediente
- *   python3 tests/runner.py --abrir-todas --alto 5000 --test expediente
+ *   python3 tests/runner.py --abrir-fichas --alto 40000 --test expediente
+ *   python3 tests/runner.py --abrir 0      --alto 6000  --test expediente   (una sola)
  */
 
 (() => {
   'use strict';
 
-  const OBJETIVO_ALTO = 2400;   // el que ux-lead se puso a sí mismo (docs/brief.md)
-  const PASO = 4;               // px entre líneas de barrido
-  const HUECO_SOSPECHOSO = 0.25; // >25% de ancho sin tinta = línea "media vacía"
+  const BANDA = 100;            // alto de banda del objetivo de ocupación
+  const CORTE_ANCHO = 0.62;     // el contenido debe pasar del 62% del ancho
+  const MAX_BANDAS_CORTAS = 0.20;
+  const PANTALLA = 900;         // el viewport en el que se derivó el objetivo
+  const MAX_PANTALLAS = { critica: 3, atencion: 3, sana: 2 };
+  const PASO = 4;
 
   const noMedible = (motivo, extra) => {
     const informe = Object.assign({
-      ok: true,              // abstenerse no es fallar: es no opinar
-      no_medible: true,
-      motivo,
+      ok: true, no_medible: true, motivo,
       resumen: 'no medible: ' + motivo,
     }, extra || {});
     console.log('· expediente — no medible:', motivo);
@@ -58,253 +80,249 @@
     return informe;
   };
 
-  /* ── 1. localizar la ficha abierta ──────────────────────────────────────── */
+  /* ── severidad por planta, desde el JSON ────────────────────────────────── */
 
-  // Se busca por estructura, no por clase: si builder renombra `.despegue`, el test
-  // tiene que seguir funcionando en vez de reportar un falso "no hay ficha".
-  const abiertos = [...document.querySelectorAll('details[open]')]
+  /* Hace falta para elegir el umbral de altura, y se toma el **peor** de todos los
+     estados, no el vigente: una planta con histórico sigue contando como crítica
+     mientras alguna observación lo diga. Es el mismo criterio que `severidadesDe()`
+     en `js/datos.js`, y se replica aquí a propósito para no depender de que el
+     render lo haya hecho bien — si el render se equivoca, quiero que se note. */
+  const ORDEN_SEV = ['sana', 'atencion', 'critica'];
+  const severidadPorPlanta = {};
+  try {
+    const x = new XMLHttpRequest();
+    x.open('GET', './content/plantas.json', false);
+    x.send(null);
+    for (const p of (JSON.parse(x.responseText).plantas || [])) {
+      let peor = 'sana';
+      for (const e of (p.estados || [])) {
+        const s = String(e && e.severidad || '').toLowerCase();
+        if (ORDEN_SEV.indexOf(s) > ORDEN_SEV.indexOf(peor)) peor = s;
+      }
+      severidadPorPlanta[p.id] = peor;
+    }
+  } catch (e) { /* sin JSON se usa el umbral más permisivo y se anota */ }
+
+  /* ── localizar las fichas desplegadas ───────────────────────────────────── */
+
+  /* Las siete fichas son `<details name="planta">`, o sea el **acordeón exclusivo
+     nativo**: el navegador cierra una cuando se abre otra, y no hay forma de tener
+     dos abiertas a la vez. Es una buena decisión de `builder` —cero JS— pero obliga a
+     medir de una en una, y de ahí sale el error de método de las pasadas 1 y 2:
+     `--abrir 0` abre la primera, la rejilla va ordenada por urgencia, así que la
+     primera es siempre el helecho. Se midió siete veces la misma planta creyendo
+     medir "la ficha desplegada", y el peor caso quedó fuera todas las veces.
+
+     Aquí se abre cada una, se mide, y se deja como estaba. `d.open = true` seguido de
+     `getBoundingClientRect()` fuerza el layout de forma síncrona: el contenido ya está
+     en el DOM —`<details>` solo lo oculta—, así que la geometría es la definitiva. Lo
+     único que no ha corrido son las animaciones, y ninguna de ellas anima la altura. */
+  const todas = [...document.querySelectorAll('details')]
     .filter((d) => d.closest('article'))
-    .filter((d) => d.getBoundingClientRect().height > 400);
+    .filter((d) => !d.parentElement.closest('details'));
 
-  if (!abiertos.length) {
-    return noMedible(
-      'ninguna ficha desplegada. Lánzalo con --abrir 0 (o --abrir-todas)',
-      { abiertos_encontrados: document.querySelectorAll('details[open]').length }
-    );
+  if (!todas.length) {
+    return noMedible('no encuentro ningún <details> de ficha dentro de un <article>');
   }
 
-  // La más alta: si `--abrir-todas` ha abierto también los "Más detalle" internos,
-  // el que interesa es el contenedor de la ficha, no un desplegable de un campo.
-  abiertos.sort((a, b) => b.getBoundingClientRect().height - a.getBoundingClientRect().height);
-  const ficha = abiertos[0];
-  const article = ficha.closest('article');
-  const planta = (article && (article.id ||
-    (article.querySelector('h3, h2') || {}).textContent || '')).toString().trim().slice(0, 60);
+  const estadoPrevio = todas.map((d) => d.open);
 
-  const rFicha = ficha.getBoundingClientRect();
-
-  /* La región cuya ocupación se juzga es el cuerpo desplegado, no la ficha entera:
-     la cabecera de la etiqueta (nombre, binomio, precio) tiene su propio diseño y
-     su hueco a la derecha es intencionado. Si no se distingue el cuerpo, se mide la
-     ficha completa y se dice en el informe. */
-  const cuerpo = ficha.querySelector('.despegada') ||
-                 [...ficha.children].filter((c) => c.tagName !== 'SUMMARY')
-                   .sort((a, b) => b.getBoundingClientRect().height - a.getBoundingClientRect().height)[0] ||
-                 ficha;
-  const region = cuerpo.getBoundingClientRect();
-  const cs = getComputedStyle(cuerpo);
-  const padIzq = parseFloat(cs.paddingLeft) || 0;
-  const padDer = parseFloat(cs.paddingRight) || 0;
-  const izq = region.left + padIzq;
-  const der = region.right - padDer;
-  const ancho = der - izq;
-
-  if (ancho < 50 || region.height < 50) {
-    return noMedible('la región desplegada mide ' + Math.round(ancho) + '×' +
-                     Math.round(region.height) + ' px: no hay nada que medir todavía');
-  }
-
-  /* ── 2. recoger la tinta ────────────────────────────────────────────────── */
-
-  const tinta = [];
   const oculto = (el) => {
     const c = getComputedStyle(el);
     return c.display === 'none' || c.visibility === 'hidden' || parseFloat(c.opacity) === 0;
   };
+  const media = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
-  // Nodos de texto: sus rectángulos reales, línea a línea. Es la diferencia entre
-  // medir dónde está el texto y medir dónde podría estar.
-  const paseador = document.createTreeWalker(cuerpo, NodeFilter.SHOW_TEXT, {
-    acceptNode(n) {
-      if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-      const p = n.parentElement;
-      if (!p || oculto(p)) return NodeFilter.FILTER_REJECT;
-      // El texto sólo para lector de pantalla no es tinta: no ocupa sitio visual.
-      if (p.closest('.oculto-visual, [hidden], [aria-hidden="true"] title, title, script, style')) {
-        return NodeFilter.FILTER_REJECT;
-      }
-      return NodeFilter.FILTER_ACCEPT;
-    },
-  });
-  let n;
-  let nodosTexto = 0;
-  while ((n = paseador.nextNode())) {
-    const r = document.createRange();
-    r.selectNodeContents(n);
-    for (const rect of r.getClientRects()) {
-      if (rect.width > 0 && rect.height > 0) tinta.push(rect);
+  /* ── medir una ficha ────────────────────────────────────────────────────── */
+
+  function medir(ficha) {
+    const article = ficha.closest('article');
+    const id = (article && article.id) || '';
+    const nombre = ((article && article.querySelector('h3, h2')) || {}).textContent || id;
+    const alto = ficha.getBoundingClientRect().height;
+
+    const cuerpo = ficha.querySelector('.despegada') ||
+      [...ficha.children].filter((c) => c.tagName !== 'SUMMARY')
+        .sort((a, b) => b.getBoundingClientRect().height - a.getBoundingClientRect().height)[0] || ficha;
+    const region = cuerpo.getBoundingClientRect();
+    const cs = getComputedStyle(cuerpo);
+    const izq = region.left + (parseFloat(cs.paddingLeft) || 0);
+    const der = region.right - (parseFloat(cs.paddingRight) || 0);
+    const ancho = der - izq;
+    if (ancho < 50 || region.height < 50) return null;
+
+    // Tinta
+    const tinta = [];
+    const paseador = document.createTreeWalker(cuerpo, NodeFilter.SHOW_TEXT, {
+      acceptNode(n) {
+        if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        const p = n.parentElement;
+        if (!p || oculto(p)) return NodeFilter.FILTER_REJECT;
+        if (p.closest('.oculto-visual, [hidden], title, script, style')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    let n;
+    while ((n = paseador.nextNode())) {
+      const r = document.createRange();
+      r.selectNodeContents(n);
+      for (const rect of r.getClientRects()) if (rect.width > 0 && rect.height > 0) tinta.push(rect);
     }
-    nodosTexto += 1;
-  }
-
-  // Gráficos: sí valen por su caja, porque un SVG pinta en todo su lienzo.
-  let graficos = 0;
-  for (const el of cuerpo.querySelectorAll('img, svg, canvas, video')) {
-    if (oculto(el)) continue;
-    if (el.closest('svg') !== el && el.tagName.toLowerCase() !== 'svg' && el.closest('svg')) continue;
-    const r = el.getBoundingClientRect();
-    if (r.width > 2 && r.height > 2) { tinta.push(r); graficos += 1; }
-  }
-
-  if (!tinta.length) {
-    return noMedible('no se encontró tinta (ni texto ni gráficos) dentro de la región desplegada');
-  }
-
-  /* ── 3. barrer en líneas horizontales ───────────────────────────────────── */
-
-  const y0 = region.top;
-  const y1 = region.bottom;
-  const lineas = [];
-  const centrosX = [];
-
-  for (let y = y0; y < y1; y += PASO) {
-    let maxDer = -Infinity;
-    let minIzq = Infinity;
-    let conTinta = false;
-    for (const r of tinta) {
-      if (r.top <= y && r.bottom >= y) {
-        conTinta = true;
-        if (r.right > maxDer) maxDer = r.right;
-        if (r.left < minIzq) minIzq = r.left;
-        centrosX.push((Math.max(r.left, izq) + Math.min(r.right, der)) / 2);
-      }
+    for (const el of cuerpo.querySelectorAll('img, svg, canvas, video')) {
+      if (oculto(el) || (el.tagName.toLowerCase() !== 'svg' && el.closest('svg'))) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width > 2 && r.height > 2) tinta.push(r);
     }
-    if (!conTinta) { lineas.push({ y, vacia: true }); continue; }
-    const hueco = Math.max(0, der - maxDer);
-    lineas.push({
-      y,
-      vacia: false,
-      tintaHasta: maxDer,
-      tintaDesde: minIzq,
-      hueco,
-      huecoPct: hueco / ancho,
+    if (!tinta.length) return null;
+
+    // Barrido de 4 px → hasta dónde llega la tinta en cada línea
+    const lineas = [];
+    const centrosX = [];
+    for (let y = region.top; y < region.bottom; y += PASO) {
+      let maxDer = -Infinity;
+      for (const r of tinta) {
+        if (r.top <= y && r.bottom >= y) {
+          if (r.right > maxDer) maxDer = r.right;
+          centrosX.push((Math.max(r.left, izq) + Math.min(r.right, der)) / 2);
+        }
+      }
+      lineas.push(maxDer === -Infinity ? null : (maxDer - izq) / ancho);
+    }
+
+    /* Bandas de 100 px, que es la unidad del objetivo. Una banda cuenta como corta
+       si su contenido —el punto más a la derecha de toda la banda— no pasa del 62 %
+       del ancho. Se toma el máximo de la banda, no la media, porque una sola línea
+       que llegue al final ya demuestra que el ancho se está usando ahí. */
+    const porBanda = Math.max(1, Math.round(BANDA / PASO));
+    const bandas = [];
+    for (let i = 0; i < lineas.length; i += porBanda) {
+      const trozo = lineas.slice(i, i + porBanda).filter((v) => v !== null);
+      if (!trozo.length) continue;
+      bandas.push(Math.max(...trozo));
+    }
+    const cortas = bandas.filter((v) => v < CORTE_ANCHO);
+    const pctCortas = bandas.length ? cortas.length / bandas.length : 0;
+
+    // Columnas de tinta de verdad: un grid declarado y sin repartir da 1.
+    const CUBOS = 24;
+    const histo = new Array(CUBOS).fill(0);
+    for (const x of centrosX) {
+      const i = Math.min(CUBOS - 1, Math.max(0, Math.floor(((x - izq) / ancho) * CUBOS)));
+      histo[i] += 1;
+    }
+    const umbral = Math.max(...histo) * 0.15;
+    let columnas = 0, dentro = false;
+    histo.forEach((v) => {
+      if (v > umbral && !dentro) { dentro = true; columnas += 1; }
+      else if (v <= umbral) { dentro = false; }
+    });
+
+    const conTinta = lineas.filter((v) => v !== null);
+    const severidad = severidadPorPlanta[id] || 'sana';
+    const pantallas = alto / PANTALLA;
+    const topePantallas = MAX_PANTALLAS[severidad] != null ? MAX_PANTALLAS[severidad] : 3;
+
+    return {
+      planta: id || String(nombre).trim().slice(0, 40),
+      severidad,
+      alto_px: Math.round(alto),
+      pantallas: Number(pantallas.toFixed(2)),
+      tope_pantallas: topePantallas,
+      tope_px: topePantallas * PANTALLA,
+      cumple_altura: pantallas <= topePantallas,
+      ancho_region_px: Math.round(ancho),
+      bandas: bandas.length,
+      bandas_cortas: cortas.length,
+      bandas_cortas_pct: Math.round(pctCortas * 100),
+      cumple_ocupacion: pctCortas <= MAX_BANDAS_CORTAS,
+      ocupacion_media_pct: Math.round(media(conTinta) * 100),
+      columnas_de_tinta: columnas,
+    };
+  }
+
+  /* Abrir → medir → siguiente, en el mismo paso. Separarlo en dos bucles no funciona:
+     con el acordeón exclusivo, al abrir la segunda se cierra la primera, así que una
+     lista de "fichas abiertas" recogida de antemano solo tiene abierta la última. */
+  const medidas = [];
+  const saltadas = [];
+  for (const d of todas) {
+    d.open = true;
+    const alto = d.getBoundingClientRect().height;   // fuerza layout síncrono
+    if (alto <= 400) {
+      saltadas.push({
+        planta: ((d.closest('article') || {}).id) || '?',
+        alto_px: Math.round(alto),
+        por_que: 'desplegada mide 400 px o menos: no parece haber llegado a pintar',
+      });
+      continue;
+    }
+    const m = medir(d);
+    if (m) medidas.push(m); else saltadas.push({
+      planta: ((d.closest('article') || {}).id) || '?', por_que: 'sin tinta medible',
     });
   }
+  // Se deja el DOM como estaba: un test no puede dejar la página tocada para el
+  // siguiente test de la misma pasada (`diagramas` corre después y mira lo desplegado).
+  todas.forEach((d, i) => { d.open = estadoPrevio[i]; });
 
-  const conTinta = lineas.filter((l) => !l.vacia);
-  if (!conTinta.length) {
-    return noMedible('el barrido no cruzó ninguna línea con tinta');
+  if (!medidas.length) {
+    return noMedible('ninguna ficha dio tinta medible', { saltadas });
   }
 
-  const media = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
-  const huecoMedioPct = media(conTinta.map((l) => l.huecoPct));
-  const huecoMedioPx = media(conTinta.map((l) => l.hueco));
-  const lineasMediaVacia = conTinta.filter((l) => l.huecoPct > HUECO_SOSPECHOSO);
+  /* ── veredicto ──────────────────────────────────────────────────────────── */
 
-  // Área sin tinta a la derecha, en px². Es el número que hizo entender el problema
-  // en el informe 2 (1,3 millones de px² de rojo vacío).
-  const superficieVacia = conTinta.reduce((a, l) => a + l.hueco * PASO, 0);
-  const superficieRegion = ancho * region.height;
-
-  /* ── 4. ¿cuántas columnas de tinta hay de verdad? ───────────────────────── */
-
-  /* Un `grid` de dos columnas declarado en CSS puede estar pintando una sola si el
-     contenido no se ha repartido. Se cuenta agrupando los centros horizontales de
-     la tinta en cubos y buscando picos separados: si hay dos zonas densas con un
-     valle entre ellas, hay dos columnas de verdad. */
-  const CUBOS = 24;
-  const histo = new Array(CUBOS).fill(0);
-  for (const x of centrosX) {
-    const i = Math.min(CUBOS - 1, Math.max(0, Math.floor(((x - izq) / ancho) * CUBOS)));
-    histo[i] += 1;
-  }
-  const pico = Math.max(...histo);
-  const umbral = pico * 0.15;
-  let columnas = 0;
-  let dentro = false;
-  const zonas = [];
-  histo.forEach((v, i) => {
-    if (v > umbral && !dentro) { dentro = true; columnas += 1; zonas.push([i, i]); }
-    else if (v > umbral && dentro) { zonas[zonas.length - 1][1] = i; }
-    else if (v <= umbral) { dentro = false; }
-  });
-
-  /* ── 5. ancho de la prosa y caracteres por línea ────────────────────────── */
-
-  /* El informe 2 dejó dicho que la columna estrecha NO es el fallo: 74 caracteres
-     por línea es medida de lectura correcta. Se sigue midiendo para que, si el
-     arreglo de la altura ensancha la prosa a 120 caracteres, se vea que se cerró
-     una incidencia abriendo otra. */
-  const parrafos = [...cuerpo.querySelectorAll('p, li, dd')]
-    .filter((p) => !oculto(p) && (p.textContent || '').trim().length > 80);
-  const anchosProsa = [];
-  let cplMax = 0;
-  for (const p of parrafos.slice(0, 120)) {
-    const r = document.createRange();
-    r.selectNodeContents(p);
-    const rects = [...r.getClientRects()].filter((x) => x.width > 20);
-    if (!rects.length) continue;
-    const w = Math.max(...rects.map((x) => x.width));
-    anchosProsa.push(w);
-    const texto = (p.textContent || '').trim();
-    const lineas_ = Math.max(1, rects.length);
-    cplMax = Math.max(cplMax, Math.round(texto.length / lineas_));
-  }
-
-  // Continuidad con los informes 1 y 2, que contaron "párrafos/viñetas largos".
-  const largos = [...cuerpo.querySelectorAll('p, li')]
-    .filter((p) => !oculto(p) && (p.textContent || '').trim().length >= 200).length;
-
-  /* ── 6. veredicto ───────────────────────────────────────────────────────── */
-
-  const alto = Math.round(rFicha.height);
   const fallos = [];
+  for (const m of medidas) {
+    if (!m.cumple_ocupacion) {
+      fallos.push({
+        objetivo: 'ocupación (≤20% de bandas de 100px por debajo del 62% del ancho)',
+        planta: m.planta,
+        medido: m.bandas_cortas_pct + '% (' + m.bandas_cortas + ' de ' + m.bandas + ' bandas)',
+        ocupacion_media: m.ocupacion_media_pct + '% del ancho',
+        columnas_de_tinta: m.columnas_de_tinta,
+        dueño: 'builder',
+      });
+    }
+    if (!m.cumple_altura) {
+      fallos.push({
+        objetivo: 'altura por severidad (≤' + m.tope_pantallas + ' pantallas en ' + m.severidad + ')',
+        planta: m.planta,
+        medido: m.alto_px + ' px = ' + m.pantallas + ' pantallas',
+        tope: m.tope_px + ' px',
+        dueño: 'builder',
+      });
+    }
+  }
 
-  if (alto > OBJETIVO_ALTO) {
-    fallos.push({
-      que: 'la ficha desplegada supera el objetivo de alto',
-      medido: alto + ' px',
-      objetivo: OBJETIVO_ALTO + ' px',
-      exceso_pct: Math.round(((alto - OBJETIVO_ALTO) / OBJETIVO_ALTO) * 100) + '%',
-      dueño: 'builder',
-    });
-  }
-  if (huecoMedioPct > HUECO_SOSPECHOSO) {
-    fallos.push({
-      que: 'la mitad derecha de la región desplegada está sin usar',
-      hueco_medio: Math.round(huecoMedioPct * 100) + '% (' + Math.round(huecoMedioPx) + ' px)',
-      lineas_media_vacia: lineasMediaVacia.length + ' de ' + conTinta.length,
-      superficie_vacia: Math.round(superficieVacia).toLocaleString('es') + ' px²',
-      dueño: 'builder',
-    });
-  }
+  const peorAlto = medidas.slice().sort((a, b) => b.alto_px - a.alto_px)[0];
+  const peorOcup = medidas.slice().sort((a, b) => b.bandas_cortas_pct - a.bandas_cortas_pct)[0];
 
   const informe = {
     ok: fallos.length === 0,
     resumen:
-      `${planta || 'ficha'} · alto ${alto} px (objetivo ${OBJETIVO_ALTO}, ` +
-      `${alto > OBJETIVO_ALTO ? '+' : ''}${Math.round(((alto - OBJETIVO_ALTO) / OBJETIVO_ALTO) * 100)}%) · ` +
-      `hueco derecho medio ${Math.round(huecoMedioPct * 100)}% · ${columnas} columna(s) de tinta`,
-    planta,
-    alto_ficha_px: alto,
-    objetivo_px: OBJETIVO_ALTO,
-    exceso_pct: Math.round(((alto - OBJETIVO_ALTO) / OBJETIVO_ALTO) * 100),
-    region: {
-      ancho_px: Math.round(ancho),
-      alto_px: Math.round(region.height),
-      selector: cuerpo === ficha ? '(la ficha entera: no se distinguió el cuerpo)'
-                                 : '.' + String(cuerpo.className).split(' ')[0],
+      `${medidas.length} ficha(s) · peor altura ${peorAlto.planta} ${peorAlto.alto_px} px ` +
+      `(${peorAlto.pantallas} pantallas, tope ${peorAlto.tope_pantallas}) · ` +
+      `peor ocupación ${peorOcup.planta} ${peorOcup.bandas_cortas_pct}% de bandas cortas ` +
+      `(tope 20%) · ${fallos.length} fallo(s)`,
+    objetivos: {
+      ocupacion: '≤20% de bandas de 100px con el contenido parando antes del 62% del ancho',
+      altura: '≤3 pantallas (2.700px) en critica/atencion · ≤2 (1.800px) en sana, a 1280×900',
+      procedencia: 'docs/brief.md § "Los objetivos que sustituyen al de 2.400 px" (ux-lead, 4f1b350)',
+      nota: 'el "objetivo de 2.400 px" de los informes 1 y 2 no existía: lo inventó qa-visual ' +
+            'y se lo atribuyó a ux-lead. Retirado.',
     },
-    hueco_derecho_medio_px: Math.round(huecoMedioPx),
-    hueco_derecho_medio_pct: Math.round(huecoMedioPct * 100),
-    lineas_barridas: lineas.length,
-    lineas_con_tinta: conTinta.length,
-    lineas_media_vacia: lineasMediaVacia.length,
-    superficie_vacia_px2: Math.round(superficieVacia),
-    superficie_vacia_pct: Math.round((superficieVacia / superficieRegion) * 100),
-    columnas_de_tinta: columnas,
-    zonas_de_tinta_pct: zonas.map(([a, b]) => Math.round((a / CUBOS) * 100) + '–' +
-                                              Math.round(((b + 1) / CUBOS) * 100) + '%'),
-    ancho_prosa_max_px: anchosProsa.length ? Math.round(Math.max(...anchosProsa)) : null,
-    ancho_prosa_medio_px: anchosProsa.length ? Math.round(media(anchosProsa)) : null,
-    caracteres_por_linea_max: cplMax || null,
-    parrafos_largos_200: largos,
-    nodos_texto: nodosTexto,
-    graficos,
+    fichas_medidas: medidas.length,
+    fichas_en_el_dom: todas.length,
+    saltadas,
+    acordeon_exclusivo: todas.some((d) => d.hasAttribute('name')),
+    peor_altura: peorAlto.planta,
+    peor_ocupacion: peorOcup.planta,
+    detalle: medidas.sort((a, b) => b.alto_px - a.alto_px),
     fallos,
   };
 
   console.log(informe.ok ? '✓ expediente' : '✗ expediente', informe.resumen);
+  if (console.table) console.table(informe.detalle);
   if (fallos.length && console.table) console.table(fallos);
   window.qaExpediente = () => informe;
   return informe;

@@ -54,19 +54,47 @@
 
   /* ── defecto 1 · riego afirmado sin ancla ───────────────────────────────── */
 
-  // Tiene que caer dentro de un contenedor atribuible al helecho, porque el test se
-  // abstiene —correctamente— si no puede saber de qué planta habla la frase.
-  const contHelecho = document.getElementById('helecho') ||
-    [...document.querySelectorAll('article')]
-      .find((a) => /helecho/i.test(a.textContent || '')) || article;
-  if (contHelecho) {
+  /* La planta se elige **leyendo el JSON**, no a mano. La primera versión inyectaba la
+     frase en el helecho porque tenía `ancla: null`, y a media sesión Carlos dio las
+     fechas de riego que faltaban: las siete pasaron a `calculable: true`. El defecto se
+     quedó sin sujeto y la autoprueba dejó de probar nada — en verde y sin decirlo, que
+     es la forma que tiene un falso negativo de esconderse. Ahora, si no hay ninguna
+     planta sin ancla, lo dice en vez de callarse. */
+  let sinAncla = null;
+  try {
+    const x = new XMLHttpRequest();
+    x.open('GET', './content/plantas.json', false);
+    x.send(null);
+    for (const p of (JSON.parse(x.responseText).plantas || [])) {
+      const r = (p.tareas || []).find((t) => t.tipo === 'ritmo');
+      if (r && r.calculable === false) { sinAncla = p.id; break; }
+    }
+  } catch (e) { /* se reporta abajo */ }
+
+  const contenedor = sinAncla
+    ? (document.getElementById(sinAncla) ||
+       [...document.querySelectorAll('article')].find((a) => a.id === sinAncla))
+    : null;
+
+  if (sinAncla && contenedor) {
     const p = marca(document.createElement('p'));
     p.textContent = 'Hoy le toca regar.';
-    contHelecho.appendChild(p);
+    contenedor.appendChild(p);
     inyectado.push({
       n: 1, defecto: 'riego afirmado sin ancla',
-      donde: 'dentro del contenedor del helecho',
+      planta_elegida: sinAncla,
       debe_cazarlo: 'franja-hoy · caso "riego afirmado sin dato"',
+    });
+  } else {
+    inyectado.push({
+      n: 1, defecto: 'NO INYECTADO — este defecto no se puede probar hoy',
+      por_que: sinAncla
+        ? 'no encuentro en el DOM el contenedor de ' + sinAncla
+        : 'ninguna planta tiene riego.calculable === false: las siete tienen ancla, así que ' +
+          'no hay sujeto para el que «hoy le toca regar» sea una mentira',
+      consecuencia: 'la comprobación de franja-hoy sigue siendo válida y saltará si alguna ' +
+                    'planta vuelve a quedarse sin ancla, pero HOY no está verificada. ' +
+                    'No cuenta como probada.',
     });
   }
 

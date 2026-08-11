@@ -168,156 +168,253 @@
     });
   }
 
-  /* ── 2. el eje logarítmico de la cronología ─────────────────────────────── */
+  /* ── 2. ¿el eje dice la verdad? ─────────────────────────────────────────── */
 
-  const crono = svgs.find((s) => familia(s) === 'cronología');
-  let ejeLog = null;
+  /* Generalizado a propósito, y no por elegancia. La primera versión solo auditaba el
+     eje de la cronología, porque era el que el encargo mencionaba. Mientras lo escribía,
+     `ux-lead` encontró **a mano** que el diagrama de recuperación tenía exactamente este
+     defecto: sus círculos van en `cx` 10/30/50/70/90/110 —espaciado perfectamente
+     regular— para pasos que son inmediato / inmediato / esta semana / 3 semanas /
+     2-3 meses / sin fecha, y va rotulado con dos fechas. El eje codifica el **índice**
+     del paso, no el tiempo, así que afirma que de "esta semana" a "3 semanas" hay lo
+     mismo que de "3 semanas" a "2-3 meses". El diagrama se borró.
 
-  if (!crono) {
-    abstenciones.push({
-      que: 'no puedo auditar el eje logarítmico de la cronología',
-      por_que: 'no encuentro el diagrama de cronología en el DOM. Si builder ya lo ha hecho, ' +
-               'puede que no lo reconozca: busco «crono», «timeline», «linea-tiempo» o «edad» en las clases',
-    });
-  } else {
-    /* Los valores. La vía fiable es `data-tick="<valor>"` en cada <text>; si no está,
-       se intenta parsear la unidad del rótulo, y si tampoco se puede, se abstiene. */
-    const UNIDADES = [
-      [/(\d+(?:[.,]\d+)?)\s*(?:s|seg|segundos?)\b/i, 1],
-      [/(\d+(?:[.,]\d+)?)\s*(?:min|minutos?)\b/i, 60],
-      [/(\d+(?:[.,]\d+)?)\s*(?:h|horas?)\b/i, 3600],
-      [/(\d+(?:[.,]\d+)?)\s*(?:d|dias?|días?)\b/i, 86400],
-      [/(\d+(?:[.,]\d+)?)\s*(?:sem|semanas?)\b/i, 604800],
-      [/(\d+(?:[.,]\d+)?)\s*(?:mes(?:es)?)\b/i, 2629800],
-      [/(\d+(?:[.,]\d+)?)\s*(?:a|años?|anos?)\b/i, 31557600],
-      [/(\d+(?:[.,]\d+)?)\s*(?:dec|décadas?|decadas?)\b/i, 315576000],
-    ];
-    const aSegundos = (t) => {
-      for (const [re, k] of UNIDADES) {
-        const m = t.match(re);
-        if (m) return parseFloat(m[1].replace(',', '.')) * k;
-      }
-      // «una década», «un año»: sin cifra explícita.
-      if (/d[eé]cada/i.test(t)) return 315576000;
-      if (/\ba[ñn]o\b/i.test(t)) return 31557600;
-      if (/\bmes\b/i.test(t)) return 2629800;
-      if (/\bsemana\b/i.test(t)) return 604800;
-      if (/\bd[ií]a\b/i.test(t)) return 86400;
-      if (/\bhora\b/i.test(t)) return 3600;
-      return null;
-    };
+     Y lo que importa para mí: **ese diagrama pasó mi informe 2 en verde.** Escribí que
+     "los cuatro diagramas se construyen y se ven", que era cierto y era irrelevante.
+     Comprobé que existía y no que dijera la verdad. Así que el test no pregunta por un
+     diagrama concreto: le pregunta a todos si su geometría sostiene sus rótulos.
 
-    const rotulos = [...crono.querySelectorAll('text')];
+     Tres ajustes y el que gane manda:
+       · posición vs log(valor)  → escala logarítmica
+       · posición vs valor       → escala lineal
+       · posición vs índice      → NO es una escala: es un reparto regular disfrazado
+
+     El tercero es el que engaña, y solo se puede acusar por comparación. Si los valores
+     rotulados están de por sí repartidos regularmente, índice y valor coinciden, el
+     ajuste lineal también sale alto y no hay mentira ninguna: por eso gana el lineal
+     antes que el índice y por eso no se levanta un fallo ahí. */
+
+  const UNIDADES = [
+    [/(\d+(?:[.,]\d+)?)\s*(?:s|seg|segundos?)\b/i, 1],
+    [/(\d+(?:[.,]\d+)?)\s*(?:min|minutos?)\b/i, 60],
+    [/(\d+(?:[.,]\d+)?)\s*(?:h|horas?)\b/i, 3600],
+    [/(\d+(?:[.,]\d+)?)\s*(?:d|dias?|días?)\b/i, 86400],
+    [/(\d+(?:[.,]\d+)?)\s*(?:sem|semanas?)\b/i, 604800],
+    [/(\d+(?:[.,]\d+)?)\s*(?:mes(?:es)?)\b/i, 2629800],
+    [/(\d+(?:[.,]\d+)?)\s*(?:a|años?|anos?)\b/i, 31557600],
+    [/(\d+(?:[.,]\d+)?)\s*(?:dec|décadas?|decadas?)\b/i, 315576000],
+  ];
+
+  const aValor = (t) => {
+    const s = String(t || '').trim();
+    if (!s) return null;
+    /* Una fecha NO es un valor de eje, y colarla como número es un falso positivo con
+       forma de hallazgo. Ocurrió: en el diagrama de recuperación el rótulo
+       `01/09/2026` se parseó como el valor `1` situado a 376 px, entre el `5` (365) y
+       el `6` (428). Ese único punto fuera de sitio hundió el ajuste lineal de 0,99 a
+       0,425 y dejó ganar al ajuste por índice, así que el test "detectó" que el eje
+       codificaba el índice. La conclusión coincidía con la que `ux-lead` había
+       encontrado a mano, y por eso estuvo a punto de pasar: **el resultado parecía una
+       confirmación independiente y era un bug de parseo.** Un acierto por el motivo
+       equivocado es un fallo que todavía no se ha manifestado. */
+    if (/\d{1,4}[/\-.]\d{1,2}[/\-.]\d{2,4}/.test(s)) return null;
+    for (const [re, k] of UNIDADES) {
+      const m = s.match(re);
+      if (m) return parseFloat(m[1].replace(',', '.')) * k;
+    }
+    if (/d[eé]cada/i.test(s)) return 315576000;
+    if (/\ba[ñn]o\b/i.test(s)) return 31557600;
+    if (/\bmes\b/i.test(s)) return 2629800;
+    if (/\bsemana\b/i.test(s)) return 604800;
+    if (/\bd[ií]a\b/i.test(s)) return 86400;
+    if (/\bhora\b/i.test(s)) return 3600;
+    // Un número suelto (grados, ml, niveles): sirve igual para juzgar la escala.
+    const n = s.match(/^[^\d\-]*(-?\d+(?:[.,]\d+)?)/);
+    return n ? parseFloat(n[1].replace(',', '.')) : null;
+  };
+
+  const r2 = (xs, ys) => {
+    const n = xs.length;
+    if (n < 3) return 0;
+    const mx = xs.reduce((a, b) => a + b, 0) / n;
+    const my = ys.reduce((a, b) => a + b, 0) / n;
+    let sxy = 0, sxx = 0, syy = 0;
+    for (let i = 0; i < n; i++) {
+      sxy += (xs[i] - mx) * (ys[i] - my);
+      sxx += (xs[i] - mx) ** 2;
+      syy += (ys[i] - my) ** 2;
+    }
+    return sxx > 0 && syy > 0 ? (sxy * sxy) / (sxx * syy) : 0;
+  };
+
+  function auditarEje(s, f) {
+    const rotulos = [...s.querySelectorAll('text')];
     const marcas = [];
     let fuente = null;
-
     for (const t of rotulos) {
       const attr = t.getAttribute('data-tick');
-      const valor = attr != null && attr !== '' && isFinite(Number(attr))
-        ? Number(attr)
-        : aSegundos(texto(t));
-      if (valor == null || !(valor > 0)) continue;
-      if (attr != null) fuente = fuente === 'texto' ? 'mixto' : 'data-tick';
-      else fuente = fuente === 'data-tick' ? 'mixto' : 'texto';
+      const valor = (attr != null && attr !== '' && isFinite(Number(attr)))
+        ? Number(attr) : aValor(texto(t));
+      if (valor == null || !isFinite(valor)) continue;
+      fuente = attr != null ? 'data-tick' : (fuente === 'data-tick' ? 'mixto' : 'texto');
       const r = t.getBoundingClientRect();
       marcas.push({ rotulo: texto(t), valor, x: (r.left + r.right) / 2, y: (r.top + r.bottom) / 2 });
     }
 
-    // ¿Hay marcas gráficas (líneas/rects finos) además de los rótulos?
-    const marcasGraficas = [...crono.querySelectorAll('line, rect, path')].filter((el) => {
+    const marcasGraficas = [...s.querySelectorAll('line, rect, circle, path')].filter((el) => {
       const r = el.getBoundingClientRect();
-      return (r.width <= 3 && r.height >= 4) || (r.height <= 3 && r.width >= 4);
+      return (r.width <= 4 && r.height >= 4) || (r.height <= 4 && r.width >= 4) ||
+             el.tagName.toLowerCase() === 'circle';
     }).length;
 
-    if (marcas.length === 0) {
-      fallos.push({
-        caso: 'eje logarítmico sin marcas rotuladas',
-        que: 'la cronología no tiene ni un rótulo del que pueda leer un valor',
-        rotulos_en_el_svg: rotulos.length,
+    if (marcas.length < 3) {
+      return { diagrama: f, medible: false, marcas_con_valor: marcas.length,
+               marcas_graficas: marcasGraficas,
+               motivo: marcas.length === 0
+                 ? 'ningún rótulo con valor legible: puede ser categórico (ordinal), y entonces está bien'
+                 : 'solo ' + marcas.length + ' marca(s) con valor; hacen falta 3 para regresar' };
+    }
+
+    /* Rótulos que son 1, 2, 3… son **números de paso**, no valores de una escala, y
+       repartirlos a espaciado regular es lo correcto. Aquí el índice y el valor son la
+       misma cosa, así que ningún ajuste puede distinguirlos y no hay nada que acusar.
+       Sin esta salida, el diagrama de recuperación —seis pasos numerados— caía en el
+       veredicto «índice» y se levantaba un fallo sobre un dibujo que no miente.
+
+       Lo que sí miente en ese diagrama es que las duraciones reales (inmediato / esta
+       semana / 3 semanas / 2-3 meses) no son regulares, y eso **no está en ningún
+       `<text>` del SVG**: no es medible desde aquí, y decir lo contrario sería inventar.
+       Lo encontró `ux-lead` leyendo el contenido, que es donde estaba el dato. */
+    const enteros = marcas.map((m) => m.valor);
+    const ordenados = enteros.slice().sort((a, b) => a - b);
+    const esSecuencia = ordenados.length >= 3 &&
+      ordenados.every((v, i) => Number.isInteger(v) && v === ordenados[0] + i) &&
+      ordenados[0] >= 0 && ordenados[ordenados.length - 1] <= 30;
+    if (esSecuencia) {
+      return {
+        diagrama: f, medible: false, marcas_con_valor: marcas.length,
         marcas_graficas: marcasGraficas,
-        por_que_importa: 'un eje log sin rótulos hace leer las distancias como proporciones lineales, ' +
-                         'y en un log un tramo del doble de largo puede ser mil veces el valor',
+        motivo: 'los rótulos son ordinales consecutivos (' + ordenados[0] + '…' +
+                ordenados[ordenados.length - 1] + '): son números de paso, no valores de ' +
+                'una escala, y espaciarlos regularmente es correcto. Si lo que representan ' +
+                'son duraciones desiguales, el dato no está en el SVG y hay que leerlo en el contenido',
+      };
+    }
+
+    const varianza = (xs) => {
+      const m = xs.reduce((a, b) => a + b, 0) / xs.length;
+      return xs.reduce((a, b) => a + (b - m) ** 2, 0) / xs.length;
+    };
+    const horizontal = varianza(marcas.map((m) => m.x)) >= varianza(marcas.map((m) => m.y));
+    const orden = marcas.slice().sort((a, b) => (horizontal ? a.x - b.x : a.y - b.y));
+    const pos = orden.map((m) => (horizontal ? m.x : m.y));
+    const val = orden.map((m) => m.valor);
+    const idx = orden.map((_, i) => i);
+    const positivos = val.every((v) => v > 0);
+
+    const rLog = positivos ? r2(val.map(Math.log10), pos) : 0;
+    const rLin = r2(val, pos);
+    const rIdx = r2(idx, pos);
+
+    let veredicto;
+    if (rLog >= 0.97 && rLog >= rLin) veredicto = 'logarítmico';
+    else if (rLin >= 0.97) veredicto = 'lineal';
+    else if (rIdx >= 0.97) veredicto = 'índice';
+    else veredicto = 'ninguno';
+
+    // ¿Cuánto se distorsiona? El engaño solo importa si los valores no eran regulares.
+    const huecos = [];
+    for (let i = 1; i < val.length; i++) huecos.push(Math.abs(val[i] - val[i - 1]));
+    const distorsion = huecos.length && Math.min(...huecos) > 0
+      ? Math.max(...huecos) / Math.min(...huecos) : Infinity;
+
+    return {
+      diagrama: f, medible: true, eje: horizontal ? 'horizontal' : 'vertical',
+      fuente_del_valor: fuente,
+      marcas: orden.map((m) => ({ rotulo: m.rotulo, valor: m.valor, px: Math.round(horizontal ? m.x : m.y) })),
+      marcas_graficas: marcasGraficas,
+      r2_log: Number(rLog.toFixed(4)),
+      r2_lineal: Number(rLin.toFixed(4)),
+      r2_indice: Number(rIdx.toFixed(4)),
+      veredicto,
+      distorsion_max_min: isFinite(distorsion) ? Number(distorsion.toFixed(1)) : null,
+    };
+  }
+
+  const ejes = svgs.map((s) => auditarEje(s, familia(s)));
+
+  for (const e of ejes) {
+    if (!e.medible) {
+      abstenciones.push({
+        diagrama: e.diagrama,
+        que: 'no puedo juzgar si su eje sostiene sus rótulos',
+        por_que: e.motivo,
+      });
+      continue;
+    }
+
+    if (e.veredicto === 'índice') {
+      fallos.push({
+        caso: 'el eje codifica el índice, no el valor rotulado',
+        diagrama: e.diagrama,
+        que: 'las marcas están repartidas a espaciado regular mientras sus rótulos dicen valores ' +
+             'muy desiguales, así que el dibujo afirma proporciones que el dato no tiene',
+        r2_indice: e.r2_indice, r2_lineal: e.r2_lineal, r2_log: e.r2_log,
+        distorsion_max_min: e.distorsion_max_min,
+        marcas: e.marcas,
         gravedad: 'alta', dueño: 'builder',
       });
-      ejeLog = { medible: false, motivo: 'sin rótulos con valor legible', rotulos: rotulos.map(texto) };
-    } else if (marcas.length < 3) {
+    } else if (e.veredicto === 'ninguno') {
       abstenciones.push({
-        que: 'no puedo comprobar si el eje es de verdad logarítmico',
-        por_que: `solo ${marcas.length} marca(s) con valor; hacen falta 3 para regresar posición contra log(valor)`,
-        marcas: marcas.map((m) => m.rotulo),
+        diagrama: e.diagrama,
+        que: 'su eje no se ajusta ni a log, ni a lineal, ni al índice',
+        r2: { log: e.r2_log, lineal: e.r2_lineal, indice: e.r2_indice },
+        por_que: 'puede ser un eje de dos tramos, o marcas que no son de eje. No firmo un ' +
+                 'veredicto que no puedo sostener: hay que mirarlo en la captura',
       });
-      ejeLog = { medible: false, motivo: 'menos de 3 marcas con valor', marcas };
-    } else {
-      // ¿Eje horizontal o vertical? El que más varíe.
-      const varianza = (xs) => {
-        const m = xs.reduce((a, b) => a + b, 0) / xs.length;
-        return xs.reduce((a, b) => a + (b - m) ** 2, 0) / xs.length;
-      };
-      const horizontal = varianza(marcas.map((m) => m.x)) >= varianza(marcas.map((m) => m.y));
-      const pos = marcas.map((m) => (horizontal ? m.x : m.y));
-      const log = marcas.map((m) => Math.log10(m.valor));
+    }
 
-      // Regresión lineal de pos contra log(valor) y R².
-      const n = marcas.length;
-      const mx = log.reduce((a, b) => a + b, 0) / n;
-      const my = pos.reduce((a, b) => a + b, 0) / n;
-      let sxy = 0, sxx = 0, syy = 0;
-      for (let i = 0; i < n; i++) {
-        sxy += (log[i] - mx) * (pos[i] - my);
-        sxx += (log[i] - mx) ** 2;
-        syy += (pos[i] - my) ** 2;
-      }
-      const r2 = sxx > 0 && syy > 0 ? (sxy * sxy) / (sxx * syy) : 0;
-      const pendiente = sxx > 0 ? sxy / sxx : 0;
-
-      // Contraste: ¿encaja mejor una escala lineal? Si sí, no es un eje log.
-      let sxyL = 0, sxxL = 0;
-      const lin = marcas.map((m) => m.valor);
-      const mL = lin.reduce((a, b) => a + b, 0) / n;
-      for (let i = 0; i < n; i++) { sxyL += (lin[i] - mL) * (pos[i] - my); sxxL += (lin[i] - mL) ** 2; }
-      const r2lineal = sxxL > 0 && syy > 0 ? (sxyL * sxyL) / (sxxL * syy) : 0;
-
-      ejeLog = {
-        medible: true,
-        eje: horizontal ? 'horizontal' : 'vertical',
-        fuente_del_valor: fuente,
-        marcas: marcas.map((m) => ({ rotulo: m.rotulo, valor_s: m.valor, px: Math.round(horizontal ? m.x : m.y) })),
-        marcas_graficas: marcasGraficas,
-        r2_contra_log: Number(r2.toFixed(4)),
-        r2_contra_lineal: Number(r2lineal.toFixed(4)),
-        px_por_decada: Math.round(Math.abs(pendiente)),
-        decadas_cubiertas: Number((Math.max(...log) - Math.min(...log)).toFixed(2)),
-      };
-
-      if (r2 < 0.97) {
-        fallos.push({
-          caso: 'el eje se rotula como logarítmico pero no lo es',
-          que: 'las marcas no caen en línea sobre log(valor)',
-          r2_contra_log: ejeLog.r2_contra_log,
-          r2_contra_lineal: ejeLog.r2_contra_lineal,
-          marcas: ejeLog.marcas,
-          por_que_importa: 'con rótulos puestos el dibujo parece verificado, así que un eje mal ' +
-                           'escalado engaña más que uno sin rotular',
-          gravedad: 'alta', dueño: 'builder',
-        });
-      }
-      if (marcasGraficas === 0) {
-        avisos.push({
-          caso: 'rótulos sin marca gráfica',
-          que: 'los valores están rotulados pero no veo la marquita del eje a la que se refieren',
-          dueño: 'builder',
-        });
-      }
-      if (fuente === 'texto') {
-        avisos.push({
-          caso: 'valores deducidos del texto',
-          que: 'he parseado los valores del rótulo por falta de data-tick. Si builder cambia la ' +
-               'redacción («1 sem» → «una semanita») dejaré de poder medirlo',
-          dueño: 'builder',
-        });
-      }
+    // Si el diagrama se anuncia como logarítmico, tiene que serlo.
+    const seDeclaraLog = /log/i.test(String(s0Clase(e.diagrama)) + ' ' + e.diagrama);
+    if (seDeclaraLog && e.veredicto !== 'logarítmico') {
+      fallos.push({
+        caso: 'se anuncia logarítmico y no lo es',
+        diagrama: e.diagrama, veredicto: e.veredicto,
+        r2_log: e.r2_log, r2_lineal: e.r2_lineal, r2_indice: e.r2_indice,
+        gravedad: 'alta', dueño: 'builder',
+      });
     }
   }
+
+  function s0Clase(f) {
+    const s = svgs.find((x) => familia(x) === f);
+    return s ? (s.getAttribute('class') || '') + ' ' + texto(s.querySelector('title')) : '';
+  }
+
+  /* La cronología, si existe, tiene que llevar marcas rotuladas: es la petición
+     explícita del encargo, y un log sin rótulos miente sobre las proporciones. */
+  const crono = svgs.find((s) => familia(s) === 'cronología');
+  const ejeCrono = crono ? ejes.find((e) => e.diagrama === 'cronología') : null;
+  if (!crono) {
+    abstenciones.push({
+      que: 'no puedo auditar el eje logarítmico de la cronología',
+      por_que: 'no encuentro el diagrama en el DOM. `ux-lead` retiró su especificación en 4f1b350, ' +
+               'así que puede que ya no exista a propósito — pero si builder lo ha construido y no ' +
+               'lo reconozco, busco «crono», «timeline», «linea-tiempo» o «edad» en las clases',
+    });
+  } else if (ejeCrono && !ejeCrono.medible) {
+    fallos.push({
+      caso: 'eje logarítmico sin marcas rotuladas',
+      diagrama: 'cronología',
+      que: 'la cronología no tiene ni tres rótulos de los que pueda leer un valor',
+      detalle: ejeCrono.motivo,
+      por_que_importa: 'un eje log sin rótulos hace leer las distancias como proporciones lineales, ' +
+                       'y en un log un tramo del doble de largo puede ser mil veces el valor',
+      gravedad: 'alta', dueño: 'builder',
+    });
+  }
+
+  const ejeLog = ejeCrono || null;
 
   /* ── 3. animación: parpadeo de 1 ms y estado final sin pintar ───────────── */
 
@@ -409,6 +506,7 @@
       (ejeLog && ejeLog.medible ? ` · eje log R²=${ejeLog.r2_contra_log}` : ' · eje log: no medible'),
     ambito,
     diagramas_encontrados: svgs.length,
+    ejes: ejes,
     inventario,
     eje_logaritmico: ejeLog,
     con_animacion: conAnimacion.slice(0, 40),
