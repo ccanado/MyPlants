@@ -1108,6 +1108,52 @@ es la clase de deuda que se paga cuando nadie mira.
 - **`riego.ancla_tipo: "sin_dato"`** y `calculable: false` en las siete: el JSON dice explícitamente
   que el riego no es calculable. La casilla la ocupa `riego.disparador`, ya especificado.
 
+### El bloque crítico no puede ir invertido — y ya no es un problema de contraste
+
+`builder` arregló el 1,19:1 y lo hizo bien: el bloque de la crítica va sobre `--color-alerta`
+sólido y **enumeró catorce selectores** para que todo su texto sea blanco. Medido: 0 nodos por
+debajo de AA. El fallo está cerrado.
+
+**Y aun así el patrón tiene que salir**, por tres razones que no son el contraste medido.
+
+**1. Es frágil por construcción, y su propio comentario lo dice.** `builder` escribió al lado:
+*"cualquier color que se añada aquí dentro tiene que entrar en esta lista"*. Eso es la definición
+de una deuda: invertir un contenedor obliga a enumerar cada descendiente, y el día que alguien
+añada uno y no lo apunte, desaparece. **Ya pasó una vez** — de ahí salieron los 1,19:1. Y lo que
+viene son justo elementos nuevos ahí dentro: `PATRÓN PARA RECONOCERLA`, la nota de manejo, las
+fuentes citadas, el índice del expediente.
+
+**2. Sobre el rojo sólido no hay ni un token del sistema que se lea. Ninguno.**
+
+| Sobre `--color-alerta` sólido | | Sobre `--color-alerta-relleno` | |
+| --- | --- | --- | --- |
+| `--texto-fuente` (los 24 enlaces) | **1,22** ✗ | `--texto-fuente` | 8,14 ✓ |
+| `--texto-secundario` | **1,19** ✗ | `--texto-secundario` | 5,61 ✓ |
+| `--texto-meta` | **1,17** ✗ | `--texto-meta` | 5,67 ✓ |
+| `--texto-principal` | **1,74** ✗ | `--texto-principal` | 11,57 ✓ |
+| `--color-sin-dato` | **1,27** ✗ | `--color-sin-dato` | 5,26 ✓ |
+| `--color-aviso` (`VA TARDE`) | **1,32** ✗ | `--color-aviso` | 5,04 ✓ |
+| solo el blanco | 7,43 ✓ | | |
+
+**Seis de seis fallan a un lado; cinco de cinco pasan al otro y sin enumerar nada.** Un contenedor
+donde solo un color del sistema es válido no es un contenedor: es una excepción con forma de
+bloque. Y los enlaces de fuentes en azul sobre rojo, además de ilegibles, son el par que peor
+funciona para quien no distingue rojo y verde.
+
+**3. Gasta justo lo que el sistema declara escaso.** Toda la paleta se sostiene sobre una frase:
+**el color significa "haz algo hoy"**, y por eso hay un solo rojo en la página. Un bloque rojo de
+varios miles de píxeles no es un acento escaso: es el fondo dominante de la ficha más larga. La
+decisión que hacía que el filete del helecho se viera desde el otro lado del monitor se anula sola
+si al abrirlo el rojo lo ocupa todo.
+
+**Corrección:** el bloque `QUÉ LE PASA` de una crítica va en `--fondo-critica` (relleno pálido)
+con tinta normal, y **solo el distintivo** —el chip `!! CRÍTICA` y el filete del canto— va en
+`--fondo-distintivo-critica` con `--texto-sobre-alerta`. Los catorce selectores enumerados
+desaparecen: sobre el pálido todo hereda bien y no hay lista que mantener.
+
+Sigue habiendo un solo rojo en la página, y sigue viéndose desde lejos. Pero ocupa el tamaño de un
+distintivo, que es lo que un distintivo es.
+
 ### Estados degradados — qué se dibuja cuando falta el dato
 
 Regla, y es de honestidad, no de estética: **cuando falta un dato se dibuja el marco con el hueco

@@ -374,6 +374,15 @@
      Para que la composición correcta sea la fácil, estos dos alias: */
   --fondo-critica:            var(--color-alerta-relleno);  /* el BLOQUE: pálido, tinta normal encima */
   --fondo-distintivo-critica: var(--color-alerta);           /* SOLO el chip, con --texto-sobre-alerta */
+
+  /* ⚠ REGLA: NO SE INVIERTE UN CONTENEDOR DE TEXTO. Solo un distintivo.
+     Sobre --color-alerta sólido NINGÚN token del sistema se lee: fuente 1,22 ·
+     secundario 1,19 · meta 1,17 · principal 1,74 · sin-dato 1,27 · aviso 1,32.
+     Solo el blanco, 7,43. Eso obliga a enumerar cada descendiente a mano, y el
+     día que alguien añada uno y no lo apunte, desaparece — ya pasó.
+     Sobre --fondo-critica los cinco pasan (5,04 a 11,57) y no hay lista que
+     mantener. Detalle en docs/brief.md § "El bloque crítico no puede ir
+     invertido". */
   --texto-sobre-aviso:  var(--color-aviso);      /* severidad atención, sin invertir */
 
 

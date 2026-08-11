@@ -102,11 +102,15 @@
 
         // basta con que UNO de los fragmentos del campo se vea: el render puede
         // resumir, y exigir que aparezca todo daría falsos positivos constantes
-        const seVe = frs.some((f) => {
-          const h = huella(f);
-          return h.length >= 12 && (textoArt.includes(h) || textoPagina.includes(h));
-        });
+        /* Si NINGÚN fragmento del campo llega al mínimo buscable, este test no
+           puede opinar: una "Araceae" de 7 letras casaría por casualidad en
+           cualquier sitio. Se marca como no medible en vez de como ausente —
+           dar por perdido un campo que sí se pinta manda a builder a cazar
+           fantasmas, que es peor que no mirarlo. */
+        const buscables = frs.map(huella).filter((h) => h.length >= 12);
+        if (!buscables.length) { acc.conDatos--; acc.noMedible = (acc.noMedible || 0) + 1; continue; }
 
+        const seVe = buscables.some((h) => textoArt.includes(h) || textoPagina.includes(h));
         if (seVe) acc.visibles++;
         else { acc.plantasSinVer.push(p.id); faltanAqui.push(campo); }
       }
@@ -117,12 +121,20 @@
     const fallos = [];
     const avisos = [];
     for (const [campo, a] of [...porCampo.entries()].sort()) {
-      if (a.visibles === 0 && a.conDatos > 0) {
+      /* Solo es ERROR el cable suelto: contenido en TODAS las plantas y visible en
+         NINGUNA. Ese patrón no tiene explicación de diseño posible y es la firma del
+         fallo que motivó este test. Que un campo falte en algunas —o en una sola— se
+         explica casi siempre porque el render lo reescribe ("hace más de 20 años" →
+         "más de veinte años") o lo sustituye ("Sin determinar" → "Especie sin
+         identificar"), y afirmarlo como fallo sería mandar a arreglar lo que ya está
+         bien. Va como aviso, para mirarlo con los ojos. */
+      if (a.conDatos === plantas.length && a.visibles === 0) {
         fallos.push({
           campo,
-          gravedad: a.conDatos === plantas.length ? 'CABLE SUELTO' : 'ausencia total',
-          detalle: `tiene contenido en ${a.conDatos} de ${plantas.length} plantas y NO SE VE EN NINGUNA — ` +
-                   `probable desajuste entre el nombre del campo en el JSON y el que lee js/`,
+          gravedad: 'CABLE SUELTO',
+          detalle: `tiene contenido en las ${plantas.length} plantas y NO SE VE EN NINGUNA — ` +
+                   `desajuste entre el nombre del campo en el JSON y el que lee js/, ` +
+                   `o un trozo de render que dejó de llamarse`,
         });
       } else if (a.plantasSinVer.length) {
         avisos.push({
@@ -132,13 +144,18 @@
       }
     }
 
+    const noMedibles = [...porCampo.entries()]
+      .filter(([, a]) => a.noMedible && a.conDatos === 0)
+      .map(([campo, a]) => ({ campo, plantas: a.noMedible, motivo: 'todos sus textos son más cortos que el mínimo buscable' }));
+
     const ok = fallos.length === 0;
     const out = {
       ok,
       resumen: `${plantas.length} plantas · ${porCampo.size} campos con contenido · ` +
-               `${fallos.length} campo(s) que no llegan a la página · ${avisos.length} parcial(es)`,
+               `${fallos.length} campo(s) que no llegan a la página · ${avisos.length} parcial(es) · ${noMedibles.length} no medible(s)`,
       fallos,
       avisos,
+      noMedibles,
       detallePorPlanta,
       nota: 'En la rejilla cerrada es normal que falten los campos que solo se pintan al ' +
             'desplegar. Ejecuta también con --abrir antes de dar por bueno un "parcial".',

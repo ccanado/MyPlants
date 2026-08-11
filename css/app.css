@@ -202,7 +202,7 @@
   .buscador__input {
     background: var(--fondo-ficha);
     color: var(--texto-principal);
-    border: var(--trazo-fino) solid var(--color-borde);
+    border: var(--trazo-fino) solid var(--color-borde-control);
     border-radius: var(--radio-troquel);
     padding: var(--space-2) var(--space-3);
     font-size: var(--texto-m);
@@ -355,7 +355,7 @@
     gap: var(--space-2);
     background: var(--fondo-ficha);
     color: var(--texto-principal);
-    border: var(--trazo-fino) solid var(--color-borde);
+    border: var(--trazo-fino) solid var(--color-borde-control);
     border-radius: var(--radio-chip);
     padding: var(--space-1) var(--space-3);
     font-size: var(--texto-s);
@@ -447,7 +447,7 @@
     line-height: var(--interlinea-titulo);
     text-transform: uppercase;
     color: var(--texto-meta);
-    border-block-end: var(--trazo-fino) solid var(--color-borde-sutil);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
     padding-block-end: var(--etiqueta-hueco-micro);
     margin-block-end: var(--space-3);
     gap: var(--etiqueta-hueco-micro);
@@ -579,7 +579,7 @@
   .resumenes {
     display: grid;
     gap: var(--space-2);
-    border-block-start: var(--trazo-fino) solid var(--color-borde-sutil);
+    border-block-start: var(--trazo-fino) solid var(--color-separador);
     padding: var(--space-3) var(--relleno-ficha);
     background: var(--fondo-hundido);
   }
@@ -624,7 +624,10 @@
     letter-spacing: var(--tracking-caja-alta);
     text-transform: uppercase;
     color: var(--texto-principal);
-    border-block-start: var(--trazo-fino) solid var(--color-borde-sutil);
+    /* --color-borde y no --color-separador: el tirador es EL control de la
+       ficha, y el sutil está documentado como filete decorativo que no
+       comunica nada (1,49:1). Un borde que delimita un control necesita 3:1. */
+    border-block-start: var(--trazo-fino) solid var(--color-borde-control);
     background: var(--fondo-hundido);
     transition: background-color var(--dur-corta) var(--ease-estandar);
 
@@ -650,7 +653,7 @@
     display: grid;
     gap: var(--space-5);
     padding: var(--relleno-ficha);
-    border-block-start: var(--trazo-fino) solid var(--color-borde-sutil);
+    border-block-start: var(--trazo-fino) solid var(--color-separador);
   }
 
   /* ── capa 1 · estado ────────────────────────────────────────────────────── */
@@ -661,11 +664,14 @@
     border-radius: var(--radio-panel);
     padding: var(--relleno-panel);
 
-    /* La crítica va INVERTIDA: blanco sobre alerta sólido (7,43:1). Es el único
-       bloque de la página con el color en el fondo, y por eso se ve primero. */
+    /* El BLOQUE va en relleno pálido con tinta normal (11,57:1). La inversión
+       es para el DISTINTIVO, nunca para un contenedor de texto: sobre
+       --color-alerta sólido el único color legible es el blanco, así que un
+       bloque invertido obliga a que TODO lo de dentro sea blanco — y basta con
+       que alguien añada un párrafo en secundario para caer a 1,19:1. Ya pasó. */
     &[data-severidad="critica"] {
-      background: var(--color-alerta);
-      color: var(--texto-sobre-alerta);
+      background: var(--fondo-critica);
+      color: var(--texto-principal);
     }
     /* Atención: relleno suave y sin invertir. Un escalón por debajo, a propósito. */
     &[data-severidad="atencion"] {
@@ -680,31 +686,14 @@
     }
   }
 
-  /* Dentro de la crítica invertida el texto de apoyo también es blanco: sobre
-     rojo sólido, --texto-principal no se leería. */
-  .estado[data-severidad="critica"] {
-    & .estado__diagnostico,
-    & .estado__lista,
-    & .estado__pasos,
-    & .estado__revisar { color: var(--texto-sobre-alerta); }
-
-    & .paso::before,
-    & .paso__plazo,
-    & .paso__senal,
-    & .estado__fecha { color: var(--texto-sobre-alerta); }
-
-    & .estado__bloque--limites .estado__lista { color: var(--texto-sobre-alerta); }
-
-    /* Las causas también: van dentro del bloque invertido, así que su gris de
-       secundario caía a 1,19:1 sobre el rojo sólido. Cualquier color que se
-       añada aquí dentro tiene que entrar en esta lista. */
-    & .causa__resumen,
-    & .causa__detalle,
-    & .causa__mas-tirador,
-    & .causa__patron,
-    & .causa__patron-rotulo { color: var(--texto-sobre-alerta); }
-
-    & .causa__patron { border-inline-start-color: var(--texto-sobre-alerta); }
+  /* El distintivo SÍ va invertido: es un chip, no un contenedor de texto. */
+  .estado[data-severidad="critica"] .estado__severidad {
+    display: inline-flex;
+    align-self: start;
+    background: var(--fondo-distintivo-critica);
+    color: var(--texto-sobre-alerta);
+    border-radius: var(--radio-chip);
+    padding: var(--space-1) var(--space-3);
   }
 
   .estado__titulo,
@@ -767,7 +756,7 @@
     gap: var(--space-1);
     margin-block-start: var(--space-2);
     padding-inline-start: var(--space-3);
-    border-inline-start: var(--trazo-grueso) solid var(--color-borde-sutil);
+    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
     font-size: var(--texto-s);
     text-wrap: pretty;
   }
@@ -892,7 +881,7 @@
     width: 100%;
     height: auto;
     border-radius: var(--radio-panel);
-    border: var(--trazo-fino) solid var(--color-borde-sutil);
+    border: var(--trazo-fino) solid var(--color-separador);
   }
 
   .foto__pie {
@@ -924,7 +913,7 @@
     aspect-ratio: var(--aspecto-foto);
     object-fit: cover;
     height: auto;
-    border: var(--trazo-fino) solid var(--color-borde-sutil);
+    border: var(--trazo-fino) solid var(--color-separador);
   }
 
   /* La frase de «sin etiqueta» NO va en gris de sin-dato: en estas dos plantas
@@ -1009,7 +998,7 @@
   .dato__mas-tirador,
   .causa__mas-tirador,
   .fuente {
-    min-height: var(--space-5);
+    min-block-size: var(--diana-min);
     display: inline-flex;
     align-items: center;
     padding-block: var(--space-1);
@@ -1018,9 +1007,9 @@
   /* Separación vertical entre dianas contiguas, que es la otra mitad del
      criterio: sin aire, dos enlaces de 24 px siguen siendo fáciles de fallar. */
   .campo__fuente,
-  .dato__fuente { margin-block-start: var(--space-2); }
+  .dato__fuente { margin-block-start: var(--espacio-diana); }
 
-  .fuentes__lista { display: grid; gap: var(--space-2); }
+  .fuentes__lista { display: grid; gap: var(--espacio-diana); }
 
   .campo__mas-tirador,
   .dato__mas-tirador,
@@ -1055,7 +1044,7 @@
     display: grid;
     gap: var(--space-1);
     padding-block-end: var(--space-3);
-    border-block-end: var(--trazo-fino) solid var(--color-borde-sutil);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
   }
 
   .dato__clave {
@@ -1087,7 +1076,7 @@
   }
 
   .dato[data-toxicidad="toxica"] {
-    border-inline-start: var(--trazo-grueso) solid var(--color-borde);
+    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
     & .dato__texto { color: var(--texto-principal); }
     & .dato__texto::before { content: "▲ "; }
   }
@@ -1210,7 +1199,7 @@
        ancho se acota el factor de escala, y el rótulo se queda donde debe. */
     max-width: var(--medida-corta);
     background: var(--fondo-ficha);
-    border: var(--trazo-fino) solid var(--color-borde-sutil);
+    border: var(--trazo-fino) solid var(--color-separador);
     border-radius: var(--radio-panel);
   }
 
@@ -1225,7 +1214,7 @@
     font-size: var(--texto-xs);
     color: var(--texto-meta);
     background: var(--fondo-ficha);
-    border: var(--trazo-fino) dashed var(--color-borde);
+    border: var(--trazo-fino) dashed var(--color-borde-control);
     border-radius: var(--radio-panel);
     padding: var(--space-3);
   }
@@ -1233,7 +1222,7 @@
   /* ── 1 · el reloj de riego ──────────────────────────────────────────────── */
 
   .reloj__pista { fill: none; stroke: var(--escala-1); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
-  .reloj__marca { stroke: var(--color-borde); stroke-width: var(--trazo-fino); }
+  .reloj__marca { stroke: var(--color-borde-control); stroke-width: var(--trazo-fino); }
   .reloj__marca--mayor { stroke: var(--color-tinta); stroke-width: var(--trazo); }
   .reloj__eje { fill: var(--color-tinta); }
 
