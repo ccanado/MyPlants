@@ -1,0 +1,1572 @@
+{
+  "meta": {
+    "fecha_diagnostico": "2026-08-11",
+    "contexto": "Móstoles (Madrid). Clima continental: verano muy seco y caluroso, invierno con calefacción y aire muy seco. Todas las plantas junto a un ventanal grande orientado a noreste (luz suave de mañana, sin sol directo duro); el poto está en una estantería de madera algo retirada del ventanal. Sin mascotas en casa: la toxicidad se documenta como dato informativo, no como alarma.",
+    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy.",
+    "escalas": {
+      "luz.nivel": "1 = sombra; 2 = luz indirecta suave; 3 = luz indirecta brillante; 4 = muy luminoso, algo de sol suave; 5 = pleno sol",
+      "riego.dias_verano": "días orientativos entre riegos en julio-agosto en Móstoles, en interior",
+      "riego.dias_invierno": "días orientativos entre riegos en invierno con calefacción encendida",
+      "riego.ml_aprox": "mililitros por riego para la maceta que tiene ahora la planta",
+      "severidad": "sana | atencion | critica",
+      "dificultad": "fácil | media | exigente"
+    },
+    "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas, así que sus URLs se citan como referencia localizada pero el nombre aceptado se ha comprobado abriendo el registro equivalente en IPNI, que es también de Kew. Está anotado en cada ficha."
+  },
+  "plantas": [
+    {
+      "id": "helecho",
+      "nombre_comun": "Helecho (sin identificar)",
+      "nombre_cientifico": null,
+      "familia": "Sin determinar",
+      "foto": "helecho.jpg",
+      "alt": "Maceta de barro con corazones blancos pintados. En el centro, una masa densa de tocones finos, oscuros y alambrados de una poda; a la izquierda, unos pocos brotes verdes pequeños de segmentos en forma de cuña que caen por el borde de la maceta.",
+      "historia": null,
+      "riego": {
+        "resumen": "Que no se seque nunca del todo: cada 3 días en verano, cada 4 en invierno, ~100 ml.",
+        "detalle": "Con la masa foliar casi a cero la planta transpira poquísimo, así que el riesgo ahora no es la sed sino el encharcamiento: el mismo volumen que antes se bebía en dos días puede tardar una semana en irse. Riega poco y a menudo: unos 100 ml cada 3 días en agosto, cada 4-5 en invierno, comprobando siempre con el dedo que el primer centímetro no está mojado. El sustrato tiene que estar fresco al tacto de forma continua, sin llegar a barro. Un helecho tierno de interior es la planta que menos perdona un secado completo: RHS lo resume en que odian el sustrato seco. Si el cepellón se ha vuelto a separar de las paredes de la maceta (síntoma de que se secó del todo), sumerge la maceta 10 minutos en un barreño y deja escurrir; luego vuelve al riego normal. Agua a temperatura ambiente, nunca fría del grifo. Móstoles tiene agua dura: si puedes, usa agua de lluvia o filtrada, que a los helechos les sienta mejor.",
+        "dias_verano": 3,
+        "dias_invierno": 4,
+        "ml_aprox": 100
+      },
+      "luz": {
+        "resumen": "Luz indirecta con buena ventilación. El ventanal NE es exactamente su sitio: nada de sol directo.",
+        "detalle": "Los helechos de interior quieren luz indirecta y detestan el sol directo. RHS da para Adiantum orientaciones este, norte u oeste, lo que en esta casa apunta al ventanal NE como ubicación correcta y no como un compromiso. Con un brote único y tierno, además, cualquier rayo directo lo achicharra en una tarde de agosto: si el sol de primera hora llega a tocar la maceta, sepárala medio metro o pon un visillo. No la muevas a un sitio más oscuro pensando que así sufre menos: sin luz no rebrota.",
+        "nivel": 2
+      },
+      "humedad": {
+        "resumen": "Lo que más le falta. 60 % o más: plato con grava húmeda y lejos de radiadores.",
+        "detalle": "Es el factor que más pesa en su recuperación y el más difícil en Móstoles. Pon la maceta sobre un plato con grava o arcilla expandida mojada, con el nivel del agua justo por debajo de la superficie de la grava, que es como lo describe RHS. No pulverices el brote a diario: sobre tejido joven y con poca ventilación invita a hongos; es mejor humedad ambiente estable que mojar la hoja. En invierno, con la calefacción, el aire de un piso de Madrid puede bajar del 30 % de humedad relativa: mantenla al menos a un metro del radiador y considera agrupar plantas para crear un microclima. Una campana o bolsa transparente abierta por arriba durante 3-4 semanas es un truco razonable mientras rebrota, siempre que no le dé el sol dentro.",
+        "hr_objetivo_pct": 60
+      },
+      "temperatura": {
+        "min_c": 10,
+        "max_c": null,
+        "detalle": "RHS es explícito con los helechos tiernos de interior: no sobreviven por debajo de 10 °C y les molestan las corrientes frías. No doy máximo porque no he encontrado cifra publicada para un helecho de interior genérico, y como la especie está sin identificar tampoco puedo tomar el máximo de otra: lo que sí es seguro es que el calor con aire seco es peor que el calor con aire húmedo. En agosto en Móstoles, si el salón pasa de 30 °C, sube la humedad antes que bajar la temperatura.",
+        "max_c_nota": "Sin cifra verificable: la especie está sin identificar y RHS solo publica el mínimo para helechos tiernos de interior."
+      },
+      "sustrato": {
+        "resumen": "Sustrato de interior sin turba, esponjoso y que retenga humedad. No lo cambies todavía.",
+        "detalle": "RHS recomienda para Adiantum sustrato de interior sin turba. Mientras esté recuperándose no lo toques: cambiar el sustrato implica manipular unas raíces que ya vienen de una desecación, y ahora mismo no tiene hoja con la que compensar el destrozo. Si al regar ves que el agua atraviesa la maceta en dos segundos y sale por abajo casi limpia, el cepellón está compactado y seco por dentro; la solución de esta semana es el riego por inmersión, no el trasplante.",
+        "cambiar_ahora": false
+      },
+      "abonado": {
+        "resumen": "Nada de abono hasta que tenga 3 o 4 frondes sanas. Luego, líquido a media dosis una vez al mes.",
+        "detalle": "RHS da para Adiantum abono líquido general a media concentración, una vez al mes, de mediados de primavera a finales de verano. Pero abonar una planta sin hoja no la alimenta: la sal del fertilizante se queda en el sustrato y quema unas raíces ya dañadas. Espera a tener 3 o 4 frondes desarrolladas y verdes, y entonces empieza a media dosis. En invierno, cero.",
+        "media_dosis": true
+      },
+      "trasplante": {
+        "resumen": "No ahora. Cuando recupere masa foliar, en primavera, y solo si el cepellón lo pide.",
+        "detalle": "Trasplantar es la peor idea posible con una planta recién podada a ras: pierde raíz justo cuando no tiene hoja para reponerla. Deja pasar la recuperación completa y hazlo en primavera, que es cuando RHS sitúa la división de rizomas de Adiantum. Cuando llegue el momento, sube solo una talla de maceta. Comprueba antes que la maceta de barro de los corazones tiene agujero de drenaje: en la foto no se ve el fondo, y una maceta decorativa sin agujero con riego frecuente es la forma más rápida de terminar el trabajo que empezó la sequía.",
+        "cuando": "primavera, tras recuperar masa foliar"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Cochinilla (provisional)",
+          "senal": "Bultitos marrones o grumos algodonosos en la base de los peciolos y en las axilas.",
+          "respuesta": "RHS cita cochinilla para Adiantum, que es la hipótesis de identificación de esta planta; tómalo como aviso provisional. Retira a mano con un bastoncillo mojado en alcohol y revisa el brote nuevo cada semana, que es tejido tierno y es donde se instalan."
+        },
+        {
+          "plaga": "Hongos en el brote nuevo",
+          "senal": "Manchas marrones blandas en los segmentos jóvenes tras pulverizar o tapar la planta.",
+          "respuesta": "Sube la humedad ambiente en lugar de mojar la hoja, y deja ventilación. Si aparecen, retira el segmento afectado y suspende la pulverización durante dos semanas."
+        }
+      ],
+      "toxicidad_mascotas": null,
+      "dificultad": "exigente",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "critica",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "En el centro de la maceta, una masa densa de tocones finos, oscuros y alambrados, cortados a pocos centímetros del sustrato: son los restos de la poda, no tejido vivo.",
+          "Un único punto de crecimiento verde, con segmentos pequeños (unos 5 mm) en forma de cuña y margen lobulado, sobre pecíolos finos y oscuros, que cae por el borde izquierdo de la maceta.",
+          "Un segundo brote diminuto, más pálido y aún sin desplegar, junto al centro de la masa de tocones.",
+          "Superficie del sustrato oscura, con restos vegetales secos entremezclados.",
+          "La foto está tomada de noche y con poca luz: el color real de la fronde nueva y el detalle del envés no se pueden juzgar en ella.",
+          "Masa foliar viva estimada: menos del 5 % de lo que tenía la planta antes de secarse."
+        ],
+        "causas_probables": [
+          "Desecación completa previa, ya confirmada por Carlos: la planta se secó y él la podó entera. Los tocones marrones son consecuencia de la poda, no de una enfermedad activa.",
+          "En un helecho tierno, la causa habitual de esa desecación en Móstoles es la combinación de aire muy seco (calefacción en invierno, calor seco en verano) con un riego que se salta: el cepellón se separa de las paredes de la maceta, el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
+          "El estado es crítico no por una plaga ni por una infección, sino por el margen: con esta masa foliar cualquier error de riego, un sol directo o un secado de dos días la mata. La buena noticia del cuadro es que ha rebrotado, lo que indica que el rizoma sigue vivo."
+        ],
+        "tratamiento": [
+          "Esta semana: corta a ras los tocones marrones y secos con tijera limpia, sin tirar de ellos y sin tocar el brote verde ni el suelo alrededor. Están muertos, estorban a la ventilación y esconden a la cochinilla.",
+          "Esta semana: comprueba si la maceta de barro tiene agujero de drenaje. Si no lo tiene, planta la maceta de plástico dentro y saca esa para regar, o cambia de recipiente antes que arriesgar un encharcado.",
+          "Esta semana: ponla sobre un plato con grava mojada y a un metro largo de cualquier radiador. Prioriza esto por encima de cualquier otra cosa.",
+          "Riego: unos 100 ml cada 3 días en agosto, comprobando el dedo antes. Si el agua atraviesa la maceta en dos segundos, riega por inmersión 10 minutos y deja escurrir bien.",
+          "Nada de abono hasta que haya 3 o 4 frondes desarrolladas. Nada de trasplante hasta primavera.",
+          "Cuando el brote se despliegue del todo (fronde entera, con el envés visible), hazle una foto de día: es lo que hace falta para cerrar la identificación."
+        ],
+        "revisar_en": "3 semanas: debería haber al menos un brote nuevo más, y el que ya está tendría que haberse desplegado con los segmentos más grandes que los actuales. Si en 3 semanas no hay ningún brote nuevo y el que hay se pone marrón desde la punta, la causa ya no es la poda: revisa encharcamiento y raíces.",
+        "no_visible_en_foto": [
+          "La identificación. Lo que se ve son tocones y un brote juvenil. Los rasgos que sí se aprecian —estipes finos, oscuros y alambrados, y segmentos verdes en cuña con margen lobulado— son compatibles con el género Adiantum (culantrillo), que es lo que se vende como helecho de interior con esa morfología, pero no me basta para afirmarlo: hace falta una fronde desarrollada, fotografiada de día, del haz y del envés (buscando los soros bajo el margen replegado).",
+          "El estado del rizoma y de las raíces, que es lo que decide si esto sale adelante.",
+          "La humedad real del cepellón y si está compactado.",
+          "Si la maceta de barro tiene agujero de drenaje.",
+          "Plagas: la foto es nocturna y de baja luz, no sirve para descartar cochinilla ni araña roja."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Sin identificación. La planta está podada a ras y solo hay un brote juvenil: los rasgos visibles (estipes finos, oscuros y alambrados; segmentos en cuña con margen lobulado) son compatibles con el género Adiantum, pero no se puede afirmar género ni especie desde una foto nocturna de un único brote. Se resuelve con una foto diurna de una fronde desarrollada, haz y envés, buscando soros bajo el margen replegado. Carlos tampoco ha dicho de qué helecho se trata."
+        },
+        {
+          "campo": "familia",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "\"Sin determinar\" porque la familia no se puede citar sin identificar la planta. Si se confirma Adiantum, la familia sería Pteridaceae (IPNI, con criterio antiguo, la publica bajo Adiantaceae). No se rellena a ojo."
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/ferns/tender-ferns-houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS para helechos tiernos de interior: sustrato húmedo pero no encharcado, no toleran sustrato seco. Los mililitros y los días son la traducción a esta maceta y a agosto en Móstoles, no una cifra de RHS."
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de Adiantum raddianum, usada como referencia provisional dada la hipótesis de identificación: riego abundante en crecimiento, escaso en invierno."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS da sombra parcial y orientaciones este, norte u oeste, y luz indirecta brillante con buena ventilación. Referencia provisional: la especie está sin confirmar."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: humedad alta, con la maceta sobre un plato de grava o gravilla húmeda. El 60 % es objetivo práctico traducido a un piso con calefacción, no una cifra de RHS."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/ferns/tender-ferns-houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS: los helechos tiernos de interior no sobreviven por debajo de 10 °C y les molestan las corrientes frías. `max_c` queda en null porque no hay cifra publicada para un helecho de interior genérico y la especie está sin identificar."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: sustrato de interior sin turba. Referencia provisional por la identificación abierta."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: abono líquido general a media dosis, mensual, de mediados de primavera a finales de verano. La decisión de no abonar hasta tener 3-4 frondes es criterio propio para una planta sin masa foliar, no de RHS."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS sitúa la división de rizomas de Adiantum a principios de primavera. Referencia provisional."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/20650/adiantum-raddianum/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS cita cochinilla para Adiantum. Provisional: depende de que la identificación se confirme."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque la planta está sin identificar y la toxicidad no se puede valorar sin especie. Además, en la lista de ASPCA (revisada el 2026-08-11 en su listado para gatos) no aparece ninguna entrada para Adiantum ni para \"maidenhair fern\", así que ni siquiera la hipótesis tiene respaldo: ausencia en ASPCA no significa que sea inocua. Se resuelve identificando el helecho y volviendo a buscar por su nombre científico."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos no ha contado de dónde vino ni desde cuándo la tiene. Pendiente de preguntar; no se inventa."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente. Lo único que ha dicho Carlos es el hecho de la poda y la desecación, que está recogido en `estado`. Sus notas propias de cuidado no las ha dado todavía."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico sobre la foto del 2026-08-11 (nocturna, luz baja), más el dato aportado por el dueño: se secó, la podó entera y ha rebrotado. Recortes ampliados del centro de la maceta y del brote usados para leer la morfología."
+        }
+      ]
+    },
+    {
+      "id": "begonia-elatior",
+      "nombre_comun": "Begonia Elatior",
+      "nombre_cientifico": "Begonia × hiemalis",
+      "familia": "Begoniaceae",
+      "foto": "begonia-elatior.jpg",
+      "alt": "Begonia Elatior en su maceta de vivero roja metida en un cachepot blanco, con una flor roja doble abierta, varios ramilletes de flores secas sin retirar, tallos alargados con tramos sin hojas y hojas de borde marrón y seco.",
+      "foto_etiqueta": "begonia-elatior-etiqueta.jpg",
+      "alt_etiqueta": "Mano sosteniendo la maceta de vivero roja. La etiqueta dice «BEGONIA ELATIOR TM 15» sobre fondo verde, con fotos de flores de varios colores y un pasaporte fitosanitario europeo con el código ES6164 2001.",
+      "historia": null,
+      "riego": {
+        "resumen": "Cada 4 días en verano, cada 7 con calefacción. Unos 250 ml, y saca la maceta del cachepot.",
+        "detalle": "Comprueba con el dedo: riega cuando los 2 cm de arriba estén secos y el resto solo fresco. En la maceta de vivero de 15 cm eso son unos 250 ml, que en agosto en Móstoles viene a ser cada 4 días y en invierno con la calefacción puesta cada 7 (la calefacción seca el aire, no el sustrato: se riega menos, no más). El detalle que más importa aquí es el cachepot blanco: la maceta de plástico roja va dentro, así que el agua que sobra se queda en el fondo sin que se vea. Riega en el fregadero, espera 10 minutos a que escurra y devuélvela al cachepot; o vacía el cachepot después de cada riego. RHS lo dice en negativo: no dejar que el sustrato se seque, pero sin excederse con el agua. Riega por el borde de la maceta, no por el centro y nunca sobre las hojas ni las flores: en begonia el follaje mojado es la puerta de entrada del oídio y de la botritis.",
+        "dias_verano": 4,
+        "dias_invierno": 7,
+        "ml_aprox": 250
+      },
+      "luz": {
+        "resumen": "Luz indirecta abundante y cero sol directo. En el ventanal NE está bien colocada.",
+        "detalle": "RHS pide sombra parcial o sombra luminosa y nada de sol directo, con un mínimo de 10 °C. Un ventanal a noreste da exactamente eso: claridad suave de mañana sin las horas duras. Aquí discrepo de la primera impresión del equipo: la luz no es el problema de esta planta, es lo que tiene bien. Lo que sí conviene es girar la maceta un cuarto de vuelta en cada riego, porque los tallos ya se inclinan hacia el cristal, y no meterla más adentro de la habitación buscando \"protegerla\": con menos luz las hojas nuevas saldrían todavía más pequeñas.",
+        "nivel": 3
+      },
+      "humedad": {
+        "resumen": "Alta, 50–60 %. Es su punto débil en Madrid: el aire seco es lo que le quema los bordes.",
+        "detalle": "RHS pide humedad alta y da el método: la maceta sobre un plato con grava, arcilla expandida o árido ligero, húmedo, con el nivel del agua justo por debajo de la superficie de la grava. Esto es lo que hay que arreglar en esta planta, y no el riego: los bordes marrones y crujientes con el centro de la hoja sano son firma de aire seco, no de sed. En invierno la calefacción de un piso de Madrid es peor para ella que el frío: mantenla a un metro largo del radiador. No la pulverices: la hoja de begonia es pubescente, retiene la gota y eso favorece el oídio y la botritis. Humedad al aire, no al follaje.",
+        "hr_objetivo_pct": 55
+      },
+      "temperatura": {
+        "min_c": 13,
+        "max_c": 22,
+        "detalle": "Las fuentes no coinciden y el rango honesto es este: RHS da como franja buena 15–22 °C con mínimo invernal de 13 °C, y en la ficha de la planta como planta de interior da un mínimo de 10 °C; para la floración menciona incluso mantenerla a 10–13 °C. No he encontrado una cifra máxima específica publicada para el grupo Elatior: por encima de 25 °C, que en agosto en Móstoles es lo normal dentro de casa, lo esperable es que aborte botones y florezca menos, que es parte de lo que se ve en la foto."
+      },
+      "sustrato": {
+        "resumen": "Universal sin turba de base coco, o John Innes nº 2, con un 20 % de perlita. Ligero y drenante.",
+        "detalle": "RHS recomienda sustrato universal, preferiblemente sin turba y a base de coco —lo dice para evitar problemas de mosca del sustrato—, o John Innes nº 2. En la foto se ve un sustrato oscuro con perlita, el típico de vivero: sirve, pero después de meses en la misma maceta está agotado y compactado, y eso explica en parte que las hojas nuevas salgan pequeñas y pálidas. Cuando la cambies de maceta, mezcla dos partes de universal sin turba con una de perlita: la begonia Elatior tiene el tallo carnoso y no perdona un sustrato que se quede empapado.",
+        "mezcla": "2 partes universal sin turba : 1 parte perlita"
+      },
+      "abonado": {
+        "resumen": "Cada 2 semanas de mayo a septiembre, abono rico en potasio (tipo tomate) a media dosis.",
+        "detalle": "RHS es concreto: a las plantas establecidas, cada dos semanas de mayo a septiembre con un abono rico en potasio. Usa el de tomate a la mitad de la dosis de la etiqueta, siempre sobre sustrato ya húmedo, nunca en seco. Empieza ya, porque estamos en agosto y llevas la mitad de la temporada de abonado con una planta que no ha comido: es la corrección más rápida para las hojas nuevas pálidas. En invierno, con menos luz y menos crecimiento, para de abonar.",
+        "temporada": "mayo a septiembre"
+      },
+      "trasplante": {
+        "resumen": "Sácala ya de la maceta de vivero a una de 15–17 cm con agujero. Tras florecer, poda a 15 cm.",
+        "detalle": "Sigue en la maceta de vivero de 15 cm (la etiqueta dice \"ELATIOR TM 15\") dentro del cachepot, y eso es medio problema resuelto de un tirón: pásala a una maceta de 15-17 cm con agujero de drenaje, sin enterrar más el cuello del tallo, y riega después con generosidad. El otro momento clave es el rejuvenecimiento: RHS describe que estas plantas, que son de floristería y se suelen tirar al acabar la floración, se pueden recuperar dejándolas descansar unas seis semanas con menos agua y a menor temperatura, y podándolas después a 15 cm de la base; cuando los brotes nuevos midan 5-7 cm se pueden tomar esquejes basales y enraizarlos a 18-22 °C. Es exactamente lo que le toca a esta planta cuando termine este ciclo de flor: no está para tirar, está para poda de rejuvenecimiento.",
+        "cuando": "cambio de maceta ya; poda de rejuvenecimiento al terminar la floración"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Oídio",
+          "senal": "Polvo blanco harinoso en el haz de las hojas, primero en manchas redondeadas.",
+          "respuesta": "RHS lo cita entre los problemas de las begonias. Es el que más probabilidad tiene aquí: retira ya las flores y hojas secas, no mojes el follaje al regar y deja aire alrededor de la planta. Si aparece, corta las hojas afectadas y sepárala de las demás."
+        },
+        {
+          "plaga": "Botritis (moho gris)",
+          "senal": "Pelusa gris sobre las flores pasadas y las hojas que las tocan, con podredumbre blanda.",
+          "respuesta": "Las inflorescencias secas retenidas en los ápices son el sitio exacto donde empieza. Retíralas pinzando el tallo floral hasta su base y saca los restos de la maceta; no los dejes sobre el sustrato."
+        },
+        {
+          "plaga": "Mosca del sustrato (esciáridos)",
+          "senal": "Mosquitas negras pequeñas que salen del sustrato al regar.",
+          "respuesta": "RHS asocia el problema a los sustratos con turba y recomienda por eso los de coco. Deja secar más los 2 cm de arriba entre riegos y retira los restos vegetales de la superficie; con eso suele bastar."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Tóxica",
+        "perros": "Tóxica",
+        "detalle": "ASPCA lista Begonia spp. como tóxica para perros, gatos y caballos. El principio activo son oxalatos de calcio solubles, y los signos descritos son vómitos y salivación; la parte más peligrosa es la subterránea (tubérculos y rizoma), no la hoja. En esta casa no hay mascotas, así que es un dato informativo: importa si viene visita con perro o si algún día hay gato, y sobre todo al manipular el tubérculo en un trasplante o al hacer esquejes."
+      },
+      "dificultad": "media",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "atencion",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "Bordes y puntas de las hojas maduras secos, marrones y crujientes, con el centro de la hoja verde y turgente; en varias hojas la necrosis entra en cuña desde el margen.",
+          "Hojas nuevas del ápice pequeñas, de verde pálido amarillento y acucharadas hacia arriba, algunas casi enrolladas en canoa.",
+          "Restos de inflorescencias secas de color marrón papeláceo retenidos en los ápices, y varios ramilletes de flores pasadas sin retirar; una sola flor roja abierta.",
+          "Botones florales pequeños con la punta ya seca y marrón, sin llegar a abrir.",
+          "Tallos carnosos alargados, con tramos desnudos entre nudos y cicatrices de hojas caídas; hay tramos de tallo sin ninguna hoja.",
+          "Un tutor de plástico azul clavado en el cepellón, señal de que la planta no se sostiene sola.",
+          "Sigue en la maceta de vivero roja de 15 cm, metida dentro del cachepot blanco de cerámica.",
+          "Sustrato oscuro con perlita, superficie suelta y con restos vegetales secos.",
+          "La etiqueta de vivero dice \"BEGONIA ELATIOR TM 15\" y trae pasaporte fitosanitario español (B ES6164 2001)."
+        ],
+        "causas_probables": [
+          "Aire seco, la primera y la más clara. Bordes crujientes con el centro de la hoja sano es la firma del aire seco, no del riego; en un piso de Madrid explica mucho mejor este cuadro que cualquier otra cosa. Los botones que se secan antes de abrir apuntan al mismo sitio.",
+          "Cepellón agotado tras meses en la maceta de vivero: es lo que hace que las hojas nuevas salgan pequeñas y pálidas. Se corrige abonando ya y cambiando de maceta, no regando más.",
+          "Ciclo de floración avanzado, con flores pasadas sin limpiar. Las inflorescencias secas frenan la floración nueva, gastan energía y son el punto de entrada de la botritis. Parte de los tallos desnudos es el envejecimiento normal de una Elatior después de una tanda larga de flor, no una enfermedad.",
+          "Riego irregular agravado por el cachepot sin drenaje visible: el agua que sobra se queda en el fondo y alterna encharcado con sequedad. Es la causa candidata de los bordes que avanzan hacia dentro en las hojas bajas.",
+          "La luz NO es la causa. Un ventanal a noreste es prácticamente lo que RHS pide para una Elatior: sombra luminosa sin sol directo. Corrijo aquí la hipótesis inicial del equipo de \"luz escasa para lo que pide\"."
+        ],
+        "tratamiento": [
+          "Hoy: retira todas las inflorescencias pasadas y los restos secos de los ápices, pinzando cada tallo floral hasta su base con tijera limpia, y saca los restos de la superficie del sustrato. Es la acción con mejor relación esfuerzo-resultado de la ficha.",
+          "Hoy: corta también las hojas con más de un tercio del borde seco. Las que solo tengan la punta marrón, déjalas: siguen alimentando la planta.",
+          "Esta semana: ponla sobre un plato con grava o arcilla expandida húmeda, con el agua por debajo del nivel de la grava. No la pulverices.",
+          "Esta semana: cámbiala a una maceta de 15-17 cm con agujero. Si no puedes, al menos riega en el fregadero y no la devuelvas al cachepot hasta que haya escurrido 10 minutos.",
+          "Esta semana: empieza a abonar con abono rico en potasio (tipo tomate) a media dosis, cada 2 semanas hasta septiembre, siempre sobre sustrato húmedo.",
+          "Riego: unos 250 ml cuando los 2 cm de arriba estén secos, por el borde y sin mojar hoja ni flor. En agosto, cada 4 días aproximadamente.",
+          "Gira la maceta un cuarto de vuelta en cada riego para que deje de escorarse hacia el cristal.",
+          "Cuando termine esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes basales de los brotes nuevos cuando midan 5-7 cm. Es lo que le devuelve la forma compacta; ningún cuidado va a rellenar los tramos de tallo que ya están desnudos."
+        ],
+        "revisar_en": "3 semanas: las hojas que salgan nuevas tienen que ser más grandes y de verde más oscuro que las de ahora, y no deberían salir acucharadas. Los bordes marrones que ya existen no se curan (el tejido está muerto): lo que se mide es que las hojas nuevas salgan sin ellos. Si a las 3 semanas la hoja nueva sigue pequeña y pálida, el problema es de raíz o de sustrato y toca revisar el cepellón.",
+        "no_visible_en_foto": [
+          "Las raíces y el olor del sustrato, que es lo que decidiría si además hay podredumbre por el agua retenida en el cachepot.",
+          "El envés de las hojas: no se puede descartar araña roja, que es justo la plaga que prospera con el aire seco de esta casa.",
+          "Si hay oídio incipiente. Hay hojas con zonas grisáceas en la foto, pero a esa resolución y con ese enfoque no distingo polvo de hongo de reflejo y pubescencia. Una foto del haz de una hoja a contraluz lo resolvería.",
+          "Si el cachepot blanco tiene agua estancada en el fondo ahora mismo.",
+          "La humedad real del cepellón: la superficie se ve suelta, pero eso no dice nada de los 10 cm de abajo."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/104845-1",
+          "consultado": "2026-08-11",
+          "nota": "Registro abierto: Begonia hiemalis Fotsch, Begoniaceae, publicado en Die Begonien (1933). El nombre se escribe con la cruz del híbrido, Begonia × hiemalis, porque es un híbrido de jardinería: RHS lo describe como cultivares de B. × hiemalis (sinónimo B. × elatior), cruce de B. socotrana con B. × tuberhybrida. El cultivar exacto no se puede determinar: la etiqueta dice solo \"ELATIOR TM 15\", que es nombre de grupo comercial y calibre de maceta, y POWO no cataloga cultivares comerciales."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/104845-1",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de POWO localizada para Begonia × hiemalis Fotsch. POWO devuelve 403 a peticiones automáticas, así que no he podido abrirla: el nombre aceptado se ha comprobado en el registro de IPNI, que es de la misma casa (Kew)."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/104845-1",
+          "consultado": "2026-08-11"
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS: mantener el sustrato húmedo sin dejar que se seque, evitando el exceso de riego. Los mililitros y la frecuencia son la traducción a esta maceta de 15 cm y al verano y al invierno con calefacción de Móstoles; RHS escribe para clima británico y no da cifras de riego."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS: sombra parcial o sombra luminosa, sin sol directo, y mínimo de 10 °C como planta de interior."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS: humedad alta, con la maceta sobre plato de grava, arcilla expandida o árido ligero húmedos y el nivel del agua algo por debajo de la superficie. El 50-60 % es objetivo práctico traducido, no cifra de RHS."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS da 15-22 °C como franja buena, mínimo invernal de 13 °C, mínimo de 10 °C como planta de interior y 10-13 °C durante la floración. No publica máximo para el grupo Elatior."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS: universal sin turba, preferiblemente a base de coco para evitar esciáridos, o John Innes nº 2. La proporción de perlita es criterio propio para un tallo carnoso en clima seco."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS: cada dos semanas de mayo a septiembre con abono rico en potasio. La media dosis es criterio propio."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS describe el reposo posterior a la floración (unas seis semanas con menos agua y menor temperatura), la poda a 15 cm de la base y los esquejes basales de 5-7,5 cm enraizados a 18-22 °C."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/begonias/houseplants",
+          "consultado": "2026-08-11",
+          "nota": "RHS menciona oídio, botritis y esciáridos entre los problemas de las begonias de interior."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/begonia",
+          "consultado": "2026-08-11",
+          "nota": "Entrada de género: Begonia spp., Begoniaceae, tóxica para perros, gatos y caballos; oxalatos de calcio solubles; vómitos y salivación; la parte subterránea es la de mayor riesgo. No hay entrada específica para el grupo Elatior ni para B. × hiemalis."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos no ha contado de dónde vino ni desde cuándo la tiene. El pasaporte fitosanitario de la etiqueta (ES6164 2001) permitiría rastrear el productor, pero no la historia personal. Pendiente de preguntar."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente. Lo único que ha dicho es que esta planta le preocupa, lo que está recogido en `estado`, no en sus notas."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico sobre la foto del 2026-08-11 y su etiqueta, con recortes ampliados del ápice, de una hoja madura, de las flores pasadas y de la superficie del sustrato."
+        }
+      ]
+    },
+    {
+      "id": "coleo-grande",
+      "nombre_comun": "Coleo grande",
+      "nombre_cientifico": "Coleus scutellarioides",
+      "familia": "Lamiaceae",
+      "foto": "coleo-grande.jpg",
+      "alt": "Coleo grande y frondoso en maceta blanca de vivero de 1,6 litros con aro de sujeción verde, de hojas dentadas granate oscuro con margen ancho verde lima y nervio central rosa; en varias hojas bajas se ve un punteado pálido y algún agujero.",
+      "foto_etiqueta": "coleo-grande-etiqueta.jpg",
+      "alt_etiqueta": "Detalle de la maceta blanca de vivero con la etiqueta de Viveros Projardín (Avda. de Móstoles): «COLEO MACETA 1,6L», 6,95 €, con el número de pasaporte fitosanitario ES13-28/0283F.",
+      "historia": null,
+      "riego": {
+        "resumen": "Cada 3 días en verano, cada 6 en invierno; unos 300 ml en la maceta de 1,6 L.",
+        "detalle": "El coleo es de las plantas de interior que más agua mueven: mucha superficie de hoja, tallo semisuculento y ninguna tolerancia a marchitarse. RHS lo resume en regar con generosidad durante el crecimiento. Traducido a esta maceta de 1,6 litros y a agosto en Móstoles: unos 300 ml cada 3 días, comprobando antes con el dedo, y en invierno cada 6. Si un día la ves con las hojas lacias, riega y en dos horas se recupera, pero cada marchitez le cuesta hojas bajas. Riega por el borde y deja escurrir; no la dejes con plato con agua. En esta maceta blanca de vivero el drenaje es bueno, así que el riesgo real aquí es el defecto y no el exceso.",
+        "dias_verano": 3,
+        "dias_invierno": 6,
+        "ml_aprox": 300
+      },
+      "luz": {
+        "resumen": "Quiere más luz de la que tiene: el granate se pierde y la hoja nueva sale verde lima.",
+        "detalle": "RHS da para esta especie pleno sol y orientaciones este, sur u oeste, y bajo cristal luz plena o sombra parcial. Un ventanal a noreste no es eso: da claridad suave de mañana y poco más, y en un coleo de hoja granate el precio se paga en color. En la foto se ve exactamente ese precio: las hojas de arriba son casi todas verde lima con muy poco granate, mientras las de abajo, formadas en el vivero con más luz, mantienen el contraste. No es una enfermedad, es una respuesta a la luz. Si te importa el color, ponla en la franja de medio metro más cercana al cristal, en la parte más luminosa del ventanal, y gírala un cuarto de vuelta en cada riego. Con sol directo de mañana suave no hay problema; lo que no tolera es el sol de las horas fuertes tras un cristal.",
+        "nivel": 4
+      },
+      "humedad": {
+        "resumen": "Media le basta, pero el aire seco le trae araña roja. 45–55 % y ojo al envés.",
+        "detalle": "No es una planta de humedad alta como el helecho o la begonia: aguanta bien el ambiente de un piso. El problema del aire seco aquí es indirecto y es serio: la araña roja prospera justo con calor y aire seco, y RHS lo dice literalmente al describirla. Con un punteado ya visible en las hojas (ver `estado`), la humedad pasa de ser un lujo a ser prevención. Pulverizar agua sobre la planta reduce el riesgo según RHS, pero no elimina una infestación ya instalada, y en coleo hay que hacerlo con cuidado: la hoja es velluda y la gota permanente favorece manchas. Mejor humedad ambiente y revisión del envés cada 10 días que empapar la hoja.",
+        "hr_objetivo_pct": 50
+      },
+      "temperatura": {
+        "min_c": 10,
+        "max_c": 28,
+        "detalle": "RHS le da rusticidad H1C, que en su escala significa que solo puede estar fuera en verano y que el mínimo está entre 5 y 10 °C: para un piso, eso quiere decir que en interior no va a pasar frío nunca, pero que si la sacas a una terraza no puede quedarse ahí en otoño. El máximo de 28 °C es criterio propio traducido a Madrid, no cifra de RHS: por encima, con aire seco, el consumo de agua se dispara y aparece la araña roja."
+      },
+      "sustrato": {
+        "resumen": "Universal sin turba, que retenga algo de humedad y drene. El de vivero le sirve esta temporada.",
+        "detalle": "RHS pide sustrato de cultivo sin turba bajo cristal, y al aire libre suelo rico en materia orgánica, húmedo y bien drenado. El sustrato de vivero de esta maceta está en buen estado y aguanta la temporada. Si la cambias de maceta, universal sin turba con un puñado de perlita basta: no necesita nada especial. Lo que no tolera es un sustrato que se quede empapado en invierno con poca luz, que es cuando se pierden la mayoría de coleos de interior.",
+        "mezcla": "universal sin turba + un puñado de perlita"
+      },
+      "abonado": {
+        "resumen": "Cada 2 semanas en crecimiento con abono rico en nitrógeno: aquí manda la hoja, no la flor.",
+        "detalle": "RHS es explícito: riego generoso en crecimiento y abono rico en nitrógeno cada dos semanas. Tiene sentido porque en un coleo el producto es la hoja: el nitrógeno alimenta follaje, mientras un abono de floración empujaría precisamente lo que aquí interesa pinzar. A media dosis cada 2 semanas de abril a septiembre y siempre sobre sustrato húmedo. En invierno, con la luz de un ventanal NE, la planta apenas crece: deja de abonar en octubre.",
+        "temporada": "abril a septiembre"
+      },
+      "trasplante": {
+        "resumen": "Aguanta la temporada en 1,6 L. Lo importante no es trasplantar: son los esquejes de septiembre.",
+        "detalle": "La maceta de 1,6 litros le vale hasta el otoño. Si la ves pidiendo agua cada dos días y con raíces asomando por el fondo, sube a 17-18 cm con universal sin turba, sin enterrar más el cuello. Pero el movimiento que de verdad importa con un coleo en Madrid es otro: RHS propone la multiplicación por esquejes de madera blanda en verano, y esa es la póliza de seguro. Corta en septiembre 3 o 4 esquejes de 8-10 cm por debajo de un nudo, quítales las hojas de abajo y ponlos en agua o en sustrato húmedo; enraízan en 10-15 días. Los coleos de interior se degradan con la poca luz del invierno; con esquejes hechos, en marzo tienes plantas jóvenes y compactas en lugar de una planta alargada y pelada.",
+        "cuando": "esquejes en septiembre; maceta más grande solo si se queda pequeña"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Trips",
+          "senal": "Punteado pálido fino en el haz, con aspecto plateado, y motitas oscuras de excremento entre él.",
+          "respuesta": "Es la hipótesis principal para el punteado de esta planta (ver `estado`). RHS describe justo eso: moteado pálido fino, tono plateado y puntitos rojizos o negros de excremento, además de deformación en los ápices. Para confirmar, sacude una hoja sobre un papel blanco y mira lo que cae con lupa; una trampa cromática azul ayuda a monitorizar y a bajar la población."
+        },
+        {
+          "plaga": "Araña roja",
+          "senal": "Punteado pálido fino en el haz y, si va avanzada, telaraña muy fina y pérdida de color.",
+          "respuesta": "El punteado se parece mucho al de los trips y se distingue mirando el envés con lupa. RHS avisa de que prospera con calor y aire seco, que es el ambiente de esta casa. Pulverizar agua y subir la humedad reduce el riesgo pero no resuelve una infestación instalada; si aparece telaraña, aísla la planta."
+        },
+        {
+          "plaga": "Cochinilla algodonosa y mosca blanca",
+          "senal": "Grumos blancos algodonosos en las axilas de las hojas, o mosquitas blancas que salen al mover la planta.",
+          "respuesta": "RHS las cita como plagas posibles del coleo. Retira los grumos con un bastoncillo mojado en alcohol y revisa las axilas cada 15 días; en la foto hay una mota blanquecina en un nudo que no he podido resolver a esa resolución."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Sin datos en ASPCA",
+        "perros": "Sin datos en ASPCA",
+        "detalle": "El coleo de jardinería (Coleus scutellarioides) no tiene entrada propia en la lista de ASPCA. Cuidado con lo que se lee por ahí: ASPCA sí tiene una entrada llamada \"Coleus\", pero corresponde a otra especie, Coleus ampoinicus (el orégano cubano o borraja india), y otra llamada \"Prostrate Coleus\", que es Plectranthus oertendahlii y figura como no tóxica. Ninguna de las dos es esta planta. Revisado también el listado completo de ASPCA para gatos: no aparece Solenostemon ni Plectranthus scutellarioides. La conclusión honesta es que no figura, no que sea inocua: la ausencia de dato no es ausencia de riesgo. En esta casa no hay mascotas, así que es información para el futuro o para visitas con perro."
+      },
+      "dificultad": "media",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "atencion",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "Planta vigorosa y densa, con muchos tallos, hoja grande y turgente, sin marchitez ni caída de hojas.",
+          "Punteado pálido fino, entre verdoso y tostado, sobre el granate de las hojas medias y bajas, en manchas irregulares y más densas junto a los nervios.",
+          "Motas oscuras pequeñas repartidas entre ese punteado, y algún punto negro suelto en el margen lima.",
+          "Varios agujeros pequeños de bordes limpios y alguna muesca en el margen de las hojas bajas.",
+          "Las hojas de la parte alta son casi todas verde lima con muy poco granate, mientras las de abajo mantienen el contraste granate con margen lima y nervio rosa.",
+          "Brotes laterales nuevos con hoja pálida y grande; en la foto no llego a ver ninguna espiga floral abierta.",
+          "Una mota blanquecina, mínima, en un nudo de un brote lateral.",
+          "Aro de sujeción verde en la maceta y sustrato de vivero oscuro; maceta blanca de 1,6 L con etiqueta de Viveros Projardín (6,95 €), pasaporte fitosanitario ES13-28/0283F.",
+          "Tallos cuadrangulares y hoja dentada y velluda: rasgos de Lamiaceae, coherentes con la etiqueta \"COLEO\"."
+        ],
+        "causas_probables": [
+          "El punteado pálido con motas oscuras es daño de chupador, y la primera candidata son los trips: RHS describe para ellos moteado pálido fino en el haz, tono plateado y puntitos rojizos o negros de excremento. Encaja con lo que se ve, incluidas las hojas nuevas algo deformes.",
+          "Segunda candidata, araña roja: el punteado inicial es casi idéntico y el ambiente de la casa (calor y aire seco) es justo el que la favorece según RHS. No se ve telaraña en la foto, lo que la deja por detrás de los trips pero no la descarta.",
+          "Tercera opción, y la que hay que descartar antes de tratar nada: que parte de ese punteado sea el patrón propio del cultivar. Muchos coleos comerciales tienen moteado genético. Lo que me hace pensar que aquí no lo es: el punteado es asimétrico, aparece en manchas, se concentra en las hojas viejas y las hojas nuevas están limpias. Un moteado genético saldría también en la hoja nueva y sería más regular.",
+          "Los agujeros de bordes limpios son daño mecánico o mordedura, no enfermedad: ni los trips ni la araña roja hacen agujeros. Probablemente vienen del vivero o de un roce.",
+          "La pérdida de granate en las hojas altas es falta de luz para lo que pide la especie: RHS le da pleno sol y este ventanal es noreste. No es una plaga ni una carencia: es la luz."
+        ],
+        "tratamiento": [
+          "Antes de tratar nada, confirma la plaga, esta semana: sacude una hoja sobre un folio blanco y mira lo que cae (los trips se ven como rayitas que se mueven), y fotografía el envés de dos hojas con punteado, lo más cerca que enfoque el móvil. Sin eso, tratar es disparar a ciegas.",
+          "Esta semana: cuelga una trampa cromática azul junto a la planta. Sirve para confirmar trips y para bajar la población.",
+          "Esta semana: retira las 2 o 3 hojas bajas con más punteado y tíralas fuera de casa. Reduce la población y quita el foco.",
+          "Aísla el coleo grande del pequeño y del resto mientras no esté confirmado: comparten vivero, están juntos y una plaga de chupadores pasa de una a otra sin esfuerzo.",
+          "Si se confirma araña roja: sube la humedad, pulveriza agua sobre la planta con regularidad y valora depredadores (RHS cita Phytoseiulus persimilis y Amblyseius californicus, de venta por correo).",
+          "Si se confirman trips: mantén la trampa azul, retira las hojas más dañadas y considera control biológico (RHS cita Orius laevigatus y ácaros depredadores Amblyseius o Hypoaspis).",
+          "Para el color: acércala a medio metro del cristal, en la zona más luminosa del ventanal, y gírala un cuarto de vuelta en cada riego.",
+          "En cuanto asome una espiga floral (racimo terminal de florecillas pequeñas azuladas), píncala: florecer le resta energía a la hoja, que es lo que interesa. RHS recomienda además pinzar los ápices para mantenerla compacta.",
+          "En septiembre: 3 o 4 esquejes de 8-10 cm. Es el seguro contra un invierno de poca luz."
+        ],
+        "revisar_en": "2 semanas: el punteado que ya existe no desaparece (el tejido está dañado), así que lo que se mide es si las hojas nuevas salen limpias. Si a las 2 semanas hay punteado nuevo en hojas que hoy están sanas, la plaga está activa y hay que tratar en serio. Y revisa la trampa azul a los 7 días.",
+        "no_visible_en_foto": [
+          "El envés de las hojas, que es donde se decide entre trips y araña roja. Es la foto que falta.",
+          "Si esa mota blanquecina del nudo es cochinilla algodonosa incipiente, un resto de sustrato o un reflejo. A esta resolución no se puede decidir.",
+          "El estado de las raíces y si la maceta de 1,6 L ya está colonizada.",
+          "La humedad real del cepellón.",
+          "Si hay espigas florales iniciándose entre el follaje alto: la parte central de la mata queda tapada. Reviso la duda: no confirmo las espigas que se habían apuntado en la primera pasada del equipo; lo que veo son brotes laterales con hoja pálida."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/446165-1",
+          "consultado": "2026-08-11",
+          "nota": "Registro abierto: Coleus scutellarioides (L.) Benth., Lamiaceae, Pl. Asiat. Rar. 2: 16 (1830); basiónimo Ocimum scutellarioides L. Este es el nombre aceptado hoy: los que aparecen en casi toda la información de internet, Solenostemon scutellarioides y Plectranthus scutellarioides, son sinónimos por recolocación de género, y conviene saberlo porque son el nombre con el que Carlos encontrará información fuera de esta web. El cultivar (granate con margen lima ancho y nervio rosa) no es determinable desde foto y POWO no cataloga cultivares comerciales; la etiqueta solo dice \"COLEO MACETA 1,6L\"."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:446165-1",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de POWO localizada para Coleus scutellarioides (L.) Benth. POWO devuelve 403 a peticiones automáticas y no he podido abrirla; el nombre aceptado y la familia se han comprobado en IPNI, también de Kew."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/446165-1",
+          "consultado": "2026-08-11"
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: suelo húmedo pero bien drenado, riego generoso durante el crecimiento. Los mililitros y los días son traducción a esta maceta de 1,6 L y al clima de Móstoles."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: pleno sol, orientaciones este, sur u oeste; bajo cristal, luz plena o sombra parcial. La lectura de que un ventanal NE se queda corto para mantener el granate es interpretación propia sobre ese dato más lo que se ve en la foto."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/biodiversity/glasshouse-red-spider-mite",
+          "consultado": "2026-08-11",
+          "nota": "RHS: las plantas cultivadas con temperaturas altas en ambiente seco son más propensas a la araña roja, y pulverizar agua y mantener humedad alta reduce el riesgo aunque no elimina la infestación. La cifra de 45-55 % es objetivo práctico propio."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: rusticidad H1C, mínimo entre 5 y 10 °C, solo fuera en verano. El máximo de 28 °C es criterio propio traducido a Madrid; RHS no publica máximo."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: bajo cristal, sustrato de cultivo sin turba; al aire libre, suelo rico en humus, húmedo y bien drenado."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: abono rico en nitrógeno cada dos semanas durante el crecimiento."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: multiplicación por esquejes de madera blanda en verano, y pinzado de ápices para mantener la planta compacta."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/biodiversity/glasshouse-thrips",
+          "consultado": "2026-08-11",
+          "nota": "RHS, trips de invernadero: moteado pálido fino en el haz, coloración plateada, puntitos rojizos o negros de excremento, deformación de ápices y botones; sacudir el follaje sobre papel blanco para detectarlos, trampas cromáticas azules para monitorizar, y depredadores (Orius laevigatus, Amblyseius, Hypoaspis) como control."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS cita para el coleo cochinilla algodonosa, cochinillas y mosca blanca de invernadero."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/cats-plant-list",
+          "consultado": "2026-08-11",
+          "nota": "Listado completo de ASPCA para gatos, revisado: no hay entrada para Coleus scutellarioides, Solenostemon scutellarioides ni Plectranthus scutellarioides. La conclusión es \"no figura\", no \"es inocua\"."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/coleus",
+          "consultado": "2026-08-11",
+          "nota": "La entrada de ASPCA titulada \"Coleus\" es de otra especie: Coleus ampoinicus (Indian Borage, Spanish Thyme), tóxica para perros, gatos y caballos por aceites esenciales. Se cita para dejar constancia de que la coincidencia de nombre común no vale como dato para esta planta."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
+          "consultado": "2026-08-11",
+          "nota": "La otra entrada con \"Coleus\" en el nombre es Plectranthus oertendahlii, que ASPCA da como no tóxica. Tampoco es esta planta: citarla como si lo fuera sería el error de identificación más peligroso de la ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Sin contar por Carlos. Lo único documentado es la compra: Viveros Projardín (Avda. de Móstoles), 6,95 €. Eso es procedencia comercial, no historia. Pendiente de preguntar."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente de preguntar a Carlos."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico sobre la foto del 2026-08-11 y su etiqueta, con recortes ampliados de las hojas bajas con punteado, del ápice y de un brote lateral."
+        }
+      ]
+    },
+    {
+      "id": "coleo-pequeno",
+      "nombre_comun": "Coleo pequeño",
+      "nombre_cientifico": "Coleus scutellarioides",
+      "familia": "Lamiaceae",
+      "foto": "coleo-pequeno.jpg",
+      "alt": "Coleo pequeño y compacto en maceta de vivero de unos 9 cm, con hojas dentadas de color granate intenso, nervios rosas y un filo verde lima muy fino en el borde serrado.",
+      "foto_etiqueta": "coleo-pequeno-etiqueta.jpg",
+      "alt_etiqueta": "Detalle de la maceta de vivero de unos 9 cm, con cesta gris interior y funda terracota, y la etiqueta de Viveros Projardín: «COLEO», 2,25 €, pasaporte fitosanitario ES13-28/0283F.",
+      "historia": null,
+      "riego": {
+        "resumen": "Maceta mínima: en agosto puede pedir agua cada 2 días. Unos 90 ml y comprobación diaria.",
+        "detalle": "Aquí el problema no es la planta, es el recipiente: en una maceta de vivero de unos 9 cm hay medio litro de sustrato para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. Unos 90 ml cada 2 días, pero mete el dedo a diario: la señal de alarma es el sustrato seco al primer centímetro. En invierno, con menos luz y menos crecimiento, cada 5 días. RHS pide riego generoso durante el crecimiento; con esta maceta \"generoso\" significa sobre todo \"frecuente\". El día que la veas lacia ya llegas tarde: recupera en dos horas, pero pierde hojas bajas cada vez. Trasplantarla a 12 cm es lo que de verdad arregla el riego.",
+        "dias_verano": 2,
+        "dias_invierno": 5,
+        "ml_aprox": 90
+      },
+      "luz": {
+        "resumen": "Quiere mucha luz para mantener este granate. Ponla en la zona más luminosa del ventanal.",
+        "detalle": "RHS le da pleno sol y orientaciones este, sur u oeste; bajo cristal, luz plena o sombra parcial. Un ventanal a noreste da menos que eso. Ahora mismo el color es magnífico —granate intenso con filo lima y nervios rosas—, pero ese color se formó en el vivero: lo que va a decir si aquí se mantiene es la hoja que salga en las próximas semanas. Ponla en la franja de medio metro más cercana al cristal y en la parte más luminosa. Si la hoja nueva sale con más verde y menos granate, es luz, no enfermedad. Girar un cuarto de vuelta en cada riego para que no se escore.",
+        "nivel": 4
+      },
+      "humedad": {
+        "resumen": "Media, 45–55 %. Aguanta el ambiente de un piso; el riesgo del aire seco es la araña roja.",
+        "detalle": "No pide humedad alta. Lo que hay que vigilar es la consecuencia indirecta del aire seco: la araña roja prospera con calor y ambiente seco, y esta planta está pegada a otro coleo con punteado sospechoso (ver la ficha de `coleo-grande`). Mantén algo de humedad ambiente, no la pongas junto al radiador en invierno, y sobre todo revisa el envés cada 10 días. Pulverizar reduce el riesgo según RHS, pero en hoja velluda mejor poco y en las horas de luz, para que seque.",
+        "hr_objetivo_pct": 50
+      },
+      "temperatura": {
+        "min_c": 10,
+        "max_c": 28,
+        "detalle": "Igual que el coleo grande: rusticidad H1C en la escala de RHS, es decir mínimo entre 5 y 10 °C y solo fuera en verano. En interior no pasará frío; el cuidado es no dejarla en una terraza en otoño. El máximo de 28 °C es criterio propio traducido a Madrid, no cifra de RHS; con esta maceta tan pequeña, el calor se traduce antes en sed que en daño."
+      },
+      "sustrato": {
+        "resumen": "Universal sin turba con algo de perlita. El de vivero está bien, la maceta no.",
+        "detalle": "RHS pide sustrato sin turba bajo cristal. El sustrato que trae de vivero está en buen estado; lo que se le queda corto es el volumen. Cuando la pases a 12 cm, universal sin turba con un puñado de perlita, sin enterrar más el cuello del tallo y rellenando alrededor del cepellón sin romperlo.",
+        "mezcla": "universal sin turba + un puñado de perlita"
+      },
+      "abonado": {
+        "resumen": "Cada 2 semanas con abono rico en nitrógeno, a media dosis. Aquí interesa la hoja.",
+        "detalle": "RHS: abono rico en nitrógeno cada dos semanas en crecimiento. En una maceta tan pequeña el sustrato se agota rápido y también se saliniza rápido, así que media dosis y siempre sobre sustrato húmedo. De abril a septiembre; en invierno, nada. Si la trasplantas a 12 cm con sustrato nuevo, espera 4 semanas antes de volver a abonar.",
+        "temporada": "abril a septiembre"
+      },
+      "trasplante": {
+        "resumen": "A 12 cm esta semana: la maceta de vivero es lo único que le falla. Esquejes en septiembre.",
+        "detalle": "Es la acción más rentable de esta ficha. La maceta de vivero de unos 9 cm obliga a regar casi a diario en agosto y cualquier despiste se paga en hojas. Pásala a 12 cm con universal sin turba, riega bien después y no la abones durante 4 semanas. Y en septiembre haz 2 o 3 esquejes de 8-10 cm cortados por debajo de un nudo, como propone RHS para el verano: enraízan en 10-15 días en agua o en sustrato húmedo y son el seguro contra el invierno, que es cuando los coleos de interior se estiran y se pelan con la luz de un ventanal NE.",
+        "cuando": "maceta de 12 cm esta semana; esquejes en septiembre"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Araña roja",
+          "senal": "Punteado pálido fino en el haz y, avanzada, telaraña finísima en el envés y pérdida de color.",
+          "respuesta": "RHS avisa de que prospera con calor y aire seco. Revisa el envés cada 10 días con la cámara del móvil al máximo de zoom. Si aparece: aislar, subir humedad, pulverizar agua y valorar depredadores (Phytoseiulus persimilis, Amblyseius californicus)."
+        },
+        {
+          "plaga": "Trips",
+          "senal": "Moteado pálido plateado en el haz con motitas oscuras de excremento; ápices deformados.",
+          "respuesta": "Es la sospecha abierta en el coleo grande, que está al lado. Sacude una hoja sobre papel blanco y cuelga una trampa cromática azul: sirve para las dos plantas a la vez."
+        },
+        {
+          "plaga": "Cochinilla algodonosa y mosca blanca",
+          "senal": "Grumos blancos algodonosos en las axilas; mosquitas blancas al mover la planta.",
+          "respuesta": "RHS las cita para el coleo. Retirar los grumos con un bastoncillo con alcohol; revisar axilas cada 15 días, que en una planta pequeña y compacta como esta son fáciles de pasar por alto."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Sin datos en ASPCA",
+        "perros": "Sin datos en ASPCA",
+        "detalle": "Misma especie que el coleo grande y misma conclusión: Coleus scutellarioides no tiene entrada en ASPCA. Las dos entradas de ASPCA que llevan \"Coleus\" en el nombre son de otras plantas —Coleus ampoinicus, tóxica, y Plectranthus oertendahlii (\"Prostrate Coleus\"), no tóxica— y ninguna sirve para esta. Que no figure no significa que sea inocua. Sin mascotas en casa, es un dato informativo."
+      },
+      "dificultad": "media",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "sana",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "Planta pequeña, compacta y bien ramificada, con hojas turgentes y ninguna marchitez.",
+          "Color de hoja intenso: granate profundo con nervios rosas y un filo verde lima muy fino sobre el margen serrado. El contraste está sin degradar.",
+          "Sin bordes secos, sin amarilleo y sin caída de hojas bajas.",
+          "Moteado más oscuro sobre el granate, bastante repartido y simétrico entre hojas: por su regularidad lo leo como patrón del cultivar y no como daño.",
+          "Alguna mota pálida suelta en el margen de dos hojas bajas, muy escasa, no comparable al punteado del coleo grande.",
+          "Sigue en la maceta de vivero de unos 9 cm (cesta gris interior con funda terracota), con el sustrato oscuro y de aspecto húmedo, y una raicilla asomando por el borde.",
+          "Etiqueta de Viveros Projardín, 2,25 €, pasaporte fitosanitario ES13-28/0283F: mismo vivero y mismo lote que el coleo grande.",
+          "Tallos cuadrangulares y hoja dentada y velluda: Lamiaceae, coherente con la etiqueta \"COLEO\"."
+        ],
+        "causas_probables": [
+          "Está sana y recién comprada: el color y la compacidad son de vivero, con luz alta y riego diario. Lo que se decide en las próximas semanas es si conserva las dos cosas en casa.",
+          "El riesgo real y a corto plazo es la maceta: unos 9 cm de diámetro para esta masa de hoja, en agosto en Móstoles, significa que se seca en un día largo. La forma habitual de perder un coleo pequeño no es una plaga, es un fin de semana sin regar.",
+          "El segundo riesgo es de contagio, no de salud propia: comparte vivero, lote y sitio con el coleo grande, que tiene punteado sospechoso de trips o araña roja. Una plaga de chupadores pasa de una a otra sin esfuerzo.",
+          "El tercero es la luz: en un ventanal NE, un coleo de hoja granate tiende a perder intensidad porque RHS le da pleno sol. Se verá en la hoja nueva, no en la que ya tiene."
+        ],
+        "tratamiento": [
+          "Preventivo, esta semana: pásala a una maceta de 12 cm con universal sin turba. Es lo que convierte un riego diario en un riego cada 3 días.",
+          "Preventivo, esta semana: mira el envés de 3 o 4 hojas con el zoom del móvil, buscando punteado o telaraña finísima. Es la revisión que evita heredar la plaga del coleo grande.",
+          "Mientras el coleo grande esté sin diagnosticar, sepáralas: que no se toquen las hojas.",
+          "Ponla en la zona más luminosa del ventanal y gírala un cuarto de vuelta en cada riego.",
+          "Pinza los ápices cuando empiece a estirarse, y las espigas florales en cuanto asomen: RHS recomienda el pinzado para mantenerla compacta, y en un coleo la hoja vale más que la flor.",
+          "En septiembre, 2 o 3 esquejes de 8-10 cm."
+        ],
+        "revisar_en": "2 semanas: comprueba que la hoja nueva mantiene el granate y no sale verde, y que sigue sin punteado pálido. Si sale más verde, es luz; si sale con punteado, es plaga y viene del coleo grande.",
+        "no_visible_en_foto": [
+          "El envés de las hojas: no puedo descartar araña roja ni trips, y con la planta hermana bajo sospecha esto no es una formalidad.",
+          "Si el cepellón está ya lleno de raíces. Por el tamaño de la maceta y la planta, lo más probable es que sí; se ve una raicilla asomando.",
+          "La humedad real del cepellón: la superficie parece húmeda, pero en 9 cm eso cambia en horas.",
+          "Si el moteado oscuro de la hoja es patrón del cultivar, como creo, o daño antiguo. Una foto de una hoja joven completamente desplegada, plana y a buena luz, lo confirmaría: si el moteado sale también ahí y con el mismo dibujo, es genético."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/446165-1",
+          "consultado": "2026-08-11",
+          "nota": "Registro abierto: Coleus scutellarioides (L.) Benth., Lamiaceae. Los nombres Solenostemon scutellarioides y Plectranthus scutellarioides, que son los que aparecen en casi toda la información divulgativa, son sinónimos por recolocación de género. El cultivar (granate con filo lima fino) no se puede determinar desde foto y la etiqueta solo dice \"COLEO\"; POWO no cataloga cultivares comerciales."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:446165-1",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de POWO localizada. POWO devuelve 403 a peticiones automáticas; el nombre aceptado se comprobó en IPNI, también de Kew."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/446165-1",
+          "consultado": "2026-08-11"
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: húmedo pero bien drenado, riego generoso en crecimiento. La frecuencia de 2 días y los 90 ml son traducción a una maceta de vivero de 9 cm en agosto en Móstoles."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: pleno sol; este, sur u oeste; bajo cristal luz plena o sombra parcial."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/biodiversity/glasshouse-red-spider-mite",
+          "consultado": "2026-08-11",
+          "nota": "RHS: la araña roja se favorece con temperaturas altas y ambiente seco; pulverizar y subir humedad reduce el riesgo sin eliminar la infestación. El 45-55 % es objetivo práctico propio."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: H1C, mínimo 5-10 °C, solo fuera en verano. El máximo de 28 °C es criterio propio."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: sustrato sin turba bajo cristal; al aire libre, rico en humus, húmedo y bien drenado."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: rico en nitrógeno cada dos semanas en crecimiento. La media dosis y la espera de 4 semanas tras trasplantar son criterio propio."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: esquejes de madera blanda en verano y pinzado de ápices. El salto a maceta de 12 cm es criterio propio a partir del tamaño de la maceta de vivero que se ve en la foto."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/132520/coleus-scutellarioides/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS cita cochinilla algodonosa, cochinillas y mosca blanca de invernadero para el coleo."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/biodiversity/glasshouse-thrips",
+          "consultado": "2026-08-11",
+          "nota": "RHS, trips: moteado pálido plateado con motitas de excremento; detección sacudiendo el follaje sobre papel blanco y trampas cromáticas azules."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/cats-plant-list",
+          "consultado": "2026-08-11",
+          "nota": "Listado completo de ASPCA para gatos, revisado: no figura Coleus scutellarioides ni sus sinónimos. \"No figura\" no es \"es inocua\"."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
+          "consultado": "2026-08-11",
+          "nota": "Entrada \"Prostrate Coleus\" = Plectranthus oertendahlii, no tóxica. Se cita para dejar claro que NO es esta planta: dar esta ficha por buena sería concluir \"no tóxica\" sobre una especie distinta."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Sin contar por Carlos. Consta la compra: Viveros Projardín, 2,25 €, mismo lote que el coleo grande. Eso es procedencia, no historia. Pendiente de preguntar."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente de preguntar a Carlos."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico sobre la foto del 2026-08-11 y su etiqueta, con recorte ampliado del follaje para valorar si el moteado es patrón del cultivar o daño."
+        }
+      ]
+    },
+    {
+      "id": "ficus-sunny",
+      "nombre_comun": "Ficus Sunny",
+      "nombre_cientifico": "Ficus pumila",
+      "familia": "Moraceae",
+      "foto": "ficus-sunny.jpg",
+      "alt": "Ficus Sunny muy denso en una maceta colgante verde de 15 cm, con cientos de hojas pequeñas, ovaladas y de margen ondulado, verdes en el centro y con un borde blanco crema ancho; los tallos rojizos caen por todos los lados.",
+      "foto_etiqueta": "ficus-sunny-etiqueta.jpg",
+      "alt_etiqueta": "Detalle de la maceta colgante verde rodeada de hojas de borde blanco, con la etiqueta de Viveros Projardín: «FICUS SUNNY MACETA 15 CM», 8,95 €, pasaporte fitosanitario ES13-28/0283F.",
+      "historia": null,
+      "riego": {
+        "resumen": "La que menos perdona un olvido: cada 3 días en verano, cada 6 en invierno, ~300 ml.",
+        "detalle": "RHS lo dice sin rodeos para las higueras ornamentales de hoja pequeña: la mayoría lo pasa mal con el sustrato seco y con el aire seco, y da la regla concreta de regar cuando los 2 cm de arriba del sustrato estén secos. En una maceta colgante de 15 cm, con esta masa de hoja y en agosto en Móstoles, eso son unos 300 ml cada 3 días; en invierno, cada 6, manteniendo el sustrato solo ligeramente húmedo. Lo importante de esta planta es que un secado completo no se recupera: las hojas afectadas se vuelven marrones y crujientes y no vuelven a ponerse verdes; la planta rebrota, pero se queda con calvas. Como está colgada, se seca más rápido que las que están en una mesa, y es fácil olvidarla porque queda por encima de la altura de la vista. Riega hasta que salga agua por los agujeros y déjala escurrir antes de volver a colgarla.",
+        "dias_verano": 3,
+        "dias_invierno": 6,
+        "ml_aprox": 300
+      },
+      "luz": {
+        "resumen": "Luz filtrada brillante. Al ser variegada necesita más luz que una de hoja verde.",
+        "detalle": "RHS pide para Ficus pumila pleno sol o sombra parcial en exterior, y bajo cristal luz plena o filtrada; en su guía de higueras ornamentales añade el matiz que aquí importa: las plantas variegadas necesitan más luz que las de hoja verde, porque la parte blanca de la hoja no fotosintetiza. Con casi la mitad de la superficie de cada hoja en blanco crema, esta necesita estar en la parte buena del ventanal. Un noreste le va bien: claridad de mañana sin sol duro. Lo que no tolera es el sol de las horas fuertes tras el cristal, que en una hoja tan fina y con tanto blanco quema en una tarde. Gírala un cuarto de vuelta cada dos semanas: en una colgante, el lado que mira a la pared se pela.",
+        "nivel": 3
+      },
+      "humedad": {
+        "resumen": "Alta, 50–60 %. RHS recomienda pulverizar la hoja: aquí sí, es la excepción.",
+        "detalle": "RHS es explícito: sufren con el aire seco, hay que subir la humedad pulverizando las hojas, y en su guía de higueras ornamentales recomienda pulverizar con regularidad, sobre todo con calor, y poner la maceta sobre un plato de grava húmeda. A diferencia de la begonia y del coleo, aquí la hoja es pequeña, glabra y de secado rápido, así que pulverizar no crea problemas de hongos si se hace por la mañana. Es la planta de la casa que más va a notar la calefacción de invierno: bordes marrones y crujientes con el centro verde es la firma del aire seco, no de la sed. Mantenla a un metro largo del radiador.",
+        "hr_objetivo_pct": 55
+      },
+      "temperatura": {
+        "min_c": 13,
+        "max_c": 26,
+        "detalle": "Las dos cifras de RHS no dicen lo mismo y conviene saber por qué: la ficha de la especie le da rusticidad H2, que en su escala es un mínimo de 1 a 5 °C, pero eso describe una planta en el suelo, en un jardín sin heladas. La guía de higueras ornamentales como planta de interior es más exigente y pide mantenerlas por encima de 10-13 °C, con temperatura estable y sin corrientes. Para un piso, la cifra útil es 13 °C: nunca la saques al balcón en invierno. El máximo de 26 °C es criterio propio: por encima, con aire seco, el consumo de agua sube y aparece la araña roja."
+      },
+      "sustrato": {
+        "resumen": "Sustrato con base de tierra (John Innes nº 2), sin turba, que retenga humedad y drene.",
+        "detalle": "RHS pide sustrato sin turba con base de tierra franca (loam), que retenga humedad, y avisa de que el sustrato seco es su principal problema. Un sustrato de tierra pesa más y se seca más despacio que uno solo de fibra, que en una colgante es justo lo que interesa. Si mezclas: dos partes de universal sin turba, una parte de sustrato con tierra y un puñado de perlita para que no se compacte. Lo que hay que evitar es un sustrato tan ligero que atraviese el agua sin mojarse, que es cómo terminan secas la mayoría de las colgantes.",
+        "mezcla": "2 universal sin turba : 1 sustrato con tierra : puñado de perlita"
+      },
+      "abonado": {
+        "resumen": "Abono rico en nitrógeno una vez al mes de primavera a final de verano; en invierno, casi nada.",
+        "detalle": "RHS, para Ficus pumila de interior: abono rico en nitrógeno mensual durante el crecimiento y riego escaso en invierno; en la guía de higueras ornamentales, abono rico en nitrógeno de primavera a finales de verano, porque lo que interesa es follaje. A media dosis y siempre sobre sustrato húmedo. En una colgante que se riega a menudo, el abono se lava con más facilidad, así que mensual es correcto y no hace falta subir la dosis. De octubre a marzo, no abones: con la luz de un NE en invierno no tiene con qué usarlo.",
+        "temporada": "primavera a finales de verano"
+      },
+      "trasplante": {
+        "resumen": "Cada 2 años en primavera, subiendo una talla. Ahora está bien en la de 15 cm.",
+        "detalle": "RHS: cada dos años, en primavera, a una maceta ligeramente más grande, con sustrato con base de tierra. Ahora mismo la planta está densa y bien, así que no hay prisa: si el año que viene la ves pidiendo agua cada dos días y con raíces asomando por los agujeros, sube a 17-18 cm. La otra tarea de mantenimiento es la poda: RHS la clasifica en el grupo de poda 1 (poda ligera). En una colgante eso significa recortar los tallos que se hayan pelado por dentro para que rebroten; los cortes se hacen justo por encima de un nudo, y los recortes de 8-10 cm enraízan como esquejes semileñosos en primavera o verano.",
+        "cuando": "primavera, cada 2 años"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Araña roja",
+          "senal": "Punteado pálido fino en el haz, hojas que pierden color y telaraña finísima en el envés.",
+          "respuesta": "RHS la cita como plaga de interior de Ficus pumila y avisa de que se favorece con calor y aire seco: en esta casa es la plaga que más probabilidad tiene de acabar con esta planta. Revisa el envés cada 2 semanas con el zoom del móvil; prevención: pulverizar y humedad ambiente. Si aparece, aísla y valora depredadores (Phytoseiulus persimilis, Amblyseius californicus)."
+        },
+        {
+          "plaga": "Trips",
+          "senal": "Moteado pálido plateado en el haz con motitas oscuras de excremento.",
+          "respuesta": "RHS los cita para esta especie en interior. En una planta con tanto blanco en la hoja el punteado es difícil de ver: fíjate en la parte verde del centro. Trampa cromática azul para monitorizar."
+        },
+        {
+          "plaga": "Cochinillas y cochinilla algodonosa",
+          "senal": "Bultitos marrones o grumos algodonosos en los tallos y en las axilas.",
+          "respuesta": "RHS las cita para Ficus pumila. Cuidado con un falso positivo muy común en esta especie: los abultamientos marrones que tiene en los nudos son raíces adventicias propias de la planta, con las que trepa. Antes de tratar, mira con lupa si el bulto se puede desprender (cochinilla) o si sale del propio tallo (raíz)."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Sin datos en ASPCA",
+        "perros": "Sin datos en ASPCA",
+        "detalle": "No hay entrada en ASPCA para Ficus pumila. Lo que sí hay es una entrada para otra especie del mismo género: \"Fig / Weeping Fig\" = Ficus benjamina, Moraceae, que ASPCA da como tóxica para perros, gatos y caballos, con enzima proteolítica (ficina) y psoraleno (ficusina) como principios activos e irritación gastrointestinal y dérmica como signos. Que el género tenga una especie tóxica no permite afirmar que esta lo sea, ni lo contrario. Además, todos los Ficus tienen látex blanco al cortarlos, que es irritante para la piel: por eso conviene usar guantes al podar, independientemente de las mascotas. En esta casa no hay animales, así que es dato informativo."
+      },
+      "dificultad": "exigente",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "sana",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "Masa foliar densísima y bien repartida, con tallos cayendo por todo el perímetro de la maceta colgante: no hay calvas ni zonas peladas.",
+          "Hojas pequeñas (1-2 cm), ovaladas y de margen ondulado, turgentes, verdes en el centro con un borde blanco crema ancho y bien definido.",
+          "Variegación estable y del mismo dibujo en las hojas nuevas de las puntas que en las viejas del interior: señal de que la luz le está bastando.",
+          "Tallos delgados y rojizos, con abultamientos marrones en los nudos que corresponden a las raíces adventicias propias de la especie.",
+          "Algunas hojas del interior más apagadas y algún borde con un tono pardo mínimo, en muy pocas hojas.",
+          "No se ven telarañas, ni punteado pálido, ni melaza, ni hojas amarillas, ni hojas caídas sobre la mesa.",
+          "Maceta colgante verde de vivero de 15 cm, con etiqueta de Viveros Projardín: \"FICUS SUNNY MACETA 15 CM\", 8,95 €, pasaporte fitosanitario ES13-28/0283F."
+        ],
+        "causas_probables": [
+          "Está sana y recién comprada, con la densidad típica de producción de vivero. El estado actual no necesita explicación: lo que necesita es no romperse.",
+          "El riesgo dominante es el riego, no la luz ni las plagas. En esta especie un secado completo del cepellón no se revierte: la hoja afectada se vuelve marrón y crujiente y no recupera color, y la planta se queda con calvas permanentes en la silueta, que es justo lo que hace bonita a una colgante. Y como está colgada y por encima de la vista, es la más fácil de olvidar.",
+          "El segundo riesgo llega en invierno: la calefacción. Bordes marrones crujientes con el centro de la hoja verde serán aire seco, no sed, y el consejo es opuesto (subir humedad, no regar más).",
+          "El tercero es la araña roja, que RHS cita para esta especie en interior y que prospera exactamente con calor y aire seco.",
+          "Los pocos bordes pardos que se ven ahora son compatibles con un episodio breve de sequedad o con el roce del transporte; no forman un patrón."
+        ],
+        "tratamiento": [
+          "Preventivo: pon una alarma de riego. Con esta planta, un recordatorio cada 3 días en verano vale más que cualquier otro consejo de la ficha.",
+          "Preventivo, esta semana: comprueba que al regar el agua no atraviesa la maceta en dos segundos. Si lo hace, el cepellón está compactado: riega por inmersión 10 minutos y deja escurrir bien antes de colgarla.",
+          "Preventivo, en verano: pulveriza las hojas por la mañana 2 o 3 veces por semana. Es la única planta de la casa en la que RHS recomienda expresamente pulverizar el follaje.",
+          "Preventivo, cada 2 semanas: mira el envés de unas cuantas hojas con el zoom del móvil buscando punteado o telaraña. Es la revisión que evita perderla por araña roja.",
+          "Gírala un cuarto de vuelta cada 2 semanas para que el lado de la pared no se pele.",
+          "Antes de tocar cualquier bultito marrón de los nudos, mira con lupa si es raíz adventicia (sale del tallo, no se desprende) o cochinilla. No la trates a ciegas.",
+          "En invierno: a un metro largo del radiador, riego cada 6 días y sin abono."
+        ],
+        "revisar_en": "1 mes: la planta tiene que seguir sin bordes marrones nuevos y con la variegación igual de contrastada en las hojas de las puntas. Si aparecen bordes crujientes en muchas hojas a la vez, revisa primero si hubo un secado (cepellón separado de las paredes, maceta muy ligera al levantarla) antes de cambiar nada más.",
+        "no_visible_en_foto": [
+          "El envés de las hojas interiores. Con esta densidad, una araña roja podría estar empezando dentro de la mata sin que se note desde fuera.",
+          "La humedad real del cepellón y si está compactado.",
+          "Si las raíces ya han colonizado el fondo de la maceta de 15 cm.",
+          "El cultivar. La descripción de RHS para Ficus pumila 'White Sunny' —hojas ovaladas y de margen ondulado, verdes con margen blanco crema— coincide con lo que se ve, pero RHS cataloga varios cultivares variegados casi idénticos ('Sonny', 'Variegata', 'White Sunny') y la etiqueta solo dice \"FICUS SUNNY\". No se puede cerrar desde una foto."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/853513-1",
+          "consultado": "2026-08-11",
+          "nota": "Registro abierto: Ficus pumila L., Moraceae, Sp. Pl. 2: 1060 (1753). El nombre de la etiqueta, \"FICUS SUNNY\", es nombre comercial de un cultivar variegado, no un binomio. El cultivar no se puede verificar desde foto; ver la nota de `estado` sobre 'White Sunny'."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:853513-1",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de POWO localizada para Ficus pumila L. POWO devuelve 403 a peticiones automáticas y no he podido abrirla; nombre y familia comprobados en IPNI (Kew)."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/362184/ficus-pumila-white-sunny-(v)/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS describe Ficus pumila 'White Sunny' como trepadora tierna de \"hojas ovaladas anchas, festoneadas, verdes con márgenes blanco crema\", que es exactamente lo que muestra la foto. Sirve para decir que el cultivar es compatible, no para afirmarlo: hay varios cultivares variegados casi indistinguibles."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/853513-1",
+          "consultado": "2026-08-11"
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/ornamental-figs/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: la mayoría sufre con el sustrato seco y el aire seco; regar cuando los 2 cm superiores del sustrato estén secos; dejar secar ligeramente entre riegos y en invierno mantener el sustrato solo apenas húmedo; agua a temperatura ambiente. Los 300 ml y los días son traducción a esta colgante de 15 cm en Móstoles."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/ornamental-figs/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: luz indirecta brillante, y \"las plantas variegadas necesitan más luz que las de hoja verde\"."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/7210/ficus-pumila/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS para la especie: pleno sol, orientación sur u oeste en exterior; bajo cristal, luz plena o filtrada. Se traduce a un ventanal NE explicando el coste, en lugar de copiar la orientación británica."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/ornamental-figs/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: pulverizar las hojas con regularidad, sobre todo con calor, y poner la maceta en un plato de grava húmeda. El 50-60 % es objetivo práctico propio."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/7210/ficus-pumila/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS da rusticidad H2 (mínimo 1-5 °C) para la especie en el suelo; la guía de higueras ornamentales de interior pide mantenerlas por encima de 10-13 °C, con temperatura estable y sin corrientes. Se citan las dos y se toma la más exigente para un piso. El máximo de 26 °C es criterio propio."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/7210/ficus-pumila/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS: bajo cristal, sustrato sin turba con base de tierra franca; en exterior, suelo rico en humus, húmedo y bien drenado. La mezcla concreta es criterio propio."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/ornamental-figs/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: abono rico en nitrógeno de primavera a finales de verano para las de follaje; para Ficus pumila de interior, abono rico en nitrógeno mensual y riego escaso en invierno."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/ornamental-figs/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: cada dos años, en primavera, a una maceta algo más grande con sustrato con base de tierra. La ficha de la especie la sitúa en el grupo de poda 1 y da esquejes semileñosos en primavera o verano."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/7210/ficus-pumila/details",
+          "consultado": "2026-08-11",
+          "nota": "RHS cita para Ficus pumila en interior araña roja de invernadero, trips, cochinilla algodonosa y cochinillas."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/biodiversity/glasshouse-red-spider-mite",
+          "consultado": "2026-08-11",
+          "nota": "RHS, araña roja: moteado pálido fino en el haz, telaraña fina en casos graves, favorecida por temperaturas altas y ambiente seco; humedad y pulverización como prevención, depredadores (Phytoseiulus persimilis, Amblyseius californicus) como control."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/fig",
+          "consultado": "2026-08-11",
+          "nota": "La entrada de ASPCA es de otra especie del género: \"Fig / Weeping Fig / Indian Rubber Plant\" = Ficus benjamina, Moraceae, tóxica para perros, gatos y caballos; ficina y ficusina; irritación gastrointestinal y dérmica. No hay entrada para Ficus pumila, así que no se puede extender el dato: se cita lo que hay y se dice lo que falta."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/cats-plant-list",
+          "consultado": "2026-08-11",
+          "nota": "Listado completo de ASPCA para gatos, revisado: el único Ficus que aparece es Ficus benjamina, en la sección de tóxicas. Ficus pumila no figura ni como tóxica ni como no tóxica."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Sin contar por Carlos. Consta la compra: Viveros Projardín, 8,95 €. Pendiente de preguntar."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente de preguntar a Carlos."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico sobre la foto del 2026-08-11 y su etiqueta, con recorte ampliado de los tallos colgantes para valorar hoja, variegación y los abultamientos de los nudos."
+        }
+      ]
+    },
+    {
+      "id": "margarita",
+      "nombre_comun": "Margarita (crisantemo de floristería)",
+      "nombre_cientifico": "Chrysanthemum × morifolium",
+      "familia": "Asteraceae",
+      "foto": "margarita.jpg",
+      "alt": "Crisantemo de floristería en maceta gris de vivero de 12 cm, formando una cúpula compacta con decenas de flores dobles blancas de tipo pompón y centro amarillo verdoso, muchos botones aún cerrados y hojas verde oscuro profundamente lobuladas.",
+      "historia": null,
+      "riego": {
+        "resumen": "Mientras esté en flor, mucha sed: cada 2 días en verano, unos 180 ml en la maceta de 12 cm.",
+        "detalle": "Una planta en plena floración con esta densidad de flor y de hoja en una maceta de 12 cm bebe muchísimo. RHS lo formula así: no dejar nunca que el sustrato se seque del todo, pero sin encharcar, porque no toleran el suelo saturado. En agosto en Móstoles eso son unos 180 ml cada 2 días; comprueba a diario metiendo el dedo, porque si se marchita en flor, las flores abiertas no se recuperan y los botones se quedan sin abrir. Riega por el borde de la maceta, nunca sobre las flores: las flores dobles mojadas se pudren y son la puerta de la botritis. Si la mantienes después de la floración, el consumo baja mucho: cada 5 días.",
+        "dias_verano": 2,
+        "dias_invierno": 5,
+        "ml_aprox": 180
+      },
+      "luz": {
+        "resumen": "Luz filtrada brillante y buena ventilación. El NE le sirve para durar, no para volver a florecer.",
+        "detalle": "RHS pide para los crisantemos de floristería de interior luz filtrada brillante con buena ventilación y un mínimo de 10 °C; para los de jardín, sitio cálido y soleado, y avisa de que no van bien en sombra. Un ventanal a noreste está entre las dos cosas: sobra para que la planta aguante bien la tanda de flor que ya trae, y falta para que forme flor nueva con fuerza. Hay algo más que conviene saber, porque cambia el consejo entero: un crisantemo de maceta como este se produce forzando el fotoperiodo, con días cortos artificiales y a menudo con enanizantes, para que salga a la venta compacto y cargado de flor. Eso no se reproduce en un salón. Aquí es una planta de temporada: dará unas 4 a 6 semanas de flor y luego hay que decidir qué hacer con ella.",
+        "nivel": 4
+      },
+      "humedad": {
+        "resumen": "Media le basta. Lo que necesita es aire moviéndose: en aire quieto salen oídio y botritis.",
+        "detalle": "No es planta de humedad alta, y en su caso subir la humedad sin ventilación sería contraproducente: RHS lista oídio y moho gris entre sus problemas habituales, y las dos cosas prosperan en aire quieto con follaje denso. Lo útil aquí es lo contrario que en la begonia: no la pongas en un plato de grava, no pulverices y déjale espacio alrededor para que corra el aire. Con esta mata tan compacta, el interior no se seca nunca si no hay algo de circulación.",
+        "hr_objetivo_pct": 45
+      },
+      "temperatura": {
+        "min_c": 10,
+        "max_c": 22,
+        "detalle": "RHS da un mínimo de 10 °C para los crisantemos de floristería de interior, y para conservar las plantas de un año a otro habla de guardarlas en sitio luminoso y libre de heladas y arrancarlas después a 7-10 °C. El máximo de 22 °C es criterio propio y es el dato práctico más útil de esta ficha: cuanto más fresco esté, más duran las flores. En un salón de Madrid en agosto a 27-28 °C la tanda de flor se acorta bastante; si tienes un sitio luminoso y más fresco, ahí durará semanas más."
+      },
+      "sustrato": {
+        "resumen": "Fértil, húmedo y bien drenado, sin turba. No la cambies de maceta estando en flor.",
+        "detalle": "RHS pide sustrato o suelo fértil, húmedo pero bien drenado y sin turba, y avisa de que no tolera el encharcamiento. El sustrato de vivero que trae es adecuado para lo que queda de floración. Lo importante es lo que no hay que hacer: no cambiarla de maceta ahora. Mover el cepellón de una planta en plena flor le hace tirar los botones. Todo lo de sustrato se pospone al final de la floración.",
+        "cambiar_ahora": false
+      },
+      "abonado": {
+        "resumen": "En flor, abono rico en potasio (tipo tomate) cada 10–14 días. No es imprescindible.",
+        "detalle": "RHS: para los de floristería de interior, abono líquido equilibrado semanal durante el crecimiento; para los de maceta en general, abono líquido durante el crecimiento y cambio a uno rico en potasio (tipo tomate) durante la floración. Traducido a esta planta: viene del vivero con el sustrato cargado de fertilizante, así que durante las primeras semanas no le hace falta nada. Si la floración se alarga, un abono de tomate a media dosis cada 10-14 días la sostiene. Si vas a tirarla al acabar la flor, sáltate el abonado: no cambia nada.",
+        "temporada": "durante la floración"
+      },
+      "trasplante": {
+        "resumen": "Nada mientras esté en flor. Después: poda a 20 cm y decides si al jardín, a maceta o fuera.",
+        "detalle": "Este es el campo que de verdad hay que leer en esta planta. RHS describe el final de temporada así: cortar los tallos a unos 20 cm y guardar la planta en un sitio libre de heladas, y añade que los crisantemos comprados en verano se pueden plantar directamente en macizos y macetas de exterior. Las tres opciones honestas, con lo que implica cada una: (1) tirarla al acabar la flor, que es lo que se hace con la mayoría de los crisantemos de maceta y no es ninguna derrota; (2) plantarla en una maceta grande de exterior o en tierra, donde en Móstoles se comporta como planta perenne de otoño: rebrotará más alta y más suelta que ahora, y florecerá en otoño con los días cortos naturales, no en verano; (3) mantenerla dentro, que es la peor de las tres, porque sin la luz y sin el fotoperiodo del vivero se estira y no vuelve a florecer decentemente. En cualquiera de los casos, la poda a 20 cm va después de la flor, nunca durante.",
+        "cuando": "al terminar la floración"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Pulgón",
+          "senal": "Melaza pegajosa y brotes o botones deformados, con los insectos agrupados en los tallos tiernos.",
+          "respuesta": "RHS lo lista entre los problemas habituales del crisantemo. Con esta cantidad de botones tiernos es la plaga más probable. Chorro de agua para desalojarlos, revisión de los botones cada semana y retirada a mano de los brotes muy infestados."
+        },
+        {
+          "plaga": "Minador de hojas",
+          "senal": "Galerías sinuosas de color claro dibujadas dentro del tejido de la hoja.",
+          "respuesta": "RHS lo cita para crisantemo. No mata la planta: retira y tira las hojas con galerías (no al compost) en cuanto las veas, para cortar el ciclo."
+        },
+        {
+          "plaga": "Oídio y moho gris",
+          "senal": "Polvo blanco harinoso en el haz, o pelusa gris sobre las flores que se pasan.",
+          "respuesta": "RHS lista los dos para crisantemo. La medida que sirve para ambos es la misma: retirar las flores pasadas, no mojar las flores al regar y dejar que corra el aire alrededor de la mata."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Tóxica",
+        "perros": "Tóxica",
+        "detalle": "ASPCA lista Chrysanthemum spp. como tóxica para perros, gatos y caballos. Los principios activos son sesquiterpenos, lactonas, piretrinas y otros irritantes, y los signos descritos son vómitos, diarrea, salivación excesiva, descoordinación y dermatitis. Es la única de la casa cuya toxicidad tiene un nombre reconocible: las piretrinas son la base de muchos insecticidas. En esta casa no hay mascotas, así que es dato informativo, con un matiz práctico: es una planta a la altura de un perro y con flor muy llamativa, así que es la que conviene subir de sitio si viene visita con animales."
+      },
+      "dificultad": "fácil",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "sana",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "Mata compacta en forma de cúpula, muy cargada: decenas de flores dobles blancas tipo pompón abiertas y muchos más botones aún cerrados.",
+          "Follaje verde oscuro, turgente, sin amarilleo, sin bordes secos, sin manchas y sin punteado.",
+          "Hojas anchas, profundamente lobuladas, con lóbulos gruesos e irregulares, y flores dobles con centro amarillo verdoso.",
+          "Ni una flor pasada todavía: la tanda de floración está empezando.",
+          "Sustrato de vivero de aspecto húmedo en superficie; maceta gris de vivero de 12 cm.",
+          "Etiqueta de Viveros Projardín: \"MARGARITA MACETA 12 CM\", 3,95 €, pasaporte fitosanitario ES13-28/0283F.",
+          "Porte anormalmente bajo y denso para la cantidad de flor que lleva: el aspecto típico de una planta forzada en producción."
+        ],
+        "causas_probables": [
+          "Está sana y en el mejor momento de su ciclo. No hay nada que corregir hoy.",
+          "Corrección de identificación, y es la más importante de esta ficha: la etiqueta dice \"MARGARITA\", pero la planta no lo es. La hoja ancha y profundamente lobulada y la flor doble en pompón son de crisantemo de floristería (Chrysanthemum × morifolium). Una margarita arbustiva (Argyranthemum) tiene la hoja finamente dividida, casi de encaje, y flor sencilla con centro amarillo plano; una margarita de pradera (Leucanthemum) tiene hoja estrecha y dentada y flor sencilla grande. Ninguna de las dos encaja. Cambia el consejo por completo: no es un arbusto de exterior de temporada larga, es una planta forzada de flor puntual.",
+          "El porte compacto no es la forma natural de la planta: los crisantemos de maceta se producen con fotoperiodo controlado y a menudo con enanizantes. Cuando rebrote, saldrá más alta y más suelta. No es que se haya estropeado: es que ahora se ve como es de verdad.",
+          "El riesgo a corto plazo es simple y doble: que se seque un día en flor (las flores abiertas no se recuperan) y que las primeras flores pasadas se queden puestas y traigan botritis."
+        ],
+        "tratamiento": [
+          "Riego: unos 180 ml cada 2 días en agosto, comprobando a diario, siempre por el borde de la maceta y nunca sobre las flores.",
+          "Preventivo, desde la primera flor marchita: retira las flores pasadas a medida que aparezcan, cortando el pedúnculo por debajo de la flor. RHS lo dice claramente: retirar las flores marchitas con regularidad mantiene el conjunto. Además corta la vía de entrada del moho gris.",
+          "Preventivo: déjale aire alrededor y no la pulverices. Con esta densidad de mata, el aire quieto es lo que trae oídio y botritis.",
+          "Ponla en el sitio luminoso más fresco que tengas. Cada grado menos son días más de flor.",
+          "Revisa los botones tiernos una vez por semana buscando pulgón, que es lo que más probablemente aparezca.",
+          "No la cambies de maceta ni la abones fuerte mientras esté en flor.",
+          "Decisión al terminar la floración (unas 4-6 semanas): tirarla, o cortarla a 20 cm y plantarla en una maceta grande de exterior o en tierra para que rebrote y florezca en otoño. Mantenerla dentro es la opción que peor sale."
+        ],
+        "revisar_en": "2 semanas: deberían haberse abierto buena parte de los botones que hoy están cerrados y no debería haber ninguna flor pasada sin retirar. Si los botones se secan sin abrir, la causa más probable es que se ha secado el cepellón algún día o que hace demasiado calor donde está.",
+        "no_visible_en_foto": [
+          "El estado del cepellón. Los crisantemos de maceta salen del vivero con la maceta llena de raíz, lo que explica parte de su sed; no se puede confirmar sin sacarla.",
+          "Si el sustrato está encharcado por dentro: la superficie húmeda no dice nada de los 10 cm de abajo.",
+          "Si la planta lleva regulador de crecimiento (enanizante). No se ve en una foto, pero condiciona lo que pasará cuando rebrote: se estirará.",
+          "El cultivar. Los crisantemos de maceta se venden por color y forma de flor, sin nombre; POWO no cataloga cultivares comerciales y la etiqueta solo dice \"MARGARITA\".",
+          "El envés de las hojas y el interior de la mata: no se puede descartar pulgón ni araña roja."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/77111328-1",
+          "consultado": "2026-08-11",
+          "nota": "Registro abierto: Chrysanthemum morifolium (Ramat.) Hemsl., Asteraceae, Gard. Chron. ser. 3, 6: 586 (1889). Se escribe con la cruz del híbrido, Chrysanthemum × morifolium, por ser de origen hortícola. Sinónimo frecuente en literatura antigua: Dendranthema × morifolium. La identificación no viene de la etiqueta —que dice \"MARGARITA\"— sino de la morfología: hoja ancha y profundamente lobulada más flor doble en pompón, que excluye Argyranthemum (hoja finamente dividida, flor sencilla) y Leucanthemum (hoja estrecha dentada, flor sencilla grande). Cuando la etiqueta y los rasgos no coinciden, gana la observación."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:77111328-1",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de POWO localizada para Chrysanthemum × morifolium (Ramat.) Hemsl. POWO devuelve 403 a peticiones automáticas y no he podido abrirla; nombre y familia comprobados en IPNI (Kew). Aviso: POWO tiene además una entrada para \"Chrysanthemum × morifolium Ramat.\" con otro identificador (193606-1); la combinación al uso es la de Hemsley."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/77111328-1",
+          "consultado": "2026-08-11",
+          "nota": "IPNI da Asteraceae. ASPCA usa el nombre antiguo de la familia, Compositae, en su ficha: son la misma familia."
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: \"nunca dejes que la tierra o el sustrato se seque por completo, pero ten cuidado de no regar en exceso, porque no toleran el encharcamiento\"; los recién plantados en maceta necesitan riego regular durante toda la temporada de crecimiento. Los 180 ml y los 2 días son traducción a esta maceta de 12 cm en flor, en agosto en Móstoles."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: sitio cálido, soleado y abrigado, y no van bien en sombra ni en condiciones secas; para los de floristería de interior, luz filtrada brillante con buena ventilación y mínimo de 10 °C. La lectura de que un NE alarga la flor pero no da para volver a florecer es interpretación propia sobre ese dato."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS lista oídio y moho gris entre los problemas del crisantemo y recomienda buena ventilación para los de interior. De ahí que aquí se recomiende ventilación en lugar de humedad ambiente; el 45 % es objetivo práctico propio."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: mínimo de 10 °C para los de floristería de interior; conservación invernal en sitio luminoso y libre de heladas, y arranque de brotación en invernadero a 7-10 °C. El máximo de 22 °C es criterio propio: cuanto más fresco, más dura la flor."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: sustrato o suelo fértil, húmedo pero bien drenado y sin turba; no toleran el suelo encharcado."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: abono líquido durante el crecimiento y cambio a uno rico en potasio (tipo tomate) durante la floración; para los de floristería de interior, abono líquido equilibrado semanal en crecimiento. La media dosis y el \"no es imprescindible\" son criterio propio para una planta recién salida del vivero."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: al acabar, cortar los tallos a unos 20 cm y guardar en sitio libre de heladas; las plantas compradas en verano se pueden plantar directamente en macizos y macetas de exterior. Que florecerá en otoño y con porte más alto es consecuencia del fotoperiodo natural, no una cita literal de RHS."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/chrysanthemum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS lista para crisantemo: babosas y caracoles, pulgón, minadores de hojas, tijeretas, araña roja, oídio, moho gris y virus."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/chrysanthemum",
+          "consultado": "2026-08-11",
+          "nota": "Entrada de género: Chrysanthemum spp. (Compositae), tóxica para perros, gatos y caballos; sesquiterpenos, lactonas, piretrinas y otros irritantes; vómitos, diarrea, salivación, descoordinación y dermatitis. No hay entrada específica para C. × morifolium."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Sin contar por Carlos. Consta la compra: Viveros Projardín, 3,95 €. Pendiente de preguntar."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente. Aquí hay además una decisión que solo puede tomar él: si al acabar la flor la tira, la planta fuera o la conserva dentro."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico e identificación sobre la foto del 2026-08-11 y la de su etiqueta, que muestra bien la hoja lobulada."
+        }
+      ]
+    },
+    {
+      "id": "poto",
+      "nombre_comun": "Poto",
+      "nombre_cientifico": "Epipremnum aureum",
+      "familia": "Araceae",
+      "foto": "poto.jpg",
+      "alt": "Poto en una maceta cerámica de cuadros blancos y negros, sobre una estantería de madera oscura, con hojas grandes acorazonadas de verde intenso muy jaspeadas de amarillo y crema, que se abren hacia los lados del hueco.",
+      "historia": null,
+      "riego": {
+        "resumen": "Cada 7 días en verano, cada 10–14 en invierno. ~200 ml, y comprueba el drenaje del cachepot.",
+        "detalle": "RHS da la regla exacta: no regar en exceso y dejar que los 2 cm de arriba del sustrato se secen entre riegos; en su guía lo repite como \"riega solo cuando el sustrato esté acercándose a la sequedad, compruébalo con el dedo\". Para esta maceta, unos 200 ml cada 7 días en verano y cada 10-14 en invierno. Es la planta más tolerante de la casa a que te olvides, y la más fácil de matar por lo contrario: la podredumbre de raíz por exceso de agua es su problema principal según RHS. Aquí hay un detalle concreto de esta maceta: es cerámica decorativa y en la foto no se ve si tiene agujero. Si no lo tiene, el agua sobrante se queda en el fondo y las raíces se ahogan sin que se vea nada desde fuera. Lo mejor: riégala en el fregadero, deja escurrir 10 minutos y devuélvela a su sitio.",
+        "dias_verano": 7,
+        "dias_invierno": 10,
+        "ml_aprox": 200
+      },
+      "luz": {
+        "resumen": "Luz indirecta brillante. En la estantería está más oscura de lo ideal: vigila la variegación.",
+        "detalle": "RHS: prefiere luz indirecta brillante, como una ventana al este o al oeste, y crece también con algo de sombra aunque más despacio. Y da el dato que aquí es el que importa: con poca luz el follaje pierde la variegación y el crecimiento es pobre. Esta planta está en una estantería de madera algo retirada del ventanal, es decir un escalón por debajo de lo que pide. La buena noticia es que las hojas que tiene ahora están muy bien jaspeadas, lo que indica que hasta ahora la luz le ha bastado. La comprobación no es teórica: en 2 o 3 meses compara una hoja nueva con una vieja. Si la nueva sale más verde y con menos amarillo, es falta de luz, y la solución es acercarla al ventanal, no abonarla. Nada de sol directo: en las variegadas quema las zonas claras.",
+        "nivel": 3
+      },
+      "humedad": {
+        "resumen": "Le da igual: es la única que no necesita humedad extra. Con el ambiente del piso va bien.",
+        "detalle": "RHS lo dice de forma explícita y es una de las razones por las que es la planta más fácil de la casa: a diferencia de muchas tropicales de interior, los potos no necesitan niveles altos de humedad y se adaptan a las condiciones normales de una vivienda. Aquí no hace falta plato de grava ni pulverizar. Lo único que agradece es que le quites el polvo de las hojas con un paño húmedo cada mes o dos: son hojas grandes y en un piso acumulan polvo, y el polvo resta luz, que es justo lo que le falta en esa estantería.",
+        "hr_objetivo_pct": null
+      },
+      "temperatura": {
+        "min_c": 18,
+        "max_c": 30,
+        "detalle": "RHS da para el poto una franja de 18 a 30 °C, evitando corrientes frías y sin ponerlo junto a fuentes de calor directo. Es un rango cómodo para un piso de Móstoles todo el año: en verano estará en la parte alta y en invierno con calefacción, en la media. El único punto de atención es no dejarlo pegado a un cristal en una noche fría de enero ni encima de un radiador."
+      },
+      "sustrato": {
+        "resumen": "Sustrato sin turba con base de tierra, que drene bien. No necesita nada especial.",
+        "detalle": "RHS: sustrato sin turba con base de tierra franca, en luz plena o filtrada. Universal de calidad sin turba con un buen puñado de perlita cumple de sobra. Lo importante no es la receta, es que el conjunto drene: en un poto, el 90 % de los problemas viene de un sustrato que se queda empapado, especialmente si la maceta decorativa no tiene salida de agua.",
+        "mezcla": "universal sin turba + un buen puñado de perlita"
+      },
+      "abonado": {
+        "resumen": "Una vez al mes de abril a octubre con abono general de plantas de interior. En invierno, nada.",
+        "detalle": "RHS: abonar una vez al mes durante la temporada de crecimiento, de abril a octubre, con un fertilizante general para plantas de interior. A media dosis y sobre sustrato húmedo. Ojo con una tentación frecuente: si pierde variegación, la reacción intuitiva es abonar, y es un error. La variegación depende de la luz, no del abono; abonar más solo acumula sales en el sustrato.",
+        "temporada": "abril a octubre"
+      },
+      "trasplante": {
+        "resumen": "Cada 2–3 años, una talla más. Y comprueba ya si la maceta cerámica tiene agujero.",
+        "detalle": "RHS: cambiar de maceta cada dos o tres años a una talla mayor, cuando las raíces estén apretadas o salgan por los agujeros de drenaje. Esa última frase es la comprobación pendiente de esta planta: mira si la maceta de cuadros tiene agujero. Si no lo tiene, la solución más simple es dejar la planta en su maceta de plástico y usar la cerámica solo como funda, sacándola para regar. Aprovecha también para la poda de mantenimiento: RHS recomienda cortar los tallos justo por encima de una hoja para que ramifique, porque de esa yema salen brotes nuevos. Los trozos que cortes enraízan en un vaso de agua en dos o tres semanas y sirven para rellenar la propia maceta.",
+        "cuando": "cada 2-3 años, en primavera"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Podredumbre de raíz",
+          "senal": "Hojas inferiores amarillas y blandas, sustrato que sigue húmedo días después de regar, olor a cerrado.",
+          "respuesta": "Es su problema principal según RHS, y por delante de cualquier plaga. Deja secar los 2 cm de arriba entre riegos y asegúrate de que el agua sobrante sale de la maceta. Si ya ha pasado: saca el cepellón, corta las raíces blandas y oscuras, cambia el sustrato y riega mucho menos durante un mes."
+        },
+        {
+          "plaga": "Cochinilla algodonosa",
+          "senal": "Grumos blancos algodonosos en las axilas de las hojas y en los tallos, a veces con melaza.",
+          "respuesta": "RHS describe el poto como planta fácil y en general libre de problemas, así que esto es vigilancia, no una alerta: pásale un paño húmedo a las hojas cada mes o dos y aprovecha para mirar las axilas. Si aparecen, se retiran con un bastoncillo mojado en alcohol."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Tóxica",
+        "perros": "Tóxica",
+        "detalle": "ASPCA lista Epipremnum aureum (\"Golden Pothos\", \"Devil's Ivy\", \"Taro Vine\", \"Ivy Arum\"), Araceae, como tóxica para perros y gatos. El principio activo son oxalatos de calcio insolubles, y los signos son irritación oral, quemazón intensa de boca, lengua y labios, salivación abundante, vómitos y dificultad para tragar. RHS lo dice en la misma dirección: como buena parte de las aráceas es tóxica, recomienda guantes para manipularla y mantenerla lejos de niños y mascotas. Es la de toxicidad mejor documentada de la casa. En este piso no hay animales, así que es dato informativo, con dos consecuencias prácticas: usa guantes si hace esquejes, y si algún día hay gato, ten en cuenta que el poto cuelga y queda a su alcance."
+      },
+      "dificultad": "fácil",
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "sana",
+        "fecha_foto": "2026-08-11",
+        "senales": [
+          "Hojas grandes, acorazonadas, enteras y turgentes, con brillo normal y sin ninguna marchitez.",
+          "Variegación amarilla y crema amplia, bien repartida y con buen contraste; hay hojas con sectores crema muy extensos.",
+          "Sin clorosis, sin bordes secos, sin puntas marrones, sin punteado y sin hojas amarillas en la base.",
+          "Mata llena y equilibrada, que se abre hacia los dos lados del hueco de la estantería; los tallos no están estirados ni pelados.",
+          "Maceta de cerámica decorativa de cuadros, colocada sobre una estantería de madera oscura, algo retirada del ventanal. En la foto no se ve el fondo de la maceta.",
+          "La escena está bastante en penumbra: el nivel de luz de la foto es coherente con una ubicación un escalón por debajo de lo ideal."
+        ],
+        "causas_probables": [
+          "Está sana, y lo que lo demuestra no es que esté verde: es que la variegación está bien marcada. En un poto, la variegación es el indicador de luz, y esta la tiene en buen estado, así que hasta ahora la luz le ha bastado.",
+          "Su riesgo dominante no es la luz insuficiente inmediata, es el agua: la podredumbre de raíz por exceso de riego es su problema principal según RHS, y aquí el factor agravante concreto es una maceta cerámica de la que no se puede ver si tiene drenaje.",
+          "El riesgo a medio plazo sí es la luz. RHS avisa de que con poca luz el follaje pierde la variegación y el crecimiento es pobre. En una estantería retirada del ventanal esto no pasa en una semana, se ve en la hoja que salga en 2 o 3 meses.",
+          "Que las hojas sean grandes y bien formadas indica también que no está pasando hambre: no hay nada que corregir en abonado."
+        ],
+        "tratamiento": [
+          "Preventivo, esta semana: mira si la maceta de cuadros tiene agujero de drenaje. Si no lo tiene, deja la planta en su maceta de plástico y usa la cerámica como funda.",
+          "Riego: unos 200 ml cuando los 2 cm de arriba estén secos, en la práctica cada 7 días en agosto. Riega en el fregadero y deja escurrir 10 minutos antes de devolverla a la estantería.",
+          "Preventivo, cada mes o dos: pasa un paño húmedo a las hojas. Quitan polvo y ganan luz, que es el recurso que le falta ahí.",
+          "Gírala un cuarto de vuelta cada 2 o 3 riegos: en un hueco de estantería la luz le entra por un solo lado.",
+          "Abono general de interior a media dosis una vez al mes, de abril a octubre. En invierno, nada.",
+          "Si en unos meses la ves perder variegación, acércala al ventanal: no la abones más ni le cambies el sustrato."
+        ],
+        "revisar_en": "3 meses: compara una hoja nueva con una de las de ahora. Si la nueva sale claramente más verde y con menos amarillo, o notablemente más pequeña, es falta de luz y hay que acercarla al ventanal. Revisa antes, al primer riego, si el cachepot tiene drenaje.",
+        "no_visible_en_foto": [
+          "Si la maceta cerámica tiene agujero de drenaje. Es la comprobación más importante de esta planta y no se ve en la foto.",
+          "El estado de las raíces y el olor del sustrato, que es lo que diría si hay podredumbre empezando.",
+          "El envés de las hojas y las axilas: no se puede descartar cochinilla algodonosa.",
+          "Cuánta luz llega realmente a esa estantería. La foto está tomada en penumbra y no permite estimarlo; se resolvería con una foto de día a la misma hora que le dé el máximo de claridad.",
+          "El cultivar. La variegación amarilla jaspeada es la del poto dorado clásico, pero los cultivares del comercio ('Golden Pothos', 'Marble Queen' y otros) se solapan y POWO no cataloga cultivares comerciales. La planta no trae etiqueta."
+        ]
+      },
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/87014-1",
+          "consultado": "2026-08-11",
+          "nota": "Registro abierto: Epipremnum aureum (Linden ex André) G.S.Bunting, Araceae, Ann. Missouri Bot. Gard. 50(1): 28 (1964). Sinónimos antiguos muy usados en internet: Pothos aureus, Scindapsus aureus, Rhaphidophora aurea. Aviso de nomenclatura útil: en horticultura también se cataloga como Epipremnum pinnatum 'Aureum' —RHS mantiene fichas separadas para las dos formas—, así que si Carlos busca fuera de esta web encontrará los dos nombres."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:87014-1",
+          "consultado": "2026-08-11",
+          "nota": "Ficha de POWO localizada para Epipremnum aureum (Linden & André) G.S.Bunting. POWO devuelve 403 a peticiones automáticas y no he podido abrirla; nombre y familia comprobados en IPNI (Kew)."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/87014-1",
+          "consultado": "2026-08-11"
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: \"riega solo cuando el sustrato se esté acercando a la sequedad, compruébalo antes con el dedo\"; evitar el riego excesivo, que causa podredumbre de raíz; dejar secar los 2 cm superiores entre riegos. Los 200 ml y los días son traducción a esta maceta y a Móstoles."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: luz indirecta brillante, ventana al este o al oeste; tolera algo de sombra creciendo más despacio; con poca luz \"el follaje pierde la variegación y el crecimiento es pobre\"."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: a diferencia de muchas tropicales de interior, los potos no requieren humedad alta y se adaptan a las condiciones normales de una casa. Por eso `hr_objetivo_pct` va en null: no hay un objetivo que perseguir, no es un dato que falte."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: mantener las plantas entre 18 y 30 °C, evitando corrientes frías y alejándolas de fuentes directas de calor."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: sustrato sin turba con base de tierra franca, en luz plena o filtrada. La perlita es criterio propio."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: abonar una vez al mes durante la temporada de crecimiento, de abril a octubre, con fertilizante general de plantas de interior."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: cambiar de maceta cada dos o tres años a una talla mayor cuando las raíces estén apretadas o salgan por los agujeros; poda cortando el tallo justo por encima de una hoja para que brote de la yema y ramifique."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS: la podredumbre de raíz por exceso de riego es el problema principal; por lo demás lo describe como muy fácil de cultivar y libre de problemas. La vigilancia de cochinilla algodonosa es criterio propio de mantenimiento, no una plaga que RHS destaque para esta planta."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/golden-pothos",
+          "consultado": "2026-08-11",
+          "nota": "Entrada de especie, la mejor coincidencia de todas las fichas: Epipremnum aureum (Golden Pothos, Devil's Ivy, Taro Vine, Ivy Arum), Araceae, tóxica para perros y gatos; oxalatos de calcio insolubles; irritación oral, quemazón de boca, lengua y labios, salivación, vómitos y dificultad para tragar."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-11",
+          "nota": "RHS confirma en la misma dirección: como muchas aráceas es tóxica, recomienda guantes para manipularla y mantenerla lejos de niños y mascotas."
+        },
+        {
+          "campo": "historia",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos no ha contado de dónde vino. Esta planta no trae etiqueta de vivero, así que ni siquiera hay procedencia comercial documentada: es de las que más probablemente venga de un esqueje o de un regalo, pero eso hay que preguntárselo, no deducirlo."
+        },
+        {
+          "campo": "notas_carlos",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Pendiente de preguntar a Carlos."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Diagnóstico sobre la foto del 2026-08-11, tomada en penumbra, con recorte ampliado del follaje para valorar variegación y turgencia."
+        }
+      ]
+    }
+  ]
+}
