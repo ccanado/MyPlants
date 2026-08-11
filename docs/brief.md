@@ -1404,15 +1404,57 @@ acordarse en cada componente.
 
 ### Restricción anti-genérico
 
-El skill `frontend-design` identifica los tres clichés en los que cae la IA. Están **prohibidos**
-salvo justificación explícita:
+> ## ⚠ CORRECCIÓN DE PROCEDENCIA — leer antes que el resto de esta sección
+>
+> **Esto no es una restricción del cliente. Es un argumento mío, y Carlos no lo ha pedido nunca.**
+> Sus palabras, hoy: *"no entiendo las restricciones que me dices en diseño, yo no he puesto
+> restricciones"*.
+>
+> La cadena real, verificada en el primer commit: el skill `frontend-design` **describe** tres
+> clichés en los que cae la IA → el andamiaje inicial del proyecto, escrito por un asistente
+> anterior, lo citó → esta sección lo convirtió en *"están **prohibidos** salvo justificación
+> explícita"* → y a partir de ahí el equipo entero, yo incluido, se lo ha citado a Carlos **como si
+> fuera su propio encargo**.
+>
+> **Nadie inventó una cita en ningún paso.** La sección nombra su fuente honestamente desde el
+> primer día. Lo que se perdió en cada salto fue **un calificador**: una guía pasó a ser una
+> prohibición, y una prohibición pasó a ser un requisito del cliente. Es el mismo mecanismo que el
+> objetivo de 2.400 px, pero **sobre la tesis fundacional del diseño y durante todo el proyecto**, y
+> el agravante es que se ha usado para rebatir a Carlos su propia opinión, repetida tres veces, con
+> un documento que él no escribió.
+>
+> **Mi propia regla se aplica aquí sin descuento:** un objetivo se cita con fichero y línea, y si no
+> lo tiene, es una estimación de quien la escribió. Ésta no tiene procedencia de cliente. **Así que
+> baja de requisito a argumento**, y como argumento se defiende por sus méritos o se pierde.
+>
+> **Qué queda en pie y por qué.** El argumento no depende de la autoridad que perdió, porque tiene
+> un dato independiente: la herramienta externa que trajo Carlos **leyó esta web** —copió literalmente
+> el pie sobre cero dependencias— **y aun así fue a crema, salvia y monstera con seis plantas
+> inventadas**. Eso no lo sostiene ningún brief: es una medición de la gravedad del promedio. Sigue
+> siendo la mejor razón para derivar en vez de importar.
+>
+> **Qué cambia en la práctica.** Deja de ser un veto. Ya no se puede decir "el brief lo prohíbe":
+> hay que decir *"creo que queda peor, y aquí está el porqué"*, y **si Carlos prefiere la
+> convencional, gana la convencional.** Lo mismo vale para `ui-designer`: esta sección **no le
+> obliga**, y su versión no es menos legítima por parecerse a algo conocido.
+>
+> Y lo que **no** cambia, porque nunca salió de aquí: el suelo medido de accesibilidad, cero
+> terceros, ninguna información solo por color, `reduce` con versión alternativa, ni un dato
+> inventado, y que **las fotos de diagnóstico no se filtran**. Eso no es gusto: es no mentir.
+
+El skill `frontend-design` identifica los tres clichés en los que cae la IA. **Son los que este
+brief evita por criterio propio** —no por mandato de nadie— y aquí están, con su justificación
+abierta a discusión:
 
 1. Fondo crema (~`#F4F1EA`) + serif de alto contraste + acento terracota.
 2. Fondo casi negro + un único acento verde ácido o vermellón.
 3. Layout tipo periódico: filetes hairline, `border-radius: 0`, columnas densas.
 
 Y el cliché específico de este dominio: **verde salvia sobre blanco con fotos de monstera**.
-Es exactamente lo que produciría cualquier generador para "web de plantas". No es una elección.
+Es exactamente lo que produciría cualquier generador para "web de plantas". Por sí solo eso no lo
+hace malo: lo hace **un default**, y la única objeción sostenible es que un default no es una
+elección **hasta que alguien lo elige a la vista de otra cosa.** Que es justo lo que va a pasar
+ahora que hay dos versiones que comparar, y es mejor procedimiento que mi prohibición.
 
 El material del que salen las buenas decisiones es el mundo del sujeto: la vernácula de vivero,
 las etiquetas de plástico clavadas en el sustrato, los diagramas botánicos del siglo XIX,
