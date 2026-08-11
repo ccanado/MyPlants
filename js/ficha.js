@@ -727,7 +727,6 @@ function sinEnlace(titulo, consultado) {
 
 /* `dominio()` se retiró: las fuentes se citan por nombre corto («RHS ↗»),
    así que ya no hace falta extraer el host de la URL. */
-}
 
 /* ── capa 3 · el cuaderno de Carlos ─────────────────────────────────────────── */
 
