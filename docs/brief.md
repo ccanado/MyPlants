@@ -2337,6 +2337,48 @@ sanas volvería a hacer que la información dependa del color, que es la línea 
 - **Decorar el expediente.** Está lleno y es lo mejor que tiene el proyecto.
 - **Información solo por color**, el suelo medido de accesibilidad, y cero terceros.
 
+### El eje de la franja lo decide el `tipo` de tarea, no yo
+
+`builder` levanta que **cinco de las seis entradas de hoy son «Abonar»** —agosto cae en la ventana
+de temporada de cinco plantas— y pregunta si agrupar por tarea en vez de por planta. Es mi decisión y
+la respuesta no es ninguno de los dos ejes: **es que el eje lo decide el `tipo`, que `botanist` ya
+tiene escrito.**
+
+Los cinco «Abonar» son `tipo: temporada`, y una ventana de temporada **no es una tarea del día**:
+está abierta semanas. Y yo mismo escribí dos párrafos antes que la franja muestra **solo lo de hoy**,
+*"lo que no vence hoy no aparece — eso es lo que mantiene la lista corta por definición"*. Así que la
+lista actual enseña más de lo que mi propia especificación permite, y no por error de `builder`: el
+rótulo sale del horizonte de la tarea, y `ESTE MES` es un horizonte honesto que no es hoy.
+
+| `tipo` | ¿entra en el parte del día? | eje |
+| --- | --- | --- |
+| `vencida` | **sí** — va tarde, es el problema de hoy | por planta |
+| `fecha` | **sí** cuando la fecha es hoy | por planta |
+| `ritmo` | **sí** cuando toca | por planta |
+| `condicionada` | **sí** si la condición se puede comprobar hoy | por planta |
+| `temporada` | **no como línea propia** | **por tarea, una sola línea** |
+
+**Por planta lo del día; por tarea la ventana del mes.** Y el motivo por el que el eje cambia es el
+que cambia el eje: en una tarea de hoy lo compartido es la planta —vas a ella y haces lo que pida—;
+en una ventana de temporada lo compartido es **la tarea y el mes**, y lo que de verdad se hace es
+sacar el abono una vez y pasar por las cinco. El eje sigue al dato, no a mi gusto.
+
+Así que las cinco líneas de temporada se convierten en **una** al pie de la franja, con las plantas
+nombradas y sin plegar: *«Este mes: abonar — coleo grande, coleo pequeño, ficus, poto, begonia»*. La
+lista del día queda en las tres que de verdad piden algo hoy —begonia que va tarde, helecho y poto—
+y **deja de estar diluida por cinco avisos idénticos de algo que se puede hacer cualquier día de
+agosto.**
+
+Es la cuarta vez hoy que la respuesta al mismo problema es la misma: **no dejes que el contenedor
+adivine de qué clase es su contenido; deja que la clase escrita en el dato decida la forma.** Con
+`tipo` en los ítems del diagnóstico, con el rótulo del `patron`, con la banda y el tope del diagrama
+térmico, y ahora con el eje de la franja.
+
+**Y lo que no se toca:** el techo del dominio se cumple con margen —seis de siete plantas tienen algo
+hoy y caben en seis entradas—, y el estirador no es el número de tareas sino los títulos largos de
+`botanist` (85 caracteres el del sol directo del helecho). **Eso envuelve y está bien: un título que
+envuelve se lee, uno truncado miente.** No se recorta.
+
 ## Fases
 
 | Fase | Qué | Quién |
