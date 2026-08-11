@@ -13,10 +13,11 @@
  * y el brief exige que no lo parezcan.
  */
 
-import { FOTO, FOTO_ETIQUETA } from "./datos.js";
+import { FOTO, FOTO_ETIQUETA, slug } from "./datos.js";
 import { humanizar, normalizar } from "./filtros.js";
 import { iconoDe, iconoDificultad } from "./iconos.js";
 import { siluetaDe } from "./siluetas.js";
+import { diaDeHoy, tareasDePlanta } from "./tareas.js";
 import {
   diagramaLuz,
   diagramaRecuperacion,
@@ -28,6 +29,16 @@ const tpl = (id) => document.getElementById(id);
 const TPL_FICHA = tpl("tpl-ficha");
 const TPL_CAMPO = tpl("tpl-campo-diagrama");
 const TPL_DATO = tpl("tpl-dato");
+const TPL_TAREA = tpl("tpl-tarea-ficha");
+
+/**
+ * El «hoy» con el que se calculan los plazos de la ficha. Lo fija `app.js` con
+ * el mismo valor que usa la franja: dos partes de la misma pantalla no pueden
+ * discrepar sobre qué día es. Si nadie lo fija, se calcula aquí — así el módulo
+ * sigue funcionando solo, pero el camino normal es el compartido.
+ */
+let HOY = diaDeHoy();
+export function fijarHoy(hoy) { if (hoy) HOY = hoy; }
 
 const SIN_DATO = "Sin dato";
 
@@ -39,6 +50,30 @@ const CON_DIAGRAMA = [
   ["luz", (p) => diagramaLuz(p.medidas.luz)],
   ["temperatura", (p) => diagramaTemperatura(p.medidas.temperatura)],
 ];
+
+/**
+ * EL RESUMEN DUPLICADO, y cuál de los dos sobra.
+ *
+ * El brief lo dice exacto: *«el resumen existe para la rejilla cerrada, donde es
+ * lo único que hay. Hoy se pinta dos veces la misma frase en la misma pantalla»*.
+ * Y las dos veces son estas, que es lo que hay que ver para no equivocarse de
+ * bulto:
+ *
+ *   1. `.resumen__valor` — en la CARA de la pegatina, a --texto-m. Es el resumen
+ *      de la rejilla cerrada, y la cara sigue ahí cuando la ficha se abre.
+ *   2. `.campo__resumen` — dentro del expediente, a --texto-s, encima de su
+ *      diagrama y su «Más detalle».
+ *
+ * Es **la misma cadena** (`cuidado.resumen`) pintada dos veces, una debajo de la
+ * otra, en la misma pantalla. El duplicado NO es «resumen contra diagrama»: si lo
+ * fuera, suprimirlo sí perdería contenido, porque el dial de riego no dice «saca
+ * la maceta del cachepot» ni la escala de luz dice «sepárala del cristal».
+ *
+ * Así que el que sobra es el 2, y solo en los tres campos que están en la cara:
+ * el 1 se queda intacto, más grande y más arriba, con la frase entera. No se
+ * pierde ni una palabra — solo deja de estar dos veces.
+ */
+const RESUMEN_YA_ESTA_EN_LA_CARA = new Set(EN_LA_CARA);
 /** El resto de datos verificados, en el bloque de abajo. */
 const RESTO = ["humedad", "sustrato", "abonado", "trasplante"];
 
@@ -113,8 +148,13 @@ export function fichaDe(planta) {
   bloqueFoto(q, planta);
   bloqueProcedencia(q, planta);
   camposConDiagrama(q, planta);
+  bloqueCalendario(q, planta);
   bloqueMasDatos(q, planta);
   bloqueCarlos(q, planta);
+  // El índice va al final: cuenta lo que los demás han dejado en el DOM, así que
+  // no puede adelantarse a ellos. Cuenta nodos pintados, no campos del JSON —
+  // un recuento que no cuadre con lo que hay debajo es peor que no ponerlo.
+  indiceDelExpediente(q, planta);
 
   return nodo;
 }
@@ -248,6 +288,11 @@ function bloqueEstado(q, planta) {
   const estado = planta.estado;
   if (!estado) {
     seccion.remove();
+    /* El tratamiento ya no vive dentro de `.estado` —está en la columna de
+       acción—, así que quitar la sección ya no se lo lleva por delante. Sin
+       estado no hay pasos, y un bloque «Qué hacer» vacío en la columna que
+       existe para decir qué hacer es lo peor que puede quedarse ahí. */
+    q(".estado__tratamiento")?.remove();
     return;
   }
 
@@ -329,6 +374,169 @@ function bloqueEstado(q, planta) {
   const diagrama = diagramaRecuperacion(estado.pasos, rotuloPlazo);
   if (diagrama) q(".estado__diagrama").append(diagrama);
   else q(".estado__diagrama").remove();
+}
+
+/* ── el calendario de la planta ──────────────────────────────────────────────── */
+
+/**
+ * Las tareas de esta planta, todas, cada una dicha con las palabras que su tipo
+ * permite. En la franja solo entran las que se pueden afirmar hoy; aquí entran
+ * las cinco clases, porque la ficha es donde se hacen y donde caben los matices:
+ *
+ *   - El riego lleva su **comprobación**, no una fecha, y dice `sin registrar`
+ *     en el hueco donde iría la última vez. La ausencia se dice como ausencia,
+ *     igual que un campo botánico sin verificar: la página no cambia de estándar
+ *     de honestidad porque el dato sea de uso en vez de botánico.
+ *   - Las condicionadas llevan la **condición delante**, en forma de
+ *     comprobación, y nunca «toca este mes».
+ */
+function bloqueCalendario(q, planta) {
+  const seccion = q(".calendario");
+  if (!seccion) return;
+  const tareas = tareasDePlanta(planta, HOY);
+  if (tareas.length === 0) {
+    seccion.remove();
+    return;
+  }
+  seccion.hidden = false;
+  const lista = seccion.querySelector(".calendario__lista");
+
+  for (const t of tareas) {
+    const nodo = TPL_TAREA.content.cloneNode(true);
+    const li = nodo.querySelector(".tarea");
+    li.dataset.tono = t.tono;
+    if (t.tarea.tipo) li.dataset.tipo = t.tarea.tipo;
+
+    const rotulo = nodo.querySelector(".tarea__rotulo");
+    if (t.rotulo) {
+      rotulo.hidden = false;
+      rotulo.textContent = t.rotulo;
+    } else {
+      rotulo.remove();
+    }
+
+    nodo.querySelector(".tarea__titulo").textContent = t.tarea.titulo;
+
+    const cuando = nodo.querySelector(".tarea__cuando");
+    const trozos = [t.cuando];
+    /* «Última vez: sin registrar». No es un hueco que tapar: es el dato que
+       impide convertir el ritmo en un vencimiento, y por tanto la razón de que
+       aquí no haya una cuenta atrás. Se dice, y se dice en su gris. */
+    if (t.sinRegistro && !t.tarea.ultimo) trozos.push("última vez: sin registrar");
+    if (trozos.filter(Boolean).length > 0) {
+      cuando.textContent = trozos.filter(Boolean).join(" · ");
+      if (t.sinRegistro && !t.tarea.ultimo) cuando.classList.add("tarea__cuando--sin-dato");
+    } else {
+      cuando.remove();
+    }
+
+    const nota = nodo.querySelector(".tarea__nota");
+    if (t.nota) {
+      nota.hidden = false;
+      /* El rótulo distingue las dos cosas que pueden ocupar esta línea, y no son
+         lo mismo: una condición es un requisito que hay que cumplir antes, y una
+         comprobación es algo que hay que mirar. Sin rótulo, «comprobar que los 2
+         cm de arriba están secos» se leería como una condición de calendario. */
+      nodo.querySelector(".tarea__nota-rotulo").textContent =
+        t.tarea.tipo === "ritmo" ? "Comprobar" : "Solo si";
+      nodo.querySelector(".tarea__nota-texto").textContent = t.nota;
+    } else {
+      nota.remove();
+    }
+
+    lista.append(nodo);
+  }
+}
+
+/* ── el índice del expediente ───────────────────────────────────────────────── */
+
+/**
+ * El índice con recuento de la columna de acción.
+ *
+ * Dos decisiones que lo gobiernan y no son de maquetación:
+ *
+ *  1. **No está para esconder, está para entrar.** Nada se pliega detrás de él:
+ *     las cuatro secciones que enumera siguen enteras y abiertas en la otra
+ *     columna. Con dos columnas y un índice, esconder además sería cobrar dos
+ *     veces por la misma decisión.
+ *  2. **El recuento se cuenta del DOM, no del JSON.** «Lo que se ve · 13» es una
+ *     afirmación sobre lo que hay debajo, y si se contara del JSON bastaría con
+ *     que un `filter()` del render descartara un elemento para que el número
+ *     mintiera. Se cuenta lo pintado, así que no puede desalinearse.
+ *
+ * Y si una sección no existe en esta planta, no sale del índice con un 0: sale
+ * fuera. Un índice de siete líneas con cuatro ceros no informa, decora.
+ */
+const SECCIONES_INDICE = [
+  { rotulo: "Lo que se ve", bloque: ".estado__bloque--senales", item: ".estado__item" },
+  { rotulo: "Causas probables", bloque: ".estado__bloque--causas", item: ".estado__item" },
+  { rotulo: "Lo que la foto no dice", bloque: ".estado__bloque--limites", item: ".estado__item" },
+  /* Las fuentes van repartidas por campo a propósito —son contenido, no letra
+     pequeña—, así que no hay un bloque «Fuentes» al que apuntar. Se cuentan las
+     citas realmente pintadas en TODA la ficha (`enToda`) y se entra por «Más
+     datos», que es donde está la mayoría y donde vive el grupo de las que no
+     cuelgan de ningún campo. El número es el que se puede contar en pantalla. */
+  { rotulo: "Fuentes", bloque: ".mas-datos", item: ".fuente", enToda: true },
+];
+
+function indiceDelExpediente(q, planta) {
+  const indice = q(".indice");
+  if (!indice) return;
+  const lista = indice.querySelector(".indice__lista");
+  const raiz = q(".expediente");
+  if (!lista || !raiz) return;
+
+  let puestas = 0;
+
+  for (const seccion of SECCIONES_INDICE) {
+    const bloque = raiz.querySelector(seccion.bloque);
+    if (!bloque) continue;
+
+    const donde = seccion.enToda ? raiz : bloque;
+    const cuenta = donde.querySelectorAll(seccion.item).length;
+    if (cuenta === 0) continue;
+
+    // El ancla se pone aquí y no en la plantilla: hay siete fichas en la página
+    // y un id repetido hace que los siete enlaces salten a la primera.
+    const id = `${planta.id}-${slug(seccion.rotulo)}`;
+    bloque.id = id;
+
+    const li = document.createElement("li");
+    li.className = "indice__item";
+
+    const a = document.createElement("a");
+    a.className = "indice__enlace";
+    a.href = `#${id}`;
+
+    const texto = document.createElement("span");
+    texto.className = "indice__texto";
+    texto.textContent = seccion.rotulo;
+
+    /* El número va en su propio elemento y NO es aria-hidden: «13» es la mitad
+       del mensaje —dice que el diagnóstico está trabajado antes de leerlo— y
+       ocultárselo a un lector de pantalla sería quitarle justo el dato. */
+    const num = document.createElement("span");
+    num.className = "indice__cuenta";
+    num.textContent = String(cuenta);
+
+    a.append(texto, num);
+    li.append(a);
+    lista.append(li);
+    puestas += 1;
+  }
+
+  if (puestas === 0) {
+    indice.remove();
+    return;
+  }
+  indice.hidden = false;
+
+  /* Siete índices en la misma página son siete <nav>, y un <nav> sin nombre
+     entre varios no se distingue de sus hermanos: un lector de pantalla que
+     liste las regiones oiría «navegación» siete veces. El rótulo visible dice
+     «En el expediente» en las siete, así que el nombre accesible tiene que
+     llevar además de qué planta es. Lo cazó `tests/runner.py`, no una lectura. */
+  indice.setAttribute("aria-label", `En el expediente de ${planta.nombre_comun}`);
 }
 
 /**
@@ -533,7 +741,11 @@ function campoDe(cuidado, diagrama, fuente) {
   if (icono) clave.prepend(icono);
 
   const resumen = nodo.querySelector(".campo__resumen");
-  if (cuidado.resumen) {
+  if (cuidado.resumen && RESUMEN_YA_ESTA_EN_LA_CARA.has(cuidado.clave)) {
+    /* Ya está impreso en la cara de la pegatina, más grande y unos centímetros
+       más arriba en la misma pantalla. Aquí solo sería la segunda vez. */
+    resumen.remove();
+  } else if (cuidado.resumen) {
     resumen.textContent = cuidado.resumen;
   } else {
     resumen.textContent = SIN_DATO;

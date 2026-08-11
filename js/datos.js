@@ -62,6 +62,13 @@ export async function cargarPlantas(url = "./content/plantas.json") {
   if (!Array.isArray(crudas)) {
     throw new Error("Formato inesperado en plantas.json: se esperaba un array de plantas");
   }
+  /* Se llama AQUÍ, y hay que decir por qué costó encontrarlo: la función estaba
+     escrita y no la invocaba nadie. O sea que el detector puesto para cazar
+     «botanist cambia la forma de un campo y el render se come un trozo de
+     interfaz en silencio» era, él mismo, código muerto — la trampa exacta que
+     existía para evitar, una capa más arriba. */
+  avisarDeCamposAusentes(crudas);
+
   // `meta` trae el vivero y su dirección: la microlínea de la pegatina sale de
   // ahí y no de una constante escrita a mano en el render.
   return { plantas: crudas.map(normalizarPlanta), meta: objeto(datos?.meta) };
@@ -74,7 +81,7 @@ export async function cargarPlantas(url = "./content/plantas.json") {
  * página parece correcta. Un `console.warn` con el id de la planta y el nombre
  * del campo cuesta cinco líneas y ahorra una tarde de búsqueda.
  */
-const CAMPOS_ESPERADOS = ["id", "nombre_comun", "foto", "alt", "riego", "luz", "temperatura", "estados", "fuentes"];
+const CAMPOS_ESPERADOS = ["id", "nombre_comun", "foto", "alt", "riego", "luz", "temperatura", "estados", "fuentes", "tareas"];
 
 function avisarDeCamposAusentes(crudas) {
   const faltas = [];
@@ -311,6 +318,52 @@ function objeto(v) {
   return v != null && typeof v === "object" && !Array.isArray(v) ? v : {};
 }
 
+/**
+ * Las tareas del calendario. `tipo` es un conjunto cerrado que mantiene
+ * `botanist` (`meta.escalas.tareas`) y dice CÓMO se calcula cada una, que es lo
+ * que evita afirmar lo que no se sabe. Aquí no se decide nada: solo se aplana a
+ * una forma estable y se le engancha al riego su `disparador`, que vive en
+ * `p.riego` y no en la propia tarea.
+ *
+ * Lo único que este normalizador hace de suyo es descartar las tareas sin
+ * `titulo` y sin `tipo`: sin una de las dos no hay nada que pintar, y una fila
+ * vacía en el calendario se lee como una tarea que nadie sabe cuál es.
+ */
+function normalizarTareas(p) {
+  const riego = objeto(p.riego);
+  return lista(p.tareas)
+    .map((t) => {
+      const o = objeto(t);
+      const tipo = texto(o.tipo);
+      return {
+        id: texto(o.id),
+        titulo: texto(o.titulo),
+        tipo,
+        fecha: texto(o.fecha),
+        desde: texto(o.desde),
+        meses: Array.isArray(o.meses) ? o.meses : null,
+        condicion: texto(o.condicion),
+        prioridad: o.prioridad ?? null,
+        dias_verano: o.dias_verano ?? null,
+        dias_invierno: o.dias_invierno ?? null,
+        /* `calculable: false` significa que la web NO debe decir «hoy toca»
+           porque falta el dato de origen, y `por_que_no` explica por qué. Se
+           conserva el texto: es la razón de un hueco, y en este proyecto las
+           razones de los huecos son contenido. */
+        calculable: o.calculable ?? null,
+        por_que_no: texto(o.por_que_no),
+        ancla: texto(o.ancla),
+        ancla_tipo: texto(o.ancla_tipo),
+        /* El disparador del riego cuelga de `riego`, no de la tarea. Se copia
+           aquí para que quien pinte la tarea no tenga que ir a buscarlo a otro
+           sitio del objeto — es lo que ocupa la casilla de la cuenta atrás. */
+        disparador: tipo === "ritmo" ? texto(riego.disparador) : null,
+        ultimo: tipo === "ritmo" ? texto(riego.ultimo) : null,
+      };
+    })
+    .filter((t) => t.titulo && t.tipo);
+}
+
 function normalizarToxicidad(t) {
   if (t == null) return { gatos: null, perros: null, nivel: null, texto: null, detalle: null, verificado: false };
   if (typeof t === "string") return { gatos: null, perros: null, nivel: null, texto: t.trim(), detalle: null, verificado: true };
@@ -395,6 +448,7 @@ function normalizarPlanta(p) {
     procedencia_nota: texto(p.procedencia_nota ?? p.origen),
     vivero: normalizarVivero(p),
     medidas: normalizarMedidas(p),
+    tareas: normalizarTareas(p),
     estado: (() => {
       const e = normalizarEstado(estadoVigente(p));
       if (e) {

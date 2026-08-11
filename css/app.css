@@ -71,11 +71,18 @@
      ponga un enlace en el pie o la cabecera. Ahí va --texto-fuente-sobre-maceta. */
   .etiqueta a,
   .cuaderno a,
-  .prueba a { color: var(--texto-fuente); }
+  .prueba a,
+  /* La franja NO está sobre la teja: tiene fondo de etiqueta blanca propio, así
+     que sus enlaces van en el azul normal. Estaba en la lista de abajo y al
+     meterle enlaces de verdad salió --color-etiqueta sobre --color-etiqueta:
+     **blanco sobre blanco, texto invisible**. Es la trampa que la matriz de
+     validez por superficie de tokens.css describe entera — el token estaba bien
+     medido, contra OTRO fondo. Lo cazó el runner; leyendo el CSS parecía
+     correcto, porque «franja» sonaba a algo que va sobre el fondo. */
+  .parte a { color: var(--texto-fuente); }
 
   .cabecera a,
-  .pie a,
-  .parte a { color: var(--texto-fuente-sobre-maceta); }
+  .pie a { color: var(--texto-fuente-sobre-maceta); }
 
   em { font-style: italic; }
 
@@ -216,8 +223,8 @@
   .parte {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3) var(--space-4);
+    align-items: start;
+    gap: var(--space-3) var(--space-5);
     background: var(--fondo-ficha);
     color: var(--texto-principal);
     border-radius: var(--radio-troquel);
@@ -228,20 +235,102 @@
     margin-inline: auto;
   }
 
+  .parte__cabeza { display: grid; gap: var(--space-1); }
+
   .parte__titulo {
     font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-xl);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+  }
+
+  /* La fecha va en mono: es un dato del navegador, no un titular. */
+  .parte__fecha {
+    font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
     letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
     color: var(--texto-meta);
   }
 
+  /* El cuerpo se lleva el hueco que sobra: es lo que cambia y lo que se lee. */
+  .parte__cuerpo {
+    flex: 1 1 var(--medida-corta);
+    display: grid;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
   .parte__resumen {
     font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-xl);
-    line-height: var(--interlinea-apretada);
+    font-size: var(--texto-m);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-nombre);
+    letter-spacing: var(--tracking-caja-alta);
+    color: var(--texto-meta);
+  }
+
+  /* ── las dos tareas de la franja ────────────────────────────────────────── */
+
+  .parte__tareas { display: grid; gap: var(--space-2); }
+
+  .tarea-hoy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+    font-size: var(--texto-s);
+  }
+
+  /* El nombre de la planta es el ancla de lectura: se busca primero. */
+  .tarea-hoy__planta {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    /* Diana de 24 px sin tocar el cuerpo tipográfico, que es una decisión de
+       diseño y no de ergonomía. */
+    min-block-size: var(--diana-min);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .tarea-hoy__titulo { text-wrap: pretty; }
+
+  .tarea-hoy__cuando {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
+  }
+
+  /* `VA TARDE` en aviso, NUNCA en rojo: el rojo es del helecho crítico y son dos
+     ejes independientes. Una planta que necesita trasplante no está en el mismo
+     apuro que una que se secó entera, y si las dos gritan igual, ninguna grita. */
+  .tarea-hoy__rotulo,
+  .tarea__rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    border-radius: var(--radio-chip);
+    padding: var(--space-1) var(--space-2);
+    background: var(--color-aviso-relleno);
+    color: var(--texto-sobre-aviso);
+    white-space: nowrap;
+  }
+
+  /* Las de fecha cumplida no compiten con la vencida: mismo sitio, sin relleno
+     de aviso. Es la misma economía que deja a las cuatro sanas sin insignia. */
+  .tarea-hoy[data-tono="hoy"] .tarea-hoy__rotulo,
+  .tarea[data-tono="hoy"] .tarea__rotulo {
+    background: var(--fondo-hundido);
+    color: var(--texto-principal);
+  }
+
+  .parte__resto {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
   }
 
   .parte__chips {
@@ -249,6 +338,7 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     margin-inline-start: auto;
+    align-self: center;
   }
 
   .chip__boton {
@@ -1171,24 +1261,408 @@
 
   /* ── container queries: el componente reacciona a SU hueco ──────────────── */
 
-  @container etiqueta (min-width: 34rem) {
-    .despegada {
-      grid-template-columns: minmax(min-content, 18rem) 1fr;
+  /* Container query y no media query: la etiqueta reacciona al hueco que le dan,
+     no al ancho de la ventana. Así funciona igual en la rejilla de dos columnas,
+     en la de cuatro y abierta a ancho completo, sin tocar nada. */
+  @container etiqueta (min-width: 52rem) {
+
+    /* ── EL EXPEDIENTE EN DOS COLUMNAS SEMÁNTICAS ─────────────────────────
+       2fr / 3fr. Y el reparto no es estético: la columna de acción lleva los
+       diagramas, que son gráficos con ancho propio, y la de consulta lleva la
+       prosa, que necesita su medida de lectura entera.
+
+       Esto resuelve DOS cosas que eran la misma: `qa-visual` midió la ficha del
+       helecho en 4.042 px con **600 px de ancho sin usar durante 2.208 px de
+       alto** — 1,3 millones de px² vacíos al lado de una columna de texto. La
+       altura y el hueco eran el mismo problema visto por dos lados, y ocupar la
+       mitad vacía es lo que parte la altura. */
+    .expediente {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: var(--space-5) var(--space-6);
       align-items: start;
     }
+
+    /* La columna de acción se queda a la vista mientras se lee el porqué.
+       El tope de alto y el `overflow` no son opcionales: sin ellos, en cuanto la
+       columna es más alta que la pantalla, `sticky` deja de pegar y además se
+       come el viewport entero. */
+    .expediente__accion {
+      position: sticky;
+      inset-block-start: var(--space-4);
+      max-block-size: calc(100dvh - var(--space-7));
+      overflow: auto;
+      /* Un panel con scroll propio necesita aire interior, o el texto queda
+         pegado a su propia barra. */
+      padding-inline-end: var(--space-2);
+    }
+
+    /* En la columna estrecha caben dos diagramas por fila. Apilados de uno en
+       uno la columna se iba a mil y pico píxeles y desequilibraba el reparto. */
+    .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+
+    .mas-datos__lista { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+
+    /* LAS DOS PRUEBAS, EN PARALELO.
+       La foto del diagnóstico y la foto de la pegatina del vivero son las dos
+       piezas documentales de esta columna, y apiladas sumaban 650 px de alto con
+       media columna vacía al lado de cada una. Puestas en paralelo ocupan lo que
+       ocupa la más alta, y de paso se leen como lo que son: la prueba de qué le
+       pasa y la prueba de de dónde viene.
+
+       El ancho de la foto lo fija la fracción de la rejilla, no un `max-width`
+       nuevo: así su alto sale del `aspect-ratio` sin que haga falta inventarse
+       una medida que no está en los tokens. */
+    .expediente__base {
+      grid-template-columns: 2fr 3fr;
+    }
+
+    .expediente__rotulo,
     .estado,
     .mas-datos,
     .cuaderno { grid-column: 1 / -1; }
 
-    /* La foto y su prueba documental en la columna estrecha; los cuidados en la
-       ancha. Sin esto queda un hueco muerto grande bajo la foto. */
-    .cuidados { grid-column: 2; }
     .foto { grid-column: 1; }
-    .prueba { grid-column: 1; }
+    .prueba { grid-column: 2; }
 
-    .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+    /* La foto ya no la acota `--medida-corta` sino su celda, que es más
+       estrecha; sin esto se quedaría en 42ch y dejaría el hueco de antes. */
+    .foto { max-width: 100%; }
+  }
 
-    .mas-datos__lista { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  /* Por debajo de 52rem se apila en una sola columna y ACCIÓN queda arriba, que
+     es lo que ya hace el orden del DOM sin ayuda de nadie. Lo único que hace
+     falta es no dejar el `sticky` puesto: pegado en una sola columna taparía
+     justo lo que hay que leer debajo. */
+  .expediente {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .expediente__accion,
+  .expediente__base {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+    /* `min-width: 0` contra el `auto` implícito de los hijos de grid: sin esto
+       un diagrama o un código largo empujan la columna y desbordan a 320 px. */
+    min-width: 0;
+  }
+
+  /* Los dos rótulos de columna son el encabezado del expediente, y tienen que
+     leerse como rótulos de archivador, no como títulos de sección cualquiera. */
+  .expediente__rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+    padding-block-end: var(--space-2);
+    border-block-end: var(--trazo-fino) solid var(--color-separador);
+  }
+
+  /* ── la cronología: décadas, semanas y horas en el mismo salón ──────────── */
+
+  .cronologia {
+    display: grid;
+    gap: var(--space-3);
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    border: var(--trazo-fino) solid var(--color-troquel);
+    border-radius: var(--radio-troquel);
+    box-shadow: var(--sombra-pegatina);
+    padding: var(--relleno-ficha);
+    margin-block-end: var(--space-5);
+  }
+
+  .cronologia__titulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  /* La nota no es letra pequeña de descargo: explica cómo se lee el eje, y sin
+     ella el gráfico invita a leer las distancias como si fueran lineales. */
+  .cronologia__nota {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    max-width: var(--medida);
+    text-wrap: pretty;
+  }
+
+  /* LA REJILLA DEL GRÁFICO, y `subgrid` es lo que la hace posible sin JS.
+     Las tres columnas se declaran UNA vez aquí; la lista, cada fila, cada botón
+     y el eje las heredan. Sin subgrid, cada fila calculaba sus propias columnas
+     —«74 días (2 meses)» es más ancho que «llegó hoy»— y las pistas terminaban
+     en sitios distintos, con lo que el eje de abajo rotulaba una posición que en
+     la mitad de las filas no era esa. */
+  .cronologia__grafico {
+    display: grid;
+    grid-template-columns: minmax(6rem, auto) minmax(0, 1fr) minmax(5rem, auto);
+    column-gap: var(--space-3);
+  }
+
+  .cronologia__lista,
+  .cronologia__fila,
+  .cronologia__marca {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+
+  /* Una fila por planta: así los cuatro marcadores del día 0 no se apilan unos
+     encima de otros en el origen del eje. */
+  .cronologia__marca {
+    align-items: center;
+    width: 100%;
+    min-block-size: var(--diana-min);
+    padding-block: var(--space-1);
+    background: none;
+    border: 0;
+    text-align: start;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+
+    &:hover .cronologia__nombre { text-decoration: underline; }
+  }
+
+  .cronologia__nombre {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+  }
+
+  /* La pista es el eje: una línea fina de borde de control, porque sin ella no
+     se entiende el gráfico y 1.4.11 habla de «graphical objects required to
+     understand the content», no solo de controles. */
+  .cronologia__pista {
+    position: relative;
+    display: block;
+    block-size: var(--diana-min);
+    border-block-end: var(--trazo-fino) solid var(--color-borde-control);
+  }
+
+  /* El punto es un pseudo-elemento a propósito: es la posición del dato, no el
+     dato — que va en texto en `.cronologia__valor`, al lado. Así no hay ningún
+     nodo pequeño con fondo y sin texto que pueda leerse como un «punto de color»
+     que codifica un estado. */
+  .cronologia__pista[style]::before {
+    content: "";
+    position: absolute;
+    inset-block-end: 0;
+    /* --x lo calcula js/cronologia.js. El translate centra el punto en su
+       coordenada en vez de colgarlo a la derecha de ella, que en «10 años» se
+       nota. */
+    inset-inline-start: var(--x);
+    translate: -50% 50%;
+    inline-size: var(--space-3);
+    block-size: var(--space-3);
+    border-radius: var(--radio-punto);
+    background: var(--color-tinta);
+  }
+
+  /* El mínimo no es una medida: el poto lleva «más de 20 años» y eso es un suelo.
+     Se dibuja abierto hacia la derecha, igual que el rango térmico sin máximo
+     publicado — la misma gramática para el mismo tipo de incertidumbre. */
+  .cronologia__fila[data-certeza="minimo"] .cronologia__pista::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: var(--x);
+    inset-block-end: 0;
+    inline-size: var(--space-5);
+    border-block-start: var(--trazo-grueso) solid var(--color-tinta);
+    translate: 0 50%;
+  }
+
+  /* Sin dato de llegada: la planta NO se omite del censo —faltar en un censo de
+     siete es información falsa— y su pista va en la trama de ausencia. */
+  .cronologia__fila[data-certeza="sin"] .cronologia__pista {
+    background: var(--trama-sin-dato);
+    border-block-end-style: dashed;
+  }
+
+  .cronologia__valor {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
+    text-align: end;
+  }
+
+  .cronologia__fila[data-certeza="sin"] .cronologia__valor { color: var(--texto-sin-dato); }
+
+  /* El eje ocupa exactamente la columna de las pistas: si no cae debajo de lo
+     que rotula, no rotula nada. */
+  .cronologia__eje { grid-column: 2; }
+
+  /* La pista del eje es el contenedor de posicionamiento de los rótulos. Hace
+     falta de verdad: sin `position: relative` aquí, los tics absolutos se
+     resolvían contra el bloque contenedor inicial y aparecían pegados al borde
+     de arriba de la PÁGINA, encima de la cabecera. */
+  .cronologia__eje-pista {
+    position: relative;
+    display: block;
+    min-block-size: var(--space-6);
+  }
+
+  .cronologia__tic {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: var(--x);
+    /* Centrado sobre su coordenada… */
+    translate: -50% 0;
+    /* Lo que impide que el eje mienta: el rótulo, que es texto de verdad. */
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+    white-space: nowrap;
+    padding-block-start: var(--space-2);
+
+    /* …salvo el primero y el último, que se anclan por su extremo. Un rótulo
+       centrado en el 0 % o en el 100 % se sale del eje por la mitad de su ancho
+       —y «10 años» desbordaba la página a 1.280 px, lo cazó el runner—. La marca
+       en sí sigue en su coordenada exacta: la compensa el `::before`. */
+    &:first-child { translate: 0 0; }
+    &:last-child { translate: -100% 0; }
+
+    /* La marca del eje: 1px estructural, no un color ni un espaciado. Va donde
+       de verdad cae el valor, pase lo que pase con el rótulo. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-start: 50%;
+      inline-size: 1px;
+      block-size: var(--space-2);
+      background: var(--color-borde-control);
+    }
+
+    &:first-child::before { inset-inline-start: 0; }
+    &:last-child::before { inset-inline-start: 100%; }
+  }
+
+  /* ── el calendario de la ficha ──────────────────────────────────────────── */
+
+  .calendario {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .calendario__titulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .calendario__lista { display: grid; gap: var(--space-3); }
+
+  .tarea {
+    display: grid;
+    gap: var(--space-1);
+    justify-items: start;
+    padding-inline-start: var(--space-3);
+    border-inline-start: var(--trazo-grueso) solid var(--color-separador);
+  }
+
+  /* La única vencida lleva filete de aviso. Sin rojo, y sin invertir nada: la
+     inversión es solo para un distintivo, nunca para un contenedor de texto. */
+  .tarea[data-tono="tarde"] {
+    border-inline-start-color: var(--color-aviso);
+    background: var(--color-aviso-relleno);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radio-chip);
+  }
+
+  .tarea__titulo { font-size: var(--texto-s); text-wrap: pretty; }
+
+  .tarea__cuando {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
+  }
+
+  /* «sin registrar» va en el gris de ausencia de dato, igual que un campo
+     botánico sin verificar. El estándar de honestidad no cambia porque el dato
+     sea de uso en vez de de fuente. */
+  .tarea__cuando--sin-dato { color: var(--texto-sin-dato); }
+
+  .tarea__nota {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    text-wrap: pretty;
+  }
+
+  /* El rótulo distingue una condición («solo si») de una comprobación
+     («comprobar»), que no son lo mismo y ocupan la misma línea. */
+  .tarea__nota-rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+
+    &::after { content: ": "; }
+  }
+
+  /* ── el índice con recuento ─────────────────────────────────────────────── */
+
+  .indice {
+    display: grid;
+    gap: var(--space-2);
+    padding-block-start: var(--space-3);
+    border-block-start: var(--trazo-fino) solid var(--color-separador);
+  }
+
+  .indice__rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .indice__lista { display: grid; gap: var(--espacio-diana); }
+
+  /* La línea de puntos entre rótulo y número es de índice de expediente, y se
+     hace con un `border-block-end` sobre un hueco flexible: cero pseudo-elemento
+     con doscientos puntos escritos a mano. */
+  .indice__enlace {
+    display: flex;
+    align-items: end;
+    gap: var(--space-2);
+    min-block-size: var(--diana-min);
+    font-size: var(--texto-s);
+    color: var(--texto-principal);
+    text-decoration: none;
+
+    &::after {
+      content: "";
+      flex: 1 1 auto;
+      border-block-end: var(--trazo-fino) dotted var(--color-borde-control);
+      /* Baja el filete a la línea base del texto en vez de al centro del renglón. */
+      margin-block-end: var(--space-1);
+      order: 1;
+    }
+
+    &:hover .indice__texto { text-decoration: underline; }
+  }
+
+  .indice__texto { text-wrap: pretty; }
+
+  /* El número en mono y con peso: es un dato, y es la mitad del mensaje. */
+  .indice__cuenta {
+    order: 2;
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-medio);
+    font-variant-numeric: tabular-nums;
+    color: var(--texto-dato);
   }
 }
 

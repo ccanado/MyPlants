@@ -34,11 +34,33 @@
   </form>
 </header>
 
-<!-- Parte del día: cuántas piden mirada hoy. Se genera desde los datos; si no
-     hay ninguna tocada, se dice, que también es información. -->
+<!-- ══ HOY · el parte del día, con la fecha real del navegador ═══════════════
+     Se genera de `tareas[]` y de `new Date()`: cero servidor, cero persistencia.
+     Lo que NO es: una app de tareas. Sin notificaciones, sin rachas, sin
+     porcentaje de cumplimiento, sin felicitar a nadie por regar. Esta página se
+     abre con prisa una vez cada quince días.
+
+     Y una consecuencia de forma: LA FRANJA NO CRECE. Si un día hay siete
+     tareas, dice el número y las dos primeras; el resto están en sus fichas,
+     que es donde se hacen.
+     ═══════════════════════════════════════════════════════════════════════ -->
 <section class="parte" id="parte" aria-labelledby="parte-titulo" hidden>
-  <h2 class="parte__titulo" id="parte-titulo">Parte del día</h2>
-  <p class="parte__resumen" id="parte-resumen"></p>
+  <div class="parte__cabeza">
+    <h2 class="parte__titulo" id="parte-titulo">Hoy</h2>
+    <!-- La fecha la pone el navegador. Es el mejor argumento de que la página
+         sirve para algo: el contenido cambia solo, sin que nadie edite nada. -->
+    <p class="parte__fecha" id="parte-fecha"></p>
+  </div>
+
+  <!-- aria-live en el contenedor de lo que cambia, no en la sección entera:
+       al filtrar cambia el recuento y quien usa lector de pantalla se entera,
+       sin que le relean la fecha y los chips cada vez. -->
+  <div class="parte__cuerpo" id="parte-cuerpo" aria-live="polite">
+    <p class="parte__resumen" id="parte-resumen"></p>
+    <ul class="parte__tareas" id="parte-tareas"></ul>
+    <p class="parte__resto" id="parte-resto" hidden></p>
+  </div>
+
   <ul class="parte__chips" id="parte-chips"></ul>
 </section>
 
@@ -52,6 +74,33 @@
 
 <main class="contenido">
   <h2 class="oculto-visual">Las plantas</h2>
+
+  <!-- ══ LA CRONOLOGÍA ══════════════════════════════════════════════════════
+       Décadas, semanas y horas en siete macetas del mismo salón. El eje es
+       LOGARÍTMICO —en lineal el poto ocupa el ancho entero y las otras seis son
+       un borrón— y las marcas van ROTULADAS, porque un eje logarítmico sin
+       rótulos miente sobre las proporciones.
+
+       Va antes de la rejilla porque reencuadra lo que se lee después: las cuatro
+       impecables lo están, en parte, porque no han tenido tiempo de que nada les
+       salga mal.
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="cronologia" aria-labelledby="cronologia-titulo" hidden>
+    <h3 class="cronologia__titulo" id="cronologia-titulo">Cuánto lleva cada una en casa</h3>
+    <p class="cronologia__nota">
+      El eje es logarítmico: cada marca es diez veces la anterior. Sin eso, el
+      poto ocuparía el ancho entero y las cuatro de agosto serían un solo punto.
+    </p>
+    <!-- El gráfico es UNA rejilla de tres columnas —nombre · pista · valor— y la
+         lista, las filas y el eje son `subgrid` suyos. Sin eso cada fila define
+         sus propias columnas, se alinean por casualidad y el eje de abajo no cae
+         debajo de las pistas: un eje que no está debajo de lo que rotula no
+         rotula nada. -->
+    <div class="cronologia__grafico">
+      <ol class="cronologia__lista"></ol>
+      <p class="cronologia__eje"><span class="cronologia__eje-pista"></span></p>
+    </div>
+  </section>
 
   <p class="resultado" id="resultado" role="status" aria-live="polite"></p>
   <p class="aviso" id="aviso" hidden></p>
@@ -132,40 +181,39 @@
           <span class="despegue__flecha" aria-hidden="true"></span>
         </summary>
 
+        <!-- ══ EL EXPEDIENTE ══════════════════════════════════════════════
+             Al despegar la pegatina no aparece el reverso de una pegatina:
+             aparece el expediente de la planta. Y se maqueta en DOS COLUMNAS
+             SEMÁNTICAS, que no es partir el texto en dos para ahorrar scroll —
+             son dos velocidades de lectura distintas:
+
+               QUÉ HAGO AHORA  · con la regadera en la mano, de pie, con prisa
+               EN QUÉ ME BASO  · el domingo, sentado, leyéndola en serio
+
+             `QUÉ HAGO AHORA` va PRIMERO EN EL DOM a propósito: al apilarse en
+             móvil queda arriba, que es donde de verdad se lee con una mano. No
+             se usa `order` de CSS para esto, porque entonces el orden de foco
+             dejaría de coincidir con el orden visual.
+             ═══════════════════════════════════════════════════════════════ -->
         <div class="despegada">
+          <div class="expediente">
 
-          <!-- capa 1 · qué le pasa ahora mismo -->
-          <section class="estado" hidden>
-            <h4 class="estado__titulo"></h4>
-            <div class="estado__cintillo">
-              <p class="estado__severidad">
-                <span class="estado__marca" aria-hidden="true"></span>
-                <span class="estado__severidad-valor"></span>
-              </p>
-              <!-- La fecha NO va dentro del distintivo: es metadato de la
-                   observación, no parte de la etiqueta de severidad. Metida en
-                   el chip invertido heredaba gris sobre rojo (1,17:1). -->
-              <p class="estado__fecha"></p>
-            </div>
+          <!-- ── columna 1 · lo accionable ──────────────────────────────── -->
+          <div class="expediente__accion">
+            <h4 class="expediente__rotulo">Qué hago ahora</h4>
 
-            <div class="estado__bloque estado__bloque--senales" hidden>
-              <h5 class="estado__sub">Lo que se ve</h5>
-              <ul class="estado__lista"></ul>
-            </div>
+            <!-- Los diagramas van AQUÍ y no en la otra columna: son la capa de
+                 resumen —el SVG dice «cada 4 días, 250 ml» de un golpe y el
+                 párrafo de la derecha explica por qué—, y de paso equilibran la
+                 masa de las dos columnas. -->
+            <section class="cuidados">
+              <h5 class="cuidados__titulo">Cuidados</h5>
+              <div class="campos-diagrama"></div>
+            </section>
 
-            <div class="estado__bloque estado__bloque--causas" hidden>
-              <h5 class="estado__sub">Causas probables</h5>
-              <ul class="estado__lista"></ul>
-            </div>
-
-            <!-- Lo que NO se puede afirmar desde una foto. Va aquí, debajo de
-                 señales y causas, y NO en un plegable: un diagnóstico que no
-                 dice dónde acaba su alcance se lee como si lo supiera todo. -->
-            <div class="estado__bloque estado__bloque--limites" hidden>
-              <h5 class="estado__sub">Lo que la foto no dice</h5>
-              <ul class="estado__lista"></ul>
-            </div>
-
+            <!-- El tratamiento sale de dentro de `.estado`: la alarma es el
+                 diagnóstico, no el arreglo. Aquí hereda tinta normal en vez del
+                 ámbar de «atención», que además contrasta mejor. -->
             <div class="estado__tratamiento" hidden>
               <h5 class="estado__sub">Qué hacer</h5>
               <div class="estado__diagrama"></div>
@@ -176,47 +224,101 @@
               </p>
             </div>
 
-          </section>
+            <!-- El calendario de esta planta. Aquí sí van las cinco clases de
+                 tarea, incluidas las dos que no pueden entrar en la franja: el
+                 riego con su comprobación en vez de una cuenta atrás, y las
+                 condicionadas con la condición delante. Donde el disparador real
+                 es una observación y no el calendario, la interfaz pide mirar,
+                 no manda hacer. -->
+            <section class="calendario" hidden>
+              <h5 class="calendario__titulo">Qué toca</h5>
+              <ul class="calendario__lista"></ul>
+            </section>
 
-          <figure class="foto" hidden>
-            <img class="foto__img" src="" alt="" width="800" height="1067" loading="lazy" decoding="async">
-            <figcaption class="foto__pie"></figcaption>
-          </figure>
+            <!-- El índice NO está para esconder: está para ENTRAR. Y el
+                 recuento es información, no adorno: «13 observaciones» y «24
+                 fuentes» dicen algo verdadero sobre esta ficha antes de
+                 leerla — que el diagnóstico está trabajado. Un índice que
+                 oculta cuánto documento hay es un índice que engaña. -->
+            <nav class="indice" hidden>
+              <h5 class="indice__rotulo">En el expediente</h5>
+              <ul class="indice__lista"></ul>
+            </nav>
+          </div>
 
-          <!-- Procedencia: la foto de la pegatina real es, para cinco de las
-               siete, la fuente más fuerte de qué compró Carlos. Va aquí abajo y
-               pequeña a propósito, y sin estilizar: una prueba retocada no
-               prueba nada. -->
-          <section class="prueba">
-            <h4 class="prueba__rotulo">La prueba</h4>
-            <figure class="prueba__figura" hidden>
-              <img class="prueba__img" src="" alt="" width="500" height="667" loading="lazy" decoding="async">
+          <!-- ── columna 2 · el material de consulta ────────────────────── -->
+          <div class="expediente__base">
+            <h4 class="expediente__rotulo">En qué me baso</h4>
+
+            <!-- capa 1 · qué le pasa ahora mismo -->
+            <section class="estado" hidden>
+              <h5 class="estado__titulo"></h5>
+              <div class="estado__cintillo">
+                <p class="estado__severidad">
+                  <span class="estado__marca" aria-hidden="true"></span>
+                  <span class="estado__severidad-valor"></span>
+                </p>
+                <!-- La fecha NO va dentro del distintivo: es metadato de la
+                     observación, no parte de la etiqueta de severidad. Metida en
+                     el chip invertido heredaba gris sobre rojo (1,17:1). -->
+                <p class="estado__fecha"></p>
+              </div>
+
+              <div class="estado__bloque estado__bloque--senales" hidden>
+                <h6 class="estado__sub">Lo que se ve</h6>
+                <ul class="estado__lista"></ul>
+              </div>
+
+              <div class="estado__bloque estado__bloque--causas" hidden>
+                <h6 class="estado__sub">Causas probables</h6>
+                <ul class="estado__lista"></ul>
+              </div>
+
+              <!-- Lo que NO se puede afirmar desde una foto. Va aquí, debajo de
+                   señales y causas, y NO en un plegable: un diagnóstico que no
+                   dice dónde acaba su alcance se lee como si lo supiera todo. -->
+              <div class="estado__bloque estado__bloque--limites" hidden>
+                <h6 class="estado__sub">Lo que la foto no dice</h6>
+                <ul class="estado__lista"></ul>
+              </div>
+            </section>
+
+            <!-- La foto es la prueba sobre la que se hizo el diagnóstico, así
+                 que su sitio es esta columna, al lado de «lo que se ve» y de
+                 «lo que la foto no dice», que la citan las dos. -->
+            <figure class="foto" hidden>
+              <img class="foto__img" src="" alt="" width="800" height="1067" loading="lazy" decoding="async">
+              <figcaption class="foto__pie"></figcaption>
             </figure>
-            <p class="prueba__sin" hidden>Sin etiqueta de vivero: no se conserva.</p>
-            <p class="prueba__nota"></p>
-          </section>
 
-          <!-- capa 2 · los tres campos con diagrama.
-               Lleva su propio h4 para que la jerarquía no salte de h3 a h5 en
-               las plantas sanas, que no tienen el bloque «Qué le pasa». -->
-          <section class="cuidados">
-            <h4 class="cuidados__titulo">Cuidados</h4>
-            <div class="campos-diagrama"></div>
-          </section>
+            <!-- Procedencia: la foto de la pegatina real es, para cinco de las
+                 siete, la fuente más fuerte de qué compró Carlos. Va aquí abajo y
+                 pequeña a propósito, y sin estilizar: una prueba retocada no
+                 prueba nada. -->
+            <section class="prueba">
+              <h5 class="prueba__rotulo">La prueba</h5>
+              <figure class="prueba__figura" hidden>
+                <img class="prueba__img" src="" alt="" width="500" height="667" loading="lazy" decoding="async">
+              </figure>
+              <p class="prueba__sin" hidden>Sin etiqueta de vivero: no se conserva.</p>
+              <p class="prueba__nota"></p>
+            </section>
 
-          <!-- capa 2 · el resto de datos verificados -->
-          <section class="mas-datos">
-            <h4 class="mas-datos__titulo">Más datos</h4>
-            <dl class="mas-datos__lista"></dl>
-          </section>
+            <!-- capa 2 · el resto de datos verificados, cada uno con su fuente -->
+            <section class="mas-datos">
+              <h5 class="mas-datos__titulo">Más datos</h5>
+              <dl class="mas-datos__lista"></dl>
+            </section>
 
-          <!-- capa 3 · la voz de Carlos, en su cuaderno -->
-          <aside class="cuaderno" hidden>
-            <h4 class="cuaderno__rotulo">Carlos</h4>
-            <p class="cuaderno__historia"></p>
-            <p class="cuaderno__notas"></p>
-          </aside>
+            <!-- capa 3 · la voz de Carlos, en su cuaderno -->
+            <aside class="cuaderno" hidden>
+              <h5 class="cuaderno__rotulo">Carlos</h5>
+              <p class="cuaderno__historia"></p>
+              <p class="cuaderno__notas"></p>
+            </aside>
+          </div>
 
+          </div>
         </div>
       </details>
 
@@ -228,7 +330,7 @@
      del texto que tiene al lado, nunca el único portador del dato. -->
 <template id="tpl-campo-diagrama">
   <section class="campo">
-    <h5 class="campo__clave"></h5>
+    <h6 class="campo__clave"></h6>
     <div class="campo__diagrama"></div>
     <p class="campo__resumen"></p>
     <details class="campo__mas" hidden>
@@ -280,6 +382,33 @@
       <span class="opcion__texto"></span>
       <span class="opcion__cuenta" aria-hidden="true"></span>
     </label>
+  </li>
+</template>
+
+<!-- Una tarea de hoy en la franja. El rótulo solo aparece cuando hay algo que
+     rotular: `VA TARDE` en la única vencida, `HOY` en las de fecha cumplida.
+     Las de temporada van sin distintivo — es la misma economía que hace que las
+     cuatro plantas sanas no lleven insignia. -->
+<template id="tpl-tarea-franja">
+  <li class="tarea-hoy">
+    <span class="tarea-hoy__rotulo" hidden></span>
+    <a class="tarea-hoy__planta" href="">
+      <span class="tarea-hoy__nombre"></span>
+    </a>
+    <span class="tarea-hoy__titulo"></span>
+    <span class="tarea-hoy__cuando"></span>
+  </li>
+</template>
+
+<!-- Una tarea dentro de su ficha, con su plazo y su condición. Aquí sí van
+     todas, incluidas las que no pueden entrar en «hoy»: el riego con su
+     comprobación y las condicionadas con su condición delante. -->
+<template id="tpl-tarea-ficha">
+  <li class="tarea">
+    <span class="tarea__rotulo" hidden></span>
+    <p class="tarea__titulo"></p>
+    <p class="tarea__cuando"></p>
+    <p class="tarea__nota" hidden><span class="tarea__nota-rotulo"></span><span class="tarea__nota-texto"></span></p>
   </li>
 </template>
 

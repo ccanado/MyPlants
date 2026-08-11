@@ -4,9 +4,11 @@
  */
 
 import { cargarPlantas, ordenarPorUrgencia } from "./datos.js";
-import { fijarMeta, grupoSeveridad, renderLista } from "./ficha.js";
+import { fijarHoy, fijarMeta, grupoSeveridad, renderLista } from "./ficha.js";
 import { crearEstado, debounce } from "./estado.js";
 import { facetas, filtrar, filtrosVacios, hayFiltros, humanizar } from "./filtros.js";
+import { diaDeHoy, fechaLarga, tareasDeHoy } from "./tareas.js";
+import { montarCronologia } from "./cronologia.js";
 
 const el = {
   rejilla: document.getElementById("rejilla"),
@@ -18,13 +20,28 @@ const el = {
   formFiltros: document.querySelector(".filtros__form"),
   formBusqueda: document.querySelector(".buscador"),
   parte: document.getElementById("parte"),
+  parteFecha: document.getElementById("parte-fecha"),
   parteResumen: document.getElementById("parte-resumen"),
+  parteTareas: document.getElementById("parte-tareas"),
+  parteResto: document.getElementById("parte-resto"),
   parteChips: document.getElementById("parte-chips"),
+  cronologia: document.querySelector(".cronologia"),
 };
 
 const TPL_FACETA = document.getElementById("tpl-faceta");
 const TPL_OPCION = document.getElementById("tpl-opcion");
 const TPL_CHIP = document.getElementById("tpl-chip");
+const TPL_TAREA = document.getElementById("tpl-tarea-franja");
+
+/**
+ * Hoy se calcula UNA VEZ, al arrancar, y se pasa a todo lo demás.
+ *
+ * No es una micro-optimización: es que nada de esta página cuenta hacia atrás en
+ * vivo. Si cada componente llamase a `new Date()` por su cuenta, dos partes de
+ * la misma pantalla podrían discrepar al cruzar la medianoche, y encima el
+ * cálculo dejaría de ser reproducible para quien lo mida.
+ */
+const HOY = diaDeHoy();
 
 arrancar();
 
@@ -33,6 +50,7 @@ async function arrancar() {
   try {
     const datos = await cargarPlantas();
     fijarMeta(datos.meta);
+    fijarHoy(HOY);
     plantas = ordenarPorUrgencia(datos.plantas);
   } catch (err) {
     // El fallo se ve en la página, no solo en la consola.
@@ -55,6 +73,11 @@ async function arrancar() {
   );
 
   montarParteDelDia(plantas);
+  /* La cronología es un censo de las SIETE, así que se monta con la lista
+     completa y no se refiltra: un censo que se recorta con el buscador deja de
+     ser un censo, y el dato que da —tres órdenes de magnitud en el mismo salón—
+     solo existe estando las siete. */
+  if (!montarCronologia(el.cronologia, plantas, HOY)) el.cronologia?.remove();
   montarFacetas(plantas);
   conectarEventos(estado);
   estado.refrescar();
@@ -86,18 +109,48 @@ function mostrarAviso(texto) {
 
 /* ── parte del día ──────────────────────────────────────────────────────────── */
 
+/** Cuántas tareas se enseñan en la franja. Dos, y no es un número redondo: es
+ *  que la franja no crece. Con siete tareas dice el número y las dos primeras. */
+const TAREAS_EN_LA_FRANJA = 2;
+
 /**
- * Cuántas piden mirada hoy. Es lo primero que necesita saber quien abre esto con
- * prisa, así que se genera de los datos y no se escribe a mano en ningún sitio.
+ * La franja `HOY`: qué hay que hacer hoy, con la fecha real del navegador.
+ *
+ * Sube de categoría la franja que antes contaba severidades estáticas. Los dos
+ * ejes conviven porque son independientes y hay que leerlos como tales: la
+ * `critica` es el helecho y la `vencida` es la begonia, plantas distintas. Uno
+ * dice cómo están; el otro, qué toca.
  */
 function montarParteDelDia(plantas) {
   const tocadas = plantas.filter((p) => p.estado && grupoSeveridad(p.estado.severidad) !== "sana");
+  const tareas = tareasDeHoy(plantas, HOY);
 
   el.parte.hidden = false;
-  el.parteResumen.textContent =
+
+  const fecha = fechaLarga(HOY.fecha);
+  if (fecha) el.parteFecha.textContent = fecha;
+  else el.parteFecha.remove();
+
+  /* Las dos cuentas en la misma línea, y la de tareas primero: es la que
+     contesta a «qué hago», que es para lo que se abre la página. */
+  const partes = [];
+  if (tareas.length > 0) {
+    partes.push(`${tareas.length} ${plural(tareas.length, "tarea", "tareas")}`);
+  } else {
+    /* Cero tareas NO es «no hay nada que hacer»: es que hoy no hay nada que se
+       pueda afirmar desde el calendario. El riego y las condicionadas siguen
+       ahí, en sus fichas, y decir lo contrario sería el error que esta franja
+       existe para no cometer. */
+    partes.push("Nada con fecha para hoy");
+  }
+  partes.push(
     tocadas.length === 0
-      ? `Las ${plantas.length} están bien. Hoy no hay nada urgente.`
-      : `${tocadas.length} de ${plantas.length} ${plural(tocadas.length, "pide", "piden")} mirada.`;
+      ? `las ${plantas.length} están bien`
+      : `${tocadas.length} de ${plantas.length} ${plural(tocadas.length, "pide", "piden")} mirada`
+  );
+  el.parteResumen.textContent = `${partes.join(" · ")}.`;
+
+  montarTareasDeLaFranja(tareas);
 
   const frag = document.createDocumentFragment();
   for (const p of tocadas) {
@@ -111,6 +164,49 @@ function montarParteDelDia(plantas) {
     frag.append(nodo);
   }
   el.parteChips.replaceChildren(frag);
+}
+
+function montarTareasDeLaFranja(tareas) {
+  const frag = document.createDocumentFragment();
+
+  for (const t of tareas.slice(0, TAREAS_EN_LA_FRANJA)) {
+    const nodo = TPL_TAREA.content.cloneNode(true);
+    const li = nodo.querySelector(".tarea-hoy");
+    li.dataset.tono = t.tono;
+
+    const rotulo = nodo.querySelector(".tarea-hoy__rotulo");
+    if (t.rotulo) {
+      rotulo.hidden = false;
+      rotulo.textContent = t.rotulo;
+    } else {
+      rotulo.remove();
+    }
+
+    /* El enlace es un <a> con href al id de la ficha, no un botón con JS: lo que
+       navega es un enlace. Y así funciona con el JS a medio cargar, con el botón
+       central del ratón y copiando la dirección. */
+    const enlace = nodo.querySelector(".tarea-hoy__planta");
+    enlace.href = `#${t.planta.id}`;
+    nodo.querySelector(".tarea-hoy__nombre").textContent = t.planta.nombre_comun;
+
+    nodo.querySelector(".tarea-hoy__titulo").textContent = t.tarea.titulo;
+    // El «cuándo» ya viene redactado y ya viene honesto de tareas.js.
+    nodo.querySelector(".tarea-hoy__cuando").textContent = t.cuando ?? "";
+
+    frag.append(nodo);
+  }
+  el.parteTareas.replaceChildren(frag);
+
+  const resto = tareas.length - TAREAS_EN_LA_FRANJA;
+  if (resto > 0) {
+    el.parteResto.hidden = false;
+    // «cada una en su ficha», porque la ficha es donde se hacen.
+    el.parteResto.textContent =
+      `y ${resto} ${plural(resto, "más", "más")}, ${plural(resto, "en su ficha", "cada una en su ficha")}.`;
+  } else {
+    el.parteResto.hidden = true;
+    el.parteResto.textContent = "";
+  }
 }
 
 /* ── facetas ────────────────────────────────────────────────────────────────── */
@@ -197,6 +293,25 @@ function conectarEventos(estado) {
   el.parteChips.addEventListener("click", (ev) => {
     const boton = ev.target.closest(".chip__boton");
     if (boton) irAFicha(boton.dataset.planta, estado);
+  });
+
+  /* Las tareas de la franja son <a href="#id">, así que sin JS ya llevan a la
+     ficha correcta: esto solo añade abrirla despegada, que es lo que quieres si
+     has pulsado una tarea. Se respetan los modificadores del teclado y el botón
+     del medio — si alguien pide abrir en otra pestaña, no se le secuestra. */
+  // Los siete marcadores de la cronología llevan a su ficha, igual que los chips.
+  el.cronologia?.addEventListener("click", (ev) => {
+    const boton = ev.target.closest(".cronologia__marca");
+    if (boton) irAFicha(boton.dataset.planta, estado);
+  });
+
+  el.parteTareas.addEventListener("click", (ev) => {
+    if (ev.defaultPrevented || ev.button !== 0) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    const enlace = ev.target.closest(".tarea-hoy__planta");
+    if (!enlace) return;
+    ev.preventDefault();
+    irAFicha(decodeURIComponent(enlace.hash.slice(1)), estado);
   });
 
   /* Al abrir una ficha la rejilla colapsa a una columna, así que la ficha que
