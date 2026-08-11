@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Las plantas de casa — MyPlants</title>
 <meta name="description" content="Fichas de cuidado de las siete plantas que Carlos tiene en casa: riego, luz, sustrato, plagas y toxicidad, con las fuentes citadas.">
+<!-- Favicon en línea como data: URI. Un .ico suelto sería una petición más y un
+     404 en consola; esto son cero peticiones. Es el troquel de la pegatina. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='2' fill='%238F4A33'/%3E%3Crect x='2.5' y='3' width='11' height='10' rx='1' fill='%23FBFAF7'/%3E%3Cg fill='%2316342A'%3E%3Crect x='4' y='5' width='1' height='6'/%3E%3Crect x='6' y='5' width='2' height='6'/%3E%3Crect x='9' y='5' width='1' height='6'/%3E%3Crect x='11' y='5' width='1' height='6'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="./css/tokens.css">
 <link rel="stylesheet" href="./css/app.css">
 </head>
@@ -78,9 +81,12 @@
 
       <!-- ── la pegatina del vivero ──────────────────────────────────────── -->
       <div class="etiqueta__cara">
+        <!-- La microlínea imprime lo que se sabe. En helecho y poto se sustituye
+             por «sin etiqueta de vivero»: la ausencia se dice, no se tapa. -->
         <p class="etiqueta__vivero">
-          <span class="etiqueta__vivero-nombre">Viveros Projardín</span>
-          <span class="etiqueta__vivero-dir">Avda. de Móstoles s/n · Tfno. 91 644 22 13</span>
+          <span class="etiqueta__vivero-nombre"></span>
+          <span class="etiqueta__vivero-dir"></span>
+          <span class="etiqueta__vivero-tfno"></span>
         </p>
 
         <h3 class="etiqueta__nombre" id=""></h3>
@@ -122,28 +128,67 @@
 
           <!-- capa 1 · qué le pasa ahora mismo -->
           <section class="estado" hidden>
-            <h4 class="estado__titulo">Qué le pasa</h4>
+            <h4 class="estado__titulo"></h4>
             <p class="estado__severidad">
               <span class="estado__marca" aria-hidden="true"></span>
               <span class="estado__severidad-valor"></span>
+              <span class="estado__fecha"></span>
             </p>
-            <p class="estado__cabecera"></p>
-            <p class="estado__diagnostico"></p>
+
+            <div class="estado__bloque estado__bloque--senales" hidden>
+              <h5 class="estado__sub">Lo que se ve</h5>
+              <ul class="estado__lista"></ul>
+            </div>
+
+            <div class="estado__bloque estado__bloque--causas" hidden>
+              <h5 class="estado__sub">Causas probables</h5>
+              <ul class="estado__lista"></ul>
+            </div>
 
             <div class="estado__tratamiento" hidden>
-              <h5 class="estado__tratamiento-titulo">Curso de recuperación</h5>
+              <h5 class="estado__sub">Qué hacer</h5>
               <div class="estado__diagrama"></div>
               <ol class="estado__pasos"></ol>
+              <p class="estado__revisar" hidden>
+                <span class="estado__revisar-rotulo">Revisar:</span>
+                <span class="estado__revisar-texto"></span>
+              </p>
+            </div>
+
+            <!-- Lo que NO se puede afirmar desde una foto. Va en la ficha a
+                 propósito: un diagnóstico que no dice dónde se acaba su
+                 alcance se lee como si lo supiera todo. -->
+            <div class="estado__bloque estado__bloque--limites" hidden>
+              <h5 class="estado__sub">No se ve en la foto</h5>
+              <ul class="estado__lista"></ul>
             </div>
           </section>
 
           <figure class="foto" hidden>
-            <img class="foto__img" src="" alt="" width="900" height="1200" loading="lazy" decoding="async">
+            <img class="foto__img" src="" alt="" width="800" height="1067" loading="lazy" decoding="async">
             <figcaption class="foto__pie"></figcaption>
           </figure>
 
-          <!-- capa 2 · los tres campos con diagrama -->
-          <div class="campos-diagrama" id=""></div>
+          <!-- Procedencia: la foto de la pegatina real es, para cinco de las
+               siete, la fuente más fuerte de qué compró Carlos. Va aquí abajo y
+               pequeña a propósito, y sin estilizar: una prueba retocada no
+               prueba nada. -->
+          <section class="prueba">
+            <h4 class="prueba__rotulo">La prueba</h4>
+            <figure class="prueba__figura" hidden>
+              <img class="prueba__img" src="" alt="" width="500" height="667" loading="lazy" decoding="async">
+            </figure>
+            <p class="prueba__sin" hidden>Sin etiqueta de vivero: no se conserva.</p>
+            <p class="prueba__nota"></p>
+          </section>
+
+          <!-- capa 2 · los tres campos con diagrama.
+               Lleva su propio h4 para que la jerarquía no salte de h3 a h5 en
+               las plantas sanas, que no tienen el bloque «Qué le pasa». -->
+          <section class="cuidados">
+            <h4 class="cuidados__titulo">Cuidados</h4>
+            <div class="campos-diagrama"></div>
+          </section>
 
           <!-- capa 2 · el resto de datos verificados -->
           <section class="mas-datos">

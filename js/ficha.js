@@ -13,7 +13,7 @@
  * y el brief exige que no lo parezcan.
  */
 
-import { FOTO } from "./datos.js";
+import { FOTO, FOTO_ETIQUETA } from "./datos.js";
 import { humanizar, normalizar } from "./filtros.js";
 import {
   diagramaLuz,
@@ -53,11 +53,19 @@ const GRUPO_SEVERIDAD = new Map([
   ["alerta", "critica"], ["urgente", "critica"],
 ]);
 
-const GRUPO_TOXICIDAD = new Map([
-  ["no toxica", "segura"], ["no", "segura"], ["segura", "segura"], ["atoxica", "segura"],
-  ["leve", "atencion"], ["irritante", "atencion"], ["baja", "atencion"],
-  ["toxica", "critica"], ["si", "critica"], ["alta", "critica"], ["grave", "critica"],
-]);
+/**
+ * Toxicidad: TRES estados y ninguno verde. No hay ni una planta con «no tóxica»
+ * confirmada, así que un icono verde mentiría en cinco fichas. Y «sin datos en
+ * ASPCA» no es «segura»: es que nadie lo ha mirado.
+ */
+function grupoToxicidad(tox) {
+  if (!tox.verificado) return "sin_identificar";
+  const t = normalizar([tox.nivel, tox.texto].filter(Boolean).join(" "));
+  if (t.includes("sin datos")) return "sin_datos_aspca";
+  if (/(no toxica|atoxica|segura)/.test(t)) return "segura";
+  if (t.includes("toxica")) return "toxica";
+  return "sin_datos_aspca";  // lado prudente: nunca se asume seguridad
+}
 
 export function grupoSeveridad(valor) {
   if (valor == null) return "sana";
@@ -83,6 +91,7 @@ export function fichaDe(planta) {
   tirador(q, planta);
   bloqueEstado(q, planta);
   bloqueFoto(q, planta);
+  bloqueProcedencia(q, planta);
   camposConDiagrama(q, planta);
   bloqueMasDatos(q, planta);
   bloqueCarlos(q, planta);
@@ -92,21 +101,54 @@ export function fichaDe(planta) {
 
 /* ── la pegatina ────────────────────────────────────────────────────────────── */
 
+const VIVERO = {
+  nombre: "Viveros Projardín",
+  direccion: "Avda. de Móstoles s/n",
+  telefono: "Tfno. 91 644 22 13",
+};
+
 function caraEtiqueta(q, planta, idTitulo) {
+  // El nombre se imprime idéntico en las siete: es lo que se busca con prisa.
   const titulo = q(".etiqueta__nombre");
   titulo.id = idTitulo;
   titulo.textContent = planta.nombre_comun;
 
   ponerOQuitar(q(".etiqueta__binomio"), q(".etiqueta__binomio-texto"), planta.nombre_cientifico);
   ponerOQuitar(q(".etiqueta__maceta"), q(".etiqueta__maceta"), planta.vivero.maceta);
-  ponerOQuitar(q(".etiqueta__precio"), q(".etiqueta__precio"), planta.vivero.precio);
   ponerOQuitar(q(".etiqueta__fito"), q(".etiqueta__fito"), planta.vivero.fitosanitario);
 
-  // El código de barras lo dibuja el CSS con repeating-linear-gradient: cero
-  // imágenes y cero peso. El EAN, si lo hay, siembra el patrón.
-  const ean = q(".etiqueta__ean");
-  if (planta.vivero.ean) ean.dataset.ean = planta.vivero.ean;
-  else if (!planta.vivero.tiene) ean.remove();
+  // Lo único que cambia entre las dos variantes es el bloque de procedencia,
+  // que es justo el dato que falta.
+  if (planta.vivero.tiene) {
+    q(".etiqueta__vivero-nombre").textContent = VIVERO.nombre;
+    q(".etiqueta__vivero-dir").textContent = VIVERO.direccion;
+    q(".etiqueta__vivero-tfno").textContent = VIVERO.telefono;
+  } else {
+    q(".etiqueta__vivero-nombre").textContent = "Sin etiqueta de vivero";
+    q(".etiqueta__vivero-dir").textContent = "Procedencia sin registrar";
+    q(".etiqueta__vivero-tfno").remove();
+  }
+
+  /* La línea de EAN + precio tiene tres casos y ninguno se puede confundir:
+     · sin pegatina  → trama de «sin dato» y una raya. La ausencia se dibuja.
+     · con pegatina y con cifras transcritas → el código y el precio reales.
+     · con pegatina pero sin transcribir → NO se dibuja la línea. Un código de
+       barras decorativo bajo un precio inventado convierte la signature en
+       atrezo, que es justo lo contrario de lo que la hace buena. */
+  const linea = q(".etiqueta__linea-precio");
+  const hayCifras = Boolean(planta.vivero.ean || planta.vivero.precio);
+
+  if (!planta.vivero.tiene) {
+    // La raya es un carácter, no un hueco: dice «no hay precio», no «se olvidó».
+    q(".etiqueta__precio").textContent = "—";
+  } else if (hayCifras) {
+    if (planta.vivero.ean) q(".etiqueta__ean").dataset.ean = planta.vivero.ean;
+    else q(".etiqueta__ean").remove();
+    q(".etiqueta__precio").textContent = planta.vivero.precio ?? "";
+    if (!planta.vivero.precio) q(".etiqueta__precio").remove();
+  } else {
+    linea.remove();
+  }
 }
 
 function resumenesDeCara(q, planta) {
@@ -134,49 +176,100 @@ function tirador(q, planta) {
 
 function bloqueEstado(q, planta) {
   const seccion = q(".estado");
-  if (!planta.estado) {
+  const estado = planta.estado;
+  if (!estado) {
     seccion.remove();
     return;
   }
 
-  const g = grupoSeveridad(planta.estado.severidad);
+  const g = grupoSeveridad(estado.severidad);
   seccion.hidden = false;
   seccion.dataset.severidad = g;
 
+  // «Qué le pasa» sobre una planta sana sería un titular equivocado.
+  q(".estado__titulo").textContent = g === "sana" ? "Cómo va" : "Qué le pasa";
+
   // El texto va siempre: el color no puede ser el único portador de la señal.
-  q(".estado__severidad-valor").textContent = humanizar(planta.estado.severidad);
+  q(".estado__severidad-valor").textContent = humanizar(estado.severidad);
   q(".estado__marca").dataset.marca = g;
-  q(".estado__cabecera").textContent = planta.estado.titulo;
-  ponerOQuitar(q(".estado__diagnostico"), q(".estado__diagnostico"), planta.estado.diagnostico);
+
+  const fecha = q(".estado__fecha");
+  if (estado.fecha_foto) fecha.textContent = `Visto el ${fechaLegible(estado.fecha_foto)}`;
+  else fecha.remove();
+
+  listaEn(seccion, ".estado__bloque--senales", estado.senales);
+  listaEn(seccion, ".estado__bloque--causas", estado.causas);
+  listaEn(seccion, ".estado__bloque--limites", estado.no_visible);
 
   const tratamiento = q(".estado__tratamiento");
-  if (planta.estado.pasos.length === 0) {
+  if (estado.pasos.length === 0) {
     tratamiento.remove();
     return;
   }
   tratamiento.hidden = false;
 
   // El <ol> es la fuente; el diagrama es una segunda vista de esta misma lista.
-  const lista = q(".estado__pasos");
-  for (const paso of planta.estado.pasos) {
+  const pasos = q(".estado__pasos");
+  for (const paso of estado.pasos) {
     const li = document.createElement("li");
     li.className = "paso";
+
+    if (paso.plazo) {
+      const plazo = document.createElement("span");
+      plazo.className = "paso__plazo";
+      plazo.textContent = paso.plazo;
+      li.append(plazo);
+    }
+
     const accion = document.createElement("span");
     accion.className = "paso__accion";
     accion.textContent = paso.accion;
     li.append(accion);
+
     if (paso.senal) {
       const senal = document.createElement("span");
       senal.className = "paso__senal";
       senal.textContent = paso.senal;
       li.append(senal);
     }
-    lista.append(li);
+    pasos.append(li);
   }
 
-  const diagrama = diagramaRecuperacion(planta.estado.pasos, planta.estado.revisar_en);
+  const revisar = q(".estado__revisar");
+  if (estado.revisar_en) {
+    revisar.hidden = false;
+    q(".estado__revisar-texto").textContent = estado.revisar_en;
+  } else {
+    revisar.remove();
+  }
+
+  const diagrama = diagramaRecuperacion(estado.pasos, estado.revisar_corto);
   if (diagrama) q(".estado__diagrama").append(diagrama);
   else q(".estado__diagrama").remove();
+}
+
+/** Rellena un <ul> de un bloque del estado, o quita el bloque si no hay nada. */
+function listaEn(raiz, selectorBloque, elementos) {
+  const bloque = raiz.querySelector(selectorBloque);
+  if (!bloque) return;
+  if (!elementos || elementos.length === 0) {
+    bloque.remove();
+    return;
+  }
+  bloque.hidden = false;
+  const ul = bloque.querySelector(".estado__lista");
+  for (const item of elementos) {
+    const li = document.createElement("li");
+    li.className = "estado__item";
+    li.textContent = item;
+    ul.append(li);
+  }
+}
+
+/** «2026-08-11» → «11/08/2026». Sin librerías de fechas para esto. */
+function fechaLegible(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
 }
 
 /* ── foto ───────────────────────────────────────────────────────────────────── */
@@ -198,6 +291,42 @@ function bloqueFoto(q, planta) {
   const pie = q(".foto__pie");
   if (planta.ubicacion) pie.textContent = planta.ubicacion;
   else pie.remove();
+}
+
+/**
+ * El bloque de procedencia. Para cinco de las siete, la pegatina del vivero es
+ * la fuente más fuerte que existe de qué compró Carlos: POWO dice qué es una
+ * especie, no qué hay en ese tiesto. Para las otras dos, la ausencia se dice.
+ */
+function bloqueProcedencia(q, planta) {
+  const figura = q(".prueba__figura");
+  const sin = q(".prueba__sin");
+  const nota = q(".prueba__nota");
+
+  if (planta.foto_etiqueta) {
+    figura.hidden = false;
+    const img = q(".prueba__img");
+    img.src = planta.foto_etiqueta;
+    img.width = FOTO_ETIQUETA.ancho;
+    img.height = FOTO_ETIQUETA.alto;
+    img.alt = planta.etiqueta_alt
+      ?? `Etiqueta de vivero de ${planta.nombre_comun}, fotografiada en la maceta`;
+    sin.remove();
+  } else {
+    figura.remove();
+    sin.hidden = false;
+    // No es lo mismo «no hubo etiqueta» que «hubo y no se fotografió». La ficha
+    // documenta procedencia: confundir las dos ausencias sería inventar una.
+    if (planta.vivero.tiene) sin.textContent = "Etiqueta de vivero no fotografiada.";
+  }
+
+  // El precio, el EAN y el fitosanitario son transcripción de una foto, no dato
+  // verificado en fuente. Se dice, porque el resto de la ficha sí lo está.
+  if (planta.vivero.tiene) {
+    nota.textContent = "Precio, código y nº fitosanitario transcritos de la foto de la etiqueta, no verificados en fuente.";
+  } else {
+    nota.remove();
+  }
 }
 
 /* ── capa 2 · los tres campos con diagrama ──────────────────────────────────── */
@@ -254,21 +383,32 @@ function bloqueMasDatos(q, planta) {
     lista.append(datoDe(c.etiqueta, c.resumen, c.detalle, fuenteDe(planta, clave)));
   }
 
-  const plagas = planta.plagas.length > 0 ? planta.plagas.join(" · ") : null;
-  lista.append(datoDe("Plagas comunes", plagas, null, fuenteDe(planta, "plagas_comunes")));
+  const plagas = planta.plagas.length > 0 ? planta.plagas.map((x) => x.nombre).join(" · ") : null;
+  // La señal de cada plaga es lo que de verdad sirve para reconocerla: va al
+  // detalle ampliable en vez de perderse.
+  const senales = planta.plagas.filter((x) => x.senal).map((x) => `${x.nombre}: ${x.senal}`).join("\n");
+  lista.append(datoDe("Plagas comunes", plagas, senales || null, fuenteDe(planta, "plagas_comunes")));
 
   const tox = planta.toxicidad;
+  const g = grupoToxicidad(tox);
+  // Ni «sin datos» ni «sin identificar» se abrevian a una palabra: que no haya
+  // dato es justo lo que hay que leer entero.
+  const textoTox =
+    g === "sin_identificar"
+      ? "Sin identificar la especie, no se puede valorar. No significa que sea segura."
+      : g === "sin_datos_aspca"
+        ? `${tox.texto ?? "Sin datos en ASPCA"}. No significa que sea segura.`
+        : tox.texto ?? (tox.nivel ? humanizar(tox.nivel) : null);
   const nodoTox = datoDe(
     "Toxicidad para mascotas",
-    tox.texto ?? (tox.nivel ? humanizar(tox.nivel) : null),
-    null,
+    textoTox,
+    tox.detalle,
     fuenteDe(planta, "toxicidad_mascotas")
   );
-  // La toxicidad es información de seguridad: se marca aunque no se sepa.
-  const grupoTox = tox.verificado
-    ? GRUPO_TOXICIDAD.get(normalizar(tox.nivel ?? tox.texto ?? "")) ?? "atencion"
-    : "desconocida";
-  nodoTox.querySelector(".dato").dataset.toxicidad = grupoTox;
+  const bloqueTox = nodoTox.querySelector(".dato");
+  // El modificador lo pone el render, no la plantilla: este bloque se genera.
+  bloqueTox.classList.add("dato--toxicidad");
+  bloqueTox.dataset.toxicidad = grupoToxicidad(tox);
   lista.append(nodoTox);
 
   lista.append(datoDe("Dificultad", planta.dificultad ? humanizar(planta.dificultad) : null, null, null));

@@ -167,7 +167,9 @@ def main() -> int:
 
     # --- CSS ---------------------------------------------------------------------------
     for css in sorted((raiz / "css").glob("*.css")) if (raiz / "css").is_dir() else []:
-        texto = css.read_text(encoding="utf-8")
+        # sin quitar comentarios, un "url(...)" citado en prosa dentro de un /* */
+        # se cuenta como referencia y da un falso positivo
+        texto = re.sub(r"/\*.*?\*/", " ", css.read_text(encoding="utf-8"), flags=re.S)
         peso = css.stat().st_size
         info.append(f"{css.relative_to(raiz)}: {kb(peso)} KB")
         if peso > MAX_CSS_KB * 1024:
@@ -202,20 +204,29 @@ def main() -> int:
         if datos is not None:
             plantas = datos if isinstance(datos, list) else datos.get("plantas", [])
             info.append(f"content/plantas.json: {len(plantas)} planta(s), {kb(jpath.stat().st_size)} KB")
+            # js/datos.js antepone "./assets/img/" a los nombres sin barra, así que un
+            # `foto` pelado como "poto.jpg" es correcto y no debe darse por roto.
             for p in plantas:
-                foto = p.get("foto")
-                if not foto:
-                    avisos.append(f"planta '{p.get('id') or p.get('nombre_comun')}' sin foto")
-                    continue
-                ruta = resolver(foto, jpath if "/" in str(foto) and str(foto).startswith(".") else html_path)
-                if ruta is None:
-                    continue
-                referenciados.add(ruta)
-                if not ruta.is_file():
-                    errores.append(
-                        f"content/plantas.json: la foto de '{p.get('id') or p.get('nombre_comun')}' "
-                        f"→ {foto} NO EXISTE en disco"
+                for campo in ("foto", "foto_etiqueta", "etiqueta"):
+                    foto = p.get(campo)
+                    if not foto:
+                        if campo == "foto":
+                            avisos.append(f"planta '{p.get('id') or p.get('nombre_comun')}' sin foto")
+                        continue
+                    foto = str(foto)
+                    ruta = (
+                        resolver(foto, html_path)
+                        if "/" in foto
+                        else (raiz / "assets" / "img" / foto).resolve()
                     )
+                    if ruta is None:
+                        continue
+                    referenciados.add(ruta)
+                    if not ruta.is_file():
+                        errores.append(
+                            f"content/plantas.json: {campo} de '{p.get('id') or p.get('nombre_comun')}' "
+                            f"→ {foto} NO EXISTE en disco"
+                        )
 
     # --- imágenes en assets/ -----------------------------------------------------------
     img_dir = raiz / "assets" / "img"

@@ -19,61 +19,97 @@
 
 
 /* -----------------------------------------------------------------------------
-   1. TIPOGRAFÍAS
+   1. TIPOGRAFÍAS — self-hosted, activas
    -----------------------------------------------------------------------------
-   PENDIENTE: los tres woff2 NO están todavía en assets/fonts/.
-   Hasta que lleguen, cada pila cae en su fallback de sistema y la web se ve
-   bien igualmente — eso es deliberado, no un descuido.
+   Los seis woff2 están en assets/fonts/. 82,1 KB en total, subset latino.
+   Cero peticiones a terceros en runtime: todas las url() son locales.
 
-   Cuando existan los ficheros, se descomentan los @font-face de abajo y NO se
-   toca nada más: las pilas ya llevan la familia real en primera posición.
+   PROCEDENCIA Y LICENCIA — en un proyecto sin dependencias, estos seis ficheros
+   son lo único con licencia de terceros que hay dentro del repositorio.
 
-   Descarga + subset a latín y a áéíóúüñ¿¡€°· (todas son SIL OFL):
-     Archivo Narrow  700         → nombre de planta, cabeceras de campo
-     Alegreya Sans   400/500/700 + itálica → texto corrido y voz de Carlos
-     IBM Plex Mono   400/600     → cifras, °C, ml, €, EAN, códigos, URLs
+     Archivo Narrow · SIL Open Font License 1.1 · Omnibus-Type
+       https://github.com/Omnibus-Type/ArchivoNarrow
+     Alegreya Sans  · SIL Open Font License 1.1 · Huerta Tipográfica (Juan Pablo del Peral)
+       https://github.com/huertatipografica/Alegreya-Sans
+     IBM Plex Mono  · SIL Open Font License 1.1 · IBM / Bold Monday
+       https://github.com/IBM/plex
+
+   La OFL permite explícitamente el self-hosting, que es el uso previsto. No
+   exige atribución en pantalla, pero sí que las fuentes no se vendan por
+   separado y que un derivado no use el nombre reservado. No hacemos ninguna
+   de las dos cosas: se sirven tal cual, sin modificar.
+
+   SUBSET: se descargaron ya subseteados al rango latino (no hay fonttools en el
+   proyecto ni lo va a haber). El unicode-range declarado es exactamente el del
+   fichero, y cubre lo que necesita el español: áéíóúüñ¿¡ y también € ° · —.
+   Declarar un rango más ancho que el real haría que el navegador descargase el
+   fichero para glifos que no contiene y luego cayera al fallback igual.
+
+   Las pilas de fallback de --fuente-* se quedan como están y no sobran: cubren
+   el instante anterior a que cargue el woff2 (font-display: swap) y el caso de
+   que alguien sirva esto sin la carpeta assets/fonts/.
    -------------------------------------------------------------------------- */
 
-/*
 @font-face {
   font-family: "Archivo Narrow";
-  src: url("../assets/fonts/archivo-narrow-700.woff2") format("woff2");
+  src: url("../assets/fonts/archivo-narrow-700.woff2") format("woff2");   /* nombre de planta, rótulos en caja alta */
   font-weight: 700;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+                 U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Alegreya Sans";
-  src: url("../assets/fonts/alegreya-sans-400.woff2") format("woff2");
-  font-weight: 400; font-style: normal; font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+  src: url("../assets/fonts/alegreya-sans-400.woff2") format("woff2");   /* texto corrido */
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+                 U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Alegreya Sans";
-  src: url("../assets/fonts/alegreya-sans-400-italic.woff2") format("woff2");
-  font-weight: 400; font-style: italic; font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+  src: url("../assets/fonts/alegreya-sans-400-italic.woff2") format("woff2");   /* LA VOZ DE CARLOS — no es opcional */
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+                 U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "Alegreya Sans";
-  src: url("../assets/fonts/alegreya-sans-700.woff2") format("woff2");
-  font-weight: 700; font-style: normal; font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+  src: url("../assets/fonts/alegreya-sans-700.woff2") format("woff2");   /* énfasis en texto corrido */
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+                 U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "IBM Plex Mono";
-  src: url("../assets/fonts/ibm-plex-mono-400.woff2") format("woff2");
-  font-weight: 400; font-style: normal; font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+  src: url("../assets/fonts/ibm-plex-mono-400.woff2") format("woff2");   /* cifras, °C, ml, €, EAN, códigos */
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+                 U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: "IBM Plex Mono";
-  src: url("../assets/fonts/ibm-plex-mono-600.woff2") format("woff2");
-  font-weight: 600; font-style: normal; font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+  src: url("../assets/fonts/ibm-plex-mono-600.woff2") format("woff2");   /* cifras destacadas */
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+                 U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-*/
 
 
 /* -----------------------------------------------------------------------------
@@ -152,7 +188,12 @@
   /* -- Derivados de tinta (los tres pasan AA sobre --color-etiqueta) -------- */
 
   --color-tinta-suave: #4A6357;  /* texto secundario, descripciones          6,26:1 */
-  --color-codigo:      #5E7066;  /* mono de metadatos: EAN, nº fitosanitario 5,05:1 */
+  /* Mono de metadatos: EAN, nº fitosanitario, unidades. Vive sobre las TRES
+     superficies claras, así que se mide contra las tres:
+       etiqueta 6,33 · etiqueta-2 5,69 · sin-dato-relleno 5,54.
+     Era #5E7066 y sobre --color-etiqueta-2 daba 4,54: pasaba AA por 0,04, y un
+     margen así lo tumba cualquier retoque futuro. Subido tras la auditoría. */
+  --color-codigo:      #4F6157;
 
   /* -- Superficies --------------------------------------------------------- */
 
@@ -179,7 +220,14 @@
 
   --color-sin-dato:         #63625B;  /* sobre etiqueta 5,87:1 · sobre su relleno 5,13:1 */
   --color-sin-dato-relleno: #EDEBE4;
-  --color-sin-dato-trama:   #B9B5AA;  /* las diagonales de --trama-sin-dato */
+
+  /* Las diagonales de --trama-sin-dato NO son textura decorativa: son el
+     portador NO CROMÁTICO de "aquí no hay dato", o sea lo que hace legible el
+     estado a quien no distingue el gris del relleno. Por tanto son un elemento
+     gráfico informativo y les aplica el 3:1, no el "no tiene umbral".
+     Corregido tras la auditoría de qa-visual: #B9B5AA daba 1,72:1 y suspendía.
+     Ahora 3,35:1 sobre su relleno y 3,83:1 sobre la etiqueta. */
+  --color-sin-dato-trama:   #847F70;
 
   /* -- Bordes -------------------------------------------------------------- */
 
@@ -223,7 +271,13 @@
   --texto-meta:        var(--color-codigo);      /* EAN, fitosanitario, cuerpos diminutos */
   --texto-sobre-maceta: var(--color-etiqueta);   /* ÚNICO color válido sobre el fondo */
   --texto-personal:    var(--color-boli);        /* la voz de Carlos */
-  --texto-fuente:      var(--color-boli);        /* enlaces a POWO/RHS/GBIF/ASPCA */
+  --texto-fuente:      var(--color-boli);        /* enlaces a POWO/RHS/GBIF/ASPCA — solo DENTRO de una ficha o panel */
+
+  /* ⚠ --texto-fuente sobre el fondo de página da 1,44:1. Un `a { color: var(--texto-fuente) }`
+     suelto en la capa `base` es una mina para el primer enlace que alguien meta en el pie.
+     La regla de enlaces se acota a la ficha y al panel; cualquier enlace que caiga sobre
+     la maceta usa este otro token (6,30:1). Levantado por qa-visual. */
+  --texto-fuente-sobre-maceta: var(--color-etiqueta);
   --texto-sin-dato:    var(--color-sin-dato);    /* "sin dato", "sin identificar" */
   --texto-sobre-alerta: var(--color-etiqueta);   /* severidad crítica, invertida  7,43:1 */
   --texto-sobre-aviso:  var(--color-aviso);      /* severidad atención, sin invertir */
@@ -555,5 +609,7 @@
     --color-borde:       #6E6759;
     --color-borde-sutil: #A9A498;
     --color-troquel:     #8A8375;
+    --color-sin-dato:       #46453F;  /* 9,21:1 sobre etiqueta */
+    --color-sin-dato-trama: #6B6759;  /* más oscuro que la base #847F70, no más claro */
   }
 }

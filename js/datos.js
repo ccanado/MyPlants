@@ -24,9 +24,34 @@ export const CAMPOS_CUIDADO = [
 
 const RUTA_IMG = "./assets/img/";
 
-/** Dimensiones de la foto de planta tras la conversión con sips. Todas las siete
- *  son 3:4 vertical, así que no hay caso especial. */
-export const FOTO = { ancho: 900, alto: 1200 };
+/**
+ * `luz.nivel` llega como número (2, 3, 4). Un filtro que ofrezca «2» y «4» no
+ * ayuda a nadie, así que se traduce a la palabra que usa la gente.
+ * ⚠ Escala pendiente de confirmar con `botanist`: si su 1–5 no es este, se
+ *   cambia aquí y en ningún otro sitio.
+ */
+const NIVELES_LUZ = new Map([
+  [1, "sombra"],
+  [2, "semisombra"],
+  [3, "luz indirecta"],
+  [4, "mucha luz"],
+  [5, "sol directo"],
+]);
+
+function palabraNivelLuz(v) {
+  if (v == null || v === "") return null;
+  const n = Number(v);
+  if (Number.isFinite(n)) return NIVELES_LUZ.get(Math.round(n)) ?? null;
+  return texto(v);
+}
+
+/** Dimensiones reales de los ficheros tras la conversión con sips. Se leyeron
+ *  con `sips -g pixelWidth`, no se estiman: el navegador reserva el hueco con
+ *  ellas y una cifra inventada produce salto de layout.
+ *  La ficha pinta la foto a ~374 px CSS, así que 800 de ancho es 2× para retina;
+ *  la etiqueta se pinta a 9rem y 500 deja margen para inspeccionarla. */
+export const FOTO = { ancho: 800, alto: 1067 };
+export const FOTO_ETIQUETA = { ancho: 500, alto: 667 };
 
 export async function cargarPlantas(url = "./content/plantas.json") {
   const res = await fetch(url);
@@ -71,30 +96,57 @@ function normalizarFuente(f) {
   }
   const url = texto(f.url ?? f.enlace ?? f.href);
   return {
-    titulo: texto(f.titulo ?? f.title ?? f.nombre) ?? url ?? "Fuente",
+    titulo: texto(f.titulo ?? f.fuente ?? f.title ?? f.nombre) ?? url ?? "Fuente",
     url,
     respalda: texto(f.respalda ?? f.campo),
+    nota: texto(f.nota),
+    consultado: texto(f.consultado),
   };
 }
 
 function normalizarEstado(e) {
   if (e == null) return null;
-  // Un paso puede ser una frase suelta o { accion, senal }. El brief pide la
-  // señal observable por hito; si no llega, el paso sigue valiendo sin ella.
-  const pasos = lista(e.que_hacer ?? e.acciones ?? e.plan)
-    .map((p) =>
-      typeof p === "string"
-        ? { accion: p.trim(), senal: null }
-        : { accion: texto(p?.accion ?? p?.paso ?? p?.texto), senal: texto(p?.senal ?? p?.señal ?? p?.signo) }
-    )
+
+  // El tratamiento llega como frases ("Hoy: …", "Esta semana: …"). Se parte por
+  // el primer dos puntos para separar el CUÁNDO de la acción: así el <ol> tiene
+  // un plazo legible y el diagrama de recuperación tiene sus hitos.
+  const pasos = lista(e.tratamiento ?? e.que_hacer ?? e.acciones ?? e.plan)
+    .map((p) => {
+      if (typeof p !== "string") {
+        return { accion: texto(p?.accion ?? p?.paso ?? p?.texto), plazo: texto(p?.plazo), senal: texto(p?.senal ?? p?.signo) };
+      }
+      const corte = p.indexOf(":");
+      const posiblePlazo = corte > 0 ? p.slice(0, corte).trim() : "";
+      // Solo es un plazo si es corto; si no, es una frase que llevaba dos puntos.
+      const esPlazo = posiblePlazo.length > 0 && posiblePlazo.length <= 24 && !posiblePlazo.includes(".");
+      return {
+        accion: esPlazo ? p.slice(corte + 1).trim() : p.trim(),
+        plazo: esPlazo ? posiblePlazo : null,
+        senal: null,
+      };
+    })
     .filter((p) => p.accion);
+
+  const revisar = texto(e.revisar_en ?? e.revisar);
+
   return {
     severidad: texto(e.severidad ?? e.nivel) ?? "atencion",
-    titulo: texto(e.titulo ?? e.resumen) ?? "Necesita atención",
-    diagnostico: texto(e.diagnostico ?? e.descripcion ?? e.detalle),
-    revisar_en: texto(e.revisar_en ?? e.revisar),
+    fecha_foto: texto(e.fecha_foto),
+    senales: lista(e.senales ?? e.señales).map(texto).filter(Boolean),
+    causas: lista(e.causas_probables ?? e.causas).map(texto).filter(Boolean),
+    no_visible: lista(e.no_visible_en_foto).map(texto).filter(Boolean),
+    revisar_en: revisar,
+    // Para el rótulo del diagrama hace falta algo corto ("3 semanas"), no el
+    // párrafo entero: se toma lo que va antes del primer dos puntos si cabe.
+    revisar_corto: revisar ? etiquetaCorta(revisar) : null,
     pasos,
   };
+}
+
+function etiquetaCorta(texto_) {
+  const corte = texto_.indexOf(":");
+  const cabeza = corte > 0 ? texto_.slice(0, corte).trim() : texto_;
+  return cabeza.length <= 20 ? cabeza : null;
 }
 
 /** Datos de la etiqueta térmica del vivero. Helecho y poto no tienen etiqueta:
@@ -121,15 +173,20 @@ function normalizarMedidas(p) {
   return {
     riego: {
       profundidad_cm: p.riego_profundidad_cm ?? riego.profundidad_cm ?? null,
-      ml: p.riego_ml ?? riego.ml ?? null,
+      ml: p.riego_ml ?? riego.ml ?? riego.ml_aprox ?? null,
+      dias_verano: riego.dias_verano ?? null,
+      dias_invierno: riego.dias_invierno ?? null,
     },
     luz: {
+      nivel: luz.nivel ?? p.luz_nivel ?? null,
+      tramos: Array.isArray(luz.tramos) ? luz.tramos : null,
+      sol_directo: texto(luz.sol_directo),
       orientacion: texto(p.ventana ?? p.orientacion ?? luz.orientacion ?? luz.ventana),
       distancia_m: p.distancia_ventana_m ?? luz.distancia_m ?? null,
     },
     temperatura: {
-      min_tolerado: temp.min_tolerado ?? p.temp_min ?? null,
-      max_tolerado: temp.max_tolerado ?? p.temp_max ?? null,
+      min_tolerado: temp.min_tolerado ?? temp.min_c ?? p.temp_min ?? null,
+      max_tolerado: temp.max_tolerado ?? temp.max_c ?? p.temp_max ?? null,
       min_optimo: temp.min_optimo ?? null,
       max_optimo: temp.max_optimo ?? null,
       letal_min: temp.letal_min ?? p.temp_letal ?? null,
@@ -144,19 +201,45 @@ function objeto(v) {
 }
 
 function normalizarToxicidad(t) {
-  if (t == null) return { nivel: null, texto: null, verificado: false };
-  if (typeof t === "string") return { nivel: null, texto: t.trim(), verificado: true };
+  if (t == null) return { nivel: null, texto: null, detalle: null, verificado: false };
+  if (typeof t === "string") return { nivel: null, texto: t.trim(), detalle: null, verificado: true };
+
+  // El formato real distingue gatos de perros, y eso no se puede aplanar a un
+  // "tóxica" genérico: quien tiene gato necesita leer gato.
+  const gatos = texto(t.gatos);
+  const perros = texto(t.perros);
+  const porEspecie = [gatos && `Gatos: ${gatos}`, perros && `Perros: ${perros}`].filter(Boolean);
+
   return {
-    nivel: texto(t.nivel ?? t.severidad ?? t.toxica),
-    texto: texto(t.resumen ?? t.texto ?? t.detalle),
-    verificado: true,
+    nivel: texto(t.nivel ?? t.severidad ?? t.toxica) ?? gatos ?? perros,
+    texto: porEspecie.length > 0 ? porEspecie.join(" · ") : texto(t.resumen ?? t.texto),
+    detalle: texto(t.detalle),
+    verificado: porEspecie.length > 0 || Boolean(t.resumen ?? t.texto ?? t.detalle),
   };
+}
+
+/**
+ * La temperatura no viene con `resumen`: viene con min_c y max_c. En vez de
+ * pintar «sin dato» teniendo las dos cifras, se compone la frase — es
+ * formateo de un dato verificado, no un dato inventado.
+ */
+function resumenTemperatura(t) {
+  const min = objeto(t).min_c, max = objeto(t).max_c;
+  if (min != null && max != null) return `Entre ${min} y ${max} °C`;
+  if (min != null) return `Mínimo ${min} °C`;
+  if (max != null) return `Máximo ${max} °C`;
+  return null;
 }
 
 function normalizarPlanta(p) {
   const cuidados = new Map();
   for (const [clave, etiqueta] of CAMPOS_CUIDADO) {
-    cuidados.set(clave, { clave, etiqueta, ...normalizarCampo(p[clave]) });
+    const campo = normalizarCampo(p[clave]);
+    if (clave === "temperatura" && campo.resumen == null) {
+      const compuesto = resumenTemperatura(p[clave]);
+      if (compuesto) { campo.resumen = compuesto; campo.verificado = true; }
+    }
+    cuidados.set(clave, { clave, etiqueta, ...campo });
   }
 
   const foto = texto(p.foto);
@@ -170,14 +253,19 @@ function normalizarPlanta(p) {
     // El JSON puede traer solo el nombre de fichero o una ruta ya hecha.
     foto: foto ? (foto.includes("/") ? foto : RUTA_IMG + foto) : null,
     foto_alt: texto(p.alt ?? p.foto_alt) ?? "",
+    etiqueta_alt: texto(p.etiqueta_alt ?? p.alt_etiqueta),
     foto_etiqueta: etiquetaFoto
       ? (etiquetaFoto.includes("/") ? etiquetaFoto : RUTA_IMG + etiquetaFoto)
       : null,
     cuidados,
-    plagas: lista(p.plagas_comunes).map((x) => texto(typeof x === "object" ? x?.nombre : x)).filter(Boolean),
+    plagas: lista(p.plagas_comunes)
+      .map((x) => (typeof x === "object" && x !== null
+        ? { nombre: texto(x.plaga ?? x.nombre), senal: texto(x.senal ?? x.señal), respuesta: texto(x.respuesta) }
+        : { nombre: texto(x), senal: null, respuesta: null }))
+      .filter((x) => x.nombre),
     toxicidad: normalizarToxicidad(p.toxicidad_mascotas),
     dificultad: texto(p.dificultad),
-    nivel_luz: texto(p.luz_nivel ?? p.nivel_luz) ?? normalizarCampo(p.luz).nivel ?? null,
+    nivel_luz: palabraNivelLuz(p.luz_nivel ?? p.nivel_luz ?? objeto(p.luz).nivel),
     historia: texto(p.historia),
     notas_carlos: texto(p.notas_carlos ?? p.notas),
     ubicacion: texto(p.ubicacion ?? p.donde ?? p.sala),

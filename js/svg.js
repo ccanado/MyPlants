@@ -73,113 +73,136 @@ function sinDato(mensaje) {
   return p;
 }
 
-/* ══ 1 · El dedo en la tierra ═══════════════════════════════════════════════
-   Corte vertical del tiesto: a qué profundidad tiene que estar seco el sustrato
-   antes de volver a regar. Necesita profundidad en cm; los ml son opcionales. */
+/* ══ 1 · El reloj de riego ══════════════════════════════════════════════════
+   Cada cuántos días toca, en verano y en invierno, sobre un dial de 0 a 10.
+   Se dibuja sobre `dias_verano` / `dias_invierno`, que sí existen en el JSON:
+   la versión anterior pedía centímetros de profundidad que no produce nadie. */
+
+const DIAS_MAX = 10;
 
 export function diagramaRiego(riego) {
-  const cm = numero(riego?.profundidad_cm);
-  if (cm == null) return sinDato("Sin dato de profundidad de riego.");
+  const verano = numero(riego?.dias_verano);
+  const invierno = numero(riego?.dias_invierno);
+  if (verano == null && invierno == null) return sinDato("Sin dato de frecuencia de riego.");
 
-  const PROF_TIESTO = 14; // cm de referencia del corte, no es un dato de la planta
-  const svg = lienzo("0 0 120 110", "diagrama--riego");
+  const svg = lienzo("0 0 120 80", "diagrama--riego");
+  const cx = 60, cy = 62, r = 44;
 
-  const bocaY = 18, fondoY = 98, bocaX1 = 16, bocaX2 = 104, fondoX1 = 30, fondoX2 = 90;
-
-  // Tiesto: trapecio de plástico inyectado, como el de la foto.
-  svg.append(e("path", {
-    class: "riego__tiesto",
-    d: `M${bocaX1} ${bocaY} L${bocaX2} ${bocaY} L${fondoX2} ${fondoY} L${fondoX1} ${fondoY} Z`,
-  }));
-  // El anillo moldeado del borde.
-  svg.append(e("rect", { class: "riego__anillo", x: bocaX1 - 2, y: bocaY - 6, width: bocaX2 - bocaX1 + 4, height: 6, rx: 1 }));
-
-  // Sustrato.
-  svg.append(e("path", {
-    class: "riego__sustrato",
-    d: `M${bocaX1 + 2} ${bocaY + 2} L${bocaX2 - 2} ${bocaY + 2} L${fondoX2 - 2} ${fondoY - 2} L${fondoX1 + 2} ${fondoY - 2} Z`,
-  }));
-
-  // Frente húmedo: empieza a la profundidad seca y baja hasta el fondo.
-  const fraccion = limitar(cm / PROF_TIESTO, 0, 1);
-  const yFrente = bocaY + (fondoY - bocaY) * fraccion;
-  const anchoEn = (y) => {
-    const t = (y - bocaY) / (fondoY - bocaY);
-    return [bocaX1 + (fondoX1 - bocaX1) * t, bocaX2 + (fondoX2 - bocaX2) * t];
+  // Punto de la semicircunferencia para N días (0 a la izquierda, 10 a la derecha).
+  const punto = (dias, radio) => {
+    const t = limitar(dias / DIAS_MAX, 0, 1);
+    const ang = Math.PI * (1 - t);
+    return [cx + Math.cos(ang) * radio, cy - Math.sin(ang) * radio];
   };
-  const [fx1, fx2] = anchoEn(yFrente);
-  svg.append(e("path", {
-    class: "riego__humedo",
-    d: `M${fx1 + 2} ${yFrente} L${fx2 - 2} ${yFrente} L${fondoX2 - 2} ${fondoY - 2} L${fondoX1 + 2} ${fondoY - 2} Z`,
-  }));
+  const arco = (radio) => {
+    const [x1, y1] = punto(0, radio);
+    const [x2, y2] = punto(DIAS_MAX, radio);
+    return `M${redondear(x1)} ${redondear(y1)} A ${radio} ${radio} 0 0 1 ${redondear(x2)} ${redondear(y2)}`;
+  };
 
-  // La línea de «hasta aquí seco» y su cota.
-  svg.append(e("line", { class: "riego__cota", x1: fx1 - 8, y1: yFrente, x2: fx2 + 4, y2: yFrente }));
-  svg.append(txt(fx2 + 6, yFrente - 2, `${formatear(cm)} cm`, "riego__cota-texto"));
+  svg.append(e("path", { class: "reloj__pista", d: arco(r) }));
 
-  // El dedo: la unidad de medida real de cualquiera que riega.
-  svg.append(e("rect", { class: "riego__dedo", x: 56, y: bocaY - 14, width: 9, height: 14 + (yFrente - bocaY), rx: 4.5 }));
+  // Marcas de día: la escala se lee sin depender del color.
+  for (let d = 0; d <= DIAS_MAX; d += 1) {
+    const [xa, ya] = punto(d, r - 4);
+    const [xb, yb] = punto(d, r + (d % 5 === 0 ? 5 : 2));
+    svg.append(e("line", { class: d % 5 === 0 ? "reloj__marca reloj__marca--mayor" : "reloj__marca", x1: xa, y1: ya, x2: xb, y2: yb }));
+  }
 
-  // La gota que cae. Solo se anima al abrir la ficha; con reduce ni aparece.
-  svg.append(e("circle", { class: "riego__gota", cx: 60, cy: 6, r: 3.5 }));
+  // Las dos agujas. Llevan rótulo con la palabra, no solo posición.
+  const aguja = (dias, clase, etiqueta) => {
+    if (dias == null) return;
+    const [x, y] = punto(dias, r - 9);
+    svg.append(e("line", { class: `reloj__aguja ${clase}`, x1: cx, y1: cy, x2: x, y2: y }));
+    svg.append(e("circle", { class: `reloj__punta ${clase}`, cx: x, cy: y, r: 4 }));
+    const [tx, ty] = punto(dias, r + 12);
+    svg.append(txt(tx, ty, etiqueta, "reloj__rotulo", { "text-anchor": "middle", "font-size": CUERPO.micro }));
+  };
+  aguja(verano, "reloj__aguja--verano", "verano");
+  aguja(invierno, "reloj__aguja--invierno", "invierno");
 
-  if (riego?.ml != null) svg.append(txt(60, 108, `${formatear(riego.ml)} ml`, "riego__ml", { "text-anchor": "middle" }));
+  svg.append(e("circle", { class: "reloj__eje", cx, cy, r: 3 }));
 
+  // La cifra grande: el dato que se busca con prisa.
+  const principal = verano ?? invierno;
+  svg.append(txt(cx, cy - 12, `${formatear(principal)}`, "reloj__cifra", { "text-anchor": "middle", "font-size": 20 }));
+  svg.append(txt(cx, cy - 4, principal === 1 ? "día" : "días", "reloj__unidad", { "text-anchor": "middle", "font-size": CUERPO.micro }));
+
+  if (riego?.ml != null) {
+    svg.append(txt(cx, 78, `${formatear(riego.ml)} ml`, "reloj__ml", { "text-anchor": "middle", "font-size": CUERPO.micro }));
+  }
   return svg;
 }
 
-/* ══ 2 · La ventana ═════════════════════════════════════════════════════════
-   Planta cenital de la habitación: por dónde entra la luz y a qué distancia
-   está la planta de verdad. No la luz teórica de la especie: la de esta casa. */
+/* ══ 2 · La mañana del salón ════════════════════════════════════════════════
+   Eje de un día con sus tramos de luz reales. No es una categoría de vivero:
+   es lo que le entra por la ventana a esta planta en esta casa. Si solo hay
+   `nivel`, los tramos se dibujan en trama de «sin dato» y el texto lo dice. */
 
-const ORIENTACIONES = new Map([
-  ["norte", { sigla: "N", angulo: 0 }],
-  ["sur", { sigla: "S", angulo: 180 }],
-  ["este", { sigla: "E", angulo: 90 }],
-  ["oeste", { sigla: "O", angulo: 270 }],
-  ["noreste", { sigla: "NE", angulo: 45 }],
-  ["noroeste", { sigla: "NO", angulo: 315 }],
-  ["sureste", { sigla: "SE", angulo: 135 }],
-  ["suroeste", { sigla: "SO", angulo: 225 }],
+const NOMBRE_NIVEL = new Map([
+  [1, "sombra"], [2, "semisombra"], [3, "luz indirecta"],
+  [4, "mucha luz"], [5, "sol directo"],
 ]);
 
 export function diagramaLuz(luz) {
-  const orientacion = luz?.orientacion ? String(luz.orientacion).toLowerCase().trim() : null;
-  const distancia = numero(luz?.distancia_m);
-  if (orientacion == null && distancia == null) {
-    return sinDato("Sin dato de ventana ni distancia.");
+  const tramos = Array.isArray(luz?.tramos) ? luz.tramos : null;
+  const solDirecto = texto0(luz?.sol_directo);
+  const nivel = numero(luz?.nivel);
+  if (!tramos && !solDirecto && nivel == null) return sinDato("Sin dato de luz.");
+
+  const svg = lienzo("0 0 120 52", "diagrama--luz");
+  const eje = { x: 10, y: 22, w: 100, h: 10 };
+
+  svg.append(hachurado());
+
+  // Horas de referencia del eje: de que amanece a que anochece.
+  svg.append(e("rect", { class: "dia__eje", x: eje.x, y: eje.y, width: eje.w, height: eje.h, rx: 2 }));
+
+  if (tramos) {
+    // Cada tramo trae su fracción del día y su tipo de luz.
+    let x = eje.x;
+    for (const tramo of tramos) {
+      const frac = limitar(numero(tramo?.fraccion) ?? 0, 0, 1);
+      const ancho = eje.w * frac;
+      svg.append(e("rect", {
+        class: `dia__tramo dia__tramo--${normalizarClase(tramo?.tipo)}`,
+        x, y: eje.y, width: ancho, height: eje.h, rx: 2,
+      }));
+      x += ancho;
+    }
+  } else {
+    // Sin los tramos reales no se inventa el reparto del día: se hachura.
+    svg.append(e("rect", { class: "dia__sin-dato", x: eje.x, y: eje.y, width: eje.w, height: eje.h, rx: 2, fill: "url(#hachurado)" }));
   }
 
-  const svg = lienzo("0 0 120 100", "diagrama--luz");
-  const sala = { x: 12, y: 14, w: 96, h: 74 };
-  const MAX_M = 4; // la habitación del diagrama son 4 m de fondo
+  svg.append(txt(eje.x, eje.y - 5, "amanece", "dia__hora", { "font-size": CUERPO.micro }));
+  svg.append(txt(eje.x + eje.w, eje.y - 5, "anochece", "dia__hora", { "text-anchor": "end", "font-size": CUERPO.micro }));
 
-  svg.append(e("rect", { class: "luz__sala", x: sala.x, y: sala.y, width: sala.w, height: sala.h, rx: 2 }));
-
-  // La ventana, en el muro que toque.
-  const info = orientacion ? ORIENTACIONES.get(orientacion) : null;
-  const ventana = { x: sala.x + sala.w * 0.28, y: sala.y, w: sala.w * 0.44, h: 3 };
-  svg.append(e("rect", { class: "luz__ventana", x: ventana.x, y: ventana.y - 1.5, width: ventana.w, height: ventana.h, rx: 1 }));
-  svg.append(txt(sala.x + sala.w / 2, sala.y - 5, info ? `Ventana ${info.sigla}` : "Ventana", "luz__rotulo", { "text-anchor": "middle", "font-size": CUERPO.rotulo }));
-
-  // Cono de luz: se abre desde la ventana y se apaga con la distancia.
-  svg.append(e("path", {
-    class: "luz__cono",
-    d: `M${ventana.x} ${sala.y} L${sala.x + 4} ${sala.y + sala.h - 4} L${sala.x + sala.w - 4} ${sala.y + sala.h - 4} L${ventana.x + ventana.w} ${sala.y} Z`,
-  }));
-
-  // Dónde está la planta, de verdad.
-  if (distancia != null) {
-    const t = limitar(distancia / MAX_M, 0, 1);
-    const py = sala.y + 6 + (sala.h - 14) * t;
-    const px = sala.x + sala.w / 2;
-    svg.append(e("line", { class: "luz__cota", x1: px, y1: sala.y, x2: px, y2: py }));
-    svg.append(e("circle", { class: "luz__planta", cx: px, cy: py, r: 5 }));
-    svg.append(txt(px + 9, py + 3, `${formatear(distancia)} m`, "luz__cota-texto"));
-  }
+  const pie = tramos
+    ? null
+    : nivel != null
+      ? `Nivel ${formatear(nivel)} de 5 · ${NOMBRE_NIVEL.get(Math.round(nivel)) ?? "sin clasificar"}`
+      : solDirecto;
+  if (pie) svg.append(txt(60, eje.y + eje.h + 12, pie, "dia__pie", { "text-anchor": "middle", "font-size": CUERPO.micro }));
 
   return svg;
 }
+
+/** Patrón de diagonales para «no hay dato». El CSS le da el color con tokens. */
+function hachurado() {
+  const patron = e("pattern", { id: "hachurado", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+  patron.append(e("rect", { class: "hachurado__fondo", width: 6, height: 6 }));
+  patron.append(e("line", { class: "hachurado__linea", x1: 0, y1: 0, x2: 0, y2: 6 }));
+  const defs = e("defs");
+  defs.append(patron);
+  return defs;
+}
+
+const normalizarClase = (v) =>
+  String(v ?? "sin-tipo").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+const texto0 = (v) => (v == null || v === "" ? null : String(v));
 
 /* ══ 3 · Rango térmico ══════════════════════════════════════════════════════
    Eje de 0 a 40 °C: lo que tolera, lo que le gusta, dónde se muere, y las dos
@@ -188,7 +211,9 @@ export function diagramaLuz(luz) {
 export function diagramaTemperatura(t) {
   const tol = [numero(t?.min_tolerado), numero(t?.max_tolerado)];
   const opt = [numero(t?.min_optimo), numero(t?.max_optimo)];
-  if (tol[0] == null && opt[0] == null) return sinDato("Sin rango de temperatura verificado.");
+  if (tol[0] == null && tol[1] == null && opt[0] == null) {
+    return sinDato("Sin rango de temperatura verificado.");
+  }
 
   const MIN = 0, MAX = 40;
   const svg = lienzo("0 0 120 54", "diagrama--temp");
@@ -197,8 +222,18 @@ export function diagramaTemperatura(t) {
 
   svg.append(e("rect", { class: "temp__eje", x: eje.x, y: eje.y, width: eje.w, height: 6, rx: 3 }));
 
-  if (tol[0] != null && tol[1] != null) {
-    svg.append(e("rect", { class: "temp__tolerado", x: px(tol[0]), y: eje.y, width: px(tol[1]) - px(tol[0]), height: 6, rx: 3 }));
+  // El rango puede estar abierto por arriba: RHS da mínimo para los helechos
+  // tiernos y no publica máximo. Se dibuja hasta el borde y se rotula «≥ min»,
+  // que es lo que se sabe — no se cierra la banda en una cifra inventada.
+  if (tol[0] != null || tol[1] != null) {
+    const desde = tol[0] != null ? px(tol[0]) : px(MIN);
+    const hasta = tol[1] != null ? px(tol[1]) : px(MAX);
+    svg.append(e("rect", { class: "temp__tolerado", x: desde, y: eje.y, width: hasta - desde, height: 6, rx: 3 }));
+
+    if (tol[1] == null && tol[0] != null) {
+      svg.append(e("path", { class: "temp__abierto", d: `M${px(MAX) - 6} ${eje.y - 2} l6 5 l-6 5 Z` }));
+      svg.append(txt(px(tol[0]), eje.y - 8, `≥ ${formatear(tol[0])}°`, "temp__casa-texto", { "text-anchor": "middle", "font-size": CUERPO.micro }));
+    }
   }
   if (opt[0] != null && opt[1] != null) {
     svg.append(e("rect", { class: "temp__optimo", x: px(opt[0]), y: eje.y + 1, width: px(opt[1]) - px(opt[0]), height: 4, rx: 2 }));

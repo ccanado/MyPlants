@@ -20,7 +20,7 @@ export const DIMENSIONES = [
     id: "dificultad",
     legend: "Dificultad",
     valor: (p) => p.dificultad,
-    orden: ["facil", "fácil", "media", "moderada", "dificil", "difícil"],
+    orden: ["facil", "fácil", "media", "moderada", "exigente", "dificil", "difícil"],
   },
   {
     id: "luz",

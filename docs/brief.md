@@ -56,19 +56,24 @@ herbario inglés. Ni una decisión de esta sección es "porque queda bien en una
 
 ### Paleta — 6 colores
 
-| Nombre | Hex | Qué es en el mundo real | Dónde se usa |
-| --- | --- | --- | --- |
-| **Maceta** | `#8F4A33` | El plástico teja del tiesto del coleo | Fondo de página. Nunca lleva texto que no sea blanco |
-| **Tinta** | `#16342A` | El verde botella del tiesto del ficus | Tinta principal: todo el texto sobre la etiqueta |
-| **Etiqueta** | `#FBFAF7` | El blanco satinado de la pegatina térmica | Superficie de las fichas, franjas y paneles |
-| **Bolígrafo** | `#1F3F97` | El azul del recuadro `PLANT PASSPORT` de la begonia | **Solo la capa de Carlos** y los enlaces a fuentes |
-| **Alarma** | `#A4161A` | El rojo del tiesto de la begonia, saturado a señal | Severidad `critica` |
-| **Aviso** | `#8C5A05` | El ocre de la tierra seca en el borde del cepellón | Severidad `atencion` |
+> **La única fuente de verdad de los nombres es `css/tokens.css`.** Esta tabla es
+> explicación, no contrato: si algún día discrepan, manda el fichero. `builder` copia los
+> nombres de ahí, nunca de aquí.
+
+| Nombre | Token | Hex | Qué es en el mundo real | Dónde se usa |
+| --- | --- | --- | --- | --- |
+| **Maceta** | `--color-maceta` | `#8F4A33` | El plástico teja del tiesto del coleo | Fondo de página. Nunca lleva texto que no sea blanco |
+| **Tinta** | `--color-tinta` | `#16342A` | El verde botella del tiesto del ficus | Tinta principal: todo el texto sobre la etiqueta |
+| **Etiqueta** | `--color-etiqueta` | `#FBFAF7` | El blanco satinado de la pegatina térmica | Superficie de las fichas, franjas y paneles |
+| **Bolígrafo** | `--color-boli` | `#1F3F97` | El azul del recuadro `PLANT PASSPORT` de la begonia | **Solo la capa de Carlos** y los enlaces a fuentes |
+| **Alerta** | `--color-alerta` | `#A4161A` | El rojo del tiesto de la begonia, saturado a señal | Severidad `critica` |
+| **Aviso** | `--color-aviso` | `#8C5A05` | El ocre de la tierra seca en el borde del cepellón | Severidad `atencion` |
 
 Derivados que también viven en tokens (no son decisiones nuevas, son la misma paleta):
-`--color-tinta-suave #4A6357` (texto secundario), `--color-codigo #5E7066` (mono de metadatos),
+`--color-tinta-suave #4A6357` (texto secundario), `--color-codigo #4F6157` (mono de metadatos),
 `--color-borde #918A7B` (bordes informativos), `--color-cuaderno #EEF1FA` (papel del panel de
-Carlos), rellenos pálidos de alarma/aviso, y las dos caras del plástico
+Carlos), `--color-sin-dato #63625B` (la ausencia de dato, que **no es un estado** y nunca es
+verde), los rellenos pálidos `--color-alerta-relleno` y `--color-aviso-relleno`, y las dos caras del plástico
 (`--color-maceta-alta #A85C43`, `--color-maceta-baja #6E3826`) para el anillo moldeado del tiesto.
 
 **Decisión de jerarquía, no de gusto:** `severidad: sana` **no tiene color propio**. Una planta
@@ -82,13 +87,17 @@ información menos urgente.
 | --- | --- | --- | --- |
 | Tinta sobre Etiqueta | **12,91** | 4,5 | ✅ |
 | Tinta-suave sobre Etiqueta | **6,26** | 4,5 | ✅ |
-| Código sobre Etiqueta | **5,05** | 4,5 | ✅ (cuerpo 11 px, por eso se mide como texto normal) |
+| `--color-codigo` sobre Etiqueta | **6,33** | 4,5 | ✅ (cuerpo 11 px, se mide como texto normal) |
+| `--color-codigo` sobre `--color-etiqueta-2` | **5,69** | 4,5 | ✅ era 4,54 — corregido tras auditoría |
+| `--color-sin-dato` sobre Etiqueta | **5,87** | 4,5 | ✅ |
+| `--color-sin-dato-trama` sobre su relleno | **3,35** | 3,0 | ✅ era 1,72 — **suspendía**, corregido |
+| `--texto-sobre-alerta` sobre `--color-alerta` | **7,43** | 4,5 | ✅ severidad crítica, invertida |
 | Bolígrafo sobre Etiqueta | **9,08** | 4,5 | ✅ |
 | Bolígrafo sobre Cuaderno | **8,77** | 4,5 | ✅ |
-| Alarma sobre Etiqueta | **7,43** | 4,5 | ✅ |
-| Alarma sobre relleno-alarma `#FBEAE8` | **6,66** | 4,5 | ✅ |
-| Aviso sobre Etiqueta | **5,62** | 4,5 | ✅ |
-| Aviso sobre relleno-aviso `#FCF2DC` | **5,27** | 4,5 | ✅ |
+| `--color-alerta` sobre Etiqueta | **7,43** | 4,5 | ✅ |
+| `--color-alerta` sobre `--color-alerta-relleno` | **6,66** | 4,5 | ✅ |
+| `--color-aviso` sobre Etiqueta | **5,62** | 4,5 | ✅ |
+| `--color-aviso` sobre `--color-aviso-relleno` | **5,27** | 4,5 | ✅ |
 | Etiqueta sobre Maceta | **6,30** | 4,5 | ✅ |
 | Etiqueta sobre Maceta-baja | **8,92** | 4,5 | ✅ |
 | Borde `#918A7B` sobre Etiqueta | **3,28** | 3,0 | ✅ |
@@ -122,16 +131,17 @@ Por qué estas y no otras:
 - **IBM Plex Mono** para el dato: mecánica sin ser de terminal, y da el efecto contador de la
   báscula del vivero.
 
-**Tarea pendiente (no bloquea a `builder`):** los tres `woff2` no están en el repo. Hay que
-descargar y subsetear a latín + `áéíóúüñ¿¡€°·`. Hasta entonces `tokens.css` ya declara las
-pilas completas con el fallback delante en la cascada de `font-family`, así que **la web se ve
-bien hoy, sin un solo fichero de fuente**. Cuando lleguen, se añaden los `@font-face` y no se
-toca nada más.
+**Resuelto.** Los seis `woff2` están en `assets/fonts/`: **82,1 KB en total**, subset latino, y
+los seis `@font-face` activos. Cero peticiones a terceros en runtime — se descargaron una vez, en
+desarrollo, que es lo que la restricción permite. Las tres familias son SIL OFL y su procedencia y
+licencia están anotadas en `css/tokens.css`, porque en un proyecto sin dependencias esos seis
+ficheros son lo único con licencia de terceros que hay dentro. Las pilas de fallback se quedan:
+cubren el instante previo al `swap` y el caso de servir esto sin la carpeta.
 
 **Escala tipográfica.** Base 17 px (`1.0625rem`) — deliberadamente no 16, para que el texto
 corrido de la ficha se lea de un vistazo con la regadera en la mano. Todo en `rem`, nunca `px`.
 `--texto-3xs` 11 px · `2xs` 12 · `xs` 13 · `s` 15 · `m` 17 (base) · `l` 20 · `xl` 24 · `2xl` 32,
-más dos escalones fluidos: `--texto-etiqueta` `clamp(2.25rem, 7cqi, 3.75rem)` (el nombre de la
+más dos escalones fluidos: `--texto-nombre` `clamp(2.25rem, 7cqi, 3.75rem)` (el nombre de la
 planta, dimensionado contra su contenedor) y `--texto-precio` `clamp(1.75rem, 4.5cqi, 2.5rem)`.
 
 **Espaciado.** Escala de 4 px en `rem`: `--space-1` .25 → `--space-9` 6rem. Nada fuera de escala.
@@ -246,6 +256,26 @@ lleva `role="img"` con `<title>`/`<desc>`, o `aria-hidden="true"` cuando el text
 dice todo. Sin librerías: SVG en línea + CSS, y `@property` para animar valores numéricos.
 **Nada arranca solo y nada va en bucle infinito.**
 
+> ### ⚠ Conflicto de datos abierto — el sol de la mañana
+>
+> El lead me trasladó de Carlos que **"por la mañana les da sol directo y luego se va"**, y sobre
+> eso rediseñé este diagrama como "la mañana del salón", con un tramo de sol y otro de sombra.
+> Al verificarlo contra `content/plantas.json` resulta que **`botanist` afirma lo contrario**, y no
+> de pasada: `meta.contexto` dice "ventanal grande orientado a **noreste** (luz suave de mañana,
+> **sin sol directo duro**)", y las fichas lo repiten planta por planta — *"nada de sol directo"*
+> (helecho), *"cero sol directo"* (begonia).
+>
+> **No lo resuelvo yo eligiendo el que me conviene.** Ese diagrama habría dibujado un tramo de sol
+> directo en las siete fichas basándome en una frase de segunda mano, que es exactamente lo que
+> `CLAUDE.md` prohíbe. **Así que retiro mi propio cambio del turno anterior** y el diagrama vuelve
+> a la escala de luz, que se apoya en `luz.nivel` — dato que existe, está en las siete y tiene su
+> escala documentada en `meta.escalas`.
+>
+> Las dos versiones pueden ser compatibles: un ventanal NE en Madrid **sí** recibe sol directo a
+> primera hora en verano, y "sin sol directo **duro**" no es "sin sol directo". Pero eso lo cierra
+> Carlos mirando por la ventana a las nueve de la mañana, no yo deduciéndolo. Si lo confirma, el
+> tramo de sol entra como **capa adicional** sobre esta escala, no en su lugar.
+
 **Se dibujan sobre los datos que existen de verdad.** `botanist` confirmó los ejes numéricos
 reales del JSON, y los cinco diagramas se han reescrito para usarlos. Un diagrama de centímetros
 de profundidad o de metros hasta la ventana habría sido precisión fingida: esos datos no los
@@ -253,14 +283,15 @@ tiene nadie, y `CLAUDE.md` prohíbe rellenarlos a ojo.
 
 | # | SVG | Campo del JSON que consume | Qué dato explica | Animación completa | Versión reducida (obligatoria) |
 | --- | --- | --- | --- | --- | --- |
-| 1 | **El reloj de riego** — corte vertical del tiesto | `riego.dias_verano` · `riego.dias_invierno` (2–10 días) | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
-| 2 | **La escala de luz** — cinco escalones rotulados | `luz.nivel` (entero 1–5; el set real va de 2 a 5) | En cuál de los cinco escalones vive esta planta, de sombra a pleno sol | El escalón de esta planta se rellena de izquierda a derecha, 260 ms | Escalón ya relleno, solo opacidad |
-| 3 | **Rango térmico** — eje de 0 a 40 °C | `temperatura.min_c` · `max_c` (el set real va de 7 a 30 °C) | La banda que aguanta y dónde empieza a sufrir | La banda crece desde `min_c` hacia `max_c`, 260 ms | Banda completa, solo opacidad |
+| 1 | **El reloj de riego** — corte vertical del tiesto | `riego.dias_verano` · `riego.dias_invierno` (2–10 días) · `riego.ml_aprox` | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
+| 2 | **Lo que quiere y lo que tiene** — la escala de 1 a 5 con dos marcas | `luz.nivel_actual` · `luz.nivel_ideal` (escala documentada en `meta.escalas`) | No en qué escalón vive, sino **cuánto le falta**: los dos coleos quieren más luz de la que tienen y el poto está más oscuro de lo ideal. Cuando las dos marcas coinciden, no hay nada que hacer, y eso también es información | La marca de "lo que tiene" entra en su sitio y el hueco hasta "lo que quiere" se rellena después, 260 ms | Las dos marcas y el hueco ya dibujados, solo opacidad |
+| 3 | **Rango térmico** — eje de 0 a 40 °C | `temperatura.min_c` · `max_c` (7–30 °C) + las dos temperaturas reales del salón | La banda que aguanta, y **dónde cae la casa dentro de ella**: 28 °C de tope en verano (el aire acondicionado) y la de calefacción en invierno | La banda crece de `min_c` a `max_c` y los dos marcadores de casa entran después, 260 ms | Banda y marcadores ya en su sitio, solo opacidad |
 | 4 | **Curso de recuperación** — línea de tiempo | `estado.tratamiento[]` · `estado.revisar_en` · `estado.fecha_foto` | Solo en las 3 plantas tocadas: de la fecha del diagnóstico a la revisión, con cada paso y la señal observable de cada hito | La línea se traza de izquierda a derecha (`--recorrido`, 900 ms) y el hito de hoy late **una sola vez** | Línea completa desde el principio, sin latido |
 | 5 | **El calendario del domingo** — eje compartido de 2 a 10 días | `riego.dias_verano` de **las siete** | Cuál toca antes. Es la respuesta a "voy a regar y no me acuerdo de a cuál", que es el trabajo primario de la página | Los siete marcadores entran escalonados, 160 ms + `--retardo-*` | Los siete ya en su sitio, sin escalonar |
 
-Redundancia textual obligatoria, por SVG: (1) "cada 4 días en verano, cada 9 en invierno";
-(2) "luz indirecta brillante — nivel 3 de 5"; (3) "7–30 °C"; (4) el mismo tratamiento como `<ol>`
+Redundancia textual obligatoria, por SVG: (1) "cada 4 días en verano, cada 9 en invierno · 250 ml";
+(2) "quiere nivel 4 de 5 y tiene 3: le falta un escalón de luz"; (3) "7–30 °C · en casa,
+28 °C tope en verano"; (4) el mismo tratamiento como `<ol>`
 numerado, del que el SVG es una segunda vista; (5) cada marcador es un `<button>` real con nombre
 accesible ("Poto — cada 7 días"), así que el diagrama es una vista redundante de una lista que ya
 funciona sin él.
@@ -268,11 +299,14 @@ funciona sin él.
 `prefers-reduced-motion: reduce` no apaga: **cambia de versión**. Y el diagrama 4, que es el que
 más importa, es legible entero sin una sola animación.
 
-> **El plano de casa queda aparcado, no descartado.** Era el SVG 5 original y sigue siendo la
-> mejor vía para "¿cuál es la del baño?", pero necesita `ubicacion.habitacion` de las siete y hoy
-> `docs/inventario.md` está vacío. **Es una pregunta para Carlos, no para `botanist`**: RHS no
-> sabe dónde está su tiesto. En cuanto haya habitaciones lo recupero como sexto diagrama. Mientras
-> tanto, el calendario del domingo ocupa ese hueco y usa datos que sí existen.
+> **El plano de casa está cerrado, no aparcado.** Carlos confirma que **las siete están en el
+> salón**. Un plano sería una habitación con siete puntos amontonados: cero información, que es la
+> definición de diagrama decorativo y por tanto de diagrama que se borra. No vuelve.
+>
+> Y el dato que lo mata mejora dos cosas. Al compartir las siete el mismo microclima, **el
+> calendario del domingo deja de ser una comparación y pasa a ser lo que de verdad es: una sola
+> escena de riego**, siete plantas en el mismo sitio y el mismo aire. Y la luz deja de ser una
+> categoría abstracta por planta y pasa a ser una historia común, que es lo que arregla el SVG 2.
 
 ### Estados degradados — qué se dibuja cuando falta el dato
 
@@ -291,15 +325,27 @@ La propuesta de `builder` es correcta y queda aprobada tal cual.
 `botanist` avisa de algo que el diseño tenía que corregir: **no hay ni una sola planta con
 "no tóxica" confirmada**. Un distintivo verde/rojo mentiría en cinco de las siete fichas.
 
+**Y el rojo de alarma sale de aquí.** `meta.contexto` dice que **no hay mascotas en casa**, así
+que la toxicidad es un dato informativo, no una urgencia. Pintarla en `--color-alerta` la habría
+puesto al mismo nivel visual que el helecho, que sí se está muriendo ahora mismo, y con una sola
+planta crítica en toda la web ese ruido se la come. En este sistema **el color significa "haz algo
+hoy"**, y una planta tóxica en una casa sin gato no lo es. El dato se ve entero; lo que no se
+gasta es la alarma.
+
 | Estado | Quién | Tratamiento visual | Texto obligatorio |
 | --- | --- | --- | --- |
-| `toxica` | begonia, poto, margarita | `--color-alerta` sobre `--color-alerta-relleno`, borde sólido, icono de alerta | "Tóxica para gatos y perros — ASPCA" + enlace |
-| `sin_datos_aspca` | los dos coleos, ficus | `--color-sin-dato` sobre `--color-sin-dato-relleno`, borde discontinuo, icono `?` | "**Sin datos** en ASPCA para esta especie. No significa que sea segura" |
-| `sin_identificar` | helecho | `--trama-sin-dato`, mismo gris, icono `?` | "Especie sin identificar: no se puede valorar" |
+| `toxica` | begonia, poto, margarita | `--texto-principal` sobre `--fondo-hundido`, **borde sólido**, icono de alerta, la palabra `TÓXICA` | "Tóxica para gatos y perros — ASPCA" + enlace |
+| `sin datos` | los dos coleos, ficus | `--color-sin-dato` sobre `--color-sin-dato-relleno`, **borde discontinuo**, icono `?` | "**Sin datos** en ASPCA para esta especie. No significa que sea segura" |
+| `sin identificar` | helecho (`toxicidad_mascotas: null`) | `--trama-sin-dato`, mismo gris, icono `?` | "Especie sin identificar: no se puede valorar" |
 
 Los tres se distinguen por **forma de borde e icono además de color**, así que en escala de grises
 siguen siendo tres cosas distintas. La frase "no significa que sea segura" es literal y no se
 abrevia: es información de seguridad.
+
+**Son dos campos, no uno.** El JSON trae `toxicidad_mascotas.gatos` y `.perros` por separado. Hoy
+coinciden en las siete, pero el esquema permite que diverjan, así que se pintan **los dos** y el
+distintivo toma el peor de ambos. Un badge único que promedie dos animales es un badge que miente
+el día que la fuente los separe.
 
 ### Severidad — tres escalones, y el de arriba tiene que ganar
 
@@ -317,6 +363,19 @@ El salto de "texto de color" a "bloque sólido invertido" es un escalón mucho m
 ocre a un rojo, y funciona igual en escala de grises. Sana no lleva distintivo: cuatro insignias
 verdes de "todo bien" son ruido justo alrededor de lo urgente.
 
+### "Lo que la foto no dice" — el campo que no esperaba y que hay que enseñar
+
+`botanist` ha metido en `estado` un campo que yo no había pedido y que es lo mejor del JSON:
+**`no_visible_en_foto`**, la lista de lo que el diagnóstico **no** puede afirmar. En el helecho son
+cinco cosas, y la primera es la identificación de la especie.
+
+Eso no se esconde en un `detalle` plegado. Va **dentro del bloque de diagnóstico**, debajo de las
+señales y las causas, bajo el rótulo `LO QUE LA FOTO NO DICE`, en `--texto-secundario`, como lista.
+Es la misma idea que hace que las fuentes citadas no sean letra pequeña: **decir hasta dónde llega
+lo que sabes es parte de saberlo**, y es lo que separa esta web de cualquier buscador de síntomas.
+
+En la ficha del helecho ese bloque será más largo que el diagnóstico. Está bien que lo sea.
+
 ### La ficha diagnostica un momento, no el presente
 
 `estado` describe lo que se veía el `fecha_foto`, no lo de hoy. Si no se dice, en tres semanas la
@@ -326,8 +385,15 @@ arranca su línea de tiempo en esa fecha, no en "hoy".
 
 ### La capa personal está vacía hoy — y eso es un problema de contenido, no de diseño
 
-`historia` y `notas_carlos` están a `null` en las siete: Carlos no las ha contado todavía. Dos
-consecuencias, y las asumo:
+> **Actualización: la capa ya existe.** Carlos ha contado el origen de las siete — el poto lleva
+> más de veinte años en la familia, el helecho y la begonia son dos regalos del mismo día de mayo,
+> y las otras cuatro se compraron hoy en Projardín. La tesis del diseño deja de ser una promesa.
+> Lo de abajo se mantiene como regla de construcción, porque el panel debe seguir siendo
+> condicional: no todas las plantas tendrán siempre nota, y un hueco decorado sigue siendo peor
+> que un hueco ausente.
+
+`historia` y `notas_carlos` estaban a `null` en las siete cuando escribí esto. Dos consecuencias,
+y las mantengo:
 
 1. **El panel de cuaderno se renderiza solo si hay contenido.** Nada de siete huecos vacíos ni de
    placeholders tipo "aún no hay notas", que es decorar una ausencia.
@@ -356,6 +422,48 @@ recorte artístico, sin sombra. Es una prueba documental, y una prueba retocada 
 
 `helecho` y `poto` no tienen etiqueta. En su bloque de procedencia va la frase
 "Sin etiqueta de vivero: no se conserva", en `--color-sin-dato`. La ausencia se dice, no se tapa.
+
+### "Recién llegada" no es un cuarto estado — es una fecha, y ya tiene sitio
+
+La pregunta era si "recién llegada / en aclimatación" necesita entrar en el sistema de severidad.
+**No, y añadirlo habría sido el error.** Severidad es un eje —cómo está— y esto es otro —desde
+cuándo—. Meterlos en la misma escala fuerza a leer un cuarto escalón que no compite con los otros
+tres: una planta puede estar sana y recién llegada, o llevar veinte años y estar crítica.
+
+Y resulta que el segundo eje **ya está dibujado**: es la signature. La cronología real es
+
+| | Cuándo llegó | Qué dice su etiqueta |
+| --- | --- | --- |
+| coleo pequeño, coleo grande, ficus, margarita | **hoy**, Viveros Projardín | pegatina con precio y fecha |
+| begonia | mayo, regalo | pegatina, aún en su maceta de vivero |
+| helecho | mayo, regalo | **sin pegatina** |
+| poto | hace **más de veinte años** | **sin pegatina** |
+
+O sea: **la ausencia de etiqueta no es un hueco, es antigüedad.** Es lo contrario de un dato que
+falta. Eso cambia el bloque de procedencia, que pasa de "aquí no hay nada" a decir la única cosa
+que importa de esa planta:
+
+```
+coleo grande   LA PRUEBA   [foto pegatina]  Projardín · hoy · 2,25 €
+poto           LA PRUEBA   Sin etiqueta: lleva más de veinte años en la familia.
+helecho        LA PRUEBA   Sin etiqueta: regalo de mayo.
+```
+
+Y "en aclimatación" es **una línea que se calcula de una fecha**, no un estado: se muestra
+mientras `fecha_llegada` esté a menos de tres semanas, en `--texto-secundario`, dentro de ese
+mismo bloque. En dos semanas será falsa y desaparecerá sola sin que nadie toque una línea de CSS,
+que era la condición. Cero tokens nuevos, cero colores nuevos, cero escalones nuevos.
+
+**Y lo que el diseño no va a hacer:** las dos plantas tocadas son las dos que le regalaron, y las
+cuatro que compró hoy están impecables. Es el hallazgo que más se parece a lo que el brief pedía
+cuando decía que el diseño debía "notar" la mezcla de las dos capas. **No se subraya.** No hay
+rótulo, ni agrupación, ni nota al pie que diga "qué casualidad". El trabajo del diseño es poner el
+origen y el estado en el mismo golpe de vista —y en la ficha están a dos centímetros— para que
+quien lo vea lo vea solo. Señalarlo con el dedo lo convertiría en una gracia; dejarlo callado lo
+deja siendo lo que es.
+
+Si hay una ficha que mirar con lupa cuando lleguen las capturas, es la del helecho: es a la vez la
+más urgente y la más personal, y es el único sitio donde las dos capas se tocan de verdad.
 
 ### La etiqueta cuando no hay etiqueta
 

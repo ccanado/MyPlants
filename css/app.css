@@ -66,7 +66,16 @@
 
   h1, h2, h3, h4, h5 { line-height: var(--interlinea-titulo); font-weight: var(--peso-fuerte); }
 
-  a { color: var(--texto-fuente); }
+  /* Acotado a propósito: --texto-fuente es el azul del plant passport y sobre
+     el fondo teja da 1,44:1. Un `a` global sería ilegible el día que alguien
+     ponga un enlace en el pie o la cabecera. Ahí va --texto-fuente-sobre-maceta. */
+  .etiqueta a,
+  .cuaderno a,
+  .prueba a { color: var(--texto-fuente); }
+
+  .cabecera a,
+  .pie a,
+  .parte a { color: var(--texto-fuente-sobre-maceta); }
 
   em { font-style: italic; }
 
@@ -105,10 +114,18 @@
 
   .rejilla {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--ancho-minimo), 1fr));
+    /* El min() es obligatorio: a 320 px el canal lateral deja menos hueco que
+       --ancho-minimo, y sin él la columna fuerza scroll horizontal. */
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--ancho-minimo), 100%), 1fr));
     gap: var(--hueco-rejilla);
-    align-items: start;
+    /* `stretch`, no `start`: iguala la altura de las etiquetas de una misma fila
+       y alinea los tiradores «despegar». Con alturas distintas el tirador de la
+       ficha alta queda por debajo del de sus vecinas y el orden de tabulación
+       deja de coincidir con lo que se lee, aunque el DOM esté bien. */
+    align-items: stretch;
   }
+
+  .rejilla__celda { display: grid; }
 
   /* Al despegar, la etiqueta ocupa el ancho completo de la rejilla y se abre en
      su sitio: sin modal, sin página de detalle, sin sacarte de la lista.
@@ -240,7 +257,7 @@
 
     &[data-marca="critica"]::before { content: "!!"; }
     &[data-marca="atencion"]::before { content: "!"; }
-    &[data-marca="sana"]::before { content: "·"; }
+    /* «sana» no lleva marca: no hay nada que señalar. */
   }
 
   /* ── filtros ────────────────────────────────────────────────────────────── */
@@ -384,11 +401,22 @@
     overflow: hidden;
     transition: box-shadow var(--dur-media) var(--ease-salida);
 
+    /* Columna para que el tirador caiga al fondo y todas las fichas de la fila
+       lo tengan a la misma altura. */
+    display: flex;
+    flex-direction: column;
+
     &:has(.despegue[open]) { box-shadow: var(--sombra-despegada); }
+
+    /* El canto izquierdo marca la severidad ya en la rejilla cerrada, antes de
+       despegar nada. Nunca va solo: la ficha lleva además marca y palabra. */
+    /* Solo la crítica lleva filete. Con una sola planta crítica y dos en
+       atención, si «atención» grita la crítica deja de destacar. */
+    &[data-severidad="critica"] { border-inline-start: var(--filete-severidad) solid var(--color-alerta); }
   }
 
   .etiqueta__cara {
-    padding: var(--space-4) var(--relleno-ficha) var(--space-3);
+    padding: var(--etiqueta-canal);
   }
 
   .etiqueta__vivero {
@@ -400,8 +428,9 @@
     text-transform: uppercase;
     color: var(--texto-meta);
     border-block-end: var(--trazo-fino) solid var(--color-borde-sutil);
-    padding-block-end: var(--space-2);
+    padding-block-end: var(--etiqueta-hueco-micro);
     margin-block-end: var(--space-3);
+    gap: var(--etiqueta-hueco-micro);
   }
 
   .etiqueta__vivero-nombre { font-weight: var(--peso-fuerte); }
@@ -438,13 +467,15 @@
     align-items: end;
     justify-content: space-between;
     gap: var(--space-4);
-    margin-block: var(--space-3) var(--space-2);
+    margin-block: var(--space-3) var(--etiqueta-hueco-pie);
   }
 
   /* El EAN: repeating-linear-gradient, cero imágenes y cero peso. */
   .etiqueta__ean {
-    flex: 1 1 auto;
-    height: var(--space-6);
+    /* Un EAN real mide lo que mide: estirado al ancho de la ficha abierta deja
+       de leerse como código de barras y pasa a ser una cebra decorativa. */
+    flex: 0 1 var(--etiqueta-ancho-barras);
+    height: var(--etiqueta-alto-barras);
     background-image: var(--barras-codigo);
     background-repeat: repeat-x;
     align-self: end;
@@ -459,10 +490,18 @@
     white-space: nowrap;
   }
 
-  /* Helecho y poto no vinieron con etiqueta de vivero: no se finge una. */
+  /* Helecho y poto no vinieron con pegatina. La signature no se rompe: la
+     pegatina se dibuja igual e imprime lo que sabe. Las barras pasan a trama de
+     «sin dato» y el precio a una raya — un carácter, no un hueco en blanco. */
   .etiqueta[data-etiqueta-vivero="no"] {
-    & .etiqueta__vivero { opacity: 0.45; }
-    & .etiqueta__linea-precio { display: none; }
+    & .etiqueta__vivero { color: var(--texto-sin-dato); }
+
+    & .etiqueta__ean {
+      background-image: var(--trama-sin-dato);
+      border: var(--trazo-fino) solid var(--color-sin-dato-trama);
+    }
+
+    & .etiqueta__precio { color: var(--texto-sin-dato); }
   }
 
   /* ── los tres datos de la cara ──────────────────────────────────────────── */
@@ -491,11 +530,15 @@
   }
 
   .resumen__valor {
-    font-size: var(--texto-s);
+    /* En la rejilla cerrada el resumen se lee con la regadera en la mano: es el
+       texto más importante de la página y no baja de la base. */
+    font-size: var(--texto-m);
     text-wrap: pretty;
   }
 
   /* ── el tirador: despegar ───────────────────────────────────────────────── */
+
+  .despegue { margin-block-start: auto; }
 
   .despegue__tirador {
     display: flex;
@@ -545,19 +588,44 @@
     border-radius: var(--radio-panel);
     padding: var(--relleno-panel);
 
+    /* La crítica va INVERTIDA: blanco sobre alerta sólido (7,43:1). Es el único
+       bloque de la página con el color en el fondo, y por eso se ve primero. */
     &[data-severidad="critica"] {
-      background: var(--color-alerta-relleno);
-      color: var(--color-alerta);
+      background: var(--color-alerta);
+      color: var(--texto-sobre-alerta);
     }
+    /* Atención: relleno suave y sin invertir. Un escalón por debajo, a propósito. */
     &[data-severidad="atencion"] {
       background: var(--color-aviso-relleno);
-      color: var(--color-aviso);
+      color: var(--texto-sobre-aviso);
     }
+    /* Sana: sin distintivo ninguno. Cuatro insignias de «todo bien» son ruido
+       alrededor de lo único urgente. */
+    &[data-severidad="sana"] {
+      background: var(--fondo-hundido);
+      color: var(--texto-principal);
+    }
+  }
+
+  /* Dentro de la crítica invertida el texto de apoyo también es blanco: sobre
+     rojo sólido, --texto-principal no se leería. */
+  .estado[data-severidad="critica"] {
+    & .estado__diagnostico,
+    & .estado__lista,
+    & .estado__pasos,
+    & .estado__revisar { color: var(--texto-sobre-alerta); }
+
+    & .paso::before,
+    & .paso__plazo,
+    & .paso__senal,
+    & .estado__fecha { color: var(--texto-sobre-alerta); }
+
+    & .estado__bloque--limites .estado__lista { color: var(--texto-sobre-alerta); }
   }
 
   .estado__titulo,
   .mas-datos__titulo,
-  .estado__tratamiento-titulo {
+  .estado__sub {
     font-family: var(--fuente-etiqueta);
     font-size: var(--texto-2xs);
     letter-spacing: var(--tracking-caja-alta);
@@ -566,6 +634,7 @@
 
   .estado__severidad {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-2);
     font-family: var(--fuente-dato);
@@ -573,6 +642,68 @@
     font-size: var(--texto-2xs);
     letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
+  }
+
+  .estado__fecha {
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-normal);
+    color: var(--texto-meta);
+    margin-inline-start: auto;
+    text-transform: none;
+    letter-spacing: var(--tracking-dato);
+  }
+
+  .estado__bloque { display: grid; gap: var(--space-2); }
+
+  .estado__sub { color: currentColor; }
+
+  .estado__lista {
+    display: grid;
+    gap: var(--space-2);
+    color: var(--texto-principal);
+    max-width: var(--medida);
+  }
+
+  .estado__item {
+    font-size: var(--texto-s);
+    padding-inline-start: var(--space-4);
+    position: relative;
+    text-wrap: pretty;
+
+    &::before {
+      content: "—";
+      position: absolute;
+      left: var(--space-0);
+      color: var(--texto-meta);
+    }
+  }
+
+  /* Los límites del diagnóstico se leen distinto del diagnóstico: no son
+     hallazgos, son la frontera de lo que la foto permite afirmar. */
+  .estado__bloque--limites .estado__lista { color: var(--texto-sin-dato); }
+
+  .estado__revisar {
+    font-size: var(--texto-s);
+    color: var(--texto-principal);
+    max-width: var(--medida);
+    border-inline-start: var(--trazo-grueso) solid currentColor;
+    padding-inline-start: var(--space-3);
+    text-wrap: pretty;
+  }
+
+  .estado__revisar-rotulo {
+    font-family: var(--fuente-etiqueta);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caja-alta);
+    font-size: var(--texto-2xs);
+  }
+
+  .paso__plazo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-micro);
+    color: var(--texto-meta);
   }
 
   .estado__cabecera {
@@ -637,9 +768,9 @@
   }
 
   .foto__img {
-    /* Los originales son 3:4; el encuadre de la ficha es 4:5, así que se recorta
-       en vez de deformar. Con width/height en el HTML no hay salto de layout. */
-    aspect-ratio: 4 / 5;
+    /* Las doce imágenes son 3:4, así que el encuadre no recorta nada.
+       Con width/height en el HTML tampoco hay salto de layout. */
+    aspect-ratio: var(--aspecto-foto);
     object-fit: cover;
     width: 100%;
     height: auto;
@@ -653,7 +784,51 @@
     color: var(--texto-meta);
   }
 
+  /* ── procedencia: la prueba documental ──────────────────────────────────── */
+
+  .prueba {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+
+  .prueba__rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  /* Sin duotono, sin recorte artístico, sin sombra: una prueba retocada no
+     prueba nada. Solo se acota el tamaño, que no es estilizar. */
+  .prueba__img {
+    width: var(--ancho-prueba);
+    aspect-ratio: var(--aspecto-foto);
+    object-fit: cover;
+    height: auto;
+    border: var(--trazo-fino) solid var(--color-borde-sutil);
+  }
+
+  .prueba__sin,
+  .prueba__nota {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-sin-dato);
+    max-width: var(--medida-corta);
+  }
+
   /* ── capa 2 · campos con diagrama ───────────────────────────────────────── */
+
+  .cuidados { display: grid; gap: var(--space-3); }
+
+  .cuidados__titulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
 
   .campos-diagrama {
     display: grid;
@@ -689,6 +864,7 @@
 
   .campo__detalle,
   .dato__detalle {
+    white-space: pre-line;   /* una plaga por línea en el detalle */
     font-size: var(--texto-s);
     color: var(--texto-secundario);
     max-width: var(--medida);
@@ -722,20 +898,33 @@
 
   .dato__valor { font-size: var(--texto-s); }
 
-  /* La toxicidad es información de seguridad: lleva palabra, no solo color. */
+  /* Toxicidad: tres estados que se distinguen por BORDE e ICONO además de por
+     color, así que en escala de grises siguen siendo tres cosas distintas.
+     Ninguno es verde: no hay ni una planta con «no tóxica» confirmada. */
   .dato--toxicidad .dato__texto::before {
     font-family: var(--fuente-dato);
     font-weight: var(--peso-fuerte);
   }
-  .dato[data-toxicidad="critica"] {
+
+  .dato[data-toxicidad="toxica"] {
+    border-inline-start: var(--trazo-grueso) solid var(--color-alerta);
+    padding-inline-start: var(--space-3);
+
     & .dato__texto { color: var(--color-alerta); }
     & .dato__texto::before { content: "!! "; }
   }
-  .dato[data-toxicidad="atencion"] {
-    & .dato__texto { color: var(--color-aviso); }
-    & .dato__texto::before { content: "! "; }
+
+  /* Discontinuo a propósito: el borde roto dice «esto está sin comprobar». */
+  .dato[data-toxicidad="sin_datos_aspca"],
+  .dato[data-toxicidad="sin_identificar"] {
+    border-inline-start: var(--trazo-grueso) dashed var(--color-sin-dato-trama);
+    padding-inline-start: var(--space-3);
+
+    & .dato__texto { color: var(--texto-sin-dato); }
+    & .dato__texto::before { content: "? "; }
   }
-  .dato[data-toxicidad="desconocida"] .dato__texto::before { content: "? "; }
+
+  .dato[data-toxicidad="segura"] .dato__texto::before { content: "· "; }
 
   /* ── fuentes: contenido, no letra pequeña ───────────────────────────────── */
 
@@ -806,6 +995,9 @@
     .mas-datos,
     .cuaderno { grid-column: 1 / -1; }
 
+    /* La foto queda en la columna estrecha y los cuidados en la ancha. */
+    .cuidados { grid-column: 2; }
+
     .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
 
     .mas-datos__lista { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
@@ -821,6 +1013,10 @@
   .diagrama {
     width: 100%;
     height: auto;
+    /* Tope deliberado: dentro de un viewBox el cuerpo del texto escala con el
+       dibujo, así que un diagrama estirado a 1000 px rotula a 50 px. Acotando el
+       ancho se acota el factor de escala, y el rótulo se queda donde debe. */
+    max-width: var(--medida-corta);
     background: var(--fondo-ficha);
     border: var(--trazo-fino) solid var(--color-borde-sutil);
     border-radius: var(--radio-panel);
@@ -842,43 +1038,56 @@
     padding: var(--space-3);
   }
 
-  /* ── 1 · el dedo en la tierra ───────────────────────────────────────────── */
+  /* ── 1 · el reloj de riego ──────────────────────────────────────────────── */
 
-  .riego__tiesto { fill: var(--color-maceta); }
-  .riego__anillo { fill: var(--color-maceta-alta); }
-  .riego__sustrato { fill: var(--color-sustrato); }
-  .riego__humedo { fill: var(--color-sustrato-humedo); }
-  .riego__dedo { fill: var(--color-etiqueta); stroke: var(--color-tinta); stroke-width: var(--trazo); }
-  .riego__gota { fill: var(--color-sustrato-humedo); }
-  .riego__cota { stroke: var(--color-tinta); stroke-width: var(--trazo); stroke-dasharray: 3 2; }
-  .riego__cota-texto, .riego__ml { fill: var(--texto-dato); }
+  .reloj__pista { fill: none; stroke: var(--escala-1); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
+  .reloj__marca { stroke: var(--color-borde); stroke-width: var(--trazo-fino); }
+  .reloj__marca--mayor { stroke: var(--color-tinta); stroke-width: var(--trazo); }
+  .reloj__eje { fill: var(--color-tinta); }
 
-  /* La gota cae y el frente húmedo aparece: una sola vez, al despegar la ficha. */
-  .despegue[open] .riego__gota {
-    animation: caer var(--dur-dibujo) var(--ease-entrada) both;
+  .reloj__aguja { stroke-width: var(--trazo-grueso); stroke-linecap: round; }
+  .reloj__aguja--verano { stroke: var(--color-tinta); }
+  .reloj__aguja--invierno { stroke: var(--escala-3); stroke-dasharray: 3 2; }
+
+  .reloj__punta { stroke: none; }
+  circle.reloj__aguja--verano { fill: var(--color-tinta); }
+  circle.reloj__aguja--invierno { fill: var(--escala-3); }
+
+  .reloj__cifra { fill: var(--texto-dato); font-weight: var(--peso-fuerte); }
+  .reloj__unidad, .reloj__rotulo, .reloj__ml { fill: var(--texto-meta); }
+
+  /* Las dos agujas entran girando desde el cero, una sola vez al despegar. */
+  .despegue[open] .reloj__aguja,
+  .despegue[open] .reloj__punta {
+    animation: aparecer-aguja var(--dur-media) var(--ease-salida) both;
   }
-  .despegue[open] .riego__humedo {
-    animation: calar var(--dur-dibujo) var(--ease-salida) both;
+  @keyframes aparecer-aguja {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  @keyframes caer {
-    from { opacity: 1; transform: translateY(0); }
-    70% { opacity: 1; transform: translateY(12px); }
-    to { opacity: 0; transform: translateY(12px); }
-  }
-  @keyframes calar {
-    from { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
-    to { opacity: 1; transform: none; }
-  }
+  /* ── 2 · la mañana del salón ────────────────────────────────────────────── */
 
-  /* ── 2 · la ventana ─────────────────────────────────────────────────────── */
+  .dia__eje { fill: var(--escala-1); }
+  .dia__tramo--sol-directo { fill: var(--color-aviso); }
+  .dia__tramo--sombra-luminosa,
+  .dia__tramo--sombra { fill: var(--escala-3); }
+  .dia__tramo--luz-indirecta { fill: var(--escala-2); }
+  .dia__tramo--sin-tipo { fill: var(--escala-2); }
+  .dia__hora, .dia__pie { fill: var(--texto-meta); }
 
-  .luz__sala { fill: var(--escala-1); stroke: var(--color-borde); stroke-width: var(--trazo-fino); }
-  .luz__ventana { fill: var(--color-tinta); }
-  .luz__cono { fill: var(--escala-2); opacity: 0.7; }
-  .luz__planta { fill: var(--color-tinta); }
-  .luz__cota { stroke: var(--color-tinta); stroke-width: var(--trazo-fino); stroke-dasharray: 2 2; }
-  .luz__cota-texto, .luz__rotulo { fill: var(--texto-dato); }
+  /* El hachurado es el portador NO cromático de «no hay dato»: tiene que verse. */
+  .hachurado__fondo { fill: var(--color-sin-dato-relleno); }
+  .hachurado__linea { stroke: var(--color-sin-dato-trama); stroke-width: var(--trazo); }
+
+  .despegue[open] .dia__tramo {
+    animation: barrer var(--dur-dibujo) var(--ease-salida) both;
+    transform-origin: left center;
+  }
+  @keyframes barrer {
+    from { transform: scaleX(0); }
+    to { transform: none; }
+  }
 
   /* ── 3 · rango térmico ──────────────────────────────────────────────────── */
 
@@ -888,6 +1097,7 @@
   .temp__letal { stroke: var(--color-alerta); stroke-width: var(--trazo-grueso); }
   .temp__letal-texto { fill: var(--color-alerta); }
   .temp__casa { fill: var(--color-tinta); }
+  .temp__abierto { fill: var(--escala-3); }
   .temp__casa-texto { fill: var(--texto-dato); }
   .temp__escala { fill: var(--texto-meta); }
 
@@ -921,13 +1131,20 @@
   /* ── movimiento reducido: no se apaga, se cambia de versión ─────────────── */
 
   @media (prefers-reduced-motion: reduce) {
-    /* La gota es puro adorno cinético: sin ella el diagrama dice lo mismo. */
-    .riego__gota { display: none; }
-
-    /* Lo demás se dibuja ya en su estado final (las duraciones bajan a 1 ms en
-       tokens.css) y solo se conserva una opacidad corta, que orienta sin mover. */
-    .despegue[open] .riego__humedo,
+    /* Las de un solo disparo NO se animan en 1 ms: eso produce un parpadeo.
+       Se anula la animación y se pinta directamente el estado final. */
+    .despegue[open] .reloj__aguja,
+    .despegue[open] .reloj__punta,
+    .despegue[open] .dia__tramo,
     .despegue[open] .temp__casa,
+    .despegue[open] .recup__trazo {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      stroke-dashoffset: 0;
+    }
+
+    /* Del despegue se conserva solo la opacidad, que orienta sin desplazar. */
     .despegue[open] > .despegada {
       animation: aparecer var(--dur-corta) linear both;
       transform: none;

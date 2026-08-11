@@ -1,6 +1,14 @@
 # macOS
 .DS_Store
 
+# Fotos originales de Carlos (34 MB). Decisión suya: se quedan solo en disco.
+# Las versiones web derivadas sí están versionadas, en assets/img/, y son las
+# que usa la página — no depende de esta carpeta para funcionar.
+docs/plants/
+
+# Capturas de trabajo sueltas en la raíz (las de QA van en docs/qa/)
+/preview-*.png
+
 # Playwright MCP (perfil de navegador y capturas temporales de qa-visual)
 .playwright-mcp/
 
