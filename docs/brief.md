@@ -1893,6 +1893,92 @@ Con dos condiciones que lo salvan de la trampa que el propio lead señala:
 
 Va **después** del expediente y de las tres cosas visuales.
 
+### La definición exacta de la métrica de ocupación, y una regla nueva para `sana`
+
+#### La métrica se escribe con su algoritmo, no con su nombre
+
+`qa-visual` pide la definición exacta porque su instrumento saca 68–76 % donde yo saqué 73–87 %, y
+tiene razón en el principio: **el objetivo es mío, así que el instrumento debe medir mi definición y
+no la suya.** Y la lección del 2.400 se aplica aquí antes de que haga falta: una métrica cuyo
+algoritmo no está escrito es una métrica que dentro de dos informes será lo que cada uno recuerde.
+
+```
+REFERENCIA  el contenedor del expediente de UNA ficha abierta (no la página).
+            W = su ancho de CAJA DE CONTENIDO (sin padding).
+BANDAS      franjas horizontales de 100 px desde el borde superior de la referencia.
+CONTENIDO   un elemento cuenta si tiene texto propio (un hijo de texto no vacío)
+            o si es <img> o <svg>. Los contenedores no cuentan: si contaran,
+            cualquier div a ancho completo taparía el hueco que se busca.
+PERFIL      para cada banda, el mayor `getBoundingClientRect().right` de los
+            elementos de CONTENIDO que la cruzan, relativo al borde izquierdo
+            de la referencia.
+BANDA CORTA banda cuyo perfil > 0 y < 0,62 · W.
+BANDAS VACÍAS  perfil = 0. Se EXCLUYEN del numerador y del denominador: una banda
+            vacía no está medio vacía, está vacía, y casi siempre es un hueco
+            entre bloques.
+RESULTADO   bandas cortas / bandas con contenido. Tope: 20 %.
+```
+
+**La discrepancia con `qa-visual` casi seguro es la referencia:** en mi primera pasada medí
+`section.estado`, el bloque de diagnóstico, no la ficha entera. Con la ficha entera entran la foto,
+los diagramas y `mas-datos`, que sí ocupan ancho, y el porcentaje baja. La referencia correcta es
+**el expediente**, porque la pregunta es si la ficha usa su ancho.
+
+Y la honestidad sobre el `0,62`, que es el número que podría convertirse en el próximo 2.400: **no
+está derivado, es una aproximación.** Sale de que una medida de lectura cómoda en este sistema
+tipográfico son 557–640 px, que en un contenedor de 1.116 son el 50–57 %, así que 62 % es "una
+medida cómoda y un margen". **La derivación honesta sería otra:** el umbral debería ser *"¿cabía otra
+columna en lo que sobra?"*, y la columna mínima de este proyecto son 13 rem (208 px) más el hueco,
+lo que en 1.116 px daría un umbral cerca del 78 %. Lo dejo en 62 % **a propósito y con esto escrito**:
+un umbral más estricto suspendería párrafos finales de sección que legítimamente no llenan el ancho,
+y prefiero una métrica que solo cace el defecto gordo. Si alguien lo mueve, que sea con esta
+derivación delante y no por comodidad.
+
+#### Toda ficha `sana` lleva al menos una `afirmacion`
+
+Sale de una pregunta de `botanist` sobre el ficus, y al comprobarla en el JSON resulta que **no es
+solo el ficus**:
+
+| planta | severidad | `afirmacion` | `riesgo` | `aclaracion` | `mejora` | `causa` |
+| --- | --- | --- | --- | --- | --- | --- |
+| helecho | critica | 0 | 2 | 1 | 0 | 2 |
+| begonia | atencion | 0 | 0 | 0 | 0 | 8 |
+| coleo grande | atencion | 0 | 0 | 1 | 0 | 5 |
+| **coleo pequeño** | **sana** | **0** | **2** | **2** | 0 | 0 |
+| **ficus** | **sana** | **0** | **3** | **1** | 0 | 0 |
+| margarita | sana | 1 | 1 | 2 | 0 | 0 |
+| poto | sana | 3 | 1 | 0 | 1 | 0 |
+
+**Dos de las cuatro sanas se quedarían mostrando solo riesgos y ninguna afirmación de que la planta
+está bien.** Y eso no es un problema de presentación: **es el defecto simétrico del que acabamos de
+arreglar.** Una ficha que sobre una planta sana solo enseña tres riesgos seguidos **dice algo falso**
+—que la planta está en apuros— igual que "causas probables" decía que tenía un problema. El rótulo
+manufacturaba contenido; esto manufactura alarma. Las dos son la página afirmando lo que no es.
+
+Así que la regla, y es de contenido aunque se descubriera mirando el dibujo:
+
+> **En `sana`, la afirmación de que la planta está bien es el diagnóstico, no un adorno del
+> diagnóstico.** Si los ítems de una ficha `sana` son todos riesgos, aclaraciones o mejoras, falta el
+> ítem principal. Toda ficha `sana` lleva **al menos una** `afirmacion`, y va primero y sin plegar.
+
+En `critica` y `atencion` **no se exige**: una planta enferma no necesita que se afirme que está
+sana, y forzarlo sería el mismo error al revés. Que la begonia tenga sus 8 ítems como `causa` es
+correcto.
+
+Y el criterio para que esto no sea "añadir contenido para que quede bonito", que era la duda
+razonable de `botanist`: **la afirmación ya está escrita**, dentro del `detalle` de otro ítem —el
+ficus tiene su *"está sano y no necesita explicación: necesita no romperse"* enterrado en el ítem de
+procedencia—. **Se cambia de sitio, no se inventa.** Si en alguna ficha no existiera y hubiera que
+escribirla desde cero, la decisión es de `botanist` y se marca como lo que sea, pero aquí no es el
+caso.
+
+Confirmación de que el reparto por ítem era lo correcto, con los números de `botanist`: **«mejoras
+opcionales» iba a rotular 17 ítems y describe exactamente 1.** Mi corrección no misfilaba una
+excepción, misfilaba 16 de 17. Y el rótulo de bloque estaba mal en **5 de las 7 plantas**, no en las
+4 sanas: el helecho lleva 2 riesgos y 1 aclaración, y su *«lo crítico no es una plaga: es que no le
+queda hoja con la que fallar»* no es la causa de nada — es el margen de error, y es lo que más
+importa de esa ficha.
+
 ## Fases
 
 | Fase | Qué | Quién |
