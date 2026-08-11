@@ -20,18 +20,6 @@
     <h1 class="cabecera__titulo">Las plantas de casa</h1>
     <p class="cabecera__bajada">Siete macetas · Móstoles → casa</p>
   </div>
-
-  <form class="buscador" role="search" novalidate>
-    <label class="buscador__label" for="busqueda">Buscar planta, sala o síntoma</label>
-    <input
-      class="buscador__input"
-      id="busqueda"
-      name="busqueda"
-      type="search"
-      autocomplete="off"
-      spellcheck="false"
-      placeholder="poto, salón, hojas amarillas…">
-  </form>
 </header>
 
 <!-- ══ HOY · el parte del día, con la fecha real del navegador ═══════════════
@@ -52,27 +40,57 @@
     <p class="parte__fecha" id="parte-fecha"></p>
   </div>
 
-  <!-- aria-live en el contenedor de lo que cambia, no en la sección entera:
-       al filtrar cambia el recuento y quien usa lector de pantalla se entera,
-       sin que le relean la fecha y los chips cada vez. -->
-  <div class="parte__cuerpo" id="parte-cuerpo">
+  <div class="parte__cuerpo">
     <!-- EL VEREDICTO DEL DÍA, a escala de display. Y NO es un encabezado: se
          pinta grande y sigue siendo un párrafo, porque subirlo a h1 o h2 rompería
          el esquema de encabezados de la página. El tamaño es jerarquía visual;
          el nivel semántico es otra cosa y no se negocian entre sí.
 
-         `aria-live` va SOLO aquí y no en la lista: lo que cambia al filtrar es el
-         recuento, y releerle a un lector de pantalla las siete líneas de tareas
-         en cada repintado es ruido, no accesibilidad. -->
+         `aria-live` va SOLO aquí y no en la sección entera: lo que cambia al
+         filtrar es el recuento, y releerle a un lector de pantalla las siete
+         líneas de tareas en cada repintado es ruido, no accesibilidad. Es además
+         lo que permite que el `<input>` conviva en la franja sin que se anuncie en
+         cada pulsación. -->
     <p class="parte__veredicto" id="parte-veredicto" aria-live="polite"></p>
     <p class="parte__resumen" id="parte-resumen"></p>
-    <!-- UNA LÍNEA POR PLANTA, no por tarea, y sin truncar. No hace falta tope
-         porque el techo ya está en el dominio: hay siete plantas, así que la
-         lista no pasa de siete renglones ni el día que todas pidan algo. -->
-    <ul class="parte__tareas" id="parte-tareas"></ul>
   </div>
 
-  <ul class="parte__chips" id="parte-chips"></ul>
+  <!-- ── EL LATERAL: los chips y el buscador ─────────────────────────────────
+       El buscador entra en la franja y deja de ser una tarjeta flotando arriba a
+       la derecha. Cierra el hueco de 325 px que dejó el hero y pone el campo de
+       búsqueda al lado de la lista de lo que hay que hacer, que es donde se usa.
+
+       Y VA AQUÍ EN EL DOM, antes de la lista de tareas, a propósito. `ux-lead`
+       planteó una tensión entre tres cosas —orden del DOM igual al visual, sin
+       `order` de CSS, y el buscador alcanzable sin recorrer toda la lista— y las
+       tres se pueden a la vez porque el orden visual de una banda de dos columnas
+       NO es «toda la izquierda y luego toda la derecha»: es el barrido en Z.
+       Arriba-izquierda (el veredicto), arriba-derecha (chips y buscador) y después
+       la lista a lo ancho. En ese orden, que es el que se lee, el buscador cae
+       antes de los diez enlaces de tareas. Ninguna de las tres cede.
+       ─────────────────────────────────────────────────────────────────────── -->
+  <div class="parte__lateral">
+    <ul class="parte__chips" id="parte-chips"></ul>
+
+    <form class="buscador" role="search" novalidate>
+      <label class="buscador__label" for="busqueda">Buscar planta, sala o síntoma</label>
+      <input
+        class="buscador__input"
+        id="busqueda"
+        name="busqueda"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="poto, salón, hojas amarillas…">
+    </form>
+  </div>
+
+  <!-- UNA LÍNEA POR PLANTA, no por tarea, y sin truncar. No hace falta tope
+       porque el techo ya está en el dominio: hay siete plantas, así que la lista
+       no pasa de siete renglones ni el día que todas pidan algo. Va a lo ancho de
+       las dos columnas: es lo más alto de la franja, y dejarla en la mitad
+       izquierda es lo que abría el hueco a su derecha. -->
+  <ul class="parte__tareas" id="parte-tareas"></ul>
 </section>
 
 <nav class="filtros" aria-labelledby="filtros-titulo">

@@ -187,20 +187,20 @@
   .buscador {
     display: grid;
     gap: var(--space-1);
-    flex: 1 1 var(--medida-corta);
     max-width: var(--medida-corta);
+    /* Ancho propio: dentro de la franja la columna es `auto`, así que sin esto el
+       campo se encogería al ancho de su etiqueta. */
+    inline-size: 100%;
+    min-inline-size: var(--medida-corta);
   }
 
-  /* El buscador vive sobre una etiqueta blanca, no sobre la teja: su borde
-     daba 1,92:1 contra el fondo y suspende WCAG 1.4.11, que pide 3:1 en bordes
-     de control. Sobre superficie clara, --color-borde da 3,28:1. Y de paso
-     refuerza la metáfora: es otra pegatina en el tiesto. */
-  .buscador {
-    background: var(--fondo-ficha);
-    border-radius: var(--radio-troquel);
-    padding: var(--space-3);
-    box-shadow: var(--sombra-pegatina);
-  }
+  /* El buscador ya NO necesita fondo ni sombra propios: vive dentro de la franja,
+     que ya es una etiqueta blanca. Su borde da 3,60:1 sobre `--fondo-ficha` por la
+     matriz de validez, así que cumple el 3:1 de bordes de control de sobra — y el
+     fallo histórico de 1,92:1 era por tenerlo SOBRE LA TEJA, o sea que meterlo
+     aquí lo aleja de ese caso en vez de acercarlo. Se quita la tarjeta que
+     flotaba: era el único elemento de la portada que no participaba de la
+     retícula. */
 
   .buscador__label {
     font-family: var(--fuente-dato);
@@ -224,9 +224,22 @@
 
   /* ── parte del día ──────────────────────────────────────────────────────── */
 
+  /* LA FRANJA EN DOS COLUMNAS, con áreas explícitas y sin un solo `order`.
+     El reparto cierra el hueco de 325 px que abrió el hero: la lista de tareas
+     —lo más alto de la franja— pasa a ocupar las DOS columnas en su fila, así que
+     no queda mitad derecha vacía debajo de los chips. Y las áreas colocan, no
+     reordenan: el orden del DOM ya es el del barrido en Z, así que el foco sigue
+     a lo que se ve.
+
+       ┌────────────────────────────┬──────────────┐
+       │ HOY · martes 11 de agosto  │ chips        │
+       │ 3 DE 7 PIDEN MIRADA        │ buscador     │
+       ├────────────────────────────┴──────────────┤
+       │ las líneas de tareas, a lo ancho          │
+       └───────────────────────────────────────────┘ */
   .parte {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
     gap: var(--space-3) var(--space-5);
     background: var(--fondo-ficha);
@@ -261,12 +274,31 @@
     color: var(--texto-meta);
   }
 
-  /* El cuerpo se lleva el hueco que sobra: es lo que cambia y lo que se lee. */
   .parte__cuerpo {
-    flex: 1 1 var(--medida-corta);
     display: grid;
     gap: var(--space-2);
     min-width: 0;
+  }
+
+  /* Los chips y el buscador, apilados en la columna derecha. */
+  .parte__lateral {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    justify-items: end;
+  }
+
+  /* Las áreas. Solo desde 48rem: por debajo se apila en una columna y el orden
+     del DOM ya deja el buscador ENTRE el veredicto y las tareas, o sea ni
+     descolgado arriba ni enterrado al fondo.
+     Es media query y no container query a propósito: la franja es una banda de
+     página y no tiene ancestro con `container-type` — el mismo motivo por el que
+     `--texto-parte` va en `vw`. */
+  @media (min-width: 48rem) {
+    .parte__cabeza { grid-area: 1 / 1; }
+    .parte__cuerpo { grid-area: 2 / 1; }
+    .parte__lateral { grid-area: 1 / 2 / 3 / 3; }
+    .parte__tareas { grid-area: 3 / 1 / 4 / 3; }
   }
 
   /* El veredicto del día, a escala de display. `--texto-parte` va en `vw` y no en
@@ -419,9 +451,8 @@
   .parte__chips {
     display: flex;
     flex-wrap: wrap;
+    justify-content: end;
     gap: var(--space-2);
-    margin-inline-start: auto;
-    align-self: start;
   }
 
   .chip__boton {
