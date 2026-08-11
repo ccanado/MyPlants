@@ -1,0 +1,559 @@
+/* =============================================================================
+   MyPlants · design tokens
+   Dueño: ux-lead. Este fichero es la ÚNICA fuente de color, tipografía,
+   espaciado, radios, sombras y motion del proyecto.
+
+   Para builder:
+   - En css/app.css no se escribe ningún literal de color, tamaño ni espaciado.
+     Solo var(--…). Si falta un token, mándame un mensaje: lo añado aquí.
+   - Cada token lleva al lado para qué es. Si no encuentras el que necesitas,
+     probablemente el componente esté pidiendo una decisión de diseño que
+     todavía no se ha tomado. Pregunta antes de improvisar.
+
+   La dirección visual completa (de dónde sale cada color, por qué esta
+   tipografía y qué explica cada SVG) está en docs/brief.md § "Dirección visual".
+   Resumen: el mundo del sujeto es la etiqueta térmica de Viveros Projardín
+   (Móstoles) pegada en un tiesto de plástico. Plástico y etiqueta española,
+   no herbario inglés.
+   ============================================================================= */
+
+
+/* -----------------------------------------------------------------------------
+   1. TIPOGRAFÍAS
+   -----------------------------------------------------------------------------
+   PENDIENTE: los tres woff2 NO están todavía en assets/fonts/.
+   Hasta que lleguen, cada pila cae en su fallback de sistema y la web se ve
+   bien igualmente — eso es deliberado, no un descuido.
+
+   Cuando existan los ficheros, se descomentan los @font-face de abajo y NO se
+   toca nada más: las pilas ya llevan la familia real en primera posición.
+
+   Descarga + subset a latín y a áéíóúüñ¿¡€°· (todas son SIL OFL):
+     Archivo Narrow  700         → nombre de planta, cabeceras de campo
+     Alegreya Sans   400/500/700 + itálica → texto corrido y voz de Carlos
+     IBM Plex Mono   400/600     → cifras, °C, ml, €, EAN, códigos, URLs
+   -------------------------------------------------------------------------- */
+
+/*
+@font-face {
+  font-family: "Archivo Narrow";
+  src: url("../assets/fonts/archivo-narrow-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Alegreya Sans";
+  src: url("../assets/fonts/alegreya-sans-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Alegreya Sans";
+  src: url("../assets/fonts/alegreya-sans-400-italic.woff2") format("woff2");
+  font-weight: 400; font-style: italic; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "Alegreya Sans";
+  src: url("../assets/fonts/alegreya-sans-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../assets/fonts/ibm-plex-mono-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../assets/fonts/ibm-plex-mono-600.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+*/
+
+
+/* -----------------------------------------------------------------------------
+   2. CUSTOM PROPERTIES REGISTRADAS (@property)
+   -----------------------------------------------------------------------------
+   Sin registrar el tipo, el motor de animación trata la custom property como
+   texto y NO interpola. Estas cinco son las que animan los SVG del brief.
+   Van fuera de :root a propósito: @property se declara a nivel superior.
+   -------------------------------------------------------------------------- */
+
+/* SVG 1 · "el dedo en la tierra": profundidad del frente húmedo en el sustrato */
+@property --frente-humedo {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* SVG 2 · "la ventana": posición del sol en su recorrido E→O (0 = amanece, 1 = anochece) */
+@property --hora-del-dia {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.5;
+}
+
+/* SVG 3 · rango térmico: posición del marcador de temperatura real de casa */
+@property --marca-temp {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+
+/* SVG 4 · curso de recuperación: cuánto se ha trazado la línea de tiempo */
+@property --recorrido {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* SVG 5 · plano de casa: atenuación de los puntos que no cuadran con el filtro */
+@property --atenuacion {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+
+:root {
+
+  /* ===========================================================================
+     3. COLOR — la paleta son SEIS colores, todo lo demás son derivados
+     ===========================================================================
+     Los seis salen medidos de las fotos de docs/plants/, no de un humor.
+
+     ⚠ PAR PROHIBIDO: --color-tinta sobre --color-maceta da 2,05:1. Sobre el
+       fondo de página SOLO se escribe en --color-etiqueta (6,30:1).
+     ------------------------------------------------------------------------ */
+
+  /* -- Los seis ------------------------------------------------------------ */
+
+  --color-maceta:      #8F4A33;  /* plástico teja del tiesto del coleo. FONDO DE PÁGINA */
+  --color-tinta:       #16342A;  /* verde botella del tiesto del ficus. TINTA PRINCIPAL */
+  --color-etiqueta:    #FBFAF7;  /* blanco satinado de la pegatina térmica. SUPERFICIES */
+  --color-boli:        #1F3F97;  /* azul del PLANT PASSPORT de la begonia. SOLO CAPA DE CARLOS + fuentes */
+  --color-alerta:      #A4161A;  /* severidad crítica */
+  --color-aviso:       #8C5A05;  /* severidad atención */
+
+  /* No existe un color para severidad "sana": una planta sana se pinta en
+     --color-tinta como todo lo demás. El color solo aparece cuando hay un
+     problema, que es el trabajo primario de la página. */
+
+  /* -- Las dos caras del plástico ------------------------------------------ */
+
+  --color-maceta-alta: #A85C43;  /* cara iluminada del tiesto — brillo y anillo moldeado */
+  --color-maceta-baja: #6E3826;  /* cara en sombra — pie de página, sombra bajo la franja */
+
+  /* -- Derivados de tinta (los tres pasan AA sobre --color-etiqueta) -------- */
+
+  --color-tinta-suave: #4A6357;  /* texto secundario, descripciones          6,26:1 */
+  --color-codigo:      #5E7066;  /* mono de metadatos: EAN, nº fitosanitario 5,05:1 */
+
+  /* -- Superficies --------------------------------------------------------- */
+
+  --color-etiqueta-2:  #F0EEE8;  /* superficie hundida: fondo de los diagramas, campos */
+  --color-cuaderno:    #EEF1FA;  /* papel del panel de Carlos (cuadriculado) */
+  --color-cuaderno-linea: #B4BFDE; /* la cuadrícula de 5 mm de ese papel */
+
+  /* -- Rellenos de severidad (el texto de su color encima pasa AA) ---------- */
+
+  --color-alerta-relleno: #FBEAE8;  /* --color-alerta encima: 6,66:1 */
+  --color-aviso-relleno:  #FCF2DC;  /* --color-aviso  encima: 5,27:1 */
+
+  /* -- AUSENCIA DE DATO ------------------------------------------------------
+     Hay una sola planta crítica y dos en atención, así que los tres escalones
+     de severidad tienen que leerse distintos. Se resuelve con PESO, no con más
+     color: `critica` se pinta INVERTIDA, --color-etiqueta sobre --color-alerta
+     sólido (7,43:1), y `atencion` se queda en texto sobre relleno. `sana` no
+     lleva distintivo.
+
+     Y este gris NO es un estado: es la ausencia de estado. `botanist` confirma
+     que no hay ni una planta con "no tóxica" verificada, así que un verde de
+     "todo bien" mentiría en cinco de las siete fichas. Nunca verde para un
+     hueco. Detalle en docs/brief.md § "Estados degradados". */
+
+  --color-sin-dato:         #63625B;  /* sobre etiqueta 5,87:1 · sobre su relleno 5,13:1 */
+  --color-sin-dato-relleno: #EDEBE4;
+  --color-sin-dato-trama:   #B9B5AA;  /* las diagonales de --trama-sin-dato */
+
+  /* -- Bordes -------------------------------------------------------------- */
+
+  --color-borde:        #918A7B;  /* borde INFORMATIVO (controles, campos)  3,28:1 sobre etiqueta */
+  --color-borde-sutil:  #D3CFC8;  /* filete decorativo dentro de una ficha — no comunica nada */
+  --color-troquel:      #C1BCB3;  /* el canto de la pegatina troquelada */
+
+  /* -- Escala de bandas para los diagramas ---------------------------------
+     Rampa de --color-tinta a --color-etiqueta. Se usa para las bandas de
+     iluminancia (SVG 2), humedad y rango térmico (SVG 3).
+     ⚠ Nunca comunican por sí solas: siempre llevan rótulo y trama al lado. */
+
+  --escala-1: #DBDEDA;  /* la más pálida */
+  --escala-2: #B6BFBA;
+  --escala-3: #84938C;
+  --escala-4: #486057;  /* la más densa */
+
+  /* -- Sustrato (SVG 1) -----------------------------------------------------
+     El agua NO se pinta de azul: en el mundo real la tierra mojada es tierra
+     más oscura, y el azul está reservado a la capa de Carlos. */
+
+  --color-sustrato:        #7A6A55;  /* sustrato seco */
+  --color-sustrato-humedo: #46392B;  /* sustrato mojado — el frente húmedo */
+
+
+  /* ===========================================================================
+     4. ALIAS SEMÁNTICOS — usa estos en app.css siempre que existan
+     ===========================================================================
+     Dicen para qué sirve el color, no cómo se llama. Si un día cambia la
+     paleta, cambian aquí y no en trescientos componentes.
+     ------------------------------------------------------------------------ */
+
+  --fondo-pagina:      var(--color-maceta);
+  --fondo-ficha:       var(--color-etiqueta);
+  --fondo-hundido:     var(--color-etiqueta-2);
+  --fondo-personal:    var(--color-cuaderno);
+
+  --texto-principal:   var(--color-tinta);
+  --texto-secundario:  var(--color-tinta-suave);
+  --texto-dato:        var(--color-tinta);       /* cifras: mismo peso visual que el texto */
+  --texto-meta:        var(--color-codigo);      /* EAN, fitosanitario, cuerpos diminutos */
+  --texto-sobre-maceta: var(--color-etiqueta);   /* ÚNICO color válido sobre el fondo */
+  --texto-personal:    var(--color-boli);        /* la voz de Carlos */
+  --texto-fuente:      var(--color-boli);        /* enlaces a POWO/RHS/GBIF/ASPCA */
+  --texto-sin-dato:    var(--color-sin-dato);    /* "sin dato", "sin identificar" */
+  --texto-sobre-alerta: var(--color-etiqueta);   /* severidad crítica, invertida  7,43:1 */
+  --texto-sobre-aviso:  var(--color-aviso);      /* severidad atención, sin invertir */
+
+
+  /* ===========================================================================
+     5. TIPOGRAFÍA
+     ========================================================================= */
+
+  /* -- Familias ------------------------------------------------------------ */
+
+  /* Display: el nombre de la planta en la etiqueta, cabeceras de campo en caja
+     alta, la franja del parte del día. El fallback Arial Narrow no es una
+     derrota: es la fuente que usaría la etiquetadora del vivero. */
+  --fuente-etiqueta:
+    "Archivo Narrow", "Arial Narrow", "Helvetica Neue Condensed",
+    "Liberation Sans Narrow", ui-sans-serif, system-ui, sans-serif;
+
+  /* Cuerpo: todo el texto corrido. Su ITÁLICA es la voz de Carlos. */
+  --fuente-cuerpo:
+    "Alegreya Sans", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Dato: cifras, unidades, códigos y URLs. Mecánica, de báscula de vivero. */
+  --fuente-dato:
+    "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
+
+  /* -- Pesos --------------------------------------------------------------- */
+
+  --peso-normal: 400;
+  --peso-medio:  500;   /* solo en --fuente-cuerpo y --fuente-dato (600 en mono) */
+  --peso-fuerte: 700;
+
+  /* -- Escala. Base 17 px, no 16: el texto se lee con prisa y con una mano
+        ocupada, y el escalón extra se nota. Todo en rem, nunca en px. ------- */
+
+  --texto-3xs: 0.6875rem;  /* 11 px · nº fitosanitario, cuerpos de etiqueta real */
+  --texto-2xs: 0.75rem;    /* 12 px · rótulos en caja alta, unidades */
+  --texto-xs:  0.8125rem;  /* 13 px · fuentes citadas, pies de diagrama */
+  --texto-s:   0.9375rem;  /* 15 px · resúmenes de campo, texto denso */
+  --texto-m:   1.0625rem;  /* 17 px · BASE, texto corrido */
+  --texto-l:   1.25rem;    /* 20 px · la voz de Carlos (un escalón por encima) */
+  --texto-xl:  1.5rem;     /* 24 px · nombre científico, títulos de sección */
+  --texto-2xl: 2rem;       /* 32 px · título de la página */
+
+  /* Fluidos, dimensionados contra su CONTENEDOR (cqi), no contra la ventana:
+     la etiqueta debe funcionar igual en la rejilla cerrada y abierta a ancho
+     completo. Requieren container-type en el ancestro. */
+  --texto-nombre: clamp(2.25rem, 7cqi, 3.75rem);   /* el nombre a sangre de la etiqueta */
+  --texto-precio: clamp(1.75rem, 4.5cqi, 2.5rem);  /* el precio en euros */
+
+  /* -- Interlineado -------------------------------------------------------- */
+
+  --interlinea-apretada: 1.02;  /* nombre de la planta a sangre de caja */
+  --interlinea-titulo:   1.18;
+  --interlinea-base:     1.55;  /* texto corrido */
+  --interlinea-suelta:   1.7;   /* la capa de Carlos, que se lee despacio */
+
+  /* -- Tracking ------------------------------------------------------------ */
+
+  --tracking-nombre:    -0.02em;  /* condensada grande: se cierra */
+  --tracking-normal:     0em;
+  --tracking-caja-alta:  0.08em;  /* rótulos de campo: RIEGO, LUZ, TEMPERATURA */
+  --tracking-micro:      0.12em;  /* la microlínea del vivero y el fitosanitario */
+  --tracking-dato:       0.01em;
+
+  /* -- Medida de línea ----------------------------------------------------- */
+
+  --medida:       62ch;  /* texto corrido de la ficha */
+  --medida-corta: 42ch;  /* resúmenes y notas de Carlos */
+
+
+  /* ===========================================================================
+     6. ESPACIADO — escala de 4 px expresada en rem
+     ========================================================================= */
+
+  --space-0: 0;
+  --space-1: 0.25rem;   /*  4 px */
+  --space-2: 0.5rem;    /*  8 px */
+  --space-3: 0.75rem;   /* 12 px */
+  --space-4: 1rem;      /* 16 px */
+  --space-5: 1.5rem;    /* 24 px */
+  --space-6: 2rem;      /* 32 px */
+  --space-7: 3rem;      /* 48 px */
+  --space-8: 4rem;      /* 64 px */
+  --space-9: 6rem;      /* 96 px */
+
+  /* Espaciados con nombre, para que app.css no tenga que elegir número */
+  --hueco-rejilla:  var(--space-5);  /* separación entre etiquetas */
+  --relleno-ficha:  var(--space-5);  /* padding interior de una ficha */
+  --relleno-panel:  var(--space-4);
+  --margen-seccion: var(--space-7);
+
+  /* Anchos de página */
+  --ancho-pagina:   78rem;
+  --ancho-minimo:   20rem;  /* mínimo de columna en la rejilla auto-fill */
+  --canal-pagina:   var(--space-5);  /* margen lateral de la página */
+
+
+  /* ===========================================================================
+     7. RADIOS Y TRAZOS
+     ========================================================================= */
+
+  --radio-troquel: 3px;   /* el canto de una pegatina troquelada. NO es 0 y NO es 12 px */
+  --radio-chip:    2px;   /* distintivos de severidad, chips de filtro */
+  --radio-panel:   4px;   /* paneles y diagramas */
+  --radio-punto:   50%;   /* puntos del plano de casa */
+
+  --trazo-fino:   1px;    /* cuadrícula de los diagramas */
+  --trazo:        1.5px;  /* trazo normal de SVG */
+  --trazo-grueso: 2.5px;  /* la línea de tiempo de recuperación, marcadores */
+  --filete-personal:  3px; /* el filete azul a la izquierda del panel de Carlos */
+  --filete-severidad: 3px; /* el canto izquierdo de la ficha en severidad crítica */
+
+
+  /* ===========================================================================
+     7 bis. LA SIGNATURE — medidas propias de la etiqueta de Projardín
+     ===========================================================================
+     La pegatina tiene microtipografía y medidas finas que no salen de la escala
+     general. Aquí están, para que app.css no tenga que hardcodear ni una.
+     Ver docs/brief.md § "Signature" y § "La etiqueta cuando no hay etiqueta".
+     ------------------------------------------------------------------------ */
+
+  --etiqueta-canal:      var(--space-4);  /* margen interior de la pegatina */
+  --etiqueta-hueco-micro: var(--space-1); /* entre la microlínea del vivero y su dirección */
+  --etiqueta-alto-barras: 2.75rem;        /* alto del bloque de código de barras (~44 px) */
+  --etiqueta-ancho-barras: 9rem;          /* ancho del EAN; el precio ocupa el resto */
+  --etiqueta-hueco-pie:   var(--space-3); /* entre el bloque EAN+precio y el fitosanitario */
+
+
+  /* ===========================================================================
+     7 ter. IMÁGENES
+     ===========================================================================
+     Las 12 imágenes que ha convertido builder son 3:4 vertical: las 7 fotos de
+     planta a 900×1200 y las 5 de etiqueta a 675×900. Un solo aspect-ratio vale
+     para todas y no recorta nada.
+     ------------------------------------------------------------------------ */
+
+  --aspecto-foto:  3 / 4;
+  --ancho-prueba:  9rem;   /* la foto de la etiqueta real en el bloque de procedencia.
+                              Pequeña a propósito: es prueba documental, no protagonista;
+                              a este tamaño no le come la escena a la etiqueta dibujada. */
+
+
+  /* ===========================================================================
+     8. FOCO — anillo DOBLE, y hace falta que sea doble
+     ===========================================================================
+     Ningún color de la paleta pasa 3:1 contra el blanco de la ficha Y contra la
+     teja del fondo a la vez (--color-boli sobre --color-maceta da 1,44).
+     Con dos anillos siempre hay uno que contrasta: sobre blanco manda el oscuro
+     (12,91), sobre la maceta manda el claro (6,30).
+
+     Uso en app.css:
+       :focus-visible {
+         outline: var(--borde-foco);
+         outline-offset: var(--foco-separacion);
+         box-shadow: var(--anillo-foco);
+       }
+     ------------------------------------------------------------------------ */
+
+  --borde-foco:       2px solid var(--color-tinta);
+  --foco-separacion:  2px;
+  --anillo-foco:      0 0 0 5px var(--color-etiqueta);
+
+
+  /* ===========================================================================
+     9. SOMBRAS — una pegatina pegada a un tiesto, no una tarjeta flotando
+     ========================================================================= */
+
+  --sombra-pegatina:
+    0 1px 0 rgb(255 255 255 / 0.55) inset,           /* el satinado del papel */
+    0 1px 2px rgb(30 16 10 / 0.28),
+    0 6px 14px -6px rgb(30 16 10 / 0.35);
+
+  --sombra-despegada:                                 /* la ficha abierta, levantada */
+    0 1px 0 rgb(255 255 255 / 0.55) inset,
+    0 2px 4px rgb(30 16 10 / 0.30),
+    0 20px 40px -18px rgb(30 16 10 / 0.50);
+
+  --sombra-franja: 0 2px 8px -2px rgb(30 16 10 / 0.35);
+
+
+  /* ===========================================================================
+     10. MATERIALES — tramas de fondo. Cero imágenes, cero peticiones.
+     ========================================================================= */
+
+  /* El código de barras EAN de la etiqueta. Se aplica como background-image
+     sobre un bloque de ~44 px de alto. Anchos irregulares a propósito: un
+     patrón regular se lee como cebra, no como código. */
+  --barras-codigo:
+    repeating-linear-gradient(
+      90deg,
+      var(--color-tinta) 0 2px,
+      transparent 2px 4px,
+      var(--color-tinta) 4px 5px,
+      transparent 5px 8px,
+      var(--color-tinta) 8px 11px,
+      transparent 11px 12px,
+      var(--color-tinta) 12px 13px,
+      transparent 13px 16px
+    );
+
+  /* El papel cuadriculado de 5 mm del panel de Carlos. */
+  --trama-cuaderno:
+    repeating-linear-gradient(
+      to right,
+      var(--color-cuaderno-linea) 0 var(--trazo-fino),
+      transparent var(--trazo-fino) 5mm
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--color-cuaderno-linea) 0 var(--trazo-fino),
+      transparent var(--trazo-fino) 5mm
+    );
+
+  /* El anillo moldeado del tiesto: la banda de refuerzo que recorre el plástico
+     por debajo del borde. Se aplica al <body> o al <header>. */
+  --anillo-maceta:
+    linear-gradient(
+      to bottom,
+      var(--color-maceta-baja) 0,
+      var(--color-maceta-alta) 3px,
+      var(--color-maceta) 10px,
+      var(--color-maceta) calc(100% - 10px),
+      var(--color-maceta-baja) 100%
+    );
+
+  /* Trama de AUSENCIA DE DATO. Diagonales sobre el relleno neutro. Se usa en el
+     hueco de un diagrama sin dato, en el distintivo de toxicidad sin identificar
+     y en el bloque de código de barras de las plantas sin etiqueta de vivero.
+     Es la señal no cromática de "aquí no hay información": en escala de grises
+     sigue distinguiéndose de un relleno liso. */
+  --trama-sin-dato:
+    repeating-linear-gradient(
+      -45deg,
+      var(--color-sin-dato-trama) 0 var(--trazo-fino),
+      var(--color-sin-dato-relleno) var(--trazo-fino) 6px
+    );
+
+  /* Brillo satinado del plástico, muy tenue. Si se nota, está mal puesto. */
+  --brillo-maceta:
+    radial-gradient(
+      120% 60% at 22% 0%,
+      var(--color-maceta-alta) 0%,
+      transparent 62%
+    );
+
+
+  /* ===========================================================================
+     11. MOTION
+     ===========================================================================
+     Nada arranca solo y nada va en bucle infinito. Cada animación tiene su
+     versión reducida definida en docs/brief.md, no improvisada.
+     ------------------------------------------------------------------------ */
+
+  --dur-instante: 80ms;    /* foco, marca de un chip */
+  --dur-corta:    160ms;   /* hover, filtros, atenuación de los puntos del plano */
+  --dur-media:    260ms;   /* despegar la etiqueta */
+  --dur-larga:    420ms;   /* reordenar la rejilla */
+  --dur-dibujo:   900ms;   /* los SVG que se trazan (frente húmedo, línea de tiempo) */
+
+  --ease-estandar: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-salida:   cubic-bezier(0.2, 0.8, 0.25, 1);   /* algo que entra o se abre */
+  --ease-entrada:  cubic-bezier(0.4, 0, 1, 1);        /* algo que se va */
+  --ease-troquel:  cubic-bezier(0.34, 1.28, 0.64, 1); /* el rebote mínimo del despegue.
+                                                         SOLO ahí. En ningún otro sitio. */
+
+  /* Retardos de la secuencia de carga. Nada por encima de 240 ms: la página
+     existe para consultarse con prisa. */
+  --retardo-1: 0ms;
+  --retardo-2: 60ms;
+  --retardo-3: 120ms;
+
+
+  /* ===========================================================================
+     12. CAPAS
+     ========================================================================= */
+
+  --z-base:    0;
+  --z-ficha:   1;   /* la ficha despegada se pone por encima de sus vecinas */
+  --z-franja: 10;   /* el parte del día, sticky en móvil */
+  --z-salto:  20;   /* el skip link */
+}
+
+
+/* -----------------------------------------------------------------------------
+   13. MOVIMIENTO REDUCIDO
+   -----------------------------------------------------------------------------
+   `reduce` NO significa "sin animación": significa otra versión. Se conservan
+   las transiciones de opacidad, que orientan sin desplazar, y se anulan las que
+   mueven o trazan.
+
+   Resuelto aquí, en los tokens, para que builder no tenga que acordarse en cada
+   componente. Lo que sigue haciendo falta en app.css es lo que no es duración:
+   sustituir transform por opacity, dibujar los SVG en su estado final y no
+   lanzar los recorridos. Ver docs/brief.md § "Los cinco SVG explicativos".
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-corta:  120ms;  /* se conserva: es una opacidad, no un desplazamiento */
+    --dur-media:    1ms;
+    --dur-larga:    1ms;
+    --dur-dibujo:   1ms;
+
+    --ease-troquel: var(--ease-estandar);  /* fuera el rebote */
+
+    --retardo-1: 0ms;
+    --retardo-2: 0ms;
+    --retardo-3: 0ms;
+  }
+}
+
+
+/* -----------------------------------------------------------------------------
+   14. MÁS CONTRASTE
+   -----------------------------------------------------------------------------
+   Quien pide prefers-contrast: more suele necesitarlo de verdad. Se endurecen
+   los tres tonos que van más justos (todos siguen por encima de AA de partida)
+   y el borde informativo.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-tinta-suave: #2C463B;
+    --color-codigo:      #33453B;
+    --color-aviso:       #6B4504;
+    --color-borde:       #6E6759;
+    --color-borde-sutil: #A9A498;
+    --color-troquel:     #8A8375;
+  }
+}

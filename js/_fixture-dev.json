@@ -1,0 +1,87 @@
+{
+  "_nota": "FIXTURE TEMPORAL de builder para probar el render antes de que botanist entregue content/plantas.json. Datos inventados, NO es contenido real. Se borra antes de cerrar la tarea.",
+  "plantas": [
+    {
+      "id": "begonia-elatior",
+      "nombre_comun": "Begonia de flor",
+      "nombre_cientifico": "Begonia x hiemalis",
+      "familia": "Begoniaceae",
+      "foto": "begonia-elatior.jpg",
+      "alt": "Begonia Elatior con flores rosas y algunas hojas con los bordes secos",
+      "foto_etiqueta": "begonia-elatior-etiqueta.jpg",
+      "historia": "Regalo de cumpleaños de 2024.",
+      "notas_carlos": "Se me pone mustia si me paso de agua.",
+      "ubicacion": "Salón, a dos metros de la ventana",
+      "riego": { "resumen": "Cada 4–5 días en verano", "detalle": "Regar cuando los dos primeros centímetros de sustrato estén secos. Nunca dejar plato con agua." },
+      "luz": { "resumen": "Luz indirecta brillante", "detalle": "El sol directo del mediodía le quema las hojas.", "nivel": "luz indirecta" },
+      "humedad": { "resumen": "Media-alta", "detalle": null },
+      "temperatura": "Entre 15 y 24 °C",
+      "sustrato": { "resumen": "Turba con perlita", "detalle": "Necesita drenaje: la mezcla universal sola se compacta." },
+      "abonado": null,
+      "trasplante": { "resumen": "Cada primavera", "detalle": null },
+      "plagas_comunes": ["Oídio", "Mosca blanca"],
+      "toxicidad_mascotas": { "nivel": "toxica", "resumen": "Tóxica para perros y gatos por los oxalatos de las raíces." },
+      "dificultad": "media",
+      "estado": {
+        "severidad": "atencion",
+        "titulo": "Bordes de hoja secos",
+        "diagnostico": "Puntas y bordes marrones en las hojas exteriores, compatible con aire seco y riego irregular.",
+        "que_hacer": ["Quitar las hojas secas por la base", "Agrupar con otras plantas para subir la humedad", "Regar con más regularidad, sin encharcar"]
+      },
+      "fuentes": [
+        { "titulo": "RHS — Begonia", "url": "https://www.rhs.org.uk/plants/begonia", "respalda": "riego" },
+        { "titulo": "ASPCA — Begonia", "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/begonia", "respalda": "toxicidad_mascotas" }
+      ]
+    },
+    {
+      "id": "poto",
+      "nombre_comun": "Poto",
+      "nombre_cientifico": "Epipremnum aureum",
+      "familia": "Araceae",
+      "foto": "poto.jpg",
+      "alt": "Poto con guías largas colgando de una estantería",
+      "foto_etiqueta": null,
+      "historia": "Esqueje de la oficina.",
+      "notas_carlos": "Es la que aguanta que me vaya de viaje.",
+      "riego": { "resumen": "Cada 7–10 días", "detalle": "Tolera bien que se olvide un riego; no tolera el exceso." },
+      "luz": { "resumen": "Se conforma con poca luz", "nivel": "semisombra" },
+      "humedad": "Se adapta a la de casa",
+      "temperatura": "Entre 17 y 27 °C",
+      "sustrato": "Universal con perlita",
+      "abonado": { "resumen": "Mensual en primavera y verano", "detalle": null },
+      "trasplante": "Cada dos años",
+      "plagas_comunes": ["Cochinilla algodonosa"],
+      "toxicidad_mascotas": { "nivel": "toxica", "resumen": "Tóxico para perros y gatos: cristales de oxalato de calcio." },
+      "dificultad": "facil",
+      "estado": null,
+      "fuentes": [{ "titulo": "POWO — Epipremnum aureum", "url": "https://powo.science.kew.org/", "respalda": "nombre_cientifico" }]
+    },
+    {
+      "id": "helecho",
+      "nombre_comun": "Helecho",
+      "nombre_cientifico": null,
+      "familia": null,
+      "foto": "helecho.jpg",
+      "alt": "Helecho con frondes amarillentas y varias secas en el centro",
+      "riego": { "resumen": "Mantener el sustrato húmedo", "detalle": "Nunca debe llegar a secarse del todo." },
+      "luz": { "resumen": "Sombra luminosa", "nivel": "sombra" },
+      "humedad": null,
+      "temperatura": null,
+      "sustrato": null,
+      "abonado": null,
+      "trasplante": null,
+      "plagas_comunes": [],
+      "toxicidad_mascotas": null,
+      "dificultad": "dificil",
+      "historia": null,
+      "notas_carlos": null,
+      "estado": {
+        "severidad": "grave",
+        "titulo": "Se está secando",
+        "diagnostico": "Frondes amarillas y quebradizas desde el centro.",
+        "que_hacer": ["Cortar todo lo seco", "Cambiar a un sitio sin corriente de aire"]
+      },
+      "fuentes": []
+    }
+  ]
+}

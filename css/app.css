@@ -1,0 +1,999 @@
+/* =============================================================================
+   MyPlants · layout y componentes
+   Dueño: builder. La paleta, la escala y el motion viven en css/tokens.css
+   (dueño: ux-lead) y aquí solo se componen: en este fichero no hay ni un color,
+   ni un tamaño de fuente, ni un espaciado escrito literal. Solo var(--…).
+
+   El orden de capas se declara una vez y decide toda la especificidad. Con esto
+   bien puesto no hace falta subir selectores ni usar !important en ningún sitio.
+   ============================================================================= */
+
+@layer reset, base, layout, componentes, diagramas, utilidades;
+
+
+/* ══ reset ═══════════════════════════════════════════════════════════════════ */
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body, h1, h2, h3, h4, h5, p, figure, dl, dd, ol, ul {
+    margin: var(--space-0);
+    padding: var(--space-0);
+  }
+
+  ul, ol { list-style: none; }
+
+  img { display: block; max-width: 100%; height: auto; }
+
+  input, button { font: inherit; color: inherit; }
+
+  button { background: none; border: var(--space-0); cursor: pointer; }
+
+  /* El triángulo por defecto del <details> no encaja con una pegatina troquelada.
+     Se quita el marcador, pero NO el comportamiento: sigue siendo <summary>. */
+  summary { list-style: none; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+
+  /* Foco visible SIEMPRE, y diseñado. El anillo es doble porque ningún color de
+     la paleta contrasta a la vez contra la ficha blanca y contra la teja. */
+  :focus-visible {
+    outline: var(--borde-foco);
+    outline-offset: var(--foco-separacion);
+    box-shadow: var(--anillo-foco);
+    border-radius: var(--radio-chip);
+  }
+}
+
+
+/* ══ base ════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  body {
+    /* El tiesto: brillo satinado del plástico sobre el anillo moldeado. */
+    background-color: var(--fondo-pagina);
+    background-image: var(--brillo-maceta), var(--anillo-maceta);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    color: var(--texto-sobre-maceta);
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--texto-m);
+    line-height: var(--interlinea-base);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5 { line-height: var(--interlinea-titulo); font-weight: var(--peso-fuerte); }
+
+  a { color: var(--texto-fuente); }
+
+  em { font-style: italic; }
+
+  ::selection {
+    background: var(--color-tinta);
+    color: var(--color-etiqueta);
+  }
+}
+
+
+/* ══ layout ══════════════════════════════════════════════════════════════════ */
+
+@layer layout {
+  .cabecera,
+  .parte,
+  .filtros,
+  .contenido,
+  .pie {
+    max-width: var(--ancho-pagina);
+    margin-inline: auto;
+    padding-inline: var(--canal-pagina);
+  }
+
+  .cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-7) var(--space-5);
+  }
+
+  .contenido { padding-block: var(--space-5) var(--space-8); }
+
+  .pie { padding-block: var(--space-6) var(--space-8); }
+
+  .rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--ancho-minimo), 1fr));
+    gap: var(--hueco-rejilla);
+    align-items: start;
+  }
+
+  /* Al despegar, la etiqueta ocupa el ancho completo de la rejilla y se abre en
+     su sitio: sin modal, sin página de detalle, sin sacarte de la lista.
+     Nativo con :has(), cero JS. */
+  .rejilla__celda:has(.despegue[open]) {
+    grid-column: 1 / -1;
+    z-index: var(--z-ficha);
+  }
+}
+
+
+/* ══ componentes ═════════════════════════════════════════════════════════════ */
+
+@layer componentes {
+
+  /* ── cabecera ───────────────────────────────────────────────────────────── */
+
+  .cabecera__titulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xl);
+    letter-spacing: var(--tracking-caja-alta);
+    line-height: var(--interlinea-apretada);
+    text-transform: uppercase;
+    color: var(--texto-sobre-maceta);
+  }
+
+  .cabecera__bajada {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-sobre-maceta);
+    margin-block-start: var(--space-2);
+    opacity: 0.85;
+  }
+
+  /* ── buscador ───────────────────────────────────────────────────────────── */
+
+  .buscador {
+    display: grid;
+    gap: var(--space-1);
+    flex: 1 1 var(--medida-corta);
+    max-width: var(--medida-corta);
+  }
+
+  .buscador__label {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-sobre-maceta);
+  }
+
+  .buscador__input {
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    border: var(--trazo-fino) solid var(--color-borde);
+    border-radius: var(--radio-troquel);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--texto-m);
+    width: 100%;
+
+    &::placeholder { color: var(--texto-secundario); }
+  }
+
+  /* ── parte del día ──────────────────────────────────────────────────────── */
+
+  .parte {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    border-radius: var(--radio-troquel);
+    box-shadow: var(--sombra-franja);
+    padding-block: var(--space-3);
+    /* La franja es una tira pegada al ancho de la página, no una tarjeta suelta. */
+    max-width: var(--ancho-pagina);
+    margin-inline: auto;
+  }
+
+  .parte__titulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .parte__resumen {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-xl);
+    line-height: var(--interlinea-apretada);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-nombre);
+  }
+
+  .parte__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-inline-start: auto;
+  }
+
+  .chip__boton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    border: var(--trazo-fino) solid currentColor;
+    border-radius: var(--radio-chip);
+    padding: var(--space-1) var(--space-3);
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    letter-spacing: var(--tracking-dato);
+    transition: background-color var(--dur-corta) var(--ease-estandar);
+
+    &[data-severidad="critica"] { color: var(--color-alerta); background: var(--color-alerta-relleno); }
+    &[data-severidad="atencion"] { color: var(--color-aviso); background: var(--color-aviso-relleno); }
+    &:hover { background: color-mix(in oklab, currentColor 12%, var(--fondo-ficha)); }
+  }
+
+  /* La marca no es solo color: cada severidad tiene su signo, y se lee sin
+     distinguir un tono de otro. */
+  .chip__marca,
+  .estado__marca {
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-fuerte);
+
+    &[data-marca="critica"]::before { content: "!!"; }
+    &[data-marca="atencion"]::before { content: "!"; }
+    &[data-marca="sana"]::before { content: "·"; }
+  }
+
+  /* ── filtros ────────────────────────────────────────────────────────────── */
+
+  .filtros__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    gap: var(--space-4);
+    padding-block: var(--space-5) var(--space-2);
+  }
+
+  .filtros__facetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .faceta {
+    border: 0;
+    padding: var(--space-0);
+    margin: var(--space-0);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .faceta__legend {
+    float: left;   /* un <legend> no participa en el flex del <fieldset> */
+    width: 100%;
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-sobre-maceta);
+    padding: var(--space-0);
+    margin-block-end: var(--space-2);
+    opacity: 0.85;
+  }
+
+  .faceta__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  /* Casilla real debajo de un chip: se conserva la semántica de checkbox (el
+     lector la anuncia como tal, Espacio la marca) y se gana el aspecto de chip. */
+  .opcion { display: contents; }
+
+  .opcion__input {
+    position: absolute;
+    width: var(--trazo-fino);
+    height: var(--trazo-fino);
+    opacity: 0;
+
+    /* El foco del teclado se dibuja en la etiqueta, que es lo que se ve. */
+    &:focus-visible + .opcion__label {
+      outline: var(--borde-foco);
+      outline-offset: var(--foco-separacion);
+      box-shadow: var(--anillo-foco);
+    }
+
+    &:checked + .opcion__label {
+      background: var(--color-tinta);
+      color: var(--color-etiqueta);
+      border-color: var(--color-tinta);
+    }
+  }
+
+  .opcion__label {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    border: var(--trazo-fino) solid var(--color-borde);
+    border-radius: var(--radio-chip);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--texto-s);
+    cursor: pointer;
+    transition: background-color var(--dur-corta) var(--ease-estandar);
+
+    &:hover { background: color-mix(in oklab, var(--color-tinta) 10%, var(--fondo-ficha)); }
+  }
+
+  .opcion__cuenta {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-2xs);
+    opacity: 0.7;
+  }
+
+  .boton--limpiar {
+    align-self: end;
+    color: var(--texto-sobre-maceta);
+    border: var(--trazo-fino) solid currentColor;
+    border-radius: var(--radio-chip);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--texto-s);
+
+    &:hover { background: color-mix(in oklab, var(--color-etiqueta) 18%, transparent); }
+  }
+
+  /* ── avisos y recuento ──────────────────────────────────────────────────── */
+
+  .resultado,
+  .aviso {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    letter-spacing: var(--tracking-dato);
+    color: var(--texto-sobre-maceta);
+    margin-block-end: var(--space-4);
+  }
+
+  .aviso {
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    border-inline-start: var(--filete-personal) solid var(--color-alerta);
+    border-radius: var(--radio-troquel);
+    padding: var(--space-4);
+    font-size: var(--texto-s);
+    max-width: var(--medida);
+  }
+
+  /* ══ LA ETIQUETA ════════════════════════════════════════════════════════════
+     La signature: la pegatina térmica de Viveros Projardín, reconstruida en HTML
+     y CSS. Sin una sola imagen — el código de barras es un gradiente repetido. */
+
+  .etiqueta {
+    /* Container query: la misma etiqueta sirve en la rejilla cerrada, abierta a
+       ancho completo y a 320 px. No pregunta cuánto mide la ventana. */
+    container-type: inline-size;
+    container-name: etiqueta;
+
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    border: var(--trazo-fino) solid var(--color-troquel);
+    border-radius: var(--radio-troquel);
+    box-shadow: var(--sombra-pegatina);
+    overflow: hidden;
+    transition: box-shadow var(--dur-media) var(--ease-salida);
+
+    &:has(.despegue[open]) { box-shadow: var(--sombra-despegada); }
+  }
+
+  .etiqueta__cara {
+    padding: var(--space-4) var(--relleno-ficha) var(--space-3);
+  }
+
+  .etiqueta__vivero {
+    display: grid;
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    line-height: var(--interlinea-titulo);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+    border-block-end: var(--trazo-fino) solid var(--color-borde-sutil);
+    padding-block-end: var(--space-2);
+    margin-block-end: var(--space-3);
+  }
+
+  .etiqueta__vivero-nombre { font-weight: var(--peso-fuerte); }
+
+  /* El nombre a sangre de caja: dimensionado contra el contenedor, no la ventana. */
+  .etiqueta__nombre {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-nombre);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-nombre);
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .etiqueta__binomio {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    margin-block-start: var(--space-1);
+  }
+
+  .etiqueta__maceta,
+  .etiqueta__fito {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .etiqueta__maceta { margin-block-start: var(--space-2); }
+
+  .etiqueta__linea-precio {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-block: var(--space-3) var(--space-2);
+  }
+
+  /* El EAN: repeating-linear-gradient, cero imágenes y cero peso. */
+  .etiqueta__ean {
+    flex: 1 1 auto;
+    height: var(--space-6);
+    background-image: var(--barras-codigo);
+    background-repeat: repeat-x;
+    align-self: end;
+  }
+
+  .etiqueta__precio {
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-fuerte);
+    font-size: var(--texto-precio);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-nombre);
+    white-space: nowrap;
+  }
+
+  /* Helecho y poto no vinieron con etiqueta de vivero: no se finge una. */
+  .etiqueta[data-etiqueta-vivero="no"] {
+    & .etiqueta__vivero { opacity: 0.45; }
+    & .etiqueta__linea-precio { display: none; }
+  }
+
+  /* ── los tres datos de la cara ──────────────────────────────────────────── */
+
+  .resumenes {
+    display: grid;
+    gap: var(--space-2);
+    border-block-start: var(--trazo-fino) solid var(--color-borde-sutil);
+    padding: var(--space-3) var(--relleno-ficha);
+    background: var(--fondo-hundido);
+  }
+
+  .resumen {
+    display: grid;
+    grid-template-columns: minmax(min-content, 5rem) 1fr;
+    gap: var(--space-3);
+    align-items: baseline;
+  }
+
+  .resumen__clave {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .resumen__valor {
+    font-size: var(--texto-s);
+    text-wrap: pretty;
+  }
+
+  /* ── el tirador: despegar ───────────────────────────────────────────────── */
+
+  .despegue__tirador {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--relleno-ficha);
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-principal);
+    border-block-start: var(--trazo-fino) solid var(--color-borde-sutil);
+    background: var(--fondo-hundido);
+    transition: background-color var(--dur-corta) var(--ease-estandar);
+
+    &:hover { background: color-mix(in oklab, var(--color-tinta) 8%, var(--fondo-hundido)); }
+  }
+
+  .despegue__flecha::before { content: "▾"; }
+
+  .despegue[open] > .despegue__tirador .despegue__flecha::before { content: "▴"; }
+
+  /* El gesto: la pegatina se levanta por el borde de arriba y el contenido baja. */
+  .despegue[open] > .despegada {
+    animation: despegar var(--dur-media) var(--ease-troquel) both;
+    transform-origin: top center;
+  }
+
+  @keyframes despegar {
+    from { opacity: 0; transform: scaleY(0.97) translateY(calc(var(--space-2) * -1)); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .despegada {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--relleno-ficha);
+    border-block-start: var(--trazo-fino) solid var(--color-borde-sutil);
+  }
+
+  /* ── capa 1 · estado ────────────────────────────────────────────────────── */
+
+  .estado {
+    display: grid;
+    gap: var(--space-2);
+    border-radius: var(--radio-panel);
+    padding: var(--relleno-panel);
+
+    &[data-severidad="critica"] {
+      background: var(--color-alerta-relleno);
+      color: var(--color-alerta);
+    }
+    &[data-severidad="atencion"] {
+      background: var(--color-aviso-relleno);
+      color: var(--color-aviso);
+    }
+  }
+
+  .estado__titulo,
+  .mas-datos__titulo,
+  .estado__tratamiento-titulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+  }
+
+  .estado__severidad {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-fuerte);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+  }
+
+  .estado__cabecera {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-xl);
+    line-height: var(--interlinea-titulo);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-nombre);
+  }
+
+  .estado__diagnostico {
+    color: var(--texto-principal);
+    max-width: var(--medida);
+    text-wrap: pretty;
+  }
+
+  .estado__tratamiento {
+    margin-block-start: var(--space-2);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .estado__pasos {
+    display: grid;
+    gap: var(--space-2);
+    counter-reset: paso;
+    color: var(--texto-principal);
+    max-width: var(--medida);
+  }
+
+  .paso {
+    counter-increment: paso;
+    display: grid;
+    gap: var(--space-1);
+    padding-inline-start: var(--space-6);
+    position: relative;
+    font-size: var(--texto-s);
+
+    &::before {
+      content: counter(paso);
+      position: absolute;
+      left: var(--space-0);
+      font-family: var(--fuente-dato);
+      font-weight: var(--peso-fuerte);
+      color: var(--texto-meta);
+    }
+  }
+
+  .paso__senal {
+    font-size: var(--texto-xs);
+    color: var(--texto-secundario);
+
+    &::before { content: "Señal: "; font-family: var(--fuente-dato); text-transform: uppercase; }
+  }
+
+  /* ── foto ───────────────────────────────────────────────────────────────── */
+
+  .foto {
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--medida-corta);
+  }
+
+  .foto__img {
+    /* Los originales son 3:4; el encuadre de la ficha es 4:5, así que se recorta
+       en vez de deformar. Con width/height en el HTML no hay salto de layout. */
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radio-panel);
+    border: var(--trazo-fino) solid var(--color-borde-sutil);
+  }
+
+  .foto__pie {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
+  }
+
+  /* ── capa 2 · campos con diagrama ───────────────────────────────────────── */
+
+  .campos-diagrama {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .campo {
+    display: grid;
+    gap: var(--space-2);
+    background: var(--fondo-hundido);
+    border-radius: var(--radio-panel);
+    padding: var(--relleno-panel);
+  }
+
+  .campo__clave {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .campo__resumen { font-size: var(--texto-s); text-wrap: pretty; }
+
+  .campo__mas-tirador,
+  .dato__mas-tirador {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-secundario);
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
+  }
+
+  .campo__detalle,
+  .dato__detalle {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    max-width: var(--medida);
+    margin-block-start: var(--space-1);
+    text-wrap: pretty;
+  }
+
+  /* ── capa 2 · el resto de datos ─────────────────────────────────────────── */
+
+  .mas-datos { display: grid; gap: var(--space-3); }
+
+  .mas-datos__lista {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .dato {
+    display: grid;
+    gap: var(--space-1);
+    padding-block-end: var(--space-3);
+    border-block-end: var(--trazo-fino) solid var(--color-borde-sutil);
+  }
+
+  .dato__clave {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+  }
+
+  .dato__valor { font-size: var(--texto-s); }
+
+  /* La toxicidad es información de seguridad: lleva palabra, no solo color. */
+  .dato--toxicidad .dato__texto::before {
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-fuerte);
+  }
+  .dato[data-toxicidad="critica"] {
+    & .dato__texto { color: var(--color-alerta); }
+    & .dato__texto::before { content: "!! "; }
+  }
+  .dato[data-toxicidad="atencion"] {
+    & .dato__texto { color: var(--color-aviso); }
+    & .dato__texto::before { content: "! "; }
+  }
+  .dato[data-toxicidad="desconocida"] .dato__texto::before { content: "? "; }
+
+  /* ── fuentes: contenido, no letra pequeña ───────────────────────────────── */
+
+  .fuente {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-fuente);
+    text-decoration-thickness: var(--trazo-fino);
+    text-underline-offset: var(--space-1);
+  }
+
+  .fuente--sin-url { color: var(--texto-meta); text-decoration: none; }
+
+  .campo__fuente,
+  .dato__fuente { display: block; margin-block-start: var(--space-1); }
+
+  /* ── capa 3 · el cuaderno de Carlos ─────────────────────────────────────── */
+
+  .cuaderno {
+    background-color: var(--fondo-personal);
+    background-image: var(--trama-cuaderno);
+    border-inline-start: var(--filete-personal) solid var(--color-boli);
+    border-radius: var(--radio-panel);
+    padding: var(--relleno-panel);
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--medida);
+  }
+
+  .cuaderno__rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-personal);
+  }
+
+  /* La itálica es la voz de Carlos, un escalón por encima del cuerpo. */
+  .cuaderno__historia,
+  .cuaderno__notas {
+    font-style: italic;
+    font-size: var(--texto-l);
+    line-height: var(--interlinea-suelta);
+    color: var(--texto-personal);
+    text-wrap: pretty;
+  }
+
+  /* ── pie ────────────────────────────────────────────────────────────────── */
+
+  .pie__texto {
+    font-size: var(--texto-s);
+    color: var(--texto-sobre-maceta);
+    max-width: var(--medida);
+    opacity: 0.9;
+  }
+
+  /* ── container queries: el componente reacciona a SU hueco ──────────────── */
+
+  @container etiqueta (min-width: 34rem) {
+    .despegada {
+      grid-template-columns: minmax(min-content, 18rem) 1fr;
+      align-items: start;
+    }
+    .estado,
+    .mas-datos,
+    .cuaderno { grid-column: 1 / -1; }
+
+    .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+
+    .mas-datos__lista { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  }
+}
+
+
+/* ══ diagramas ═══════════════════════════════════════════════════════════════
+   Los colores salen de tokens; la geometría (coordenadas, radios, cuerpo del
+   texto en unidades de viewBox) vive en js/svg.js, que es donde se dibuja. */
+
+@layer diagramas {
+  .diagrama {
+    width: 100%;
+    height: auto;
+    background: var(--fondo-ficha);
+    border: var(--trazo-fino) solid var(--color-borde-sutil);
+    border-radius: var(--radio-panel);
+  }
+
+  .diagrama text {
+    font-family: var(--fuente-dato);
+    fill: var(--texto-meta);
+  }
+
+  /* Cuando no hay dato no se dibuja un eje bonito fingiendo precisión: se dice. */
+  .diagrama-sin-dato {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-meta);
+    background: var(--fondo-ficha);
+    border: var(--trazo-fino) dashed var(--color-borde);
+    border-radius: var(--radio-panel);
+    padding: var(--space-3);
+  }
+
+  /* ── 1 · el dedo en la tierra ───────────────────────────────────────────── */
+
+  .riego__tiesto { fill: var(--color-maceta); }
+  .riego__anillo { fill: var(--color-maceta-alta); }
+  .riego__sustrato { fill: var(--color-sustrato); }
+  .riego__humedo { fill: var(--color-sustrato-humedo); }
+  .riego__dedo { fill: var(--color-etiqueta); stroke: var(--color-tinta); stroke-width: var(--trazo); }
+  .riego__gota { fill: var(--color-sustrato-humedo); }
+  .riego__cota { stroke: var(--color-tinta); stroke-width: var(--trazo); stroke-dasharray: 3 2; }
+  .riego__cota-texto, .riego__ml { fill: var(--texto-dato); }
+
+  /* La gota cae y el frente húmedo aparece: una sola vez, al despegar la ficha. */
+  .despegue[open] .riego__gota {
+    animation: caer var(--dur-dibujo) var(--ease-entrada) both;
+  }
+  .despegue[open] .riego__humedo {
+    animation: calar var(--dur-dibujo) var(--ease-salida) both;
+  }
+
+  @keyframes caer {
+    from { opacity: 1; transform: translateY(0); }
+    70% { opacity: 1; transform: translateY(12px); }
+    to { opacity: 0; transform: translateY(12px); }
+  }
+  @keyframes calar {
+    from { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ── 2 · la ventana ─────────────────────────────────────────────────────── */
+
+  .luz__sala { fill: var(--escala-1); stroke: var(--color-borde); stroke-width: var(--trazo-fino); }
+  .luz__ventana { fill: var(--color-tinta); }
+  .luz__cono { fill: var(--escala-2); opacity: 0.7; }
+  .luz__planta { fill: var(--color-tinta); }
+  .luz__cota { stroke: var(--color-tinta); stroke-width: var(--trazo-fino); stroke-dasharray: 2 2; }
+  .luz__cota-texto, .luz__rotulo { fill: var(--texto-dato); }
+
+  /* ── 3 · rango térmico ──────────────────────────────────────────────────── */
+
+  .temp__eje { fill: var(--escala-1); }
+  .temp__tolerado { fill: var(--escala-2); }
+  .temp__optimo { fill: var(--escala-4); }
+  .temp__letal { stroke: var(--color-alerta); stroke-width: var(--trazo-grueso); }
+  .temp__letal-texto { fill: var(--color-alerta); }
+  .temp__casa { fill: var(--color-tinta); }
+  .temp__casa-texto { fill: var(--texto-dato); }
+  .temp__escala { fill: var(--texto-meta); }
+
+  .despegue[open] .temp__casa {
+    animation: asentar var(--dur-media) var(--ease-salida) both;
+  }
+  @keyframes asentar {
+    from { opacity: 0; transform: translateY(calc(var(--space-2) * -1)); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ── 4 · curso de recuperación ──────────────────────────────────────────── */
+
+  .recup__rail { stroke: var(--escala-1); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
+  .recup__trazo { stroke: var(--color-tinta); stroke-width: var(--trazo-grueso); stroke-linecap: round; }
+  .recup__punto { fill: var(--color-etiqueta); stroke: var(--color-tinta); stroke-width: var(--trazo); }
+  .recup__numero { fill: var(--texto-dato); }
+  .recup__extremo { fill: var(--texto-meta); }
+
+  /* La línea se traza de izquierda a derecha. Con reduce dura 1 ms: aparece
+     entera, que es exactamente la versión reducida que pide el brief. */
+  .despegue[open] .recup__trazo {
+    stroke-dasharray: 100;
+    animation: trazar var(--dur-dibujo) var(--ease-salida) both;
+  }
+  @keyframes trazar {
+    from { stroke-dashoffset: 100; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ── movimiento reducido: no se apaga, se cambia de versión ─────────────── */
+
+  @media (prefers-reduced-motion: reduce) {
+    /* La gota es puro adorno cinético: sin ella el diagrama dice lo mismo. */
+    .riego__gota { display: none; }
+
+    /* Lo demás se dibuja ya en su estado final (las duraciones bajan a 1 ms en
+       tokens.css) y solo se conserva una opacidad corta, que orienta sin mover. */
+    .despegue[open] .riego__humedo,
+    .despegue[open] .temp__casa,
+    .despegue[open] > .despegada {
+      animation: aparecer var(--dur-corta) linear both;
+      transform: none;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  }
+}
+
+
+/* ══ utilidades ══════════════════════════════════════════════════════════════ */
+
+@layer utilidades {
+  /* Visible para un lector de pantalla, invisible en pantalla. */
+  .oculto-visual:not(:focus):not(:active) {
+    clip-path: inset(50%);
+    height: var(--trazo-fino);
+    width: var(--trazo-fino);
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  /* Un dato que no se ha podido verificar se dice, no se esconde. */
+  .sin-dato {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-micro);
+    color: var(--texto-meta);
+  }
+
+  .salto-contenido {
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-3);
+    z-index: var(--z-salto);
+    background: var(--fondo-ficha);
+    color: var(--texto-principal);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radio-troquel);
+    text-decoration: none;
+
+    &:not(:focus) {
+      clip-path: inset(50%);
+      height: var(--trazo-fino);
+      width: var(--trazo-fino);
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
+}
+
+
+/* ══ decisiones de página (media queries, no de componente) ══════════════════ */
+
+@media (max-width: 40rem) {
+  /* En móvil el parte del día se queda a la vista: es el motivo de abrir esto. */
+  .parte {
+    position: sticky;
+    top: var(--space-0);
+    z-index: var(--z-franja);
+  }
+
+  .parte__chips { margin-inline-start: var(--space-0); }
+}

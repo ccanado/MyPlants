@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Las plantas de casa — MyPlants</title>
+<meta name="description" content="Fichas de cuidado de las siete plantas que Carlos tiene en casa: riego, luz, sustrato, plagas y toxicidad, con las fuentes citadas.">
+<link rel="stylesheet" href="./css/tokens.css">
+<link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+
+<a class="salto-contenido" href="#rejilla">Saltar a las plantas</a>
+
+<header class="cabecera">
+  <div class="cabecera__rotulo">
+    <h1 class="cabecera__titulo">Las plantas de casa</h1>
+    <p class="cabecera__bajada">Siete macetas · Móstoles → casa</p>
+  </div>
+
+  <form class="buscador" role="search" novalidate>
+    <label class="buscador__label" for="busqueda">Buscar planta, sala o síntoma</label>
+    <input
+      class="buscador__input"
+      id="busqueda"
+      name="busqueda"
+      type="search"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="poto, salón, hojas amarillas…">
+  </form>
+</header>
+
+<!-- Parte del día: cuántas piden mirada hoy. Se genera desde los datos; si no
+     hay ninguna tocada, se dice, que también es información. -->
+<section class="parte" id="parte" aria-labelledby="parte-titulo" hidden>
+  <h2 class="parte__titulo" id="parte-titulo">Parte del día</h2>
+  <p class="parte__resumen" id="parte-resumen"></p>
+  <ul class="parte__chips" id="parte-chips"></ul>
+</section>
+
+<nav class="filtros" aria-labelledby="filtros-titulo">
+  <h2 class="oculto-visual" id="filtros-titulo">Filtrar</h2>
+  <form class="filtros__form" novalidate>
+    <div class="filtros__facetas" id="facetas"></div>
+    <button class="boton boton--limpiar" id="limpiar" type="button" hidden>Quitar filtros</button>
+  </form>
+</nav>
+
+<main class="contenido">
+  <h2 class="oculto-visual">Las plantas</h2>
+
+  <p class="resultado" id="resultado" role="status" aria-live="polite"></p>
+  <p class="aviso" id="aviso" hidden></p>
+
+  <ul class="rejilla" id="rejilla"></ul>
+</main>
+
+<footer class="pie">
+  <p class="pie__texto">
+    Web estática: sin dependencias, sin build y sin una sola petición a terceros.
+    Los datos de cuidado se verifican contra las fuentes citadas en cada campo;
+    lo que no se ha podido verificar aparece marcado como <em>sin dato</em>,
+    nunca rellenado a ojo.
+  </p>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     PLANTILLAS
+     El markup vive aquí para que la semántica se audite leyendo el HTML.
+     js/ solo clona y rellena con textContent — nunca innerHTML.
+     ══════════════════════════════════════════════════════════════════════════ -->
+
+<template id="tpl-ficha">
+  <li class="rejilla__celda">
+    <article class="etiqueta" aria-labelledby="">
+
+      <!-- ── la pegatina del vivero ──────────────────────────────────────── -->
+      <div class="etiqueta__cara">
+        <p class="etiqueta__vivero">
+          <span class="etiqueta__vivero-nombre">Viveros Projardín</span>
+          <span class="etiqueta__vivero-dir">Avda. de Móstoles s/n · Tfno. 91 644 22 13</span>
+        </p>
+
+        <h3 class="etiqueta__nombre" id=""></h3>
+        <p class="etiqueta__binomio"><em class="etiqueta__binomio-texto"></em></p>
+        <p class="etiqueta__maceta"></p>
+
+        <div class="etiqueta__linea-precio">
+          <span class="etiqueta__ean" aria-hidden="true"></span>
+          <span class="etiqueta__precio"></span>
+        </div>
+
+        <p class="etiqueta__fito"></p>
+      </div>
+
+      <!-- ── los tres datos con los que se llega con la regadera ─────────── -->
+      <dl class="resumenes">
+        <div class="resumen" data-campo="riego">
+          <dt class="resumen__clave">Riego</dt>
+          <dd class="resumen__valor"></dd>
+        </div>
+        <div class="resumen" data-campo="luz">
+          <dt class="resumen__clave">Luz</dt>
+          <dd class="resumen__valor"></dd>
+        </div>
+        <div class="resumen" data-campo="temperatura">
+          <dt class="resumen__clave">Temp</dt>
+          <dd class="resumen__valor"></dd>
+        </div>
+      </dl>
+
+      <!-- ── despegar: <details> nativo, sin una línea de JS ─────────────── -->
+      <details class="despegue">
+        <summary class="despegue__tirador">
+          <span class="despegue__texto"></span>
+          <span class="despegue__flecha" aria-hidden="true"></span>
+        </summary>
+
+        <div class="despegada">
+
+          <!-- capa 1 · qué le pasa ahora mismo -->
+          <section class="estado" hidden>
+            <h4 class="estado__titulo">Qué le pasa</h4>
+            <p class="estado__severidad">
+              <span class="estado__marca" aria-hidden="true"></span>
+              <span class="estado__severidad-valor"></span>
+            </p>
+            <p class="estado__cabecera"></p>
+            <p class="estado__diagnostico"></p>
+
+            <div class="estado__tratamiento" hidden>
+              <h5 class="estado__tratamiento-titulo">Curso de recuperación</h5>
+              <div class="estado__diagrama"></div>
+              <ol class="estado__pasos"></ol>
+            </div>
+          </section>
+
+          <figure class="foto" hidden>
+            <img class="foto__img" src="" alt="" width="900" height="1200" loading="lazy" decoding="async">
+            <figcaption class="foto__pie"></figcaption>
+          </figure>
+
+          <!-- capa 2 · los tres campos con diagrama -->
+          <div class="campos-diagrama" id=""></div>
+
+          <!-- capa 2 · el resto de datos verificados -->
+          <section class="mas-datos">
+            <h4 class="mas-datos__titulo">Más datos</h4>
+            <dl class="mas-datos__lista"></dl>
+          </section>
+
+          <!-- capa 3 · la voz de Carlos, en su cuaderno -->
+          <aside class="cuaderno" hidden>
+            <h4 class="cuaderno__rotulo">Carlos</h4>
+            <p class="cuaderno__historia"></p>
+            <p class="cuaderno__notas"></p>
+          </aside>
+
+        </div>
+      </details>
+
+    </article>
+  </li>
+</template>
+
+<!-- Campo con diagrama: riego, luz y temperatura. El SVG es una segunda vista
+     del texto que tiene al lado, nunca el único portador del dato. -->
+<template id="tpl-campo-diagrama">
+  <section class="campo">
+    <h5 class="campo__clave"></h5>
+    <div class="campo__diagrama"></div>
+    <p class="campo__resumen"></p>
+    <details class="campo__mas" hidden>
+      <summary class="campo__mas-tirador">Más detalle</summary>
+      <p class="campo__detalle"></p>
+    </details>
+    <p class="campo__fuente" hidden>
+      <a class="fuente" href="" rel="noopener noreferrer">
+        <span class="fuente__dominio"></span>
+        <span class="fuente__flecha" aria-hidden="true">↗</span>
+        <span class="oculto-visual"> (se abre en el sitio de la fuente)</span>
+      </a>
+    </p>
+  </section>
+</template>
+
+<!-- Dato simple del bloque «más datos» -->
+<template id="tpl-dato">
+  <div class="dato">
+    <dt class="dato__clave"></dt>
+    <dd class="dato__valor">
+      <span class="dato__texto"></span>
+      <details class="dato__mas" hidden>
+        <summary class="dato__mas-tirador">Más detalle</summary>
+        <p class="dato__detalle"></p>
+      </details>
+      <span class="dato__fuente" hidden>
+        <a class="fuente" href="" rel="noopener noreferrer">
+          <span class="fuente__dominio"></span>
+          <span class="fuente__flecha" aria-hidden="true">↗</span>
+          <span class="oculto-visual"> (se abre en el sitio de la fuente)</span>
+        </a>
+      </span>
+    </dd>
+  </div>
+</template>
+
+<template id="tpl-faceta">
+  <fieldset class="faceta">
+    <legend class="faceta__legend"></legend>
+    <ul class="faceta__opciones"></ul>
+  </fieldset>
+</template>
+
+<template id="tpl-opcion">
+  <li class="opcion">
+    <input class="opcion__input" type="checkbox" id="" name="" value="">
+    <label class="opcion__label" for="">
+      <span class="opcion__texto"></span>
+      <span class="opcion__cuenta" aria-hidden="true"></span>
+    </label>
+  </li>
+</template>
+
+<template id="tpl-chip">
+  <li class="chip">
+    <button class="chip__boton" type="button" data-planta="">
+      <span class="chip__marca" aria-hidden="true"></span>
+      <span class="chip__nombre"></span>
+      <span class="oculto-visual"> — ir a su ficha</span>
+    </button>
+  </li>
+</template>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>
