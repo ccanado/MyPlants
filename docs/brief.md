@@ -1979,6 +1979,52 @@ excepción, misfilaba 16 de 17. Y el rótulo de bloque estaba mal en **5 de las 
 queda hoja con la que fallar»* no es la causa de nada — es el margen de error, y es lo que más
 importa de esa ficha.
 
+### El rótulo del `patron` también varía por `tipo` — y una afirmación con condición de falsación
+
+Verificada la regla de `sana` en el JSON: 38 ítems, las cuatro sanas abren con `afirmacion`, y la
+regla **con su excepción** queda escrita en `meta.escalas`. Cumple.
+
+Pero al leer los `patron` nuevos aparece un hueco de mi especificación. `botanist` ha puesto `patron`
+en dos afirmaciones, y lo que ha escrito no es un patrón de reconocimiento:
+
+> *"Mira la hoja nueva de las puntas: mientras salga con el mismo borde blanco ancho que las de
+> dentro, la luz le basta. El día que salga más verde y con el borde más estrecho, le falta luz."*
+
+**Eso es una condición de falsación, no una forma de reconocer nada.** Y mi rótulo dice
+`PATRÓN PARA RECONOCERLA`, que sobre una afirmación no significa nada: no estás reconociendo la
+afirmación, estás diciendo qué la desmentiría. El rótulo se escribió cuando el campo solo vivía en
+`causa`, donde sí es exacto.
+
+Así que el rótulo del `patron` **varía por `tipo`**, igual que el del bloque:
+
+| `tipo` | rótulo del `patron` | qué es |
+| --- | --- | --- |
+| `causa` | `PATRÓN PARA RECONOCERLA` | cómo se distingue de las otras causas |
+| `riesgo` | `SEÑAL DE QUE ESTÁ PASANDO` | qué se vería si el riesgo se materializa |
+| `afirmacion` | `QUÉ LO DESMENTIRÍA` | la comprobación que la tumbaría |
+| `aclaracion` · `mejora` | sin `patron` hoy | si aparece, se decide entonces |
+
+Es la tercera vez hoy que la respuesta al mismo problema es la misma: **un rótulo por clase, no un
+rótulo por bloque.** Con `tipo` en los ítems, con las dos formas del diagrama térmico —banda para un
+intervalo, marcador para un tope— y ahora con esto. Merece quedar como criterio general: **cuando un
+contenedor tiene que adivinar de qué clase es su contenido, la solución no es un rótulo más listo, es
+etiquetar la clase en el dato.**
+
+Y lo que hace `botanist` con esa frase es mejor de lo que yo había especificado, así que lo escribo
+como criterio de contenido y no solo de rótulo: **una afirmación que trae su propia condición de
+falsación es más fuerte que una que no.** «Está sano» es una opinión; «está sano, y el día que la hoja
+nueva salga más verde y con el borde más estrecho es que me equivoqué» es una afirmación que se puede
+comprobar y que dice de antemano cómo se sabría que era falsa. Es la disciplina de honestidad de este
+proyecto aplicada a las buenas noticias, que es donde cuesta: los huecos ya se marcaban como huecos y
+las fuentes ya se citaban, pero **una afirmación positiva sin forma de desmentirla era el último sitio
+donde quedaba sitio para el optimismo.** Donde una `afirmacion` pueda llevarla, la lleva.
+
+> **Nota sobre el tope de altura, que se retiró justo a tiempo.** Esta corrección **añade** dos ítems
+> y sube las fichas sanas. Con el tope de 1.800 px vivo, la mejor decisión de contenido del día
+> —dos afirmaciones que faltaban en dos plantas que las necesitaban— habría estado compitiendo con
+> una métrica mía. No es un argumento retrospectivo a mi favor: es la demostración de para qué sirve
+> distinguir un objetivo de una observación. **Un objetivo manda cortar, y aquí cortar era lo malo.**
+
 ## Fases
 
 | Fase | Qué | Quién |
