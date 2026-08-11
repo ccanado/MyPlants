@@ -148,6 +148,7 @@ export function clasificar(tarea, hoy) {
     const dias = dia == null ? null : hoy.dia - dia;
     return {
       enHoy: true,
+      estado: "vencida",
       /* «VA TARDE», nunca «incumplido» ni «pendiente desde». `vencida` significa
          «tiene fecha de referencia y ya pasó», no «alguien lo ha hecho mal» — y
          la fecha de referencia es criterio de `botanist`, no norma de RHS, así
@@ -166,20 +167,21 @@ export function clasificar(tarea, hoy) {
   if (tipo === "fecha") {
     const dia = diaDeISO(tarea.fecha);
     if (dia == null) {
-      return { enHoy: false, rotulo: null, cuando: null, nota: null, tono: "comprobacion" };
+      return { enHoy: false, estado: "proxima", rotulo: null, cuando: null, nota: null, tono: "comprobacion" };
     }
     const faltan = dia - hoy.dia;
     /* `cuando: null` y no «Hoy»: el rótulo ya dice «HOY» y repetirlo dos veces en
        la misma línea —una en el distintivo y otra detrás del título— es ruido.
        La regla general de este objeto: el `cuando` solo dice lo que el rótulo no
        puede decir. */
-    if (faltan === 0) return { enHoy: true, rotulo: "Hoy", cuando: null, nota: tarea.condicion, tono: "hoy", dias: 0 };
+    if (faltan === 0) return { enHoy: true, estado: "hoy", rotulo: "Hoy", cuando: null, nota: tarea.condicion, tono: "hoy", dias: 0 };
     if (faltan < 0) {
       /* Una `fecha` que ya pasó NO se reetiqueta como vencida: `vencida` es una
          clasificación de `botanist` y hoy solo hay una en las siete. Se dice el
          hecho —la fecha era otro día— sin subir el tono ni acusar a nadie. */
       return {
         enHoy: true,
+        estado: "hoy",
         rotulo: null,
         cuando: `Estaba prevista para el ${fechaCortaLegible(tarea.fecha)}`,
         nota: tarea.condicion,
@@ -189,6 +191,7 @@ export function clasificar(tarea, hoy) {
     }
     return {
       enHoy: false,
+      estado: "proxima",
       rotulo: null,
       cuando: faltan === 1
         ? `Mañana, ${fechaCortaLegible(tarea.fecha)}`
@@ -213,6 +216,7 @@ export function clasificar(tarea, hoy) {
     if (enMes && tarea.condicion) {
       return {
         enHoy: false,
+        estado: "condicionada",
         rotulo: null,
         cuando: `Su temporada es ahora (${ventana}), pero antes hay que comprobar una cosa`,
         nota: tarea.condicion,
@@ -226,6 +230,7 @@ export function clasificar(tarea, hoy) {
     }
     return {
       enHoy: false,
+      estado: "temporada",
       rotulo: null,
       cuando: ventana ? `Su temporada es ${ventana}` : null,
       nota: tarea.condicion,
@@ -238,6 +243,7 @@ export function clasificar(tarea, hoy) {
        el calendario. Aparece en su ficha, en forma de comprobación. */
     return {
       enHoy: false,
+      estado: "condicionada",
       rotulo: null,
       cuando: "No depende del calendario",
       nota: tarea.condicion,
@@ -265,19 +271,48 @@ export function clasificar(tarea, hoy) {
        cierta todos los días. Una web que dice «comprueba» enseña a cuidar
        plantas; una que dice «riega hoy» solo da órdenes, y a los cuatro días se
        equivoca. */
+    /* Y AQUÍ ESTABA UN DEFECTO REAL, que avisó `botanist` dos veces.
+       El comentario de arriba decía «`riego.ultimo` es null en las siete» y ya no
+       lo es: **la begonia, el helecho y el poto tienen `riego.ultimo:
+       "2026-08-11"`**, porque Carlos los regó ese día, y su `ancla_tipo` pasó a
+       `riego_registrado`. Devolver `sinRegistro: true` para todo `ritmo` hacía
+       que la ficha rotulara «sin registrar» en tres plantas donde el dato SÍ
+       consta — o sea el error simétrico del que este módulo existe para evitar:
+       en vez de inventarse un dato, negaba uno que había.
+       Ahora `sinRegistro` sale del dato y no del tipo. */
+    const ultimo = diaDeISO(tarea.ultimo);
+    const desdeElUltimo = ultimo == null ? null : hoy.dia - ultimo;
+
     return {
       enHoy: false,
+      estado: "ritmo",
       rotulo: null,
-      cuando: ritmoLegible(tarea, hoy.mes),
+      cuando: [ritmoLegible(tarea, hoy.mes), regadaHace(desdeElUltimo)]
+        .filter(Boolean).join(" · ") || null,
       nota: tarea.disparador ?? null,
       tono: "comprobacion",
-      sinRegistro: true,
+      // Solo cuando de verdad no hay registro. Es un hecho del JSON, no del tipo.
+      sinRegistro: ultimo == null,
     };
   }
 
   // Tipo desconocido: no se inventa nada y no entra en «hoy». El conjunto es
   // cerrado, así que llegar aquí significa que el JSON ha crecido.
-  return { enHoy: false, rotulo: null, cuando: null, nota: tarea.condicion ?? null, tono: "comprobacion" };
+  return { enHoy: false, estado: null, rotulo: null, cuando: null, nota: tarea.condicion ?? null, tono: "comprobacion" };
+}
+
+/**
+ * «se regó hace 3 días». Es una OBSERVACIÓN, no una predicción, y por eso sí se
+ * puede decir: cuenta hacia atrás desde un hecho registrado en vez de hacia
+ * delante hacia un vencimiento que el sustrato puede desmentir. La diferencia
+ * entre esto y «hoy toca regar» es la diferencia entre lo que pasó y lo que
+ * alguien supone que va a pasar.
+ */
+function regadaHace(dias) {
+  if (dias == null || dias < 0) return null;
+  if (dias === 0) return "se regó hoy";
+  if (dias === 1) return "se regó ayer";
+  return `se regó hace ${dias} días`;
 }
 
 /** «Cada 3 días en julio y agosto, cada 6 en invierno», y sin fecha ninguna. */
@@ -323,6 +358,73 @@ export function tareasDeHoy(plantas, hoy) {
       (a.tarea.prioridad ?? 9) - (b.tarea.prioridad ?? 9) ||
       a.planta.nombre_comun.localeCompare(b.planta.nombre_comun, "es")
   );
+}
+
+/**
+ * Las tareas de hoy AGRUPADAS POR PLANTA: una entrada por planta, no por tarea.
+ *
+ * Y esto no es una preferencia de formato, es la corrección de un error de
+ * diseño. La franja tenía un tope de dos tareas y una línea de «y 8 más, cada
+ * una en su ficha». Carlos: *«el "y 8 más, cada una en su ficha" es complejo
+ * porque te obliga a entrar en todas las fichas»*. El tope protegía «hay muchas
+ * tareas y la portada explota» y el caso real es «hay diez tareas cortas y
+ * quiero verlas de un tirón»: diez líneas de una frase no son un muro, diez
+ * fichas que abrir sí — y la página existe justo para ahorrar ese trabajo.
+ *
+ * No hace falta tope porque **el techo ya está en el dominio**: hay siete
+ * plantas, así que agrupando por planta la lista no pasa de siete renglones ni
+ * el día que todas necesiten algo. Hoy son diez tareas en seis líneas.
+ */
+export function tareasDeHoyPorPlanta(plantas, hoy) {
+  const porPlanta = new Map();
+  for (const t of tareasDeHoy(plantas, hoy)) {
+    /* `temporada` NO entra como línea propia, y el motivo es que el eje del
+       agrupamiento lo decide el tipo de tarea:
+       - En una tarea DEL DÍA lo compartido es la planta: vas a ella y haces lo
+         que pida. Se agrupa por planta.
+       - En una VENTANA DE TEMPORADA lo compartido es la tarea y el mes: lo que se
+         hace de verdad es sacar el abono una vez y pasar por las cinco. Se agrupa
+         por tarea, en una sola línea al pie.
+       Hoy son cinco «Abonar» idénticos, el 50 % de la lista, para algo que se
+       puede hacer cualquier día de agosto. Cinco líneas iguales diluían lo
+       urgente. Y la spec ya lo prohibía sin que nadie lo viera: la franja muestra
+       «solo lo de hoy», y una ventana abierta semanas no es hoy. */
+    if (t.tarea.tipo === "temporada") continue;
+    if (!porPlanta.has(t.planta.id)) porPlanta.set(t.planta.id, { planta: t.planta, tareas: [] });
+    porPlanta.get(t.planta.id).tareas.push(t);
+  }
+  /* `tareasDeHoy` ya viene ordenada, así que la primera tarea de cada planta es
+     su más urgente y sirve para ordenar las líneas entre sí. */
+  return [...porPlanta.values()].sort(
+    (a, b) =>
+      (PESO_TIPO[a.tareas[0].tarea.tipo] ?? 9) - (PESO_TIPO[b.tareas[0].tarea.tipo] ?? 9) ||
+      (a.tareas[0].tarea.prioridad ?? 9) - (b.tareas[0].tarea.prioridad ?? 9) ||
+      a.planta.nombre_comun.localeCompare(b.planta.nombre_comun, "es")
+  );
+}
+
+/**
+ * Las ventanas de temporada abiertas este mes, agrupadas POR TAREA y no por
+ * planta: «Este mes: abonar — coleo grande, coleo pequeño, ficus, poto, begonia».
+ * Una línea al pie de la franja, sin plegar y con las plantas nombradas.
+ *
+ * Se agrupan por `titulo` y no por `id` porque el rótulo es lo que se lee: dos
+ * tareas con el mismo título son la misma faena aunque `botanist` les ponga ids
+ * distintos.
+ */
+export function ventanasDeTemporada(plantas, hoy) {
+  const porTarea = new Map();
+  for (const planta of plantas) {
+    for (const tarea of planta.tareas ?? []) {
+      if (tarea.tipo !== "temporada") continue;
+      const c = clasificar(tarea, hoy);
+      if (!c.enHoy) continue;   // fuera de mes, o con condición: la condición gana
+      const clave = tarea.titulo;
+      if (!porTarea.has(clave)) porTarea.set(clave, { titulo: tarea.titulo, cuando: c.cuando, plantas: [] });
+      porTarea.get(clave).plantas.push(planta);
+    }
+  }
+  return [...porTarea.values()].sort((a, b) => b.plantas.length - a.plantas.length);
 }
 
 /** Las tareas de UNA planta, todas, clasificadas y en orden de urgencia. */

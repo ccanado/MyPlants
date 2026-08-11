@@ -84,7 +84,7 @@ export function entradaDe(planta, hoy) {
     return { planta, dias, certeza: "exacta", texto: legible(dias) };
   }
 
-  const minimo = anosDelTexto(planta.fecha_llegada_texto);
+  const minimo = planta.anos_en_casa_min ?? anosDelTexto(planta.fecha_llegada_texto);
   if (minimo != null) {
     return {
       planta,
@@ -98,17 +98,21 @@ export function entradaDe(planta, hoy) {
 }
 
 /**
- * «hace más de 20 años» → 20.
+ * RESPALDO. El camino normal es `planta.anos_en_casa_min`, que `botanist` escribió
+ * en el poto a petición de este módulo: la prosa es para quien lee y el número
+ * para quien pinta, así que reescribir una ya no toca el otro.
  *
- * Es lo único de este módulo que saca un número de una frase, y conviene decir
- * por qué y qué lo hace aceptable: `fecha_llegada` es `null` en el poto **a
- * propósito** —`meta.escalas` dice que cuando la llegada solo se puede decir de
- * forma aproximada, el dato vive en `fecha_llegada_texto`—, así que la prosa es
- * la forma canónica del dato, no un descuido.
- *
- * Aun así es frágil, y el arreglo limpio es un campo numérico de `botanist`
- * (`anos_en_casa_min: 20`). Mientras no exista: si la frase no encaja, no se
- * inventa nada — se cae al caso «sin dato», que dibuja la trama y lo dice.
+ * Esto se queda solo como red por si un día llega un `fecha_llegada_texto` sin su
+ * campo numérico. Y merece quedar apuntado por qué corría prisa quitarlo del
+ * camino principal, porque es la misma familia que el `estado` → `estados[]` de
+ * ayer: `botanist` estuvo hoy barriendo el fichero de expresiones relativas y
+ * **esta frase estaba en su lista de candidatas**. La dejó por su semántica —un
+ * «más de veinte años» solo se vuelve más cierto—, sin saber que un diagrama
+ * dependía de su sintaxis. Si la hubiera reescrito como «desde antes de 2006», el
+ * poto habría caído a «sin registrar cuándo llegó» con el JSON válido y los
+ * comprobadores en verde, y justo en la planta que sostiene el extremo largo del
+ * eje: sin sus veinte años contra el día de las cuatro nuevas, tres órdenes de
+ * magnitud se quedan en uno.
  */
 function anosDelTexto(texto) {
   if (!texto) return null;
@@ -219,6 +223,13 @@ function marcasDelEje() {
     const span = document.createElement("span");
     span.className = "cronologia__tic";
     span.style.setProperty("--x", porcentaje(marca.dias));
+    /* `data-tick` con el VALOR en días, que es lo que pidió `qa-visual`: con el
+       par (posición, valor) su test puede comprobar lo que de verdad importa y
+       que hoy ningún test del repo comprueba — que la posición en píxeles sea
+       lineal en el logaritmo del valor rotulado. Un eje que se llama logarítmico
+       y no lo es miente sobre las proporciones, y con los rótulos sueltos solo se
+       puede verificar que existen, no que digan la verdad. */
+    span.dataset.tick = String(marca.dias);
     // El rótulo es texto de verdad: es lo que impide que el eje mienta.
     span.textContent = marca.rotulo;
     frag.append(span);

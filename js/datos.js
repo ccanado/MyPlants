@@ -197,9 +197,15 @@ function normalizarEstado(e) {
        reconocerla mirando la planta. `patron` es null en 14 de 35 y eso
        significa «esta causa no se distingue por una señal», no que falte. */
     causas: lista(e.causas_probables ?? e.causas)
+      /* `tipo` es conjunto cerrado de `botanist` —`causa | afirmacion | riesgo |
+         mejora | aclaracion`— y **ausente equivale a `causa`**, así que el
+         contenido viejo sigue comportándose igual. Se normaliza aquí porque esta
+         proyección es explícita: cuando `botanist` escribió `tipo` en los 38
+         ítems, el campo llegaba al JSON y moría en esta línea. Él lo avisó antes
+         de que pasara, que es la única razón de que no haya pasado. */
       .map((c) => (typeof c === "object" && c !== null
-        ? { id: texto(c.id), resumen: texto(c.resumen), detalle: texto(c.detalle), patron: texto(c.patron) }
-        : { id: null, resumen: texto(c), detalle: null, patron: null }))
+        ? { id: texto(c.id), tipo: texto(c.tipo) ?? "causa", resumen: texto(c.resumen), detalle: texto(c.detalle), patron: texto(c.patron) }
+        : { id: null, tipo: "causa", resumen: texto(c), detalle: null, patron: null }))
       .filter((c) => c.resumen || c.detalle),
     no_visible: lista(e.no_visible_en_foto).map(texto).filter(Boolean),
     revisar_en: revisar,
@@ -207,6 +213,9 @@ function normalizarEstado(e) {
     revisar_dias: e.revisar_dias ?? null,
     revisar_desde: texto(e.revisar_desde),
     titulo_estado: texto(e.titulo),
+    /* Qué NO se puede juzgar en la foto de este diagnóstico. Pedido a `botanist`
+       para el punto 4 de v1; hasta que exista, la banda muestra solo la fecha. */
+    limitacion_foto: texto(e.limitacion_foto),
     foto_diagnostico: null,   // se resuelve en normalizarPlanta, que conoce RUTA_IMG
     verificacion: e.verificacion ?? null,
     // Para el rótulo del diagrama hace falta algo corto ("3 semanas"), no el
@@ -308,6 +317,14 @@ function normalizarMedidas(p) {
       // bandas de rusticidad, no el grado al que se muere una planta.
       letal_min: temp.minima_letal_c ?? temp.letal_min ?? null,
       casa_invierno: temp.casa_invierno_c ?? temp.casa_invierno ?? null,
+      /* La calefacción es una BANDA (21–24 °C), no un punto. `botanist` dejó
+         `casa_invierno_c` en null a propósito para que nadie dibujase el punto
+         medio: un 22,5 que nadie ha medido. Y las tres son constantes del SALÓN,
+         iguales en las siete, así que se rotulan como de la habitación y no de la
+         planta. El día que Carlos diga dónde hay radiadores dejarán de ser
+         iguales sin que el esquema cambie. */
+      casa_invierno_min: temp.casa_invierno_min_c ?? null,
+      casa_invierno_max: temp.casa_invierno_max_c ?? null,
       casa_verano: temp.casa_verano_max_c ?? temp.casa_verano ?? null,
       rusticidad: texto(temp.rusticidad_rhs),
     },
@@ -443,6 +460,10 @@ function normalizarPlanta(p) {
     ubicacion: normalizarUbicacion(p.ubicacion ?? p.donde ?? p.sala),
     fecha_llegada: texto(p.fecha_llegada),
     fecha_llegada_texto: texto(p.fecha_llegada_texto),
+    /* El suelo en años del poto, la única sin `fecha_llegada`. Va aquí porque
+       `normalizarPlanta` es una proyección EXPLÍCITA: un campo que no se copia no
+       existe para el render, y ese es el fallo silencioso de esta frontera. */
+    anos_en_casa_min: p.anos_en_casa_min ?? null,
     dias_en_casa: p.dias_en_casa ?? null,
     manipulacion: objeto(p.manipulacion).resumen ? objeto(p.manipulacion) : null,
     procedencia_nota: texto(p.procedencia_nota ?? p.origen),

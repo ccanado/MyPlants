@@ -20,7 +20,6 @@ import { siluetaDe } from "./siluetas.js";
 import { diaDeHoy, tareasDePlanta } from "./tareas.js";
 import {
   diagramaLuz,
-  diagramaRecuperacion,
   diagramaRiego,
   diagramaTemperatura,
 } from "./svg.js";
@@ -147,9 +146,13 @@ export function fichaDe(planta) {
   bloqueEstado(q, planta);
   bloqueFoto(q, planta);
   bloqueProcedencia(q, planta);
-  camposConDiagrama(q, planta);
+  /* Qué fuentes se han pintado ya junto a su campo, para que el bloque de abajo
+     recoja EXACTAMENTE el resto y ninguna se quede fuera de la pantalla. Se crea
+     por render, no por planta: la rejilla se repinta al filtrar. */
+  const citadas = new Set();
+  camposConDiagrama(q, planta, citadas);
   bloqueCalendario(q, planta);
-  bloqueMasDatos(q, planta);
+  bloqueMasDatos(q, planta, citadas);
   bloqueCarlos(q, planta);
   // El índice va al final: cuenta lo que los demás han dejado en el DOM, así que
   // no puede adelantarse a ellos. Cuenta nodos pintados, no campos del JSON —
@@ -315,7 +318,7 @@ function bloqueEstado(q, planta) {
   else fecha.remove();
 
   listaEn(seccion, ".estado__bloque--senales", estado.senales);
-  bloqueCausas(seccion, estado.causas);
+  bloqueCausas(seccion, estado.causas, g);
   listaEn(seccion, ".estado__bloque--limites", estado.no_visible);
 
   const tratamiento = q(".estado__tratamiento");
@@ -363,17 +366,22 @@ function bloqueEstado(q, planta) {
     revisar.remove();
   }
 
-  /* `revisar_fecha` es fecha real en 6 de 7. La begonia lleva null a propósito:
-     su plazo cuenta desde el día que se cambie de maceta, no desde hoy, así que
-     se pinta como plazo relativo y nunca como fecha. */
-  const rotuloPlazo = estado.revisar_fecha
-    ? fechaCorta(estado.revisar_fecha)
-    : estado.revisar_dias
-      ? `+${estado.revisar_dias} días`
-      : estado.revisar_corto;
-  const diagrama = diagramaRecuperacion(estado.pasos, rotuloPlazo);
-  if (diagrama) q(".estado__diagrama").append(diagrama);
-  else q(".estado__diagrama").remove();
+  /* EL DIAGRAMA DE RECUPERACIÓN SE BORRA, y no es una poda por altura: afirmaba
+     algo falso. `ux-lead` retiró su propia especificación al medirlo.
+     Los seis círculos iban en cx 10/30/50/70/90/110 —espaciado regular— para
+     pasos cuyos horizontes son *inmediato, inmediato, esta semana, 3 semanas, 2-3
+     meses* y *cuando haya una fronde adulta*. O sea que el eje codificaba el
+     índice 1…6 y no el tiempo, y encima iba rotulado `hoy` … `01/09/2026`, con lo
+     que **afirmaba que el paso 6 cae el 1 de septiembre cuando esa fecha es el
+     `revisar_fecha` y no corresponde a ningún paso**.
+     Y no se arregla: dos pasos en el instante 0 no tienen posición en un eje
+     logarítmico, y uno sin fecha no la tiene en ninguno. La lista numerada que va
+     justo debajo ya rotula cada paso con su horizonte en palabras (`INMEDIATO`,
+     `3 SEMANAS`, `2-3 MESES`), que es MÁS preciso que un eje.
+     Por la regla eliminatoria de `svg.js` —si se puede borrar sin perder
+     información, es decoración— aquí el que se borra es el dibujo, porque todas
+     sus palabras están en el texto y el texto además no miente. */
+  q(".estado__diagrama")?.remove();
 }
 
 /* ── el calendario de la planta ──────────────────────────────────────────────── */
@@ -406,6 +414,11 @@ function bloqueCalendario(q, planta) {
     const li = nodo.querySelector(".tarea");
     li.dataset.tono = t.tono;
     if (t.tarea.tipo) li.dataset.tipo = t.tarea.tipo;
+    /* Los mismos `data-*` que en la franja: `qa-visual` mide las dos superficies,
+       porque una tarea condicionada mal pintada es igual de dañina en la ficha. */
+    if (t.tarea.id) li.dataset.tarea = t.tarea.id;
+    li.dataset.planta = planta.id;
+    if (t.estado) li.dataset.tareaEstado = t.estado;
 
     const rotulo = nodo.querySelector(".tarea__rotulo");
     if (t.rotulo) {
@@ -548,7 +561,49 @@ function indiceDelExpediente(q, planta) {
  * instrucción para mirar la planta, y es lo que convierte un listado de causas
  * en algo usable delante del tiesto.
  */
-function bloqueCausas(raiz, causas) {
+/**
+ * EL RÓTULO DEL `patron` VARÍA POR `tipo`, y no es cosmético.
+ *
+ * `PATRÓN PARA RECONOCERLA` era correcto cuando el campo solo vivía en `causa`.
+ * Con `tipo` puesto hay `patron` en afirmaciones, y ahí ese rótulo no significa
+ * nada: lo que dice el texto es **qué desmentiría** la afirmación, no cómo
+ * reconocerla. Un rótulo por clase, no un rótulo por bloque.
+ */
+const ROTULO_PATRON = new Map([
+  ["causa", "Patrón para reconocerla"],
+  ["riesgo", "Señal de que está pasando"],
+  ["afirmacion", "Qué lo desmentiría"],
+]);
+
+/**
+ * Qué se pliega, por clase. El contrato es de `ux-lead` y la lógica es la misma
+ * regla de siempre: **no se pliegan ni las afirmaciones ni los límites de lo que
+ * sabemos; el razonamiento sí puede.** Una `mejora` es una propuesta, no una
+ * afirmación sobre un problema, así que puede ir plegada sin romper nada.
+ */
+const SE_PLIEGA_ENTERA = new Set(["mejora"]);
+
+/**
+ * El rótulo del bloque, y por qué no puede ser fijo.
+ *
+ * `CAUSAS PROBABLES` sobre una planta sana le pide la causa de un problema que no
+ * tiene — y el hueco se rellenaba, porque `botanist` responde bien: el poto sano
+ * cargaba 5 «causas» y 1.955 caracteres, el mismo peso que el helecho que se
+ * muere. Pero «mejoras opcionales» tampoco servía: en esas cuatro plantas los
+ * ítems no son todos del mismo tipo — el poto trae tres afirmaciones, **un riesgo**
+ * (podredumbre de raíz en maceta sin drenaje visible) y una mejora, y filar un
+ * riesgo bajo «opcionales» es peor que filarlo bajo «causas probables».
+ *
+ * Así que el rótulo del bloque deja de adivinar y solo dice de qué va el bloque;
+ * la clase la dice cada ítem. Es el criterio general que salió cuatro veces hoy:
+ * **no dejes que el contenedor adivine de qué clase es su contenido; deja que la
+ * clase escrita en el dato decida la forma.**
+ */
+function rotuloDeCausas(grupo) {
+  return grupo === "sana" ? "Lo que hay que saber" : "Causas probables";
+}
+
+function bloqueCausas(raiz, causas, grupo) {
   const bloque = raiz.querySelector(".estado__bloque--causas");
   if (!bloque) return;
   if (!causas || causas.length === 0) {
@@ -556,29 +611,49 @@ function bloqueCausas(raiz, causas) {
     return;
   }
   bloque.hidden = false;
+  const sub = bloque.querySelector(".estado__sub");
+  if (sub) sub.textContent = rotuloDeCausas(grupo);
   const ul = bloque.querySelector(".estado__lista");
 
   for (const causa of causas) {
     const li = document.createElement("li");
     li.className = "estado__item causa";
     if (causa.id) li.dataset.causa = causa.id;
+    // La clase va al DOM para que el CSS pueda distinguirlas sin adivinar.
+    li.dataset.tipo = causa.tipo ?? "causa";
 
     const linea = document.createElement("p");
     linea.className = "causa__resumen";
     linea.textContent = causa.resumen ?? causa.detalle;
-    li.append(linea);
 
-    if (causa.detalle && causa.resumen) {
+    if (causa.detalle && causa.resumen && SE_PLIEGA_ENTERA.has(causa.tipo)) {
+      /* Una `mejora` se pliega ENTERA, afirmación incluida: es una propuesta, y
+         una propuesta no es ni un hallazgo ni un límite de lo que sabemos. El
+         rótulo lleva su propio resumen, así que plegada sigue diciendo de qué es. */
       const det = document.createElement("details");
-      det.className = "causa__mas";
+      det.className = "causa__mas causa__mas--entera";
       const sum = document.createElement("summary");
       sum.className = "causa__mas-tirador";
-      sum.textContent = "Por qué";
+      sum.textContent = causa.resumen;
       const p = document.createElement("p");
       p.className = "causa__detalle";
       p.textContent = causa.detalle;
       det.append(sum, p);
       li.append(det);
+    } else {
+      li.append(linea);
+      if (causa.detalle && causa.resumen) {
+        const det = document.createElement("details");
+        det.className = "causa__mas";
+        const sum = document.createElement("summary");
+        sum.className = "causa__mas-tirador";
+        sum.textContent = "Por qué";
+        const p = document.createElement("p");
+        p.className = "causa__detalle";
+        p.textContent = causa.detalle;
+        det.append(sum, p);
+        li.append(det);
+      }
     }
 
     if (causa.patron) {
@@ -586,10 +661,17 @@ function bloqueCausas(raiz, causas) {
       patron.className = "causa__patron";
       const rotulo = document.createElement("span");
       rotulo.className = "causa__patron-rotulo";
-      rotulo.textContent = "Para reconocerla";
+      /* Sin entrada en el mapa no se inventa un rótulo: se pinta el patrón sin
+         él. `aclaracion` y `mejora` hoy no traen `patron`, y si un día lo traen
+         `ux-lead` decide cómo se llama — no lo decide un `??` de este fichero. */
+      const nombre = ROTULO_PATRON.get(causa.tipo ?? "causa");
+      if (nombre) {
+        rotulo.textContent = nombre;
+        patron.append(rotulo);
+      }
       const texto = document.createElement("span");
       texto.textContent = causa.patron;
-      patron.append(rotulo, texto);
+      patron.append(texto);
       li.append(patron);
     }
 
@@ -649,9 +731,37 @@ function bloqueFoto(q, planta) {
   // Sin alt útil, la foto no le aporta nada a un lector de pantalla.
   img.alt = planta.foto_alt || "";
 
-  const pie = q(".foto__pie");
-  if (planta.ubicacion) pie.textContent = planta.ubicacion;
-  else pie.remove();
+  /* La banda de la foto: fecha primero, porque es lo que fija de QUÉ momento
+     habla el diagnóstico. `estados[].fecha_foto` existe en las siete. */
+  const fecha = q(".foto__fecha");
+  const cuando = planta.estado?.fecha_foto;
+  if (cuando) fecha.textContent = `Foto del ${fechaLegible(cuando)}`;
+  else fecha.remove();
+
+  /* La limitación de ESTA foto, cuando el contenido la trae.
+     `limitacion_foto` es un campo que le he pedido a `botanist` y que hoy no
+     existe todavía: el texto del helecho —«la foto está tomada de noche y con
+     poca luz: el color real de la fronde nueva y el detalle del envés no se
+     pueden juzgar en ella»— vive hoy enterrado como una observación entre trece.
+     Y NO se saca de ahí olfateando la prosa: buscar «foto» en las señales sería
+     un heurístico sobre texto, que es justo lo que este proyecto no hace.
+     Mientras el campo no exista, la banda muestra solo la fecha. Y **no se
+     escribe «sin limitaciones conocidas»**: eso afirmaría algo que nadie ha
+     comprobado. */
+  const limite = q(".foto__limite");
+  if (planta.estado?.limitacion_foto) {
+    limite.hidden = false;
+    limite.textContent = planta.estado.limitacion_foto;
+  } else {
+    limite.remove();
+  }
+
+  const lugar = q(".foto__lugar");
+  if (planta.ubicacion) lugar.textContent = planta.ubicacion;
+  else lugar.remove();
+
+  // Si la banda se ha quedado sin nada, se va: una caja vacía no es una banda.
+  if (!q(".foto__pie").hasChildNodes()) q(".foto__pie").remove();
 }
 
 /**
@@ -720,12 +830,12 @@ function fechaCorta(iso) {
 
 /* ── capa 2 · los tres campos con diagrama ──────────────────────────────────── */
 
-function camposConDiagrama(q, planta) {
+function camposConDiagrama(q, planta, citadas) {
   const contenedor = q(".campos-diagrama");
   for (const [clave, hacerDiagrama] of CON_DIAGRAMA) {
     const cuidado = planta.cuidados.get(clave);
     if (!cuidado) continue;
-    contenedor.append(campoDe(cuidado, hacerDiagrama(planta), fuenteDe(planta, clave)));
+    contenedor.append(campoDe(cuidado, hacerDiagrama(planta), fuenteDe(planta, clave, citadas)));
   }
 }
 
@@ -771,13 +881,13 @@ function campoDe(cuidado, diagrama, fuente) {
 
 /* ── capa 2 · el resto ──────────────────────────────────────────────────────── */
 
-function bloqueMasDatos(q, planta) {
+function bloqueMasDatos(q, planta, citadas) {
   const lista = q(".mas-datos__lista");
 
   for (const clave of RESTO) {
     const c = planta.cuidados.get(clave);
     if (!c) continue;
-    lista.append(datoDe(c.etiqueta, c.resumen, c.detalle, fuenteDe(planta, clave), clave));
+    lista.append(datoDe(c.etiqueta, c.resumen, c.detalle, fuenteDe(planta, clave, citadas), clave));
   }
 
   /* Se pinta también cuando dice que los guantes sobran: inflar la precaución
@@ -785,14 +895,14 @@ function bloqueMasDatos(q, planta) {
   if (planta.manipulacion) {
     lista.append(datoDe("Manipulación", planta.manipulacion.resumen,
       [planta.manipulacion.detalle, planta.manipulacion.epi].filter(Boolean).join("\n") || null,
-      fuenteDe(planta, "manipulacion"), "manipulacion"));
+      fuenteDe(planta, "manipulacion", citadas), "manipulacion"));
   }
 
   const plagas = planta.plagas.length > 0 ? planta.plagas.map((x) => x.nombre).join(" · ") : null;
   // La señal de cada plaga es lo que de verdad sirve para reconocerla: va al
   // detalle ampliable en vez de perderse.
   const senales = planta.plagas.filter((x) => x.senal).map((x) => `${x.nombre}: ${x.senal}`).join("\n");
-  lista.append(datoDe("Plagas comunes", plagas, senales || null, fuenteDe(planta, "plagas_comunes"), "plagas"));
+  lista.append(datoDe("Plagas comunes", plagas, senales || null, fuenteDe(planta, "plagas_comunes", citadas), "plagas"));
 
   const tox = planta.toxicidad;
   const g = grupoToxicidad(tox);
@@ -811,7 +921,7 @@ function bloqueMasDatos(q, planta) {
     "Toxicidad para mascotas",
     textoTox,
     tox.detalle,
-    fuenteDe(planta, "toxicidad_mascotas"),
+    fuenteDe(planta, "toxicidad_mascotas", citadas),
     "toxicidad"
   );
   const bloqueTox = nodoTox.querySelector(".dato");
@@ -833,21 +943,73 @@ function bloqueMasDatos(q, planta) {
   // La palabra es obligatoria al lado de los puntos: tres puntos no dicen cuál es cuál.
   lista.append(datoDe("Dificultad", planta.dificultad ? humanizar(planta.dificultad) : null, null, null, "dificultad"));
 
-  // Fuentes que no cuelgan de ningún campo concreto: no se tiran, se agrupan.
-  const sueltas = planta.fuentes.filter((f) => !f.respalda);
-  if (sueltas.length > 0) {
+  /* TODAS las fuentes que no se han pintado ya junto a su campo.
+   *
+   * Esto era un filtro por `!f.respalda` y ahí había un agujero grande y callado:
+   * en el JSON real **las 34 fuentes del helecho traen `campo`**, así que ninguna
+   * era «suelta», el bloque no se creaba nunca, y de las 34 solo llegaban a la
+   * pantalla las 10 que `fuenteDe()` engancha a un campo renderizado. Las otras
+   * 24 —`nombre_cientifico`, `familia`, `estado`, `historia`, `fecha_llegada`,
+   * `etiqueta_vivero`, `riego.ultimo`, `temperatura.minima_letal_c`… y la SEGUNDA
+   * fuente de `riego` y de `plagas_comunes`, que `.find()` descarta— no se veían
+   * en ningún sitio. Unas 170 citas en las siete fichas.
+   *
+   * Y es el peor sitio donde podía pasar: `CLAUDE.md` dice que los datos se
+   * verifican y se citan, y el brief dice que las fuentes son contenido y no
+   * letra pequeña. Una cita que no llega a la pantalla no respalda nada.
+   *
+   * Lo cazó el recuento del índice: «Fuentes · 10» contra 34 en el JSON. Es el
+   * argumento de `ux-lead` a favor del recuento, cumpliéndose el primer día —
+   * un número que se puede contrastar es un número que delata. */
+  const resto = planta.fuentes.filter((f) => !citadas.has(f));
+  if (resto.length > 0) {
     const div = document.createElement("div");
     div.className = "dato dato--fuentes";
     const dt = document.createElement("dt");
     dt.className = "dato__clave";
-    dt.textContent = sueltas.length === 1 ? "Fuente" : "Fuentes";
+    dt.textContent = resto.length === 1 ? "Fuente" : "Fuentes";
     const dd = document.createElement("dd");
     dd.className = "dato__valor";
-    for (const f of sueltas) {
+
+    /* Y AQUÍ HAY UN CHOQUE ENTRE DOS REGLAS DEL PROYECTO, así que conviene decir
+       cuál gana y con qué argumento.
+       Sacar estas 24 citas del limbo cuesta ~600 px por ficha, o sea que se come
+       casi todo lo que ganaron las dos columnas. Pero el brief da la regla que lo
+       resuelve, y es suya, no mía:
+         «Plegar por longitud es razonable; plegar los límites de lo que sabemos,
+          no.»
+       Una lista de 24 citas es un problema de LONGITUD, no un límite de lo que
+       sabemos: lo que no se puede esconder es «esto no lo podemos afirmar», y eso
+       vive en `LO QUE LA FOTO NO DICE`, que sigue entero y abierto.
+       Además el rótulo lleva el número, así que plegado se sabe cuántas hay antes
+       de abrirlo — que es la condición que el brief le pone a un índice para no
+       engañar, y vale igual aquí. Antes de esto no estaban plegadas: no estaban. */
+    const det = document.createElement("details");
+    det.className = "fuentes-resto";
+    const sum = document.createElement("summary");
+    sum.className = "fuentes-resto__tirador";
+    sum.textContent = resto.length === 1
+      ? "La otra fuente citada"
+      : `Las otras ${resto.length} fuentes citadas`;
+    const caja = document.createElement("div");
+    caja.className = "fuentes-resto__lista";
+    det.append(sum, caja);
+    dd.append(det);
+
+    for (const f of resto) {
       const span = document.createElement("span");
       span.className = "dato__fuente";
+      /* El campo que respalda va delante de la cita: sin él, veinticuatro
+         «RHS ↗» seguidos son una lista de logos. Con él, cada línea dice qué
+         afirmación sostiene, que es para lo que existe una fuente. */
+      if (f.respalda) {
+        const campo = document.createElement("span");
+        campo.className = "dato__fuente-campo";
+        campo.textContent = humanizar(f.respalda);
+        span.append(campo);
+      }
       span.append(enlaceFuente(f));
-      dd.append(span);
+      caja.append(span);
     }
     div.append(dt, dd);
     lista.append(div);
@@ -884,8 +1046,18 @@ function datoDe(etiqueta, valor, detalle, fuente, campoIcono) {
 
 /* ── fuentes: contenido, no letra pequeña ───────────────────────────────────── */
 
-function fuenteDe(planta, campo) {
-  return planta.fuentes.find((f) => f.respalda && normalizar(f.respalda) === normalizar(campo)) ?? null;
+/**
+ * La fuente que respalda un campo, y el registro de cuál se ha usado.
+ *
+ * `citadas` es un Set POR RENDER, no una marca en el objeto de datos: la rejilla
+ * se vuelve a pintar cada vez que se filtra o se busca, y una bandera pegada a
+ * la fuente sobreviviría al re-render y dejaría el bloque de resto vacío a la
+ * segunda pasada.
+ */
+function fuenteDe(planta, campo, citadas) {
+  const f = planta.fuentes.find((x) => x.respalda && normalizar(x.respalda) === normalizar(campo)) ?? null;
+  if (f && citadas) citadas.add(f);
+  return f;
 }
 
 function pintarFuente(contenedor, fuente) {

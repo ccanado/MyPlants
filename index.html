@@ -55,10 +55,21 @@
   <!-- aria-live en el contenedor de lo que cambia, no en la sección entera:
        al filtrar cambia el recuento y quien usa lector de pantalla se entera,
        sin que le relean la fecha y los chips cada vez. -->
-  <div class="parte__cuerpo" id="parte-cuerpo" aria-live="polite">
+  <div class="parte__cuerpo" id="parte-cuerpo">
+    <!-- EL VEREDICTO DEL DÍA, a escala de display. Y NO es un encabezado: se
+         pinta grande y sigue siendo un párrafo, porque subirlo a h1 o h2 rompería
+         el esquema de encabezados de la página. El tamaño es jerarquía visual;
+         el nivel semántico es otra cosa y no se negocian entre sí.
+
+         `aria-live` va SOLO aquí y no en la lista: lo que cambia al filtrar es el
+         recuento, y releerle a un lector de pantalla las siete líneas de tareas
+         en cada repintado es ruido, no accesibilidad. -->
+    <p class="parte__veredicto" id="parte-veredicto" aria-live="polite"></p>
     <p class="parte__resumen" id="parte-resumen"></p>
+    <!-- UNA LÍNEA POR PLANTA, no por tarea, y sin truncar. No hace falta tope
+         porque el techo ya está en el dominio: hay siete plantas, así que la
+         lista no pasa de siete renglones ni el día que todas pidan algo. -->
     <ul class="parte__tareas" id="parte-tareas"></ul>
-    <p class="parte__resto" id="parte-resto" hidden></p>
   </div>
 
   <ul class="parte__chips" id="parte-chips"></ul>
@@ -286,9 +297,22 @@
             <!-- La foto es la prueba sobre la que se hizo el diagnóstico, así
                  que su sitio es esta columna, al lado de «lo que se ve» y de
                  «lo que la foto no dice», que la citan las dos. -->
+            <!-- LA FOTO DECLARA QUÉ NO SE PUEDE JUZGAR EN ELLA.
+                 Ni un filtro: sin duotono, sin viñeta, sin grado cálido. Filtrar
+                 una foto de diagnóstico corrompe la prueba, y en la única planta
+                 que se muere la haría parecer mejor de lo que está.
+                 La banda va en SUPERFICIE SÓLIDA pegada al borde inferior de la
+                 imagen, nunca sobre los píxeles: texto sobre fotografía es
+                 contraste NO MEDIBLE —ya arrastramos 24 nodos así— y sobre la foto
+                 nocturna del helecho sería ilegible. Con fondo propio se mide como
+                 cualquier otro texto y la cifra de AA se queda en cero. -->
             <figure class="foto" hidden>
               <img class="foto__img" src="" alt="" width="800" height="1067" loading="lazy" decoding="async">
-              <figcaption class="foto__pie"></figcaption>
+              <figcaption class="foto__pie">
+                <span class="foto__fecha"></span>
+                <span class="foto__limite" hidden></span>
+                <span class="foto__lugar"></span>
+              </figcaption>
             </figure>
 
             <!-- Procedencia: la foto de la pegatina real es, para cinco de las
@@ -385,18 +409,17 @@
   </li>
 </template>
 
-<!-- Una tarea de hoy en la franja. El rótulo solo aparece cuando hay algo que
-     rotular: `VA TARDE` en la única vencida, `HOY` en las de fecha cumplida.
-     Las de temporada van sin distintivo — es la misma economía que hace que las
-     cuatro plantas sanas no lleven insignia. -->
+<!-- Una PLANTA en la franja, con todo lo que le toca hoy en el mismo renglón.
+     El rótulo solo aparece cuando hay algo que rotular: `VA TARDE` en la única
+     vencida, `HOY` en las de fecha cumplida. Las de temporada van sin distintivo
+     — es la misma economía que hace que las cuatro sanas no lleven insignia. -->
 <template id="tpl-tarea-franja">
   <li class="tarea-hoy">
     <span class="tarea-hoy__rotulo" hidden></span>
     <a class="tarea-hoy__planta" href="">
       <span class="tarea-hoy__nombre"></span>
     </a>
-    <span class="tarea-hoy__titulo"></span>
-    <span class="tarea-hoy__cuando"></span>
+    <ul class="tarea-hoy__cosas"></ul>
   </li>
 </template>
 

@@ -7,7 +7,7 @@ import { cargarPlantas, ordenarPorUrgencia } from "./datos.js";
 import { fijarHoy, fijarMeta, grupoSeveridad, renderLista } from "./ficha.js";
 import { crearEstado, debounce } from "./estado.js";
 import { facetas, filtrar, filtrosVacios, hayFiltros, humanizar } from "./filtros.js";
-import { diaDeHoy, fechaLarga, tareasDeHoy } from "./tareas.js";
+import { diaDeHoy, fechaLarga, tareasDeHoyPorPlanta, ventanasDeTemporada } from "./tareas.js";
 import { montarCronologia } from "./cronologia.js";
 
 const el = {
@@ -21,9 +21,9 @@ const el = {
   formBusqueda: document.querySelector(".buscador"),
   parte: document.getElementById("parte"),
   parteFecha: document.getElementById("parte-fecha"),
+  parteVeredicto: document.getElementById("parte-veredicto"),
   parteResumen: document.getElementById("parte-resumen"),
   parteTareas: document.getElementById("parte-tareas"),
-  parteResto: document.getElementById("parte-resto"),
   parteChips: document.getElementById("parte-chips"),
   cronologia: document.querySelector(".cronologia"),
 };
@@ -109,10 +109,6 @@ function mostrarAviso(texto) {
 
 /* ── parte del día ──────────────────────────────────────────────────────────── */
 
-/** Cuántas tareas se enseñan en la franja. Dos, y no es un número redondo: es
- *  que la franja no crece. Con siete tareas dice el número y las dos primeras. */
-const TAREAS_EN_LA_FRANJA = 2;
-
 /**
  * La franja `HOY`: qué hay que hacer hoy, con la fecha real del navegador.
  *
@@ -123,7 +119,9 @@ const TAREAS_EN_LA_FRANJA = 2;
  */
 function montarParteDelDia(plantas) {
   const tocadas = plantas.filter((p) => p.estado && grupoSeveridad(p.estado.severidad) !== "sana");
-  const tareas = tareasDeHoy(plantas, HOY);
+  const porPlanta = tareasDeHoyPorPlanta(plantas, HOY);
+  const ventanas = ventanasDeTemporada(plantas, HOY);
+  const cuantas = porPlanta.reduce((n, g) => n + g.tareas.length, 0);
 
   el.parte.hidden = false;
 
@@ -131,26 +129,25 @@ function montarParteDelDia(plantas) {
   if (fecha) el.parteFecha.textContent = fecha;
   else el.parteFecha.remove();
 
-  /* Las dos cuentas en la misma línea, y la de tareas primero: es la que
-     contesta a «qué hago», que es para lo que se abre la página. */
-  const partes = [];
-  if (tareas.length > 0) {
-    partes.push(`${tareas.length} ${plural(tareas.length, "tarea", "tareas")}`);
-  } else {
-    /* Cero tareas NO es «no hay nada que hacer»: es que hoy no hay nada que se
-       pueda afirmar desde el calendario. El riego y las condicionadas siguen
-       ahí, en sus fichas, y decir lo contrario sería el error que esta franja
-       existe para no cometer. */
-    partes.push("Nada con fecha para hoy");
-  }
-  partes.push(
+  /* EL VEREDICTO: la tesis del día, y la forma es fija aunque el contenido cambie.
+     El día bueno dice «LAS 7 ESTÁN BIEN» con el mismo tamaño y el mismo color: no
+     se encoge y no estrena color. No hay token de severidad «sana» en este sistema
+     a propósito, y un verde de celebración sería inventar uno para decir lo que la
+     tipografía ya dice. Nada de rachas, porcentajes ni felicitaciones. */
+  el.parteVeredicto.textContent =
     tocadas.length === 0
-      ? `las ${plantas.length} están bien`
-      : `${tocadas.length} de ${plantas.length} ${plural(tocadas.length, "pide", "piden")} mirada`
-  );
-  el.parteResumen.textContent = `${partes.join(" · ")}.`;
+      ? `Las ${plantas.length} están bien`
+      : `${tocadas.length} de ${plantas.length} ${plural(tocadas.length, "pide", "piden")} mirada`;
 
-  montarTareasDeLaFranja(tareas);
+  /* Y debajo, en cuerpo pequeño, cuántas cosas hay que hacer. Cero tareas NO es
+     «no hay nada que hacer»: es que hoy no hay nada que se pueda afirmar desde el
+     calendario. El riego y las condicionadas siguen ahí, en sus fichas, y decir lo
+     contrario sería el error que esta franja existe para no cometer. */
+  el.parteResumen.textContent = cuantas > 0
+    ? `${cuantas} ${plural(cuantas, "cosa", "cosas")} que hacer hoy`
+    : "Nada con fecha para hoy";
+
+  montarTareasDeLaFranja(porPlanta, ventanas);
 
   const frag = document.createDocumentFragment();
   for (const p of tocadas) {
@@ -166,47 +163,115 @@ function montarParteDelDia(plantas) {
   el.parteChips.replaceChildren(frag);
 }
 
-function montarTareasDeLaFranja(tareas) {
+/**
+ * Una línea por PLANTA, con todo lo que le toca hoy, y sin truncar.
+ *
+ * Sin tope y sin «y 8 más, cada una en su ficha»: esa línea obligaba a abrir
+ * todas las fichas para saber qué escondía, que es justo el trabajo que la
+ * página existe para ahorrar. El techo lo pone el dominio —siete plantas, siete
+ * renglones como máximo—, no un número elegido por nosotros.
+ */
+function montarTareasDeLaFranja(porPlanta, ventanas) {
   const frag = document.createDocumentFragment();
 
-  for (const t of tareas.slice(0, TAREAS_EN_LA_FRANJA)) {
+  for (const { planta, tareas } of porPlanta) {
     const nodo = TPL_TAREA.content.cloneNode(true);
     const li = nodo.querySelector(".tarea-hoy");
-    li.dataset.tono = t.tono;
+    // El tono de la línea es el de su tarea más urgente, que viene primera.
+    li.dataset.tono = tareas[0].tono;
 
+    /* El rótulo es el de la más urgente y va uno por línea, no uno por tarea:
+       tres «HOY» en el mismo renglón no informan tres veces. */
     const rotulo = nodo.querySelector(".tarea-hoy__rotulo");
-    if (t.rotulo) {
+    if (tareas[0].rotulo) {
       rotulo.hidden = false;
-      rotulo.textContent = t.rotulo;
-    } else {
-      rotulo.remove();
+      rotulo.textContent = tareas[0].rotulo;
     }
+    /* Sin rótulo se queda `hidden`, NO se borra: con `subgrid` la columna existe
+       igual, pero borrar el nodo en unas filas y no en otras hacía que el nombre
+       de la planta cambiara de columna según la fila. */
 
     /* El enlace es un <a> con href al id de la ficha, no un botón con JS: lo que
        navega es un enlace. Y así funciona con el JS a medio cargar, con el botón
        central del ratón y copiando la dirección. */
     const enlace = nodo.querySelector(".tarea-hoy__planta");
-    enlace.href = `#${t.planta.id}`;
-    nodo.querySelector(".tarea-hoy__nombre").textContent = t.planta.nombre_comun;
+    enlace.href = `#${planta.id}`;
+    nodo.querySelector(".tarea-hoy__nombre").textContent = planta.nombre_comun;
 
-    nodo.querySelector(".tarea-hoy__titulo").textContent = t.tarea.titulo;
-    // El «cuándo» ya viene redactado y ya viene honesto de tareas.js.
-    nodo.querySelector(".tarea-hoy__cuando").textContent = t.cuando ?? "";
+    const cosas = nodo.querySelector(".tarea-hoy__cosas");
+    for (const t of tareas) {
+      const item = document.createElement("li");
+      item.className = "tarea-hoy__cosa";
+      /* Los `data-*` que pidió `qa-visual`. No son lógica ni estilo: son la forma
+         de que su test pueda AFIRMAR en vez de abstenerse, y lo que queda sin
+         verificar sin ellos es justo la guarda del abonado del helecho — la única
+         que puede matar una planta. Deducirlo del texto era la clase de
+         herramienta que nos ha costado cinco falsos positivos. */
+      if (t.tarea.id) item.dataset.tarea = t.tarea.id;
+      item.dataset.planta = planta.id;
+      if (t.estado) item.dataset.tareaEstado = t.estado;
+
+      const titulo = document.createElement("span");
+      titulo.className = "tarea-hoy__titulo";
+      titulo.textContent = t.tarea.titulo;
+      item.append(titulo);
+
+      /* El «cuándo» solo se pinta si dice algo que el rótulo de la línea no
+         dice — «hace 57 días» sí, «Hoy» detrás de un rótulo `HOY` no. Ya viene
+         redactado y ya viene honesto de tareas.js. */
+      if (t.cuando) {
+        const cuando = document.createElement("span");
+        cuando.className = "tarea-hoy__cuando";
+        cuando.textContent = t.cuando;
+        item.append(cuando);
+      }
+      cosas.append(item);
+    }
 
     frag.append(nodo);
   }
-  el.parteTareas.replaceChildren(frag);
+  /* LA VENTANA DE TEMPORADA, una sola línea al pie y agrupada POR TAREA.
+     Los cinco «Abonar» eran el 50 % de la lista para algo que se puede hacer
+     cualquier día de agosto, y cinco líneas idénticas diluían lo urgente. Aquí lo
+     compartido es la faena y el mes, no la planta: se saca el abono una vez y se
+     pasa por las cinco. */
+  for (const v of ventanas) {
+    const li = document.createElement("li");
+    li.className = "tarea-hoy tarea-hoy--temporada";
+    li.dataset.tono = "plazo";
+    li.dataset.tareaEstado = "temporada";
 
-  const resto = tareas.length - TAREAS_EN_LA_FRANJA;
-  if (resto > 0) {
-    el.parteResto.hidden = false;
-    // «cada una en su ficha», porque la ficha es donde se hacen.
-    el.parteResto.textContent =
-      `y ${resto} ${plural(resto, "más", "más")}, ${plural(resto, "en su ficha", "cada una en su ficha")}.`;
-  } else {
-    el.parteResto.hidden = true;
-    el.parteResto.textContent = "";
+    const rotulo = document.createElement("span");
+    rotulo.className = "tarea-hoy__rotulo";
+    rotulo.textContent = "Este mes";
+    li.append(rotulo);
+
+    const titulo = document.createElement("span");
+    titulo.className = "tarea-hoy__faena";
+    titulo.textContent = v.titulo;
+    li.append(titulo);
+
+    /* Las plantas se nombran, no se cuentan: «5 plantas» obligaría a abrir cinco
+       fichas para saber cuáles, que es el problema que acabamos de quitar. */
+    const cuales = document.createElement("ul");
+    cuales.className = "tarea-hoy__cosas";
+    for (const p of v.plantas) {
+      const item = document.createElement("li");
+      item.className = "tarea-hoy__cosa";
+      item.dataset.planta = p.id;
+      item.dataset.tareaEstado = "temporada";
+      const enlace = document.createElement("a");
+      enlace.className = "tarea-hoy__planta";
+      enlace.href = `#${p.id}`;
+      enlace.textContent = p.nombre_comun;
+      item.append(enlace);
+      cuales.append(item);
+    }
+    li.append(cuales);
+    frag.append(li);
   }
+
+  el.parteTareas.replaceChildren(frag);
 }
 
 /* ── facetas ────────────────────────────────────────────────────────────────── */

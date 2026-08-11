@@ -159,9 +159,13 @@
 
   /* ── cabecera ───────────────────────────────────────────────────────────── */
 
+  /* El h1 baja de tamaño y SIGUE SIENDO EL h1. Se pinta como antetítulo porque la
+     tesis del día manda visualmente, pero el nivel semántico no se toca: el
+     tamaño es jerarquía visual y el nivel es estructura del documento, y cambiar
+     el segundo para conseguir el primero rompe el esquema de encabezados. */
   .cabecera__titulo {
     font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-2xl);
+    font-size: var(--texto-l);
     letter-spacing: var(--tracking-caja-alta);
     line-height: var(--interlinea-apretada);
     text-transform: uppercase;
@@ -237,12 +241,15 @@
 
   .parte__cabeza { display: grid; gap: var(--space-1); }
 
+  /* EL RÓTULO Y EL VEREDICTO SE INTERCAMBIAN LOS PAPELES.
+     Antes `PARTE DEL DÍA` iba a --texto-xl y la tesis de la página a --texto-m:
+     el rótulo que la encabeza era más grande que lo que encabezaba. */
   .parte__titulo {
     font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-xl);
-    line-height: var(--interlinea-apretada);
+    font-size: var(--texto-2xs);
     letter-spacing: var(--tracking-caja-alta);
     text-transform: uppercase;
+    color: var(--texto-meta);
   }
 
   /* La fecha va en mono: es un dato del navegador, no un titular. */
@@ -262,23 +269,63 @@
     min-width: 0;
   }
 
-  .parte__resumen {
+  /* El veredicto del día, a escala de display. `--texto-parte` va en `vw` y no en
+     `cqi` a propósito: la franja no tiene ancestro con `container-type`, así que
+     con `cqi` el valor caería al viewport pequeño sin dar error. */
+  .parte__veredicto {
     font-family: var(--fuente-etiqueta);
-    font-size: var(--texto-m);
+    font-size: var(--texto-parte);
+    line-height: var(--interlinea-apretada);
+    letter-spacing: var(--tracking-nombre);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-caja-alta);
+    color: var(--texto-principal);
+    text-wrap: balance;
+
+    /* EL GESTO: se revela como se imprime una etiqueta térmica, una banda que
+       resuelve DE ARRIBA ABAJO. No un cursor que teclea letra a letra —ése es el
+       tic que hay que evitar y además no es como imprime una térmica—.
+       Cinco condiciones, y si alguna se rompe el gesto se cae:
+         · un disparo, al cargar. No lo repite ningún filtro (la animación va en el
+           elemento, no en una clase que el render vuelva a poner).
+         · sobre texto que YA está en el DOM: es una máscara `clip-path`, no
+           contenido que llegue tarde.
+         · cero desplazamiento de layout: `clip-path` no reserva ni libera espacio.
+         · `reduce` → la banda aparece entera. Versión alternativa, no duración
+           corta, y no un fade de 1 ms, que parpadea.
+         · duración `--dur-media`. */
+    animation: imprimir-termica var(--dur-media) var(--ease-salida) both;
+  }
+
+  @keyframes imprimir-termica {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  .parte__resumen {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
     color: var(--texto-meta);
   }
 
   /* ── las dos tareas de la franja ────────────────────────────────────────── */
 
-  .parte__tareas { display: grid; gap: var(--space-2); }
+  /* Tres columnas —rótulo · planta · lo que le toca— compartidas por todas las
+     filas vía `subgrid`. Sin esto cada fila calcula sus propias columnas, los
+     nombres no se alinean y la lista se lee como un párrafo picado en vez de
+     como un parte. Mismo mecanismo que la cronología. */
+  .parte__tareas {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+  }
 
   .tarea-hoy {
-    display: flex;
-    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
     align-items: baseline;
-    gap: var(--space-1) var(--space-2);
     font-size: var(--texto-s);
   }
 
@@ -295,12 +342,34 @@
     align-items: center;
   }
 
+  /* Las cosas que le tocan a esta planta, en el mismo renglón. Se separan con un
+     punto medio entre hermanas: si un día una planta tiene tres tareas, la línea
+     sigue leyéndose como una línea y no como tres. */
+  .tarea-hoy__cosas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+    min-width: 0;
+  }
+
+  .tarea-hoy__cosa {
+    display: inline flow-root;
+
+    & + &::before {
+      content: "·";
+      color: var(--texto-meta);
+      margin-inline-end: var(--space-2);
+    }
+  }
+
   .tarea-hoy__titulo { text-wrap: pretty; }
 
   .tarea-hoy__cuando {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
     color: var(--texto-meta);
+    margin-inline-start: var(--space-2);
   }
 
   /* `VA TARDE` en aviso, NUNCA en rojo: el rojo es del helecho crítico y son dos
@@ -333,12 +402,16 @@
     color: var(--texto-meta);
   }
 
+  /* Los chips de severidad se alinean ARRIBA, con el renglón del recuento: son
+     el otro eje del parte y se leen a la vez que él. Centrados verticalmente
+     quedaban flotando a media altura de la lista de tareas, que ahora puede
+     tener seis renglones, y parecían caídos ahí por accidente. */
   .parte__chips {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     margin-inline-start: auto;
-    align-self: center;
+    align-self: start;
   }
 
   .chip__boton {
@@ -508,7 +581,16 @@
     border: var(--trazo-fino) solid var(--color-troquel);
     border-radius: var(--radio-troquel);
     box-shadow: var(--sombra-pegatina);
-    overflow: hidden;
+    /* `clip` Y NO `hidden`, y la diferencia es toda la columna sticky.
+       `overflow: hidden` crea un CONTENEDOR DE SCROLL, y `position: sticky` se
+       posiciona respecto al contenedor de scroll más cercano. Como `.etiqueta` no
+       scrollea, `.expediente__accion` no tenía recorrido y se iba con la página
+       como si fuera estática. Medido por `ux-lead` scrolleando 0/400/900 px:
+       `hidden` → 16 · −384 · −884 (no pega) · `clip` → 16 · 16 · 16 (pega).
+       `clip` recorta igual —el troquel de 3 px se mantiene— pero no crea
+       contenedor de scroll. El síntoma estaba a 400 líneas de la causa: nadie
+       mira `overflow` cuando el bug parece de `position: sticky`. */
+    overflow: clip;
     transition: box-shadow var(--dur-media) var(--ease-salida);
 
     /* Columna para que el tirador caiga al fondo y todas las fichas de la fila
@@ -728,15 +810,44 @@
 
   .despegue[open] > .despegue__tirador .despegue__flecha::before { content: "▴"; }
 
-  /* El gesto: la pegatina se levanta por el borde de arriba y el contenido baja. */
-  .despegue[open] > .despegada {
-    animation: despegar var(--dur-media) var(--ease-troquel) both;
+  /* ── QUE EL DESPEGUE DESPEGUE ────────────────────────────────────────────
+     Antes la `.etiqueta` NUNCA se movía: solo se profundizaba la sombra y el panel
+     hacía un fade con `scaleY(0.97)`. Un desplegable corriente. Y el tell estaba
+     en los propios tokens: **`--ease-troquel`, cuyo comentario dice «el rebote
+     mínimo del despegue», se estaba gastando en una opacidad.** El sistema
+     documentaba un gesto que nadie había construido.
+
+     Lo que hace una pegatina de verdad: se levanta por un borde, y lo que aparece
+     es LO QUE ESTABA DEBAJO. Así que la etiqueta bisagra por su canto superior y
+     el expediente se descubre por debajo — el canto se queda donde está.
+
+     Y una cosa verificada, para que nadie la rediseñe por miedo: **un `transform`
+     aquí NO rompe el `position: sticky` de la columna de acción.** Un `transform`
+     crea containing block para `fixed` y `absolute`, pero **no crea contenedor de
+     scroll**, y `sticky` se posiciona respecto al contenedor de scroll más
+     cercano. Lo que lo rompía era el `overflow: hidden` de `.etiqueta`, ya en
+     `clip`. Medido scrolleando, no deducido. */
+  .despegue[open] {
+    animation: bisagra var(--dur-media) var(--ease-troquel) both;
+    /* La bisagra está en el canto de arriba de la parte que se levanta. */
     transform-origin: top center;
   }
 
-  @keyframes despegar {
-    from { opacity: 0; transform: scaleY(0.97) translateY(calc(var(--space-2) * -1)); }
-    to { opacity: 1; transform: none; }
+  @keyframes bisagra {
+    from { transform: perspective(1200px) rotateX(-1.6deg); }
+    to { transform: none; }
+  }
+
+  /* El expediente se DESCUBRE por debajo: no entra desde fuera, se revela. Una
+     máscara de arriba abajo, sin desplazamiento — es la misma gramática que el
+     revelado del veredicto, y por el mismo motivo: cero salto de layout. */
+  .despegue[open] > .despegada {
+    animation: descubrir var(--dur-media) var(--ease-salida) both;
+  }
+
+  @keyframes descubrir {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
   }
 
   .despegada {
@@ -966,7 +1077,6 @@
 
   .foto {
     display: grid;
-    gap: var(--space-2);
     max-width: var(--medida-corta);
   }
 
@@ -981,10 +1091,38 @@
     border: var(--trazo-fino) solid var(--color-separador);
   }
 
+  /* LA BANDA DE LA FOTO. Pegada al borde inferior de la imagen y compartiendo su
+     ancho, en superficie sólida propia. El `--radio-panel` solo abajo, para que
+     imagen y banda se lean como una sola pieza y no como dos cajas apiladas. */
   .foto__pie {
+    display: grid;
+    gap: var(--space-1);
+    background: var(--fondo-hundido);
+    border: var(--trazo-fino) solid var(--color-separador);
+    border-block-start: 0;
+    border-end-start-radius: var(--radio-panel);
+    border-end-end-radius: var(--radio-panel);
+    padding: var(--space-2) var(--space-3);
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
     color: var(--texto-meta);
+  }
+
+  /* La imagen pierde el radio de abajo: es la banda la que lo lleva ahora. */
+  .foto:has(.foto__pie) .foto__img {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    border-block-end: 0;
+  }
+
+  /* La limitación no es un pie de foto más: es lo que la foto NO permite afirmar,
+     así que va en cuerpo de texto y no en mono de metadato. En secundario y no en
+     gris de «sin dato»: es contenido, no una ausencia. */
+  .foto__limite {
+    font-family: var(--fuente-cuerpo);
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    text-wrap: pretty;
   }
 
   /* ── procedencia: la prueba documental ──────────────────────────────────── */
@@ -1107,6 +1245,56 @@
   .dato__fuente { margin-block-start: var(--espacio-diana); }
 
   .fuentes__lista { display: grid; gap: var(--espacio-diana); }
+
+  /* El bloque del resto de fuentes son ~24 líneas por ficha: una rejilla de dos
+     o tres columnas, no una columna de veinticuatro renglones. Cada línea es
+     «campo → cita», así que se lee por el campo.
+
+     `grid-column: 1 / -1` no es cosmético: sin él el bloque cae en UNA celda de
+     `.mas-datos__lista` (~217 px), su rejilla interior colapsa a una columna y
+     las 24 citas se apilan — 1.255 px de alto medidos, más que lo que costaba
+     toda la ficha antes. Cruzando la fila son ~8 renglones de tres columnas. */
+  .dato--fuentes { grid-column: 1 / -1; }
+
+  .fuentes-resto__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--espacio-diana) var(--space-4);
+    margin-block-start: var(--space-2);
+  }
+
+  /* El tirador lleva el número, así que plegado ya dice cuántas hay. */
+  .fuentes-resto__tirador {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-xs);
+    color: var(--texto-secundario);
+    text-decoration: underline;
+    text-underline-offset: var(--space-1);
+    min-block-size: var(--diana-min);
+    display: inline-flex;
+    align-items: center;
+    padding-block: var(--space-1);
+  }
+
+  .dato--fuentes .dato__fuente {
+    margin-block-start: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+  }
+
+  /* El campo que la cita respalda. En mono y en versalitas: es una clave, no
+     prosa, y así la columna se escanea por el campo. */
+  .dato__fuente-campo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-meta);
+
+    &::after { content: " ·"; }
+  }
 
   .campo__mas-tirador,
   .dato__mas-tirador,
@@ -1819,9 +2007,19 @@
       stroke-dashoffset: 0;
     }
 
-    /* Del despegue se conserva solo la opacidad, que orienta sin desplazar. */
+    /* El veredicto aparece ENTERO, sin banda. Versión alternativa y no duración
+       corta: un `clip-path` de 1 ms parpadea, que es peor que no animar. */
+    .parte__veredicto { animation: none; clip-path: none; }
+
+    /* SIN BISAGRA: la sombra sola marca el estado. Versión alternativa, no
+       duración corta — una rotación de 1 ms es un tirón, no una animación. */
+    .despegue[open] { animation: none; transform: none; }
+
+    /* Y el expediente aparece entero, sin máscara. Del despegue se conserva solo
+       la opacidad, que orienta sin desplazar. */
     .despegue[open] > .despegada {
       animation: aparecer var(--dur-corta) linear both;
+      clip-path: none;
       transform: none;
     }
 

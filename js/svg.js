@@ -274,7 +274,23 @@ export function diagramaTemperatura(t) {
     svg.append(txt(px(letal), eje.y - 8, "letal", "temp__letal-texto", { "text-anchor": "middle", "font-size": CUERPO.micro }));
   }
 
-  // Las dos temperaturas de esta casa: el dato que convierte el eje en útil.
+  /* EL INVIERNO ES UNA BANDA, NO UN PUNTO. Carlos dio la calefacción como 21–24 °C
+     y `botanist` dejó `casa_invierno_c` en `null` a propósito para que nadie
+     dibujara un «22,5°» que nadie ha medido. Se pinta como banda, igual que el
+     rango tolerado y el óptimo — la misma gramática para el mismo tipo de dato. */
+  const invMin = numero(t?.casa_invierno_min);
+  const invMax = numero(t?.casa_invierno_max);
+  if (invMin != null && invMax != null) {
+    svg.append(e("rect", {
+      class: "temp__casa-banda",
+      x: px(invMin), y: eje.y - 4, width: px(invMax) - px(invMin), height: 4, rx: 1,
+    }));
+    svg.append(txt((px(invMin) + px(invMax)) / 2, eje.y - 6,
+      `inv ${formatear(invMin)}–${formatear(invMax)}°`, "temp__casa-texto",
+      { "text-anchor": "middle", "font-size": CUERPO.micro }));
+  }
+
+  // El tope de verano sí es un punto: es el objetivo del aire acondicionado.
   for (const [clave, etiqueta] of [["casa_invierno", "inv"], ["casa_verano", "ver"]]) {
     const v = numero(t?.[clave]);
     if (v == null) continue;
@@ -286,7 +302,46 @@ export function diagramaTemperatura(t) {
   svg.append(txt(eje.x - 1, eje.y, `${MIN}°`, "temp__escala", { "text-anchor": "end", dy: 5, "font-size": CUERPO.micro }));
   svg.append(txt(eje.x + eje.w + 2, eje.y, `${MAX}°`, "temp__escala", { dy: 5, "font-size": CUERPO.micro }));
 
-  return svg;
+  /* EQUIVALENTE EN TEXTO — y no es un pie decorativo, es una condición de
+     accesibilidad que puso `botanist` y que yo había incumplido.
+     Al suprimir el `resumen` duplicado de temperatura, este SVG se quedó como
+     ÚNICO portador del rango… y va `aria-hidden="true"`. O sea que el dato
+     desaparecía del DOM accesible: el único punto de la ficha donde eso pasaba.
+     Con esta frase el SVG vuelve a ser la segunda vista de un texto, que es la
+     regla 2 de este fichero, y encima dice más que el resumen que sustituye —
+     porque añade el óptimo y dónde cae esta casa dentro de la banda. */
+  const frag = document.createDocumentFragment();
+  frag.append(svg);
+  const p = document.createElement("p");
+  p.className = "diagrama__equivalente";
+  p.textContent = frasePisoTermico(tol, opt, invMin, invMax, numero(t?.casa_verano));
+  frag.append(p);
+  return frag;
+}
+
+/**
+ * El rango térmico dicho en palabras. Va por partes y solo afirma las que existen:
+ * `minima_letal_c` es `null` en las siete y el máximo tolerado falta en el
+ * helecho, así que la frase se compone de lo que hay y calla lo que no.
+ *
+ * La banda de casa se rotula como **del salón** y no de la planta: los tres campos
+ * valen lo mismo en las siete porque son una constante de la habitación, y
+ * atribuírsela a la planta sería afirmar que se ha medido junto a su maceta.
+ */
+function frasePisoTermico(tol, opt, invMin, invMax, verano) {
+  const partes = [];
+  if (tol[0] != null && tol[1] != null) partes.push(`Aguanta de ${formatear(tol[0])} a ${formatear(tol[1])} °C`);
+  else if (tol[0] != null) partes.push(`Aguanta desde ${formatear(tol[0])} °C (sin máximo publicado)`);
+  else if (tol[1] != null) partes.push(`Aguanta hasta ${formatear(tol[1])} °C`);
+
+  if (opt[0] != null && opt[1] != null) partes.push(`le gusta entre ${formatear(opt[0])} y ${formatear(opt[1])}`);
+
+  const casa = [];
+  if (invMin != null && invMax != null) casa.push(`${formatear(invMin)}–${formatear(invMax)} °C en invierno`);
+  if (verano != null) casa.push(`${formatear(verano)} °C de tope en verano`);
+  if (casa.length > 0) partes.push(`el salón está a ${casa.join(" y ")}`);
+
+  return partes.length > 0 ? `${partes.join(", ")}.` : "Sin rango de temperatura verificado.";
 }
 
 /* ══ 4 · Curso de recuperación ══════════════════════════════════════════════
