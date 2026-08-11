@@ -2,10 +2,12 @@
 
 Web estática con las fichas de cuidado de las plantas que Carlos tiene en casa.
 
-Objetivo doble:
-1. Que la web sea **visualmente excelente** — es el criterio de éxito principal.
-2. Que el proyecto sirva de **sandbox para aprender Agent Teams**. Preferimos hacer las cosas
-   en paralelo con teammates aunque en solitario fuera más rápido: el aprendizaje es parte del entregable.
+El criterio de éxito es que la web sea **visualmente excelente** y que su contenido sea fiable:
+todo dato verificado con su fuente, y todo hueco declarado en vez de rellenado a ojo.
+
+El proyecto nació también como sandbox para aprender Agent Teams. **Esa fase está cerrada** y se
+trabaja en solitario; lo aprendido está en `docs/aprendizaje.md`, que es la mitad del entregable y
+se escribió a base de equivocarse.
 
 ## Stack — restricciones duras
 
@@ -57,23 +59,40 @@ Reglas de contenido:
 - `toxicidad_mascotas` es información de seguridad: se cita fuente siempre, o se deja `null`.
 - `historia` y `notas_carlos` son personales. Se preguntan a Carlos; no se fabrican.
 
-## Equipo (Agent Teams)
+## Cómo se trabaja aquí
 
-Reparto estricto de ficheros — dos teammates editando el mismo fichero se pisan:
+**Se trabaja en solitario.** El proyecto se construyó con un equipo de agentes en paralelo los
+días 10 y 11 de agosto de 2026, y ese modo está retirado. Si lees referencias a `ux-lead`,
+`builder`, `botanist`, `qa-visual` o `ui-designer` en `docs/`, son **el registro de quién escribió
+qué**, no instrucciones: no hay nadie a quien mandar un mensaje.
 
-| Teammate    | Rol                                                      | Ficheros que posee                        |
-| ----------- | -------------------------------------------------------- | ----------------------------------------- |
-| `ux-lead`   | Dirección visual: tokens, tipografía, layout, motion     | `css/tokens.css`, `docs/brief.md`         |
-| `builder`   | HTML semántico y JS vanilla                              | `index.html`, `js/`, `css/app.css`        |
-| `botanist`  | Contenido: especies, cuidados, toxicidad, fuentes        | `content/plantas.json`                    |
-| `qa-visual` | Screenshots, a11y, rendimiento, revisión visual          | `tests/`, `docs/qa/`                      |
+Empieza por **`docs/retomar.md`**, que dice en qué estado está todo y qué queda.
 
-Si necesitas cambiar un fichero que no es tuyo, manda un mensaje a su dueño. No lo edites.
+Qué escribió cada uno, que sigue siendo útil para saber dónde buscar el porqué de algo:
+
+| Quién fue | Qué ficheros |
+| --- | --- |
+| `ux-lead` | `css/tokens.css`, `docs/brief.md`, `docs/decisiones.md` |
+| `builder` | `index.html`, `css/app.css`, `js/`, `assets/img/` |
+| `botanist` | `content/plantas.json` |
+| `qa-visual` | `tests/`, `docs/qa/` |
+| `ui-designer` | `alternativa/` — piel visual alternativa, pendiente de comparar |
 
 ## Proceso
 
-- `ux-lead` trabaja en **plan mode** y necesita aprobación del lead antes de tocar código.
-- Nada se considera terminado sin que `qa-visual` lo haya visto en screenshot. "Compila" no es "está bien".
-- Las decisiones de diseño con alternativas descartadas van a `docs/decisiones.md`, una línea por decisión.
-- Evitar el "look de IA": si una elección de paleta, tipografía o layout es la que harías para
-  cualquier otra web, no es una elección — es un default. Ver `docs/brief.md`.
+- **Nada se considera terminado sin haberlo visto en captura.** "Compila" no es "está bien", y
+  esto se ha cobrado una web publicada en blanco durante horas.
+- **No se mide con el árbol sucio.** `python3 tests/runner.py` se niega a dar número si hay
+  ficheros sin commitear, y es deliberado: la salida es `--raiz` sobre un worktree limpio. Para
+  comprobar si algo está hecho, `git show HEAD:fichero`, nunca `grep` sobre el directorio.
+- Las decisiones con alternativas descartadas van a `docs/decisiones.md`, una línea por decisión.
+- **Los hallazgos sobre el instrumental y la coordinación van a `docs/aprendizaje.md` y no generan
+  trabajo**, salvo que impidan verificar algo del alcance. Ese fichero recoge doce casos del mismo
+  patrón y merece leerse antes de fiarse de un test.
+- **El imperativo está reservado a lo que tiene dueño humano.** Lo que escriba un agente se redacta
+  como propuesta con su motivo, porque una recomendación citada varias veces asciende a requisito
+  sin que nadie mienta. Ocurrió: una restricción de diseño escrita por un asistente se le citó a
+  Carlos dos días como si fuera su encargo. Ver `docs/aprendizaje.md`.
+- Sobre el "look de IA": si una elección de paleta, tipografía o layout es la que harías para
+  cualquier otra web, es un default y no una elección. **Pero es un argumento, no una prohibición**
+  — y si Carlos prefiere la opción convencional, gana Carlos.

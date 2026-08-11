@@ -1,138 +1,149 @@
-# Retomar el trabajo
+# Retomar el trabajo — relevo para un solo agente
 
-Escrito al pausar la sesión del **11 de agosto de 2026**. Este fichero lo mantiene el lead.
+Escrito por el lead al **cerrar el equipo el 11 de agosto de 2026**. Sustituye al relevo anterior.
 
-Lo primero que hay que entender: **los teammates no sobreviven a la sesión.** Mañana se
-relanzan de cero y no recuerdan nada. Lo que sí sobrevive es lo que dejaron escrito, y por eso
-`docs/brief.md` tiene 1.482 líneas y `docs/decisiones.md` 138 decisiones con sus alternativas
-descartadas. Ese es el mecanismo: la memoria del equipo es el repo.
+**Se trabaja en solitario.** El equipo de cinco agentes que construyó esto está parado y el modo
+Agent Teams retirado. Si encuentras referencias a `ux-lead`, `builder`, `botanist`, `qa-visual` o
+`ui-designer`, son **el registro de quién escribió qué**, no instrucciones: no hay nadie a quien
+mandar un mensaje.
 
-## Dónde está todo
+Lee, en este orden: este fichero, `CLAUDE.md`, y **`docs/aprendizaje.md`** — que no es opcional,
+porque documenta doce formas en que los instrumentos de este proyecto han mentido, y vas a usar
+esos instrumentos.
 
-- **Web publicada:** https://ccanado.github.io/MyPlants/ — se actualiza en cada push a `main`.
-- **Repo:** github.com/ccanado/MyPlants (público, Pages desde `main` / raíz).
-- **En local:** `python3 -m http.server 8000` desde la raíz.
+---
 
-## Estado al pausar
+## LA TAREA 1, decidida por Carlos: aplicar el diseño de `alternativa/`
 
-Los cuatro comprobadores en verde: tokens (142, sin un literal hardcodeado), estático (cero
-terceros), contenido (huecos anotados, toxicidad con fuente) y el runner de QA (0 nodos bajo AA,
-0 bordes de control bajo 3:1, 0 saltos de foco, 0 problemas de diana, consola limpia).
+**Carlos ha visto las dos versiones y elige la de `alternativa/`.** Textual: *"me gusta el diseño
+de alternativa; que quede que el agente único que lance lo aplique cuando todos ellos terminen
+aquí"*, y luego: *"no hace falta que lo hagan ahora; que quede todo lo hecho para que cuando
+cerremos el team y yo arranque un solo agente, lo aplique."*
 
-Hecho: las siete fichas con contenido verificado y entre 15 y 19 fuentes citadas por planta;
-dirección visual cerrada y aprobada; tipografía self-hosted; siete siluetas de hoja; diez
-iconos de campo; cuatro diagramas; histórico de estados; campo de manipulación.
+**Empieza leyendo `alternativa/LEEME.md`**, que su autor escribió como mapa de aplicación: qué
+tokens cambian, qué reglas se sustituyen, qué no implementó y qué decisiones tomó y por qué.
 
-**No terminado.** Falta lo que este proyecto considera la puerta de cierre: que `qa-visual`
-firme una pasada con captura sobre el estado actual. Nadie ha visto todavía con los ojos los
-cuatro diagramas ni la ficha crítica legible después del último arreglo.
+### Qué es y por qué se eligió
 
-## Verificado al cerrar, después de escribir lo de arriba
+Fondo casi negro cálido, **las fotos a sangre llevando la página**, y chartreuse ácido como acento
+—sacado del coleo grande real, que es chartreuse con granate de vino—. El veredicto del día
+(`3 DE 7 PIDEN MIRADA`) a escala de display. Las fichas agrupadas en dos secciones, **PIDEN
+MIRADA** y **ESTÁN BIEN**, con su recuento. Cada tarjeta: distintivo de severidad con **palabra**
+además de color, nombre, nombre científico, una línea de diagnóstico y los datos en monoespaciada.
 
-Llegaron informes tardíos y comprobé lo que afirmaban, porque uno decía que seguía habiendo un
-bloqueante abierto. **No lo hay:**
+Se eligió porque resuelve las cuatro cosas que Carlos echaba en falta —las fotos no se veían, el
+color solo existía como alarma, faltaba profundidad y faltaba movimiento— y porque su diagnóstico
+era correcto: el diseño anterior **presumía de esquivar el cliché de "web de plantas" exhibiendo la
+ausencia de las fotos como prueba de virtud**, y esa ausencia era justo la queja.
 
-- **El bloqueante de `estados` está cerrado.** `js/datos.js` usa `estadoVigente(p)`, que ordena
-  por `fecha_foto` y no coge `estados[0]`, con el razonamiento escrito en el propio código. El
-  informe que lo daba por abierto medía un estado anterior. Y `severidadesDe()` toma el **peor**
-  de todos los estados, no solo el vigente: una planta con histórico sigue siendo crítica
-  mientras alguna observación lo diga.
-- **El diagnóstico llega a pantalla:** `tests/runner.py --abrir-todas --test cobertura-datos`
-  da 7 plantas, 20 campos con contenido y **0 campos que no llegan a la página**.
-- **El bloque de la ficha crítica ya va en pálido**, así que la decisión de no invertir un
-  contenedor de texto está aplicada.
-- **GitHub Pages está limpio:** 7 fichas pintadas bajo `/MyPlants/`, 0 recursos con error, 0
-  peticiones externas, 6 de 6 fuentes cargadas. El fallo clásico de subdirectorio no se da.
-- **Carga inicial: 218 KB** con la rejilla cerrada y **0 bytes de foto**, porque cada ficha es
-  la etiqueta dibujada en CSS. El presupuesto del checklist se reescribió en esos términos:
-  carga inicial < 400 KB, y el peso de abrir una ficha es una foto, no un acumulado.
+Dos efectos colaterales buenos que conviene conservar al aplicarlo:
 
-`tests/` tiene ahora diez herramientas, todas ejecutables sin el MCP: `coherencia.py`
-(todo `url()` local resuelve, y ninguna planta sin pegatina trae precio, EAN ni fitosanitario),
-`enlaces-fuentes.py` (una petición por cita: 26 de 29 con 200, y clasifica 401/403/429/503 como
-`MANUAL` y no como cita rota, porque POWO/Kew bloquea clientes automáticos) y
-`cobertura-datos.js` (que el contenido llegue a la pantalla).
+- **Agrupar en «piden mirada» / «están bien» resuelve el problema del día bueno**: cuando ninguna
+  planta necesite nada, la primera sección desaparece y la página dice `ESTÁN BIEN · 7 de 7` sin
+  tener que inventar urgencia. Ese estado es el que el proyecto existe para producir.
+- **La foto del helecho no desaparece sobre fondo oscuro**, que era el riesgo que se temía: está
+  tomada de noche y casi negra, y sobre oscuro se integra en lugar de perderse.
 
-Queda una duda menor para `botanist`: `ipni.org` no está en la lista de dominios citables del
-proyecto. IPNI es la fuente de la que POWO toma los nombres, así que probablemente sea legítimo
-y lo que falte sea añadirlo a la lista.
+### Lo que NO puede perderse al aplicarlo
 
-## Cola pendiente, por dueño
+Esto es lo que más riesgo tiene, porque `alternativa/` es una piel de portada y ficha, y la versión
+principal tiene **dos días de funcionalidad y contenido** que su autor no reimplementó:
 
-**`builder`** — `index.html`, `css/app.css`, `js/`, `assets/img/`
-1. La franja `HOY` con `tareas[]` y fecha real del navegador.
-2. El diagrama de cronología (décadas / semanas / horas, eje logarítmico rotulado).
-3. El expediente: dos columnas semánticas (`QUÉ HAGO AHORA` / `EN QUÉ ME BASO`), índice con
-   recuento, y suprimir el resumen duplicado en los campos que ya traen diagrama. **No se va a
-   reducir solo**: los 4.801 px se midieron con los diagramas dentro.
+- El **expediente a dos columnas semánticas** (`QUÉ HAGO AHORA` / `EN QUÉ ME BASO`), con la de
+  acción primero en el DOM y `position: sticky`. Bajó el hueco vacío del 53–65 % al 0–7 %.
+- La **franja `HOY`** con la fecha real del navegador, **una línea por planta**, y **la guarda de
+  seguridad**: una tarea con `condicion` **nunca** entra en el día. Sin eso, la web le dice a Noah
+  que abone un helecho sin hojas, que es el único fallo capaz de matar una planta.
+- Los **diagramas**: riego, luz como hueco entre lo que quiere y lo que tiene, rango térmico con la
+  banda de la casa rotulada **como banda de la casa**, y la cronología con eje logarítmico de
+  verdad (verificado por regresión: R² 0,9995 contra log).
+- Las **siete siluetas de hoja** con el rasgo diagnóstico de cada especie, y la del helecho con la
+  trama de sin-dato **dentro del contorno** porque su especie no está identificada.
+- Los **diez iconos de campo**, la búsqueda, los filtros, el histórico de estados y las fuentes
+  citadas al pie de cada campo.
 
-**`ux-lead`** — `css/tokens.css`, `docs/brief.md`
-Nada bloqueante. Revisar la captura del expediente cuando exista.
+### El suelo que no se negocia, y aplica a la piel nueva igual que a la vieja
 
-**`botanist`** — `content/plantas.json`
-Nada bloqueante. Las tres fechas de último riego que faltan (begonia, helecho, poto) dependen
-de Carlos.
+- **Cero recursos de terceros** en runtime. Sin CDN, sin Google Fonts, sin librerías.
+- **HTML + CSS + JS vanilla, sin build step.** Se sirve estático y funciona.
+- **Cero nodos de texto por debajo de AA**, cero bordes de control por debajo de 3:1, cero saltos de
+  orden de foco, cero desborde horizontal a 320 px, consola limpia.
+- **`prefers-reduced-motion` con versión alternativa**, no con duración corta: 1 ms parpadea.
+- **Ninguna información transmitida solo por color.**
+- **Las fotos de diagnóstico no se filtran.** Ni duotono, ni grado, ni viñeta. Más grandes y mejor
+  presentadas sí; mejor de lo que están, no. En la única planta que se muere, embellecer la foto
+  corrompe la prueba.
+- **Ni un dato inventado.** Siete plantas y son las que hay. Un campo vacío está vacío a propósito.
 
-**`qa-visual`** — `tests/`, `docs/qa/`
-La pasada 2 con capturas sobre el estado actual, y la pasada contra la URL publicada, que sirve
-desde subdirectorio y es lo único no comprobable en local.
+---
 
-## Lo que hace falta de Carlos
+## Estado al cerrar
 
-1. **Temperatura de la calefacción en invierno.** Falta el segundo marcador del diagrama
-   térmico. El tope de verano (28 °C, aire acondicionado) ya está.
-2. **Cuándo se regaron por última vez la begonia, el helecho y el poto.** Es el ancla del
-   calendario de tareas. Las cuatro compradas el 11 de agosto ya la tienen. Si no se sabe, se
-   queda en `null` — no se estima.
-3. **Las notas personales.** `notas` está vacío en las siete. `historia` sí está escrita. El
-   panel de cuaderno solo se renderiza cuando hay contenido, así que no se ve ningún hueco,
-   pero es la capa que distingue esto de cualquier web de jardinería.
-4. **Fotos nuevas** cuando quiera un estado nuevo. El esquema ya es un histórico: `estados[]`
-   con `fecha_foto` y `foto` por entrada.
+Publicado en **https://ccanado.github.io/MyPlants/** (Pages desde `main`, se actualiza en cada
+push). En local: `python3 -m http.server 8000`.
 
-## Cómo relanzar el equipo
+Medido en worktree limpio sobre el último commit del equipo:
 
-Leer `CLAUDE.md`, este fichero y `docs/brief.md`. Después lanzar los cuatro teammates con el
-reparto estricto de ficheros de `CLAUDE.md` y decirle a cada uno que invoque su skill:
-`vanilla-web-craft` para `builder` y `qa-visual`, `plant-expert` para `botanist`,
-`frontend-design` + `vanilla-web-craft` para `ux-lead`.
+```
+ocupación del ancho 0 % (tope 20 %) · carrera sin ancla 506 px (tope 600)
+0 de 1.740 nodos de texto bajo AA · 0 bordes de control < 3:1
+0 saltos de orden de foco / 293 enfocables · cero desborde a 320 y 1280
+cero recursos de terceros · consola limpia · diez comprobadores en verde
+```
 
-Dos avisos de operación que costaron tiempo y conviene no repetir:
+**Contenido:** siete plantas verificadas con 15–19 fuentes citadas cada una, histórico de estados
+fechados, tareas con condiciones, y los huecos declarados en vez de rellenados.
 
-- **El navegador de Playwright es un recurso exclusivo.** El MCP usa un perfil único de Chrome,
-  así que dos teammates no pueden navegar a la vez. Usar `python3 tests/runner.py`, que levanta
-  su propio Chrome y no depende del MCP. Acepta `--captura`, `--ancho`, `--completa` y `--abrir`.
-- **Los mensajes se cruzan.** Antes de encargar algo, comprobar si ya está hecho:
-  `grep -n "^### " docs/brief.md` y `git status`. Cuatro turnos se perdieron demostrando que
-  algo ya estaba resuelto.
+---
 
-## Notas de aprendizaje
+## Pendiente, por orden
 
-Están en `docs/brief.md` § "Notas de aprendizaje", y son la mitad del entregable. Las tres que
-más valen:
+1. **Aplicar `alternativa/`** — arriba. Es la tarea grande.
+2. **Una pasada de QA final con capturas**, sellada contra un commit concreto. `python3
+   tests/runner.py` y `docs/qa/checklist.md`. Es lo único del alcance de v1 que quedó sin firmar,
+   porque el equipo se cerró antes: **los cinco puntos de código están hechos**, incluido el
+   buscador dentro de la franja (commit `18fdf35`), que cerró el hueco de 325 px de la cabecera y
+   dos críticas de QA.
+3. **Las `notas` de Carlos.** Vacías en las siete. Es la única cosa que no puede hacer un agente:
+   la voz de las personas de la casa. El panel solo se renderiza con contenido, así que hoy no se ve
+   un hueco — se ve una web sin voz. **No las inventes nunca.**
+4. **El índice de síntomas.** Aprobado en concepto: se genera de `senales` y `patron`, no de una
+   taxonomía fija, así que cada entrada tiene al menos una planta por construcción. Va en el
+   buscador. Es la única promesa incumplida que queda: el placeholder dice "planta, sala o síntoma"
+   y el contenido no está organizado así.
+5. **Backlog sin dueño**, con su razonamiento en `docs/pendiente.md`: revisar los umbrales sin
+   derivar (el 62 % de la ocupación, los 600 px de carrera), pasar la prueba del imperativo a los
+   dos skills, y la propuesta de `botanist` para hacer comprobable una cita correcta que apunta al
+   taxón equivocado.
 
-1. **Un dato deducido entró en el contenido como si viniera del cliente.** El lead dedujo "sin
-   sol directo" de la orientación noreste y lo pasó como contexto de la casa; se propagó a las
-   siete fichas. Se detectó porque el reparto de ficheros obligaba a que el dato y el fichero
-   estuvieran en manos distintas, y porque un teammate se negó a elegir entre dos fuentes en
-   conflicto y lo marcó como abierto. Un solo agente con las dos cosas en la cabeza habría
-   cerrado la contradicción sin enterarse de que existía.
-2. **Un cambio correcto por un lado deja mudo a otro sin que nada dé error.** El contenido pasó
-   de `estado` a `estados[]` y el render siguió leyendo el campo viejo: las siete fichas
-   perdieron el diagnóstico entero con la consola limpia y los tres comprobadores en verde. De
-   ahí salieron `avisarDeCamposAusentes()` en `js/datos.js` y `tests/cobertura-datos.js`.
-3. **Cinco falsos positivos, todos del mismo tronco: una herramienta que opina cuando no puede
-   saber.** Contar `@font-face` con `grep` (cuenta el código comentado), comparar orden de foco
-   contra bandas horizontales en una rejilla de tarjetas, cruzar JSON contra JS con una regex que
-   casaba cualquier variable llamada `p`, medir texto con `innerText` (omite lo que
-   `content-visibility` salta), y tratar un 403 de bot-blocking como cita rota. La formulación de
-   `qa-visual` es la que hay que recordar: **el coste de un falso positivo en un equipo de
-   agentes no es el tuyo, es el del teammate al que mandas a arreglar lo que no está roto.** De
-   ahí que los tests digan ahora "no medible" en lugar de inventarse un veredicto.
+---
 
-4. **Quien revisa necesita ejecutar, no leer.** El lead afirmó tres defectos que no existían
-   —fuentes con 404, desbordamiento a 320 px, diagramas sin renderizar— las tres veces
-   inspeccionando ficheros estáticos en vez de ejecutar la web, y dos de ellas mandaron a un
-   teammate a arreglar algo intacto. El corolario: un resultado de QA solo vale si se puede
-   atribuir a un estado concreto del código, porque medir mientras alguien edita produce
-   conclusiones sobre el instrumento en lugar de sobre el objeto.
+## Cómo trabajar sin tropezar con el instrumental
+
+Esto ahorra horas y está aquí porque el equipo las perdió:
+
+- **`python3 tests/runner.py` se niega a medir con el árbol sucio**, y es deliberado: sale con
+  `exit 3` antes de abrir el navegador. La salida es `--raiz` sobre un worktree limpio:
+  ```
+  git worktree add --detach /tmp/verif HEAD
+  cd /tmp/verif && python3 tests/runner.py --puerto 8123
+  ```
+  Hay `--sucio` para medir el árbol a propósito, y estampa `NO ATRIBUIBLE` en cada línea.
+- **`--url` audita la web publicada.** Es la única medición inmune al problema del estado en
+  movimiento, porque **producción no puede estar sucia**.
+- **`--completa` no captura la página entera** —Chrome ignora el flag— y el runner protesta cuando
+  lo detecta. Para ver algo largo, `--alto` grande.
+- **Para saber si algo está hecho: `git show HEAD:fichero`, nunca `grep` sobre el directorio.** Un
+  `grep` responde sobre un estado que no existe para nadie más.
+- Los tres comprobadores de los skills: `check-tokens.py`, `check-estatico.py` y
+  `validar-plantas.py`. Y `docs/qa/como-ejecutar.md` para el resto.
+- **Un `TypeError` en un módulo de render no se ve**: se traga el trozo de interfaz y la página
+  parece bien. `js/datos.js` tiene `avisarDeCamposAusentes()` para eso; úsalo.
+- El estado vigente de una planta se lee con **`estadoVigente(p)`**, que ordena por `fecha_foto`.
+  **Nunca `estados[0]`**: el orden de un array es una convención y la fecha es un dato.
+
+## Lo que este proyecto considera "terminado"
+
+Nada está terminado sin haberlo visto en captura. "Compila" no es "está bien" — y aquí eso costó
+una web publicada en blanco durante horas, con los cinco comprobadores en verde, porque el verde
+era de dos commits atrás.
