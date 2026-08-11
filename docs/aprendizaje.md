@@ -88,13 +88,26 @@ se dice; una cosa que no se mide, también.
 - **Medir y publicar exigen lo mismo: un worktree limpio.** La lección nació para publicar y
   tardó una sesión en trasladarse a medir, que es donde se había originado.
 - **`grep` sobre el directorio de trabajo responde sobre un estado que no existe para nadie más.**
-  Formulación de `ux-lead`, y es la forma madura del hallazgo anterior: no es que alguien lea mal
-  el sello del runner, es que **la operación por defecto para comprobar si algo está hecho es la
-  operación equivocada**. La versión fiable es `git show HEAD:fichero` o un worktree, y cuesta un
-  carácter más. Nos pilló tres veces el mismo día —el expediente por la mañana, y el
-  `overflow: clip` dos veces— y a los tres: lead, `ux-lead` y `builder`. Con una consecuencia
-  registrada: **una pasada de QA se firmó contra un commit que no llevaba el arreglo que daba por
-  cerrado.**
+  Formulación de `ux-lead`. La versión fiable es `git show HEAD:fichero` o un worktree, y cuesta un
+  carácter más. Válido para el caso del expediente por la mañana, donde el lead reportó una
+  ocupación del 9 % medida sobre árbol sucio.
+
+  **Corrección, y es del propio `builder`: el caso del `overflow: clip` NO era éste, y yo lo
+  escribí aquí como si lo fuera.** Comprobado con `git show`: el `clip` estaba commiteado en
+  `eb8e25e`, **anterior al commit en que escribí esta lección**. `ux-lead` midió en worktree
+  limpio —el método correcto— sobre `0c81869`, y `builder` commiteó mientras él medía. Las tres
+  mediciones eran correctas y ninguna usó `grep` sobre el árbol.
+
+  **Lo que pasaba de verdad, con su formulación:** el blanco en movimiento no era el fichero, era
+  `HEAD`. **Una medición hay que sellarla con el commit y también con el instante**, y cuando la
+  firma y los commits corren en paralelo, quien mide tiene que decir contra qué hash mide *antes*
+  de empezar. El sello del runner ya imprime el hash; lo que faltaba era que alguien lo comparara
+  con el del que estaba commiteando.
+
+  Y la recursión merece quedar escrita, porque es la prueba más fuerte de todo este fichero:
+  **el lead escribió una lección sobre atribuir mal la causa, atribuyendo mal la causa.** Ni
+  saberse el patrón de memoria protege de cometerlo — solo protege verificar antes de escribir, y
+  esta entrada se escribió sin verificar.
 - **Un sticky puede estar declarado, con su `top` resuelto, y no pegar.** Tercer modo de fallo que
   ninguna de las dos comprobaciones cubría: un ancestro con `overflow: hidden` es el contenedor de
   scroll más cercano. Se detecta **scrolleando de verdad**, no leyendo el estilo computado. Y el
