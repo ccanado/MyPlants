@@ -2030,6 +2030,23 @@ Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
   herramienta que afirma lo que no puede saber— con una vuelta de tuerca: **aquí el fallo no
   produce un dato falso, produce un dato ausente disfrazado de dato completo**, que es más difícil
   de detectar porque no hay nada raro que mirar.
+- **Un aviso que no bloquea se lee por encima, sobre todo si la noticia es buena.** El sello del
+  runner imprime `commit X + N fichero(s) sin commitear`, y solo se **niega** a atribuir el resultado
+  cuando algo cambia *durante* la pasada. Con el árbol sucio **desde antes**, informa y sigue. Y así
+  se dio por cumplida la métrica de ocupación —"9 %, sellado sobre `3a5b2da`"— cuando en el estado
+  commiteado **no existe el expediente a dos columnas**: `git grep expediente` sobre `HEAD` da **cero
+  ocurrencias** en CSS, JS y HTML. El 9 % salió del árbol de trabajo de `builder`, no de un commit; en
+  `HEAD` la ocupación es del 53–65 % y la ALTA sigue abierta. Lo confirma que `qa-visual`, midiendo
+  **producción** con otro instrumento, saque las alturas del estado sin dos columnas (helecho 3.710
+  contra los 2.802 del informe) — dos lecturas independientes coincidiendo en que el reparto no está
+  publicado.
+  Lo que enseña no es que alguien leyera mal: es que **la línea del sello estaba escrita para el que
+  ya sospecha.** Quien mide esperando una buena noticia lee el commit y salta el `+ N sin commitear`,
+  porque el sello nombra primero lo que tranquiliza. La versión que funciona es la que **se niega**:
+  si el árbol está sucio en los ficheros que se miden, no hay número, igual que cuando cambia a
+  media pasada. Y la alternativa barata existe y este mismo día se usó para publicar —medir en un
+  `git worktree` sobre el estado commiteado—: la lección se había aprendido para **publicar** y no se
+  había trasladado a **medir**, que es donde nació.
 - **La gravedad del promedio, demostrada por un tercero con nuestro material delante.** Carlos generó
   un diseño alternativo con una herramienta externa y pidió basarnos en él. Sus colores dominantes:
   crema `#fbf9f4`, terracota `#7e2b0f` y **verde salvia `#b0cdbb`**; su sistema se llama "Botanical
