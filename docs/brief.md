@@ -2489,6 +2489,19 @@ Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
   media pasada. Y la alternativa barata existe y este mismo día se usó para publicar —medir en un
   `git worktree` sobre el estado commiteado—: la lección se había aprendido para **publicar** y no se
   había trasladado a **medir**, que es donde nació.
+- **Lo que se pierde en cada cita no es la fuente: es el calificador. Y la defensa es que la frase
+  lleve su modalidad dentro.** El caso grande del proyecto: el skill `frontend-design` **describe**
+  tres clichés → el andamiaje inicial los **cita** → esta sección los **prohíbe** → el equipo se los
+  cita a Carlos **como su propio encargo**. Cuatro pasos, ninguna cita falsa, un calificador menos
+  cada vez. Buscar citas inventadas no habría encontrado nada: la fuente estaba escrita desde el
+  primer día.
+  Nombrar el mecanismo permite vigilarlo, pero no basta para evitarlo, porque nadie revisa una frase
+  que ya está escrita. Lo que sí lo evita es **redactar de forma que la frase se resista al ascenso**:
+  *"el skill recomienda evitar X"* aguanta ser citada sin convertirse en prohibición, y *"X está
+  prohibido"* invita al siguiente a citarlo como requisito. **La modalidad va dentro de la frase, no
+  en el contexto del que la lee**, porque el contexto es exactamente lo que no viaja. Corolario
+  incómodo y verificable en este mismo fichero: **casi todo lo que escribí en imperativo era una
+  opinión mía en imperativo.**
 - **La gravedad del promedio, demostrada por un tercero con nuestro material delante.** Carlos generó
   un diseño alternativo con una herramienta externa y pidió basarnos en él. Sus colores dominantes:
   crema `#fbf9f4`, terracota `#7e2b0f` y **verde salvia `#b0cdbb`**; su sistema se llama "Botanical
