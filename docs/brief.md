@@ -1906,7 +1906,8 @@ algoritmo no está escrito es una métrica que dentro de dos informes será lo q
 REFERENCIA  el contenedor del expediente de UNA ficha abierta (no la página).
             W = su ancho de CAJA DE CONTENIDO (sin padding).
 BANDAS      franjas horizontales de 100 px desde el borde superior de la referencia.
-CONTENIDO   un elemento cuenta si tiene texto propio (un hijo de texto no vacío)
+CONTENIDO   [CORREGIDO — ver § "El perfil se mide por tinta"] un elemento cuenta
+            si tiene texto propio (un hijo de texto no vacío)
             o si es <img> o <svg>. Los contenedores no cuentan: si contaran,
             cualquier div a ancho completo taparía el hueco que se busca.
 PERFIL      para cada banda, el mayor `getBoundingClientRect().right` de los
@@ -2024,6 +2025,58 @@ donde quedaba sitio para el optimismo.** Donde una `afirmacion` pueda llevarla, 
 > —dos afirmaciones que faltaban en dos plantas que las necesitaban— habría estado compitiendo con
 > una métrica mía. No es un argumento retrospectivo a mi favor: es la demostración de para qué sirve
 > distinguir un objetivo de una observación. **Un objetivo manda cortar, y aquí cortar era lo malo.**
+
+### El perfil se mide por tinta, no por caja — corrijo mi propio algoritmo
+
+`qa-visual` implementó mi definición al pie de la letra y reconcilió la discrepancia: era la
+referencia, como sospechaba. Ni mi 73–87 % (que era `section.estado`) ni su 68–76 % (que era su
+perfil de tinta sobre la ficha entera), sino **53–65 % en las siete**, y las siete siguen
+incumpliendo el tope del 20 %. La conclusión no cambia; cambia que el número ahora es reproducible.
+
+Y me hace una pregunta con una observación dentro que **encuentra un defecto real en mi algoritmo**,
+así que no la contesto: la aplico.
+
+> Mi perfil usa `getBoundingClientRect().right` **del elemento**. Un `<p>` a ancho completo cuya
+> última línea llena la mitad devuelve **la caja entera**, así que la banda no sale corta aunque el
+> hueco esté ahí, visible en pantalla.
+
+Hoy los dos perfiles coinciden en la conclusión porque la prosa lleva `max-width`: la caja ya es
+estrecha y coincide con el texto, y de ahí que el desfase sea **constante** (+9 a +15 pp) en vez de
+errático. Pero la consecuencia que él señala es la que decide:
+
+> **Si alguien quita ese `max-width`, mi número mejora solo, sin que nada se haya arreglado.**
+
+Una métrica que un día puede mejorar **por una regresión** es una métrica rota, y es la peor
+propiedad posible: no falla en voz alta, felicita. Su propuesta —mantener los dos perfiles en
+paralelo con la divergencia en puntos— es un buen parche y funcionaría, pero es **un parche para una
+definición que está mal**, y dos números para un solo objetivo es exactamente cómo un objetivo se
+vuelve ambiguo. Ya tenemos un caso de eso hoy.
+
+**Corrección, y con ella la pregunta se disuelve:**
+
+```
+PERFIL   por banda, el borde derecho más lejano de la TINTA, no de la caja:
+         · nodos de texto → el mayor `right` de sus `Range.getClientRects()`
+           (rects por línea), quedándose con las líneas que cruzan la banda.
+         · <img> y <svg>   → su `getBoundingClientRect().right`, que ahí la
+           caja SÍ es la tinta.
+```
+
+Con esto **el perfil de caja deja de hacer falta**: quitar un `max-width` ya no mueve el número,
+porque la tinta sigue donde estaba. Así que **no lo mantengas en paralelo — la razón para tenerlo era
+protegerme de un defecto que ya no existe.** Y el mérito es entero suyo: la definición mejora porque
+él midió de otra forma y explicó **por qué** divergía, en vez de aceptar la mía por ser mía o
+defender la propia por ser suya.
+
+Cambio mi especificación dos veces en el mismo día, y quiero dejar escrito por qué eso está bien
+aquí: **la primera versión estaba escrita en prosa y no la había ejecutado nadie.** En cuanto se
+implementó, se vio lo que le faltaba. Reescribirla es el resultado esperado de haberla escrito con
+algoritmo; lo que no habría estado bien es dejarla imprecisa **porque ya estaba implementada**.
+
+Nota para cuando se mida: el número puede subir con la definición nueva, y **si sube no es una
+regresión, es que antes no se estaba viendo el hueco entero.** El tope del 20 % se queda; si tras las
+dos columnas resultara inalcanzable **con la tinta**, el sospechoso sería el 20 y no el código, igual
+que con el 600 y con el 0,62.
 
 ## Fases
 
