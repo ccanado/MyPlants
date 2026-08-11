@@ -333,6 +333,39 @@ function ritmoLegible(tarea, mes) {
 
 const numero = (x) => (x == null || x === "" || !Number.isFinite(Number(x)) ? null : Number(x));
 
+/**
+ * Pinta una frase nuestra repartiendo los NÚMEROS en su propia voz.
+ *
+ * En este proyecto las cifras se escriben en `--fuente-dato` —ml, °C, cm, €, EAN,
+ * fechas—: es la voz mecánica de báscula de vivero que hace que esto parezca un
+ * cuaderno de campo y no una landing. Y estaba sin aplicar justo en el renglón
+ * que más se lee: el `57` de «hace 57 días» iba vestido de prosa, siendo la única
+ * cifra de la franja. Lo levantó `ux-lead` sobre una crítica de `qa-visual`.
+ *
+ * Se hace aquí y de forma general en vez de con un caso especial para el 57,
+ * porque la regla tipográfica es del proyecto y no de esa frase: cualquier cifra
+ * que salga de este módulo la hereda. Y se construye con `createElement` y
+ * `textContent`, nunca con `innerHTML` — las cadenas las generamos nosotros, pero
+ * la disciplina no depende de quién sea el autor del texto.
+ */
+export function conCifras(frase) {
+  const frag = document.createDocumentFragment();
+  if (!frase) return frag;
+  // Grupos de dígitos, con su coma o punto decimal si lo llevan.
+  for (const trozo of String(frase).split(/(\d+(?:[.,]\d+)?)/)) {
+    if (trozo === "") continue;
+    if (/^\d/.test(trozo)) {
+      const cifra = document.createElement("span");
+      cifra.className = "cifra";
+      cifra.textContent = trozo;
+      frag.append(cifra);
+    } else {
+      frag.append(document.createTextNode(trozo));
+    }
+  }
+  return frag;
+}
+
 /* ── la lista de hoy, para la franja ────────────────────────────────────────── */
 
 /**

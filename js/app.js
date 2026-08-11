@@ -7,7 +7,7 @@ import { cargarPlantas, ordenarPorUrgencia } from "./datos.js";
 import { fijarHoy, fijarMeta, grupoSeveridad, renderLista } from "./ficha.js";
 import { crearEstado, debounce } from "./estado.js";
 import { facetas, filtrar, filtrosVacios, hayFiltros, humanizar } from "./filtros.js";
-import { diaDeHoy, fechaLarga, tareasDeHoyPorPlanta, ventanasDeTemporada } from "./tareas.js";
+import { conCifras, diaDeHoy, fechaLarga, tareasDeHoyPorPlanta, ventanasDeTemporada } from "./tareas.js";
 import { montarCronologia } from "./cronologia.js";
 
 const el = {
@@ -222,7 +222,8 @@ function montarTareasDeLaFranja(porPlanta, ventanas) {
       if (t.cuando) {
         const cuando = document.createElement("span");
         cuando.className = "tarea-hoy__cuando";
-        cuando.textContent = t.cuando;
+        // Las cifras en su propia voz: el «57» de «hace 57 días» es un dato.
+        cuando.append(conCifras(t.cuando));
         item.append(cuando);
       }
       cosas.append(item);

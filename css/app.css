@@ -365,6 +365,16 @@
 
   .tarea-hoy__titulo { text-wrap: pretty; }
 
+  /* Las cifras en la voz mecánica del proyecto — la de báscula de vivero. Es la
+     regla general de este sistema (ml, °C, cm, €, EAN, fechas) y estaba sin
+     aplicar en el renglón que más se lee. */
+  .cifra {
+    font-family: var(--fuente-dato);
+    font-weight: var(--peso-medio);
+    font-variant-numeric: tabular-nums;
+    color: var(--texto-dato);
+  }
+
   .tarea-hoy__cuando {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);

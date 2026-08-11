@@ -17,7 +17,7 @@ import { FOTO, FOTO_ETIQUETA, slug } from "./datos.js";
 import { humanizar, normalizar } from "./filtros.js";
 import { iconoDe, iconoDificultad } from "./iconos.js";
 import { siluetaDe } from "./siluetas.js";
-import { diaDeHoy, tareasDePlanta } from "./tareas.js";
+import { conCifras, diaDeHoy, tareasDePlanta } from "./tareas.js";
 import {
   diagramaLuz,
   diagramaRiego,
@@ -437,7 +437,7 @@ function bloqueCalendario(q, planta) {
        aquí no haya una cuenta atrás. Se dice, y se dice en su gris. */
     if (t.sinRegistro && !t.tarea.ultimo) trozos.push("última vez: sin registrar");
     if (trozos.filter(Boolean).length > 0) {
-      cuando.textContent = trozos.filter(Boolean).join(" · ");
+      cuando.append(conCifras(trozos.filter(Boolean).join(" · ")));
       if (t.sinRegistro && !t.tarea.ultimo) cuando.classList.add("tarea__cuando--sin-dato");
     } else {
       cuando.remove();
