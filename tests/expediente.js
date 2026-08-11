@@ -175,6 +175,43 @@
     const ancho = der - izq;
     if (ancho < 50 || region.height < 50) return null;
 
+    /* ── dos perfiles, y por qué se miden los dos ─────────────────────────
+       `ux-lead` publicó el algoritmo exacto de la métrica en `5f3282e`, con esta
+       frase que acepto entera: *el objetivo es mío, así que el instrumento debe
+       medir mi definición y no la suya.* Así que el **veredicto** sale de su
+       definición: un elemento cuenta si tiene texto propio o es `<img>`/`<svg>`, y
+       el perfil de la banda es el mayor `getBoundingClientRect().right` de esos
+       elementos. Los contenedores no cuentan.
+
+       Y se sigue midiendo el mío en paralelo, como observación: el perfil de la
+       **tinta**, con los rectángulos reales de los nodos de texto. La diferencia
+       importa en un caso concreto — un `<p>` a ancho completo cuya última línea
+       llena la mitad devuelve la caja entera, así que por elementos la banda no
+       sale corta y el hueco visual se vuelve invisible para la métrica. Hoy los dos
+       perfiles coinciden porque la prosa va en una columna con `max-width`, o sea
+       que la caja ya es estrecha; si alguien quita ese `max-width`, el número por
+       elementos mejoraría solo y el de tinta no. Cuando divergen, el que dice la
+       verdad sobre lo que se ve es el de tinta.
+
+       Se reportan los dos y se dice cuál manda. Un instrumento que mide la
+       definición de su dueño no tiene por qué renunciar a lo que sabe de más. */
+    const CUENTA_COMO_CONTENIDO = (el) => {
+      const t = el.tagName.toLowerCase();
+      if (t === 'img' || t === 'svg') return true;
+      for (const n of el.childNodes) {
+        if (n.nodeType === 3 && n.nodeValue && n.nodeValue.trim()) return true;
+      }
+      return false;
+    };
+    const elementos = [];
+    for (const el of cuerpo.querySelectorAll('*')) {
+      if (oculto(el) || !CUENTA_COMO_CONTENIDO(el)) continue;
+      if (el.closest('.oculto-visual')) continue;
+      if (el.tagName.toLowerCase() !== 'svg' && el.closest('svg')) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) elementos.push(r);
+    }
+
     // Tinta
     const tinta = [];
     const paseador = document.createTreeWalker(cuerpo, NodeFilter.SHOW_TEXT, {
@@ -213,19 +250,32 @@
       lineas.push(maxDer === -Infinity ? null : (maxDer - izq) / ancho);
     }
 
-    /* Bandas de 100 px, que es la unidad del objetivo. Una banda cuenta como corta
-       si su contenido —el punto más a la derecha de toda la banda— no pasa del 62 %
-       del ancho. Se toma el máximo de la banda, no la media, porque una sola línea
-       que llegue al final ya demuestra que el ancho se está usando ahí. */
-    const porBanda = Math.max(1, Math.round(BANDA / PASO));
-    const bandas = [];
-    for (let i = 0; i < lineas.length; i += porBanda) {
-      const trozo = lineas.slice(i, i + porBanda).filter((v) => v !== null);
-      if (!trozo.length) continue;
-      bandas.push(Math.max(...trozo));
+    /* Bandas de 100 px desde el borde superior de la referencia, y las vacías se
+       excluyen del numerador Y del denominador: una banda vacía no está medio vacía,
+       está vacía, y casi siempre es un hueco entre bloques. Es literal del algoritmo
+       de `ux-lead`, y es la parte que más cambia el porcentaje. */
+    function bandasDesde(rects) {
+      const out = [];
+      for (let top = region.top; top < region.bottom; top += BANDA) {
+        const bot = Math.min(top + BANDA, region.bottom);
+        let maxDer = 0;
+        for (const r of rects) {
+          if (r.bottom <= top || r.top >= bot) continue;   // no cruza la banda
+          if (r.right > maxDer) maxDer = r.right;
+        }
+        const perfil = maxDer > 0 ? (maxDer - izq) / ancho : 0;
+        if (perfil > 0) out.push(perfil);                  // vacías fuera
+      }
+      return out;
     }
+
+    const bandas = bandasDesde(elementos);                 // ← la definición de ux-lead
     const cortas = bandas.filter((v) => v < CORTE_ANCHO);
     const pctCortas = bandas.length ? cortas.length / bandas.length : 0;
+
+    const bandasTinta = bandasDesde(tinta);                // ← observación paralela
+    const cortasTinta = bandasTinta.filter((v) => v < CORTE_ANCHO);
+    const pctCortasTinta = bandasTinta.length ? cortasTinta.length / bandasTinta.length : 0;
 
     // Columnas de tinta de verdad: un grid declarado y sin repartir da 1.
     const CUBOS = 24;
@@ -309,6 +359,10 @@
       bandas_cortas: cortas.length,
       bandas_cortas_pct: Math.round(pctCortas * 100),
       cumple_ocupacion: pctCortas <= MAX_BANDAS_CORTAS,
+      // Observación paralela con el perfil de tinta. Cuando divergen, este es el que
+      // describe lo que se ve; el veredicto sigue saliendo del de ux-lead.
+      bandas_cortas_pct_por_tinta: Math.round(pctCortasTinta * 100),
+      divergencia_pp: Math.round((pctCortasTinta - pctCortas) * 100),
       ocupacion_media_pct: Math.round(media(conTinta) * 100),
       columnas_de_tinta: columnas,
     };
@@ -352,6 +406,9 @@
         objetivo: 'ocupación (≤20% de bandas de 100px por debajo del 62% del ancho)',
         planta: m.planta,
         medido: m.bandas_cortas_pct + '% (' + m.bandas_cortas + ' de ' + m.bandas + ' bandas)',
+        definicion: 'algoritmo de ux-lead (docs/brief.md, 5f3282e): perfil por elementos con ' +
+                    'texto propio o img/svg, bandas vacías excluidas de numerador y denominador',
+        por_tinta: m.bandas_cortas_pct_por_tinta + '% (observación con el perfil de los nodos de texto)',
         ocupacion_media: m.ocupacion_media_pct + '% del ancho',
         columnas_de_tinta: m.columnas_de_tinta,
         dueño: 'builder',
@@ -401,7 +458,11 @@
       `${peorCarrera.carrera_max_px} px (tope ${MAX_CARRERA}) · alto máx ${peorAlto.alto_px} px ` +
       `(${peorAlto.planta}, observación) · ${fallos.length} fallo(s)`,
     objetivos: {
-      ocupacion: '≤20% de bandas de 100px con el contenido parando antes del 62% del ancho',
+      ocupacion: '≤20% de bandas de 100px con el perfil por debajo del 62% del ancho de la ' +
+                 'caja de contenido. Bandas vacías excluidas de numerador y denominador. ' +
+                 'Algoritmo literal de ux-lead (5f3282e); el 0,62 NO está derivado y él lo dice: ' +
+                 'la derivación honesta (¿cabría otra columna de 13rem?) daría ~78%, y se queda ' +
+                 'en 62 a propósito para cazar solo el defecto gordo',
       carreras: 'ninguna carrera de más de 600px sin ancla de navegación (rótulo de bloque, ' +
                 'entrada del índice o diagrama)',
       sticky: 'la columna de acción tiene que pegar de verdad: sin sticky se cumple la ' +

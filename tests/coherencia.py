@@ -174,6 +174,61 @@ def main() -> int:
     if plantas:
         info.append(f"etiquetas de vivero: {con_etiqueta} con foto_etiqueta, {len(plantas) - con_etiqueta} sin pegatina")
 
+    # ─── 5. una ficha sana tiene que afirmar que la planta está bien ──────────────
+    # Regla de `ux-lead` en 5f3282e, y es de contenido aunque se descubriera mirando el
+    # dibujo: *en `sana`, la afirmación de que la planta está bien ES el diagnóstico, no
+    # un adorno del diagnóstico.*
+    #
+    # Se comprueba aquí porque es el **defecto simétrico** del que se acaba de arreglar,
+    # y los dos son la página afirmando lo que no es. El rótulo "CAUSAS PROBABLES" le
+    # pedía causas a plantas que no tenían problema, o sea manufacturaba contenido. Una
+    # ficha sana que solo enseña riesgos y aclaraciones manufactura **alarma**: dice que
+    # la planta está en apuros cuando el diagnóstico es que está bien. Dos de las cuatro
+    # sanas estaban así (ficus y coleo pequeño: 0 afirmaciones, 2-3 riesgos).
+    #
+    # En `critica` y `atencion` NO se exige: una planta enferma no necesita que se afirme
+    # que está bien, y exigirlo sería el mismo error al revés.
+    ORDEN_SEV = ("sana", "atencion", "critica")
+    for p in plantas:
+        pid = p.get("id") or p.get("nombre_comun")
+        estados = p.get("estados") or []
+        if not estados:
+            continue
+        peor = "sana"
+        for e in estados:
+            s = str((e or {}).get("severidad") or "").lower()
+            if s in ORDEN_SEV and ORDEN_SEV.index(s) > ORDEN_SEV.index(peor):
+                peor = s
+        if peor != "sana":
+            continue
+        # Los ítems del diagnóstico viven en `causas_probables`, que es un nombre
+        # heredado de cuando solo había causas: hoy la lista mezcla `afirmacion`,
+        # `riesgo`, `aclaracion`, `mejora` y `causa` mediante su clave `tipo`. Se
+        # aceptan también `items`/`notas` por si el esquema se renombra, y si no se
+        # encuentra ninguna clave conocida el chequeo **se abstiene** en vez de
+        # deducir que hay cero afirmaciones — que es lo que haría un test que opina
+        # cuando no puede saber, y aquí daría cuatro errores falsos de golpe.
+        tipos = []
+        for e in estados:
+            for clave in ("causas_probables", "items", "notas", "diagnostico"):
+                for item in ((e or {}).get(clave) or []):
+                    t = str((item or {}).get("tipo") or "").lower()
+                    if t:
+                        tipos.append(t)
+        if not tipos:
+            avisos.append(
+                f"«{pid}» es sana y no consigo leerle los tipos de sus ítems: "
+                f"no puedo comprobar si lleva una afirmación (¿cambió el esquema?)"
+            )
+            continue
+        if "afirmacion" not in tipos:
+            errores.append(
+                f"«{pid}» es SANA y no tiene ninguna `afirmacion`: solo "
+                f"{', '.join(sorted(set(tipos)))}. Una ficha sana que solo enseña riesgos "
+                f"dice algo falso — que la planta está en apuros. La afirmación de que "
+                f"está bien ES el diagnóstico en sana, no un adorno"
+            )
+
     # ─── salida ──────────────────────────────────────────────────────────────────
     for i in info:
         print(f"       {i}")
