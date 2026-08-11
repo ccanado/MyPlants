@@ -167,6 +167,49 @@
        fondo de página SOLO se escribe en --color-etiqueta (6,30:1).
      ------------------------------------------------------------------------ */
 
+  /* ═══════════════════════════════════════════════════════════════════════
+     MATRIZ DE VALIDEZ POR SUPERFICIE — léela antes de elegir un color
+     ═══════════════════════════════════════════════════════════════════════
+     Un color no es accesible o inaccesible: lo es SOBRE UNA SUPERFICIE. Dos
+     fallos reales de este proyecto salieron de ignorar eso — un enlace en azul
+     de bolígrafo sobre la teja (1,44:1) y el borde del buscador sobre la teja
+     (1,92:1), los dos con tokens correctamente medidos contra OTRO fondo.
+     Ningún checker lo detecta: el contraste solo se mide en el navegador, con
+     el fondo real compuesto. Así que se declara aquí.
+
+     Ratios calculados (WCAG 2.1). Umbral: 4,5 texto · 3,0 bordes de control.
+     "—" = NO USAR sobre esa superficie.
+
+                         maceta  etiqueta  etiq-2  cuaderno  rell.alerta  rell.aviso  rell.s/dato
+     --color-tinta          —      12,91    11,61    11,93      11,57       12,11       11,29
+     --color-tinta-suave    —       6,26     5,63     5,79       5,61        5,87        5,48
+     --color-codigo         —       6,33     5,69     5,85       5,67        5,94        5,54
+     --color-boli           —       9,08     8,17     8,39       8,14        8,52        7,94
+     --color-alerta         —       7,43     6,68     6,87       6,66        6,97        6,50
+     --color-aviso          —       5,62     5,06     5,20       5,04        5,27        4,92
+     --color-sin-dato       —       5,87     5,28     5,42       5,26        5,50        5,13
+     --color-etiqueta     6,30       —        —        —          —           —           —
+     --color-borde-control  —       3,60     3,24     3,33       3,23        3,38        3,15
+     --color-borde-c/mac  3,48       —        —        —          —           —           —
+     --color-separador      sin umbral: NUNCA delimita algo pulsable
+     --color-troquel        sin umbral: es el canto de la pegatina
+
+     Se lee así, y no tiene excepciones:
+
+       1. Sobre --color-maceta (el fondo de página) SOLO valen dos tokens:
+          --color-etiqueta para texto y --color-borde-control-sobre-maceta para bordes.
+          Todo lo demás suspende ahí, incluidos colores que sobre blanco van
+          sobradísimos.
+       2. Sobre cualquier superficie CLARA valen todos los de tinta y el borde.
+          La columna que manda es la más oscura de las claras (rell. sin-dato):
+          si algo pasa ahí, pasa en todas.
+       3. --color-etiqueta (blanco) solo sobre maceta o sobre --color-alerta
+          sólido (7,43:1, la severidad crítica invertida). Nunca sobre claro.
+
+     Si hace falta un color sobre una superficie nueva, NO se deduce de esta
+     tabla: se mide y se añade una fila. Un token no hereda su ratio.
+     ═══════════════════════════════════════════════════════════════════════ */
+
   /* -- Los seis ------------------------------------------------------------ */
 
   --color-maceta:      #8F4A33;  /* plástico teja del tiesto del coleo. FONDO DE PÁGINA */
@@ -231,17 +274,50 @@
 
   /* -- Bordes -------------------------------------------------------------- */
 
-  --color-borde:        #918A7B;  /* borde INFORMATIVO (controles, campos)  3,28:1 sobre etiqueta */
+  /* ── LOS DOS TIPOS DE BORDE. La distinción está en el NOMBRE a propósito ──
+     Un borde que delimita algo pulsable y un borde que separa dos bloques son
+     cosas distintas y tienen umbrales distintos, pero se escriben igual en CSS
+     (`border`). Por eso el error se repite: se coge el token más discreto y
+     queda bonito. Los nombres ya no lo permiten — `--color-separador` se lee
+     mal en un botón.
 
-  /* ⚠ --color-borde SOLO vale sobre superficie clara: sobre --color-maceta da
-     1,92:1 y suspende WCAG 1.4.11 (bordes de control, 3:1). Lo levantó qa-visual
-     en el borde del buscador, que es el único control que vive sobre el fondo.
-     Un control sobre la maceta usa este otro (3,48:1 sobre teja). Y si lo que
-     se necesita es un control sobre el fondo, casi siempre la respuesta correcta
-     es ponerlo sobre una etiqueta blanca, no darle un borde más claro. */
-  --color-borde-sobre-maceta: #C1BCB3;
-  --color-borde-sutil:  #D3CFC8;  /* filete decorativo dentro de una ficha — no comunica nada */
-  --color-troquel:      #C1BCB3;  /* el canto de la pegatina troquelada */
+     BORDE DE CONTROL → ≥3:1 obligatorio (WCAG 1.4.11), sobre CUALQUIER
+       superficie donde aparezca. Botones, campos, tiradores, chips pulsables.
+     SEPARADOR → sin umbral. Filetes entre bloques, canto de la pegatina, reglas
+       internas. Nunca delimita algo que se pueda pulsar.
+
+     Historial, porque van tres: el enlace azul sobre la teja (1,44), el borde
+     del buscador sobre la teja (1,92), el borde sobre la superficie hundida
+     (2,87) y el tirador de despegar en las siete fichas (1,49). Los cuatro eran
+     el mismo error con distinto disfraz. */
+
+  --color-borde-control:  #8A8375;  /* peor caso sobre superficie clara: 3,15 */
+  --color-separador:      #D3CFC8;  /* 1,49 sobre etiqueta — y está BIEN, no delimita nada pulsable */
+  --color-troquel:        #C1BCB3;  /* el canto de la pegatina: separador, no control */
+
+  /* ⚠ Ningún borde oscuro funciona sobre --color-maceta: --color-borde-control
+     da 1,92:1 ahí. Este es para un control que tenga que vivir sobre el fondo
+     (3,48:1). Pero antes de usarlo: si algo necesita borde sobre la teja, casi
+     siempre lo correcto es ponerlo sobre una etiqueta blanca, no aclararle el
+     borde. Es lo que se hizo con el buscador. */
+  --color-borde-control-sobre-maceta: #C1BCB3;
+
+  /* ── ALIAS TEMPORALES · A BORRAR ─────────────────────────────────────────
+     `app.css` es de builder y todavía usa los nombres viejos. Estos dos alias
+     existen solo para que el repo no quede roto entre su turno y el mío, y
+     desaparecen en cuanto migre. Mapeo:
+
+       --color-borde        →  --color-borde-control   (o --color-separador,
+                                según si delimita algo pulsable o no: MIRAR CADA USO,
+                                no sustituir a ciegas — ese es justo el criterio
+                                que los nombres nuevos vienen a forzar)
+       --color-borde-sutil  →  --color-separador
+
+     Ojo con el segundo: los siete `summary.despegue__tirador` que suspenden a
+     1,49:1 usan hoy --color-borde-sutil, y ésos NO van a --color-separador: son
+     controles y van a --color-borde-control. */
+  --color-borde:        var(--color-borde-control);   /* DEPRECATED */
+  --color-borde-sutil:  var(--color-separador);       /* DEPRECATED */
 
   /* -- Escala de bandas para los diagramas ---------------------------------
      Rampa de --color-tinta a --color-etiqueta. Se usa para las bandas de
@@ -288,6 +364,16 @@
   --texto-fuente-sobre-maceta: var(--color-etiqueta);
   --texto-sin-dato:    var(--color-sin-dato);    /* "sin dato", "sin identificar" */
   --texto-sobre-alerta: var(--color-etiqueta);   /* severidad crítica, invertida  7,43:1 */
+
+  /* ⚠ LA INVERSIÓN ES SOLO PARA EL DISTINTIVO, NUNCA PARA UN CONTENEDOR DE TEXTO.
+     El runner encontró el bloque de causas de la ficha crítica pintado sobre
+     --color-alerta sólido con --texto-secundario encima: **1,19:1**, texto
+     prácticamente invisible, y en la única planta que se está muriendo. Sobre el
+     rojo sólido el ÚNICO color legible es --color-etiqueta (7,43) — ni siquiera
+     --color-tinta, que da 1,74.
+     Para que la composición correcta sea la fácil, estos dos alias: */
+  --fondo-critica:            var(--color-alerta-relleno);  /* el BLOQUE: pálido, tinta normal encima */
+  --fondo-distintivo-critica: var(--color-alerta);           /* SOLO el chip, con --texto-sobre-alerta */
   --texto-sobre-aviso:  var(--color-aviso);      /* severidad atención, sin invertir */
 
 
@@ -335,12 +421,17 @@
   /* Fluidos, dimensionados contra su CONTENEDOR (cqi), no contra la ventana:
      la etiqueta debe funcionar igual en la rejilla cerrada y abierta a ancho
      completo. Requieren container-type en el ancestro. */
-  /* El nombre a sangre de la etiqueta. El suelo bajó de 2.25rem a 2rem tras ver
-     la ficha del helecho a 320 px: con el contenedor en ~224 px útiles, una
-     palabra como "IDENTIFICAR)" a 36 px ocupaba el 87 % del renglón y no dejaba
-     margen para ningún nombre más largo. A 32 px cabe con holgura y el nombre
-     sigue mandando en la pegatina. Debe ir con `hyphens: auto` y `lang="es"`:
-     una condensada de display sin partición es una bomba de desbordamiento. */
+  /* El nombre a sangre de la etiqueta. Suelo en 2rem, no en 2.25rem.
+     Aclaración importante, porque el motivo cambió: qa-visual midió 320 px en el
+     navegador y el desbordamiento era CERO — no lo causaba la tipografía sino el
+     `min-width: auto` implícito de los hijos de grid, ya resuelto en app.css con
+     `minmax(min(…, 100%), 1fr)`. Así que este suelo NO lo exige ningún dato de QA.
+     Se queda por criterio tipográfico: a 36 px el nombre más largo ocupaba el
+     98,5 % del renglón útil, y eso no es un margen, es suerte. A 32 px ocupa el
+     87 % y el nombre sigue mandando en la pegatina — el techo del clamp no se
+     toca, así que en escritorio no cambia nada.
+     Va con `hyphens: auto` y `lang="es"` en el <html>: hoy no hace falta, pero es
+     la red que impide que un nombre científico largo rompa la rejilla mañana. */
   --texto-nombre: clamp(2rem, 7cqi, 3.75rem);
   --texto-precio: clamp(1.75rem, 4.5cqi, 2.5rem);  /* el precio en euros */
 
@@ -399,7 +490,28 @@
   --radio-troquel: 3px;   /* el canto de una pegatina troquelada. NO es 0 y NO es 12 px */
   --radio-chip:    2px;   /* distintivos de severidad, chips de filtro */
   --radio-panel:   4px;   /* paneles y diagramas */
-  --radio-punto:   50%;   /* puntos del plano de casa */
+  --radio-punto:   50%;   /* puntos de los diagramas */
+
+
+  /* ── TAMAÑO DE DIANA (WCAG 2.2 · 2.5.8 AA) ──────────────────────────────
+     El runner encontró 24 dianas de 20–23 px con vecinas a 1–18 px: los
+     tiradores «Más detalle» y «Por qué» y los enlaces de fuentes citadas, que
+     van apilados y son 24 por ficha.
+
+     ⚠ Se crece el ÁREA PULSABLE con padding, NUNCA el font-size. La
+     microtipografía de las citas es una decisión de diseño; el tamaño de la
+     diana es una decisión de ergonomía, y son independientes:
+
+       min-block-size: var(--diana-min);
+       padding-inline: var(--space-2);
+       display: inline-flex; align-items: center;
+
+     Y entre dianas apiladas, --espacio-diana como mínimo: dos dianas de 24 px
+     pegadas siguen fallando 2.5.8, que mide el objetivo MÁS su separación. */
+
+  --diana-min:     1.5rem;    /* 24 px · el mínimo de 2.5.8 AA */
+  --diana-comoda:  2.75rem;   /* 44 px · lo que de verdad se acierta con el pulgar */
+  --espacio-diana: var(--space-2);
 
   --trazo-fino:   1px;    /* cuadrícula de los diagramas */
   --trazo:        1.5px;  /* trazo normal de SVG */
@@ -647,9 +759,9 @@
     --color-tinta-suave: #2C463B;
     --color-codigo:      #33453B;
     --color-aviso:       #6B4504;
-    --color-borde:       #6E6759;
-    --color-borde-sutil: #A9A498;
-    --color-troquel:     #8A8375;
+    --color-borde-control: #6E6759;
+    --color-separador:     #A9A498;
+    --color-troquel:       #8A8375;
     --color-sin-dato:       #46453F;  /* 9,21:1 sobre etiqueta */
     --color-sin-dato-trama: #6B6759;  /* más oscuro que la base #847F70, no más claro */
   }

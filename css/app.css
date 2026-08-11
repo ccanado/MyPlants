@@ -127,13 +127,22 @@
 
   .rejilla__celda { display: grid; }
 
-  /* Al despegar, la etiqueta ocupa el ancho completo de la rejilla y se abre en
-     su sitio: sin modal, sin página de detalle, sin sacarte de la lista.
-     Nativo con :has(), cero JS. */
+  /* La página hace dos trabajos y necesita dos formas.
+     · Modo estantería (nada abierto): rejilla de columnas para buscar y comparar.
+     · Modo ficha (algo abierto): UNA columna, porque estás leyendo una planta y
+       la rejilla de al lado es ruido alrededor de lo que has decidido leer.
+     Descartado `grid-auto-flow: dense`, que rellenaba el hueco pero desacopla
+     el orden visual del orden del DOM y con él el de foco. */
+  .rejilla:has(details[open]) { grid-template-columns: 1fr; }
+
   .rejilla__celda:has(.despegue[open]) {
     grid-column: 1 / -1;
     z-index: var(--z-ficha);
   }
+
+  /* Al colapsar, la ficha que acabas de tocar cambia de sitio: el margen evita
+     que la franja sticky la tape cuando el JS la trae a la vista. */
+  .despegue__tirador { scroll-margin-block-start: var(--space-7); }
 }
 
 
@@ -171,12 +180,23 @@
     max-width: var(--medida-corta);
   }
 
+  /* El buscador vive sobre una etiqueta blanca, no sobre la teja: su borde
+     daba 1,92:1 contra el fondo y suspende WCAG 1.4.11, que pide 3:1 en bordes
+     de control. Sobre superficie clara, --color-borde da 3,28:1. Y de paso
+     refuerza la metáfora: es otra pegatina en el tiesto. */
+  .buscador {
+    background: var(--fondo-ficha);
+    border-radius: var(--radio-troquel);
+    padding: var(--space-3);
+    box-shadow: var(--sombra-pegatina);
+  }
+
   .buscador__label {
     font-family: var(--fuente-dato);
     font-size: var(--texto-2xs);
     letter-spacing: var(--tracking-micro);
     text-transform: uppercase;
-    color: var(--texto-sobre-maceta);
+    color: var(--texto-meta);
   }
 
   .buscador__input {
@@ -435,6 +455,39 @@
 
   .etiqueta__vivero-nombre { font-weight: var(--peso-fuerte); }
 
+  /* La silueta de hoja: la forma es la clave de identificación botánica, así
+     que aquí es información. NO se anima ninguna — son el ancla para escanear
+     la rejilla, y algo que se mueve no ancla nada. */
+  .etiqueta__silueta {
+    float: inline-end;
+    margin-inline-start: var(--space-3);
+    margin-block-end: var(--space-2);
+    color: var(--texto-secundario);
+  }
+
+  .silueta {
+    width: var(--silueta-tam);
+    height: var(--silueta-tam);
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--trazo);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .silueta--grande { width: var(--silueta-tam-l); height: var(--silueta-tam-l); }
+
+  .silueta__nervio,
+  .silueta__pinna { stroke-width: var(--trazo-fino); opacity: 0.75; }
+
+  .silueta__raquis { stroke-width: var(--trazo); }
+
+  /* Aquí la trama SÍ corresponde: la especie es un dato desconocido de verdad,
+     y va dentro del contorno para marcar dónde está la duda exactamente. */
+  .silueta__trama { stroke: none; }
+  .silueta__trama-linea { stroke: var(--color-sin-dato-trama); stroke-width: var(--trazo-fino); }
+
   /* El nombre a sangre de caja: dimensionado contra el contenedor, no la ventana. */
   .etiqueta__nombre {
     font-family: var(--fuente-etiqueta);
@@ -641,6 +694,17 @@
     & .estado__fecha { color: var(--texto-sobre-alerta); }
 
     & .estado__bloque--limites .estado__lista { color: var(--texto-sobre-alerta); }
+
+    /* Las causas también: van dentro del bloque invertido, así que su gris de
+       secundario caía a 1,19:1 sobre el rojo sólido. Cualquier color que se
+       añada aquí dentro tiene que entrar en esta lista. */
+    & .causa__resumen,
+    & .causa__detalle,
+    & .causa__mas-tirador,
+    & .causa__patron,
+    & .causa__patron-rotulo { color: var(--texto-sobre-alerta); }
+
+    & .causa__patron { border-inline-start-color: var(--texto-sobre-alerta); }
   }
 
   .estado__titulo,
@@ -682,6 +746,38 @@
     gap: var(--space-2);
     color: var(--texto-principal);
     max-width: var(--medida);
+  }
+
+  .causa { display: grid; gap: var(--space-1); }
+
+  .causa__resumen { font-weight: var(--peso-fuerte); }
+
+  .causa__detalle {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    margin-block-start: var(--space-1);
+    text-wrap: pretty;
+  }
+
+  /* El patrón no es una afirmación más: es una instrucción para mirar la
+     planta, y es lo que hace usable un listado de causas delante del tiesto.
+     Sin color — es método, no alarma. */
+  .causa__patron {
+    display: grid;
+    gap: var(--space-1);
+    margin-block-start: var(--space-2);
+    padding-inline-start: var(--space-3);
+    border-inline-start: var(--trazo-grueso) solid var(--color-borde-sutil);
+    font-size: var(--texto-s);
+    text-wrap: pretty;
+  }
+
+  .causa__patron-rotulo {
+    font-family: var(--fuente-etiqueta);
+    font-size: var(--texto-2xs);
+    letter-spacing: var(--tracking-caja-alta);
+    text-transform: uppercase;
+    color: var(--texto-meta);
   }
 
   .estado__item {
@@ -903,8 +999,32 @@
 
   .campo__resumen { font-size: var(--texto-s); text-wrap: pretty; }
 
+  /* Alto mínimo de diana: iban a 20 px y van apiladas con poco aire, así que no
+     salvaban la excepción de espaciado de WCAG 2.5.8. */
+  /* WCAG 2.2 · 2.5.8: 24×24 de área pulsable. Crece el PADDING, no el
+     `font-size`: la microtipografía de la cita es pequeña a propósito. Y van
+     apiladas con poco aire —24 fuentes por ficha—, así que no salvaban la
+     excepción de espaciado. */
   .campo__mas-tirador,
-  .dato__mas-tirador {
+  .dato__mas-tirador,
+  .causa__mas-tirador,
+  .fuente {
+    min-height: var(--space-5);
+    display: inline-flex;
+    align-items: center;
+    padding-block: var(--space-1);
+  }
+
+  /* Separación vertical entre dianas contiguas, que es la otra mitad del
+     criterio: sin aire, dos enlaces de 24 px siguen siendo fáciles de fallar. */
+  .campo__fuente,
+  .dato__fuente { margin-block-start: var(--space-2); }
+
+  .fuentes__lista { display: grid; gap: var(--space-2); }
+
+  .campo__mas-tirador,
+  .dato__mas-tirador,
+  .causa__mas-tirador {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
     color: var(--texto-secundario);

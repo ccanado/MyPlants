@@ -211,7 +211,7 @@ primario ("una planta mía tiene un problema ahora") no admite navegación.
   añade buscar, filtrar y el plano. Progresivo de verdad, no de boquilla.
 - Las fichas usan **container queries**, no media queries: la misma etiqueta sirve en la rejilla
   cerrada, abierta a ancho completo y en 320 px.
-- Las plantas con `estado.severidad != sana` van **las primeras** en el DOM. El orden es
+- Las plantas con `estados[].severidad != sana` van **las primeras** en el DOM. El orden es
   información.
 - Móvil: una columna, la franja del parte del día se vuelve `position: sticky`.
 
@@ -280,10 +280,10 @@ tiene nadie, y `CLAUDE.md` prohíbe rellenarlos a ojo.
 
 | # | SVG | Campo del JSON que consume | Qué dato explica | Animación completa | Versión reducida (obligatoria) |
 | --- | --- | --- | --- | --- | --- |
-| 1 | **El reloj de riego** — corte vertical del tiesto | `profundidad_seco_cm` (1–2) · `dias_verano` · `dias_invierno` (2–10) · `ml_aprox` (90–300) | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
+| 1 | **El reloj de riego** — corte vertical del tiesto | `profundidad_cm` (1–2) · `dias_verano` · `dias_invierno` (2–10) · `ml_aprox` (90–300) | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
 | 2 | **Lo que quiere y lo que tiene** — dos filas: la escala de 1 a 5 con dos marcas, y debajo la tira del día | `luz.nivel_actual` · `luz.nivel_ideal` · el tramo de sol directo de la mañana | **Arriba, el dato**: cuánto le falta — los dos coleos quieren más de la que tienen, el poto está más oscuro de lo ideal, y cuando las marcas coinciden no hay nada que hacer. **Abajo, el porqué**: de dónde sale esa luz — sol directo de primera hora y después claridad sin sol | La marca de "lo que tiene" entra, el hueco hasta "lo que quiere" se rellena, y el tramo de sol se dibuja de izquierda a derecha; 260 ms + 900 ms, **una vez** | Las dos marcas, el hueco y los dos tramos ya dibujados; solo opacidad |
 | 3 | **Rango térmico** — eje de 0 a 40 °C | `min_c` · `max_c` · `optimo_*` (solo 2 de 7) · `casa_verano_max_c` (28) · `rusticidad_rhs` | La banda que aguanta, la óptima **donde exista**, y dónde cae la casa dentro de ella. **No hay mínima letal**: `minima_letal_c` es `null` en las siete y RHS no publica ese dato | La banda crece de `min_c` a `max_c` y la marca de casa entra después, 260 ms | Banda y marca ya en su sitio, solo opacidad |
-| 4 | **Curso de recuperación** — eje de **hitos**, no de fechas | `estado.plan_recuperacion[]` (`{paso, senal, hito}`) · `estado.revisar_en` (texto con plazo **y** criterio) | Solo en begonia (5 pasos) y helecho (6): cada nodo es un paso y debajo la **señal observable** que confirma que funcionó. Lo que deja avanzar no es que pasen siete días, es que veas el brote | La línea se traza de izquierda a derecha (`--recorrido`, 900 ms) y el hito de hoy late **una sola vez** | Línea completa desde el principio, sin latido |
+| 4 | **Curso de recuperación** — eje de **hitos**, no de fechas | `estados[].plan_recuperacion[]` (`{paso, senal, hito}`) · `estados[].revisar_fecha` · `estados[].revisar_en` (prosa con plazo **y** criterio) | Solo en begonia (5 pasos) y helecho (6): cada nodo es un paso y debajo la **señal observable** que confirma que funcionó. Lo que deja avanzar no es que pasen siete días, es que veas el brote | La línea se traza de izquierda a derecha (`--recorrido`, 900 ms) y el hito de hoy late **una sola vez** | Línea completa desde el principio, sin latido |
 | 5 | **El calendario del domingo** — eje compartido de 2 a 10 días | `riego.dias_verano` de **las siete** | Cuál toca antes. Es la respuesta a "voy a regar y no me acuerdo de a cuál", que es el trabajo primario de la página | Los siete marcadores entran escalonados, 160 ms + `--retardo-*` | Los siete ya en su sitio, sin escalonar |
 
 Redundancia textual obligatoria, por SVG: (1) "cuando los 2 cm de arriba estén secos · cada 4 días
@@ -568,15 +568,15 @@ va en `--texto-secundario`, sin flecha, y `consultado` al lado.
 
 #### 5. Los diagramas, corregidos contra los campos que existen
 
-**Riego (1).** Gana un dato que yo había dado por perdido: **`profundidad_seco_cm`** existe y vale
+**Riego (1).** Gana un dato que yo había dado por perdido: **`riego.profundidad_cm`** existe y vale
 1 o 2 cm en las siete. Así que el corte del tiesto vuelve a tener su marca de profundidad, que era
-la idea original. Consume `profundidad_seco_cm`, `dias_verano`, `dias_invierno` y `ml_aprox`, y
+la idea original. Consume `riego.profundidad_cm`, `dias_verano`, `dias_invierno` y `ml_aprox`, y
 lleva el pie de atribución de arriba. Texto: *"cuando los 2 cm de arriba estén secos · cada 4 días
 en verano, 9 en invierno · 250 ml"*.
 
 **Luz (2) — y aquí `botanist` mejora el diagrama, no lo corrige.** Yo lo había planteado como
 "cuánto le falta". El dato real tiene **signo**: `nivel` es lo que la especie necesita y
-`nivel_recibido_estimado` lo que recibe donde está, y la diferencia va en las dos direcciones:
+`nivel_actual` lo que recibe donde está, y la diferencia va en las dos direcciones:
 
 | | Quién | Qué significa |
 | --- | --- | --- |
@@ -620,7 +620,7 @@ el brote. Solo en begonia (5 pasos) y helecho (6).
 
 #### 6. Las siete sanas también tienen `estado`, y hoy no tienen dónde
 
-`estado` está poblado en las siete, **también en las cuatro sanas**: llevan preventivo, plazo y
+`estados` está poblado en las siete, **también en las cuatro sanas**: llevan preventivo, plazo y
 qué mirar. Mi sistema les da distintivo cero —y eso sigue bien, cuatro insignias de "todo bien" son
 ruido— pero eso no puede significar que su contenido no se vea.
 
@@ -887,9 +887,14 @@ no cambia de estándar de honestidad porque el dato sea de uso en vez de botáni
 - **Ventanas de abonado y trasplante**, si `botanist` da los meses. *"El trasplante de la begonia
   va tarde"* es una tarea de hoy, no un consejo de manual.
 - **Días en casa** desde `fecha_llegada`: las cuatro de hoy están en aclimatación.
-- **Plazos de revisión** desde `estado.fecha_foto` hasta `revisar_en`.
+- **Plazos de revisión** desde `estados[].fecha_foto` hasta `revisar_en`.
 
-#### La memoria: `localStorage`, y dicha en voz alta
+#### La memoria: `localStorage`, **opcional**, y dicha en voz alta
+
+> Ya no es un requisito. Con los tipos de tarea de `botanist` la franja es correcta **sin
+> persistencia ninguna**: lo que tiene fecha se calcula y lo que no la tiene se dice como
+> comprobación. `localStorage` queda como mejora — reanclar una cuenta cuando Noah riega en un día
+> distinto al previsto —. Si no se implementa nunca, la función sigue siendo cierta.
 
 Un control por planta, **`Regada hoy`**, dentro de la ficha —no en la franja: la franja informa,
 la ficha es donde estás cuando riegas—. Al confirmarse, el rótulo pasa a pasado y a dato:
@@ -927,6 +932,181 @@ es donde se hacen—.
 `revisar_en_fecha` **además** del texto, no en su lugar: el texto dice *qué* mirar y eso no lo
 sustituye una fecha. Y las ventanas de `abonado` y `trasplante` como meses, si son afirmables.
 Donde no haya fecha, la franja se calla sobre esa planta — no estima.
+
+### La etiqueta se despega y debajo hay un expediente — y hay que decirlo
+
+`qa-visual` mide la ficha abierta: **4.801 px de alto, 51 párrafos seguidos**, en una página de
+7.033. Y su diagnóstico es mejor que el número: *"la ficha cerrada es una etiqueta de vivero
+disciplinada; la desplegada deja de ser una etiqueta y se convierte en un documento de texto. La
+metáfora no aguanta 4.801 px."* Tiene razón, y es una decisión de dirección, no de maquetación.
+
+**Pero la salida no es recortar.** Las trece observaciones visuales, las siete causas con su
+patrón y la que descarta con evidencia negativa son lo que hace fiable la web. Cortarlas para que
+la metáfora encaje sería subordinar el contenido a la ocurrencia, que es exactamente el fallo que
+el brief prohíbe.
+
+**La salida es admitir que la metáfora cambia al abrir, y decirlo en el diseño.**
+
+> La ficha cerrada **es la pegatina**. Al despegarla no aparece el reverso de una pegatina —un
+> reverso de pegatina no tiene 4.800 px—: aparece **el expediente de la planta**. Y un expediente
+> se maqueta como un expediente: con secciones nombradas, con un índice y con recuento.
+
+Eso no es rendirse: es que las plantas de vivero **tienen** expediente —pasaporte fitosanitario,
+lote, productor, país— y la pegatina es su portada. La página pasa de imitar una etiqueta a imitar
+la relación real entre una etiqueta y lo que hay detrás de ella.
+
+#### Tres medidas, en este orden
+
+**1. Las dos columnas semánticas** (§ anterior) recortan el alto casi a la mitad sin tocar una
+palabra. Es la medida que más devuelve por menos.
+
+**2. Un índice con recuento, dentro de la columna sticky de acción.** No para esconder: **para
+entrar**.
+
+```
+QUÉ HACER ─────────────
+  1. Sepárala del cristal
+  2. Cámbiala de maceta ⚠
+  3. …
+  ▨ línea de hitos
+─────────────────────────
+EN EL EXPEDIENTE
+  Lo que se ve ········ 13
+  Causas probables ····  7
+  Lo que la foto
+    no dice ···········  6
+  Fuentes ············· 24
+```
+
+**El recuento es información, no adorno.** «13 observaciones» y «24 fuentes» dicen algo verdadero
+sobre esta ficha antes de leerla: que el diagnóstico está trabajado. Un índice de un documento que
+oculta cuánto documento hay es un índice que engaña.
+
+**3. Y una supresión de verdad, que es lo que faltaba.** En la ficha abierta, los campos que
+muestran **diagrama + `detalle`** ya no repiten su `resumen`: el resumen existe para la rejilla
+cerrada, donde es lo único que hay. Hoy se pinta dos veces la misma frase en la misma pantalla.
+No se pierde nada y se van varios cientos de píxeles.
+
+#### Lo que sigue sin plegarse, y por qué
+
+Nada. Ni `LO QUE LA FOTO NO DICE`, ni los patrones, ni las causas. La regla se mantiene y ahora
+tiene mejor argumento: **con dos columnas y un índice, esconder además sería cobrar dos veces por
+la misma decisión.** Se ha resuelto el problema de navegación sin tocar el de honestidad, que era
+justo lo que había que conseguir.
+
+Y una línea que separa las dos cosas, por si vuelve la tentación: **plegar por longitud es
+razonable; plegar los límites de lo que sabemos, no.** Un índice mueve al lector; un `<details>`
+sobre "esto no lo podemos afirmar" decide por él que no le interesa.
+
+### Las tareas no son todas del mismo tipo — y el riego no es una de calendario
+
+`botanist` cierra el calendario con `tareas[].tipo`, conjunto cerrado de cinco, y ahí está la
+decisión de diseño entera: **cada tipo permite decir una cosa distinta, y pintarlos todos igual
+sería mentir en cuatro de los cinco.**
+
+| Tipo | Cuántas | Qué se puede decir | Cómo se pinta |
+| --- | --- | --- | --- |
+| **`vencida`** | **1** — el trasplante de la begonia | *"debería haberse hecho hace 57 días"* | ver abajo: es la única con peso |
+| `fecha` | 14 | *"faltan N días"*, *"hoy"* | texto normal, sin distintivo |
+| `temporada` | 9 | *"toca este mes"* | texto normal |
+| `condicionada` | 4 | **solo la condición**, nunca "hoy toca" | texto normal + la condición delante |
+| `ritmo` | 7 — el riego | **nunca una fecha** | ver abajo |
+
+#### El riego no puede llevar fecha, y esto es lo que más hay que respetar
+
+`riego.ultimo` es `null` en las siete y `calculable: false`. Un intervalo sin día de partida no
+produce un vencimiento: decir "hoy toca regar" desde "cada 4 días" es **inventarse el origen de la
+cuenta**. Es el mismo caso que la mínima letal, y se resuelve igual — mejor un hueco honesto que
+un número fabricado.
+
+Pero `botanist` da algo mejor que un hueco: **`riego.disparador`**, una frase que es cierta todos
+los días — *"comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo"*. Esa
+frase ocupa la casilla donde iba a ir la cuenta atrás. Y su argumento es el que cierra el asunto:
+
+> **Una web que dice "comprueba" enseña a cuidar plantas; una que dice "riega hoy" solo da
+> órdenes, y a los cuatro días se equivoca.**
+
+Eso vale como principio general de esta interfaz y no solo para el riego. Donde el disparador
+real sea una observación y no el calendario, **la interfaz pide mirar, no manda hacer.**
+
+> **Nota sobre la fecha de ancla.** Con una fecha de partida y el intervalo, la aritmética daría
+> todos los vencimientos: es cierto. Pero para el riego el disparador correcto **nunca es el
+> calendario, es el sustrato**, así que un ancla exacta produciría un vencimiento aritméticamente
+> impecable y agronómicamente falso — regar por calendario en una casa con aire acondicionado y
+> sol de mañana es cómo se ahoga una planta. El ancla se usa donde el calendario **sí** manda
+> (abonado, trasplante, revisión); en riego, no.
+
+#### Una sola `vencida`, y el mismo problema de calibración que la severidad
+
+`botanist` lo ve antes que yo: es idéntico al de la única `critica`. Si las catorce tareas con
+fecha se pintan con urgencia, la única que de verdad va tarde no destaca.
+
+Y hay algo mejor: **la `critica` es el helecho y la `vencida` es la begonia**, plantas distintas.
+Son dos ejes independientes y tienen que leerse como tales, así que **no comparten registro
+visual**:
+
+- **`critica`** (helecho) → `--color-alerta` invertido y el filete rojo en el canto. Sigue siendo
+  el único rojo de la página.
+- **`vencida`** (begonia) → `--color-aviso` sobre `--color-aviso-relleno`, con el rótulo
+  **`VA TARDE`** y el número de días. Sin rojo: no compite con el helecho, y una planta que
+  necesita trasplante no está en el mismo apuro que una que se secó entera.
+- Las otras catorce con fecha: **sin distintivo ninguno**. Es la misma economía que hace que las
+  cuatro sanas no lleven insignia.
+
+**El rótulo es `VA TARDE`, nunca "incumplido" ni "pendiente desde".** `vencida` significa *"tiene
+fecha de referencia y ya pasó"*, no *"alguien lo ha hecho mal"* — y la fecha de referencia es
+criterio de `botanist`, no norma de RHS, así que la interfaz no puede sonar a multa. Lo dice él y
+tiene toda la razón: acusar al lector de una tarea que nadie le había dicho es la forma más rápida
+de que cierre la página.
+
+#### La condición gana al mes
+
+Dos tareas —abonar y trasplantar el helecho— tienen el mes a favor y una condición en contra
+(*"solo cuando tenga 3 o 4 frondes"*). **Si las dos cosas se contradicen, manda la condición y la
+tarea no aparece como "toca este mes".** Abonar una planta sin hoja le quema las raíces: una tarea
+condicionada mostrada porque el mes cuadra no sería inexacta, sería **consejo dañino**.
+
+Regla para la franja: **`condicionada` nunca entra en la lista de "hoy"**. Aparece en su ficha, con
+la condición delante y en forma de comprobación, igual que el riego.
+
+#### Plazos relativos
+
+La begonia lleva `revisar_fecha: null`, `revisar_dias: 21` y `revisar_desde: "el día en que la
+cambies de maceta"`: su revisión cuenta desde el trasplante, no desde hoy, porque el trasplante es
+lo que se está midiendo. Se pinta **relativo y con su origen** —*"tres semanas después de
+cambiarla de maceta"*— y **nunca como fecha**. Es un solo caso, y pintado como fecha miente.
+
+### Nombres de campo — el brief se sincroniza con el JSON, no al revés
+
+`botanist` ha renombrado cosas y el brief tenía **rutas obsoletas apuntando a campos que ya no
+existen**. Corregidas todas. Como `builder` maqueta leyendo esto, una ruta vieja aquí es un
+`TypeError` silencioso allí — que es exactamente lo que pasó con `p.medidas.*` y costó los cuatro
+diagramas.
+
+| Antes (en este brief) | Ahora (en el JSON) |
+| --- | --- |
+| `estado.*` | **`estados[].*`** — es un **array** |
+| `riego.profundidad_seco_cm` | `riego.profundidad_cm` |
+| `luz.nivel_recibido_estimado` | `luz.nivel_actual` (con `luz.nivel_ideal`) |
+| `luz.orientacion_ventana` | `luz.orientacion` |
+
+**`estados` es un array y hoy todas las plantas tienen exactamente uno.** El diseño no lo va a
+ignorar por eso: el distintivo de severidad toma **el peor** de los estados, y el bloque
+`QUÉ LE PASA` se repite por estado con su propio `titulo` —que ya existe y es bueno: *"Podado a
+ras tras secarse: un solo brote y ningún margen de error"*—. Diseñar para uno y romperse con dos
+es la clase de deuda que se paga cuando nadie mira.
+
+**Y dos campos nuevos que sí cambian cosas:**
+
+- **`estados[].revisar_fecha`** existe además de `revisar_en`. La fecha se usa para contar días; la
+  prosa **no se sustituye por ella**, porque dice *qué mirar* y describe **dos formas distintas de
+  fracasar y cómo distinguirlas**. Eso no lo reemplaza un `2026-09-01`. Van los dos: la fecha en la
+  franja `HOY`, la prosa en el expediente.
+- **`tareas[].prioridad`** (1, 2, 3). Es el orden dentro de una planta, no una cuarta escala de
+  urgencia: **no se pinta con color ni con distintivo**, solo ordena la lista. La única jerarquía
+  cromática de tareas sigue siendo `VA TARDE`.
+- **`riego.ancla_tipo: "sin_dato"`** y `calculable: false` en las siete: el JSON dice explícitamente
+  que el riego no es calculable. La casilla la ocupa `riego.disparador`, ya especificado.
 
 ### Estados degradados — qué se dibuja cuando falta el dato
 
@@ -985,7 +1165,7 @@ verdes de "todo bien" son ruido justo alrededor de lo urgente.
 
 ### "Lo que la foto no dice" — el campo que no esperaba y que hay que enseñar
 
-`botanist` ha metido en `estado` un campo que yo no había pedido y que es lo mejor del JSON:
+`botanist` ha metido en `estados[]` un campo que yo no había pedido y que es lo mejor del JSON:
 **`no_visible_en_foto`**, la lista de lo que el diagnóstico **no** puede afirmar. En el helecho son
 cinco cosas, y la primera es la identificación de la especie.
 
@@ -998,7 +1178,7 @@ En la ficha del helecho ese bloque será más largo que el diagnóstico. Está b
 
 ### La ficha diagnostica un momento, no el presente
 
-`estado` describe lo que se veía el `fecha_foto`, no lo de hoy. Si no se dice, en tres semanas la
+`estados[0]` describe lo que se veía el `fecha_foto`, no lo de hoy. Si no se dice, en tres semanas la
 ficha estará afirmando algo falso. Por eso **la fecha va pegada al diagnóstico**, en
 `--fuente-dato`, dentro del mismo bloque y no al pie: *"observado el 11 ago 2026"*. Y el SVG 4
 arranca su línea de tiempo en esa fecha, no en "hoy".
@@ -1206,6 +1386,18 @@ un default.
 haría. Se sostiene porque las fichas son blancas y todo el texto largo vive sobre blanco: el
 color agresivo ocupa los huecos, nunca la lectura.
 
+> **Verificado en pantalla, y en el ancho donde yo decía que era peor.** `qa-visual` revisó los
+> 320 px expresamente: *"la teja no agobia; con el `h1` en dos líneas y los chips en tres filas la
+> proporción queda cómoda, el fondo respira y la ficha domina igual"*. Y aporta el motivo, que yo
+> no había previsto: **la franja del parte del día, al ser una banda blanca a sangre, corta el
+> terracota justo donde empezaba a pesar**. No hace falta apretar `--hueco-rejilla`, que era el
+> plan de contingencia acordado con el lead.
+>
+> Donde el riesgo **sí** se cobró fue en un sitio que nadie había mirado: con una ficha desplegada
+> quedaban ~850 × 480 px de teja continua. Ahí la frase "ocupa los huecos, nunca la lectura" dejaba
+> de ser cierta, y por eso la rejilla colapsa a una columna en modo ficha. La declaración de riesgo
+> sirvió para saber **dónde** mirar; no para acertar a la primera.
+
 ## Fases
 
 | Fase | Qué | Quién |
@@ -1225,6 +1417,20 @@ los Agent Teams lucen. `builder` arranca cuando hay tokens y hay JSON.
 Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
 
 - Qué reparto de tareas funcionó y cuál generó conflictos.
+- **El reparto de ficheros no cubre los recursos de ejecución.** `CLAUDE.md` evita que dos agentes
+  se pisen editando, pero no dice nada del navegador: el MCP de Playwright usa un perfil único de
+  Chrome, así que mientras `builder` previsualizaba, `qa-visual` no podía navegar — y yo tampoco
+  pude medir el desbordamiento de 320 px cuando quise. Se resolvió construyendo `tests/runner.py`,
+  que no depende del MCP. Un problema de coordinación que produjo la herramienta más reutilizable
+  del proyecto.
+- **Un dato deducido por el lead entró en el JSON como si viniera del cliente** (la orientación NE
+  y el "sin sol directo"), y solo se detectó porque el reparto obligaba a que el dato y el fichero
+  estuvieran en manos distintas y hubo un tercero que se negó a elegir entre dos fuentes. Un solo
+  agente con las dos cosas en la cabeza habría cerrado la contradicción sin enterarse de que
+  existía.
+- **Los mensajes cruzados costaron cuatro turnos** de demostrar que algo ya estaba hecho. Se
+  corrigió con dos hábitos: el lead comprueba `grep -n "^### " docs/brief.md` antes de encargar, y
+  los informes dan **líneas exactas** en vez de nombres de sección.
 - Cuándo el lead se puso a implementar en vez de esperar a los teammates.
 - Si los teammates marcaron sus tareas como completadas o se quedaron colgadas.
 - Coste en tokens frente a hacerlo en una sola sesión.

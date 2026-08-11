@@ -198,6 +198,19 @@ function conectarEventos(estado) {
     const boton = ev.target.closest(".chip__boton");
     if (boton) irAFicha(boton.dataset.planta, estado);
   });
+
+  /* Al abrir una ficha la rejilla colapsa a una columna, así que la ficha que
+     acabas de tocar cambia de sitio bajo el cursor. Esto no reimplementa nada
+     nativo: corrige un desplazamiento que provoca nuestro propio cambio de
+     layout, que es otra cosa. */
+  el.rejilla.addEventListener("toggle", (ev) => {
+    const detalle = ev.target;
+    if (!detalle.matches?.(".despegue") || !detalle.open) return;
+    detalle.querySelector(".despegue__tirador")?.scrollIntoView({
+      block: "start",
+      behavior: prefiereMenosMovimiento() ? "auto" : "smooth",
+    });
+  }, true);  // en captura: `toggle` no burbujea
 }
 
 /**

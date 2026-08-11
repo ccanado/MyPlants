@@ -29,6 +29,8 @@ const TRAZOS = {
   trasplante: ["M5 12h10l-1 8H6z", "M19 10V3", "M16 6l3-3 3 3"],
   // insecto de seis patas, muy esquemático
   plagas: ["M12 7a4 4 0 0 1 4 4v3a4 4 0 0 1-8 0v-3a4 4 0 0 1 4-4z", "M8 10L4 8", "M8 13H4", "M8 16l-4 2", "M16 10l4-2", "M16 13h4", "M16 16l4 2", "M10 6L9 3", "M14 6l1-3"],
+  // guante: cómo se hace la tarea, no una alarma
+  manipulacion: ["M7 11V6a1.5 1.5 0 0 1 3 0v5", "M10 11V4a1.5 1.5 0 0 1 3 0v7", "M13 11V5a1.5 1.5 0 0 1 3 0v6", "M16 11V8a1.5 1.5 0 0 1 3 0v7a6 6 0 0 1-6 6h-2a5 5 0 0 1-4-2l-4-5a1.6 1.6 0 0 1 2.4-2L7 14"],
   // triángulo de aviso
   toxicidad: ["M12 4l9 16H3z", "M12 10v4", "M12 17h.01"],
 };

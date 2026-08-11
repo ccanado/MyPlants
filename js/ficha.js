@@ -16,6 +16,7 @@
 import { FOTO, FOTO_ETIQUETA } from "./datos.js";
 import { humanizar, normalizar } from "./filtros.js";
 import { iconoDe, iconoDificultad } from "./iconos.js";
+import { siluetaDe } from "./siluetas.js";
 import {
   diagramaLuz,
   diagramaRecuperacion,
@@ -127,6 +128,10 @@ export function fijarMeta(meta) { META = meta ?? {}; }
 
 function caraEtiqueta(q, planta, idTitulo) {
   // El nombre se imprime idéntico en las siete: es lo que se busca con prisa.
+  const silueta = siluetaDe(planta.id);
+  if (silueta) q(".etiqueta__silueta").append(silueta);
+  else q(".etiqueta__silueta").remove();
+
   const titulo = q(".etiqueta__nombre");
   titulo.id = idTitulo;
   /* El nombre grande existe para encontrar la planta de un vistazo, y el estado
@@ -254,6 +259,7 @@ function bloqueEstado(q, planta) {
      mirar. Siguen sin distintivo, pero su contenido tiene que verse, y «Qué le
      pasa» sobre una planta sana sería un titular equivocado. */
   q(".estado__titulo").textContent = g === "sana" ? "Qué vigilar" : "Qué le pasa";
+  if (estado.titulo_estado) q(".estado__severidad").before(subtitulo(estado.titulo_estado));
 
   // El texto va siempre: el color no puede ser el único portador de la señal.
   q(".estado__severidad-valor").textContent = humanizar(estado.severidad);
@@ -264,7 +270,7 @@ function bloqueEstado(q, planta) {
   else fecha.remove();
 
   listaEn(seccion, ".estado__bloque--senales", estado.senales);
-  listaEn(seccion, ".estado__bloque--causas", estado.causas);
+  bloqueCausas(seccion, estado.causas);
   listaEn(seccion, ".estado__bloque--limites", estado.no_visible);
 
   const tratamiento = q(".estado__tratamiento");
@@ -304,14 +310,83 @@ function bloqueEstado(q, planta) {
   const revisar = q(".estado__revisar");
   if (estado.revisar_en) {
     revisar.hidden = false;
-    q(".estado__revisar-texto").textContent = estado.revisar_en;
+    const desde = !estado.revisar_fecha && estado.revisar_dias && estado.revisar_desde
+      ? `${estado.revisar_dias} días desde ${estado.revisar_desde}. `
+      : "";
+    q(".estado__revisar-texto").textContent = desde + estado.revisar_en;
   } else {
     revisar.remove();
   }
 
-  const diagrama = diagramaRecuperacion(estado.pasos, estado.revisar_corto);
+  /* `revisar_fecha` es fecha real en 6 de 7. La begonia lleva null a propósito:
+     su plazo cuenta desde el día que se cambie de maceta, no desde hoy, así que
+     se pinta como plazo relativo y nunca como fecha. */
+  const rotuloPlazo = estado.revisar_fecha
+    ? fechaCorta(estado.revisar_fecha)
+    : estado.revisar_dias
+      ? `+${estado.revisar_dias} días`
+      : estado.revisar_corto;
+  const diagrama = diagramaRecuperacion(estado.pasos, rotuloPlazo);
   if (diagrama) q(".estado__diagrama").append(diagrama);
   else q(".estado__diagrama").remove();
+}
+
+/**
+ * Las causas probables: una línea por causa y el razonamiento plegado detrás.
+ * Con siete párrafos largos volcados de golpe el bloque se vuelve un muro y el
+ * brief pide leer el dato concreto sin scroll infinito.
+ *
+ * `patron` va aparte y con su rótulo: no es una afirmación más, es una
+ * instrucción para mirar la planta, y es lo que convierte un listado de causas
+ * en algo usable delante del tiesto.
+ */
+function bloqueCausas(raiz, causas) {
+  const bloque = raiz.querySelector(".estado__bloque--causas");
+  if (!bloque) return;
+  if (!causas || causas.length === 0) {
+    bloque.remove();
+    return;
+  }
+  bloque.hidden = false;
+  const ul = bloque.querySelector(".estado__lista");
+
+  for (const causa of causas) {
+    const li = document.createElement("li");
+    li.className = "estado__item causa";
+    if (causa.id) li.dataset.causa = causa.id;
+
+    const linea = document.createElement("p");
+    linea.className = "causa__resumen";
+    linea.textContent = causa.resumen ?? causa.detalle;
+    li.append(linea);
+
+    if (causa.detalle && causa.resumen) {
+      const det = document.createElement("details");
+      det.className = "causa__mas";
+      const sum = document.createElement("summary");
+      sum.className = "causa__mas-tirador";
+      sum.textContent = "Por qué";
+      const p = document.createElement("p");
+      p.className = "causa__detalle";
+      p.textContent = causa.detalle;
+      det.append(sum, p);
+      li.append(det);
+    }
+
+    if (causa.patron) {
+      const patron = document.createElement("p");
+      patron.className = "causa__patron";
+      const rotulo = document.createElement("span");
+      rotulo.className = "causa__patron-rotulo";
+      rotulo.textContent = "Para reconocerla";
+      const texto = document.createElement("span");
+      texto.textContent = causa.patron;
+      patron.append(rotulo, texto);
+      li.append(patron);
+    }
+
+    ul.append(li);
+  }
 }
 
 /** Rellena un <ul> de un bloque del estado, o quita el bloque si no hay nada. */
@@ -330,6 +405,13 @@ function listaEn(raiz, selectorBloque, elementos) {
     li.textContent = item;
     ul.append(li);
   }
+}
+
+function subtitulo(texto_) {
+  const p = document.createElement("p");
+  p.className = "estado__cabecera";
+  p.textContent = texto_;
+  return p;
 }
 
 /** «2026-08-11» → «11/08/2026». Sin librerías de fechas para esto. */
@@ -479,6 +561,14 @@ function bloqueMasDatos(q, planta) {
     const c = planta.cuidados.get(clave);
     if (!c) continue;
     lista.append(datoDe(c.etiqueta, c.resumen, c.detalle, fuenteDe(planta, clave), clave));
+  }
+
+  /* Se pinta también cuando dice que los guantes sobran: inflar la precaución
+     donde no aplica es la forma más rápida de que nadie se la crea donde sí. */
+  if (planta.manipulacion) {
+    lista.append(datoDe("Manipulación", planta.manipulacion.resumen,
+      [planta.manipulacion.detalle, planta.manipulacion.epi].filter(Boolean).join("\n") || null,
+      fuenteDe(planta, "manipulacion"), "manipulacion"));
   }
 
   const plagas = planta.plagas.length > 0 ? planta.plagas.map((x) => x.nombre).join(" · ") : null;

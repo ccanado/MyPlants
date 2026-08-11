@@ -67,6 +67,28 @@ export async function cargarPlantas(url = "./content/plantas.json") {
   return { plantas: crudas.map(normalizarPlanta), meta: objeto(datos?.meta) };
 }
 
+/**
+ * Grita en consola si el JSON deja de traer un campo del que depende el render.
+ * El fallo que esto evita es el peor de todos: cuando `botanist` cambia la
+ * forma de un campo, el render no explota — se traga un trozo de interfaz y la
+ * página parece correcta. Un `console.warn` con el id de la planta y el nombre
+ * del campo cuesta cinco líneas y ahorra una tarde de búsqueda.
+ */
+const CAMPOS_ESPERADOS = ["id", "nombre_comun", "foto", "alt", "riego", "luz", "temperatura", "estados", "fuentes"];
+
+function avisarDeCamposAusentes(crudas) {
+  const faltas = [];
+  for (const p of crudas) {
+    for (const campo of CAMPOS_ESPERADOS) {
+      if (!(campo in p)) faltas.push(`${p?.id ?? "(sin id)"} → falta «${campo}»`);
+    }
+    if (Array.isArray(p.estados) && p.estados.length === 0) faltas.push(`${p.id} → «estados» está vacío`);
+  }
+  if (faltas.length > 0) {
+    console.warn(`[MyPlants] content/plantas.json no trae campos que el render espera:\n  ${faltas.join("\n  ")}`);
+  }
+}
+
 /* ── normalizadores ─────────────────────────────────────────────────────────── */
 
 /**
@@ -106,6 +128,29 @@ function normalizarFuente(f) {
   };
 }
 
+/**
+ * El estado vigente de una planta. Existe como función y no como acceso
+ * directo a propósito: `estado` (objeto) pasó a `estados` (lista, la más
+ * reciente primero) y Carlos quiere añadir diagnósticos nuevos con fotos
+ * nuevas. Leerlo por aquí hace que el próximo cambio de forma cueste una línea.
+ */
+function estadoVigente(p) {
+  if (!Array.isArray(p.estados)) return p.estado ?? null;  // forma antigua
+  /* El más reciente POR `fecha_foto`, no `estados[0]`. El orden de un array es
+     una convención y la fecha es un dato: el día que alguien inserte una
+     observación antigua al final, `[0]` mostraría un diagnóstico caducado sin
+     que nada falle. */
+  return [...p.estados]
+    .sort((a, b) => String(b?.fecha_foto ?? "").localeCompare(String(a?.fecha_foto ?? "")))[0] ?? null;
+}
+
+/** El distintivo toma el PEOR de todos los estados, no solo el vigente: una
+ *  planta con histórico sigue siendo crítica mientras alguna observación lo diga. */
+function severidadesDe(p) {
+  const lista_ = Array.isArray(p.estados) ? p.estados : [p.estado];
+  return lista_.map((e) => texto(e?.severidad)).filter(Boolean);
+}
+
 function normalizarEstado(e) {
   if (e == null) return null;
 
@@ -141,9 +186,22 @@ function normalizarEstado(e) {
     severidad: texto(e.severidad ?? e.nivel) ?? "atencion",
     fecha_foto: texto(e.fecha_foto),
     senales: lista(e.senales ?? e.señales).map(texto).filter(Boolean),
-    causas: lista(e.causas_probables ?? e.causas).map(texto).filter(Boolean),
+    /* Cada causa trae ahora su línea corta, su párrafo y el patrón para
+       reconocerla mirando la planta. `patron` es null en 14 de 35 y eso
+       significa «esta causa no se distingue por una señal», no que falte. */
+    causas: lista(e.causas_probables ?? e.causas)
+      .map((c) => (typeof c === "object" && c !== null
+        ? { id: texto(c.id), resumen: texto(c.resumen), detalle: texto(c.detalle), patron: texto(c.patron) }
+        : { id: null, resumen: texto(c), detalle: null, patron: null }))
+      .filter((c) => c.resumen || c.detalle),
     no_visible: lista(e.no_visible_en_foto).map(texto).filter(Boolean),
     revisar_en: revisar,
+    revisar_fecha: texto(e.revisar_fecha),
+    revisar_dias: e.revisar_dias ?? null,
+    revisar_desde: texto(e.revisar_desde),
+    titulo_estado: texto(e.titulo),
+    foto_diagnostico: texto(e.foto),
+    verificacion: e.verificacion ?? null,
     // Para el rótulo del diagrama hace falta algo corto ("3 semanas"), no el
     // párrafo entero: se toma lo que va antes del primer dos puntos si cabe.
     revisar_corto: revisar ? etiquetaCorta(revisar) : null,
@@ -224,7 +282,8 @@ function normalizarMedidas(p) {
        lo que la especie pide y lo que recibe donde está: si recibe de más hay
        riesgo de quemadura, si recibe de menos hay déficit. */
     luz: {
-      nivel_ideal: luz.nivel_ideal ?? luz.nivel ?? p.luz_nivel ?? null,
+      // Migrado a `nivel_ideal`; `luz.nivel` era alias y ya no se lee.
+      nivel_ideal: luz.nivel_ideal ?? p.luz_nivel ?? null,
       nivel_actual: luz.nivel_actual ?? luz.nivel_recibido_estimado ?? null,
       categoria_ideal: texto(luz.categoria_ideal),
       categoria_recibida: texto(luz.categoria_recibida),
@@ -324,7 +383,7 @@ function normalizarPlanta(p) {
       .filter((x) => x.nombre),
     toxicidad: normalizarToxicidad(p.toxicidad_mascotas),
     dificultad: texto(p.dificultad),
-    nivel_luz: palabraNivelLuz(p.luz_nivel ?? p.nivel_luz ?? objeto(p.luz).nivel),
+    nivel_luz: palabraNivelLuz(objeto(p.luz).nivel_ideal ?? p.luz_nivel ?? p.nivel_luz),
     historia: texto(p.historia),
     notas_carlos: texto(p.notas_carlos),
     notas: lista(p.notas).map((n) => ({ autor: texto(n?.autor), texto: texto(n?.texto) })).filter((n) => n.texto),
@@ -336,7 +395,9 @@ function normalizarPlanta(p) {
     procedencia_nota: texto(p.procedencia_nota ?? p.origen),
     vivero: normalizarVivero(p),
     medidas: normalizarMedidas(p),
-    estado: normalizarEstado(p.estado),
+    estado: normalizarEstado(estadoVigente(p)),
+    severidades: severidadesDe(p),
+    historico: Array.isArray(p.estados) ? p.estados.length : (p.estado ? 1 : 0),
     fuentes: lista(p.fuentes).map(normalizarFuente).filter(Boolean),
   };
 }
@@ -350,9 +411,12 @@ const PESO_SEVERIDAD = ["critica", "urgente", "grave", "mal", "alerta", "atencio
 
 export function ordenarPorUrgencia(plantas) {
   const peso = (p) => {
-    if (!p.estado) return PESO_SEVERIDAD.length;
-    const i = PESO_SEVERIDAD.indexOf(slug(p.estado.severidad));
-    return i === -1 ? PESO_SEVERIDAD.length - 0.5 : i;
+    // Se ordena por la PEOR severidad conocida de la planta, no solo la vigente.
+    const pesos = (p.severidades ?? [])
+      .map((s) => PESO_SEVERIDAD.indexOf(slug(s)))
+      .map((i) => (i === -1 ? PESO_SEVERIDAD.length - 0.5 : i));
+    if (pesos.length === 0) return PESO_SEVERIDAD.length;
+    return Math.min(...pesos);
   };
   return [...plantas].sort(
     (a, b) => peso(a) - peso(b) || a.nombre_comun.localeCompare(b.nombre_comun, "es")

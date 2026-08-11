@@ -70,10 +70,19 @@ RECOLECTOR = """
   const espera = (ms) => new Promise(r => setTimeout(r, ms));
 
   // Si hay que abrir una ficha antes de medir (para auditar el estado desplegado)
-  if (window.__QA_ABRIR__) {
-    for (let i = 0; i < 60 && !document.querySelector('.despegue'); i++) await espera(100);
-    const d = document.querySelectorAll('details.despegue')[window.__QA_ABRIR_N__ || 0];
-    if (d) { d.open = true; await espera(700); }
+  if (window.__QA_ABRIR__ || window.__QA_ABRIR_TODAS__) {
+    for (let i = 0; i < 60 && !document.querySelector('details'); i++) await espera(100);
+    if (window.__QA_ABRIR_TODAS__) {
+      // TODOS los <details>, no solo el de despegue: los "Más detalle" de cada campo
+      // también esconden contenido, y para medir cobertura hay que verlo entero.
+      document.querySelectorAll('details').forEach((d) => { d.open = true; });
+      await espera(300);
+      document.querySelectorAll('details').forEach((d) => { d.open = true; });
+      await espera(900);
+    } else {
+      const d = document.querySelectorAll('details.despegue')[window.__QA_ABRIR_N__ || 0];
+      if (d) { d.open = true; await espera(700); }
+    }
   }
 
   // esperar a que la página termine de pintar sus fichas desde el JSON
@@ -245,13 +254,16 @@ def main() -> int:
     ap.add_argument("--json", default=None, help="vuelca el informe crudo a un fichero")
     ap.add_argument("--puerto", type=int, default=8011)
     ap.add_argument("--abrir", type=int, default=None, help="abre la ficha N (0-based) antes de medir")
+    ap.add_argument("--abrir-todas", action="store_true", help="abre TODOS los <details> antes de medir")
     ap.add_argument("--verboso", action="store_true")
     args = ap.parse_args()
 
     tests = args.test or ORDEN
     buzon = {"informe": None, "listo": threading.Event()}
     inyeccion = construir_inyeccion(tests)
-    if args.abrir is not None:
+    if args.abrir_todas:
+        inyeccion = "<script>window.__QA_ABRIR_TODAS__=true;</script>" + inyeccion
+    elif args.abrir is not None:
         inyeccion = (f"<script>window.__QA_ABRIR__=true;window.__QA_ABRIR_N__={args.abrir};</script>"
                      + inyeccion)
     srv = servidor(inyeccion, args.puerto, buzon)

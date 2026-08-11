@@ -23,14 +23,21 @@
       "riego.profundidad_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
       "fecha_llegada": "fecha en que la planta entró en casa, YYYY-MM-DD. `null` cuando solo se puede decir de forma aproximada: entonces el dato está en `fecha_llegada_texto`",
       "dias_en_casa": "días desde `fecha_llegada` hasta la fecha del diagnóstico (2026-08-11). `null` si la llegada es aproximada",
-      "notas": "lista de notas personales, `[{autor, texto}]`. Vacía hoy: nadie las ha dictado todavía. `notas_carlos` se mantiene en null por compatibilidad con el validador",
+      "notas": "lista de notas personales, `[{autor, texto}]`, hoy vacía en las siete: nadie las ha dictado. Sustituye a `notas_carlos`, que se ha retirado del fichero: había dos campos para lo mismo y la duplicación es peor que el hueco. Los autores posibles son Carlos, Noah y Vanesa.",
       "manipulacion": "riesgo al manipular la planta (podar, trasplantar, hacer esquejes): la vía relevante en esta casa, que es dérmica y ocular, no digestiva. Con su propia cita",
       "nombre_comun": "el nombre con el que Carlos llama a la planta, y nada más. El estado de identificación NO va aquí: cuando `nombre_cientifico` es null, ese es el renglón donde se rotula «sin identificar». Y la discrepancia entre el nombre de la etiqueta y la especie real (caso de la margarita, que es un crisantemo) se cuenta en `nombre_cientifico` y en `estado`, no metida entre paréntesis en el nombre grande.",
       "tareas": "lista de tareas por planta. `tipo` es conjunto cerrado y dice CÓMO se calcula cada una, que es lo que evita afirmar lo que no se sabe: `vencida` (tenía fecha límite y ya pasó: usa `desde`), `fecha` (fecha concreta en `fecha`), `temporada` (meses en `meses`), `condicionada` (no depende del calendario sino de que se cumpla `condicion`), `ritmo` (cada tantos días, pero SOLO calculable si hay registro del último día; ver `calculable`)",
       "tareas.calculable": "false significa que la web NO debe decir «hoy toca»: falta el dato de origen. Está explicado en `por_que_no`",
       "revisar_fecha": "fecha de la revisión del diagnóstico, YYYY-MM-DD. `null` cuando la revisión no cuenta desde hoy sino desde una acción que aún no se ha hecho: entonces el plazo está en `revisar_dias` y el punto de partida en `revisar_desde`",
       "abonado.meses / trasplante.meses": "meses del año (1-12) en que la tarea aplica. `null` cuando la tarea no depende del calendario, y entonces hay `condicion`",
-      "riego.ultimo": "fecha del último riego. `null` en las siete: nadie lo registra. Es la razón por la que el riego no se puede convertir en «hoy toca regar»"
+      "riego.ultimo": "fecha del último riego. `null` en las siete: nadie lo registra. Es la razón por la que el riego no se puede convertir en «hoy toca regar»",
+      "estados": "lista de diagnósticos ordenada del más reciente al más antiguo. `estados[0]` es el vigente. Cada entrada lleva su `fecha_foto` y su `foto`: un diagnóstico describe una imagen concreta, no el presente",
+      "estados[].causas_probables": "objetos `{id, resumen, detalle, patron}`. `patron` es la señal que permite distinguir esa causa de las otras mirando la planta; puede ser null si la causa no tiene patrón propio",
+      "estados[].verificacion": "qué hipótesis del diagnóstico anterior quedó confirmada, refutada o sin resolver. Null en el primer diagnóstico de cada planta",
+      "riego.ancla": "fecha desde la que contar los vencimientos de riego. Con `dias_verano`/`dias_invierno` basta para calcular sin guardar nada",
+      "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (alguien apuntó el riego: el cálculo es firme), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe), `sin_dato` (no se puede contar)",
+      "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
+      "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente."
     },
     "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas, así que sus URLs se citan como referencia localizada pero el nombre aceptado se ha comprobado abriendo el registro equivalente en IPNI, que es también de Kew. Está anotado en cada ficha.",
     "vivero": {
@@ -59,7 +66,9 @@
         "profundidad_cm": 1,
         "ultimo": null,
         "calculable": false,
-        "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo"
+        "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": null,
+        "ancla_tipo": "sin_dato"
       },
       "luz": {
         "resumen": "Luz difusa, nada de sol directo: ese tramo de la mañana le puede quemar el brote.",
@@ -98,7 +107,6 @@
         "min_c": 10,
         "max_c": null,
         "detalle": "RHS es explícito con los helechos tiernos de interior: no sobreviven por debajo de 10 °C y les molestan las corrientes frías. No doy máximo porque no he encontrado cifra publicada para un helecho de interior genérico, y como la especie está sin identificar tampoco puedo tomar el máximo de otra: lo que sí es seguro es que el calor con aire seco es peor que el calor con aire húmedo. En agosto en Móstoles, si el salón pasa de 30 °C, sube la humedad antes que bajar la temperatura.",
-        "max_c_nota": "Sin cifra verificable: la especie está sin identificar y RHS solo publica el mínimo para helechos tiernos de interior.",
         "optimo_min_c": null,
         "optimo_max_c": null,
         "minima_letal_c": null,
@@ -109,12 +117,13 @@
       "sustrato": {
         "resumen": "Sustrato de interior sin turba, esponjoso y que retenga humedad. No lo cambies todavía.",
         "detalle": "RHS recomienda para Adiantum sustrato de interior sin turba. Mientras esté recuperándose no lo toques: cambiar el sustrato implica manipular unas raíces que ya vienen de una desecación, y ahora mismo no tiene hoja con la que compensar el destrozo. Si al regar ves que el agua atraviesa la maceta en dos segundos y sale por abajo casi limpia, el cepellón está compactado y seco por dentro; la solución de esta semana es el riego por inmersión, no el trasplante.",
+        "mezcla": null,
         "cambiar_ahora": false
       },
       "abonado": {
         "resumen": "Nada de abono hasta que tenga 3 o 4 frondes sanas. Luego, líquido a media dosis una vez al mes.",
         "detalle": "RHS da para Adiantum abono líquido general a media concentración, una vez al mes, de mediados de primavera a finales de verano. Pero abonar una planta sin hoja no la alimenta: la sal del fertilizante se queda en el sustrato y quema unas raíces ya dañadas. Espera a tener 3 o 4 frondes desarrolladas y verdes, y entonces empieza a media dosis. En invierno, cero.",
-        "media_dosis": true,
+        "temporada": null,
         "meses": [
           4,
           5,
@@ -122,7 +131,8 @@
           7,
           8
         ],
-        "condicion": "solo cuando tenga 3 o 4 frondes sanas desarrolladas; abonar una planta sin hoja quema raíces"
+        "condicion": "solo cuando tenga 3 o 4 frondes sanas desarrolladas; abonar una planta sin hoja quema raíces",
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "No ahora. Cuando recupere masa foliar, en primavera, y solo si el cepellón lo pide.",
@@ -154,83 +164,6 @@
       ],
       "toxicidad_mascotas": null,
       "dificultad": "exigente",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "critica",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Lleva 74 días en casa (llegó el 29 de mayo de 2026). Dentro de esos 74 días se secó por completo y Noah lo podó entero: no es una planta que llevara años deteriorándose, es un colapso rápido en menos de un trimestre.",
-          "En el centro de la maceta, una masa densa de tocones finos, oscuros y alambrados, cortados a pocos centímetros del sustrato: son los restos de la poda, no tejido vivo.",
-          "Un único punto de crecimiento verde, con segmentos pequeños (unos 5 mm) en forma de cuña y margen lobulado, sobre pecíolos finos y oscuros, que cae por el borde izquierdo de la maceta.",
-          "Un segundo brote diminuto, más pálido y aún sin desplegar, junto al centro de la masa de tocones.",
-          "Superficie del sustrato oscura, con restos vegetales secos entremezclados.",
-          "La foto está tomada de noche y con poca luz: el color real de la fronde nueva y el detalle del envés no se pueden juzgar en ella.",
-          "Masa foliar viva estimada: menos del 5 % de lo que tenía la planta antes de secarse.",
-          "La planta está junto al ventanal, donde por la mañana entra sol directo. Para un brote de helecho recién nacido eso no es luz favorable: es un riesgo inmediato."
-        ],
-        "causas_probables": [
-          "Desecación completa previa, ya confirmada por Carlos: la planta se secó y él la podó entera. Los tocones marrones son consecuencia de la poda, no de una enfermedad activa.",
-          "Que ocurriera en 74 días acota mucho la causa, y apunta a un secado puntual y no a un declive lento. Los 74 días son junio, julio y media de agosto: el tramo más seco y caluroso del año en Móstoles, con el aire acondicionado deshumidificando a diario. En un helecho tierno basta con que el cepellón (la bola de raíces con su tierra) se separe de las paredes de la maceta una vez: a partir de ahí el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
-          "En un helecho tierno, la causa habitual de esa desecación en Móstoles es la combinación de aire muy seco (calefacción en invierno, calor seco en verano) con un riego que se salta: el cepellón se separa de las paredes de la maceta, el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
-          "El estado es crítico no por una plaga ni por una infección, sino por el margen: con esta masa foliar cualquier error de riego, un sol directo o un secado de dos días la mata. La buena noticia del cuadro es que ha rebrotado, lo que indica que el rizoma sigue vivo.",
-          "Su ubicación actual, con sol directo matinal, es incompatible con lo que RHS pide para un helecho tierno, y el aire acondicionado añade corriente fría y sequedad en verano. No son la causa del estado actual —eso lo explica la desecación previa que ya ha contado Carlos— pero sí son la vía más probable de que la recuperación fracase."
-        ],
-        "tratamiento": [
-          "Hoy, y por delante de todo lo demás: sácala del tramo de sol directo de la mañana. Mismo salón, junto al ventanal, pero en un lateral, a un metro del cristal o detrás de un visillo.",
-          "Hoy: comprueba que no está en la línea de aire del aire acondicionado. La corriente fría y seca sobre un brote tierno es de las pocas cosas que pueden matarlo en días.",
-          "Esta semana: corta a ras los tocones marrones y secos con tijera limpia, sin tirar de ellos y sin tocar el brote verde ni el suelo alrededor. Están muertos, estorban a la ventilación y esconden a la cochinilla.",
-          "Esta semana: comprueba si la maceta de barro tiene agujero de drenaje. Si no lo tiene, planta la maceta de plástico dentro y saca esa para regar, o cambia de recipiente antes que arriesgar un encharcado.",
-          "Esta semana: ponla sobre un plato con grava mojada y a un metro largo de cualquier radiador. Prioriza esto por encima de cualquier otra cosa.",
-          "Riego: unos 100 ml cada 3 días en agosto, comprobando el dedo antes. Si el agua atraviesa la maceta en dos segundos, riega por inmersión 10 minutos y deja escurrir bien.",
-          "Nada de abono hasta que haya 3 o 4 frondes desarrolladas. Nada de trasplante hasta primavera.",
-          "Cuando el brote se despliegue del todo (fronde entera, con el envés visible), hazle una foto de día: es lo que hace falta para cerrar la identificación."
-        ],
-        "revisar_en": "Fecha concreta: 1 de septiembre de 2026, tres semanas después de la foto. Para entonces debería haber al menos un brote nuevo más, y el que ya está tendría que haberse desplegado con los segmentos más grandes que ahora. Dos formas distintas de fracasar, y se distinguen: si el brote se pone marrón desde la punta y de golpe, con aspecto de papel, sospecha sol directo o la corriente del aire acondicionado; si se pone marrón despacio y desde la base, y la tierra sigue mojada tres días después de regar, sospecha encharcamiento. Si el 1 de septiembre no hay ningún brote nuevo pero el actual sigue verde, no lo des por perdido: un rizoma que rebrota una vez suele volver a hacerlo, y en septiembre baja el calor.",
-        "no_visible_en_foto": [
-          "La identificación. Lo que se ve son tocones y un brote juvenil. Los rasgos que sí se aprecian —estipes finos, oscuros y alambrados, y segmentos verdes en cuña con margen lobulado— son compatibles con el género Adiantum (culantrillo), que es lo que se vende como helecho de interior con esa morfología, pero no me basta para afirmarlo: hace falta una fronde desarrollada, fotografiada de día, del haz y del envés (buscando los soros bajo el margen replegado).",
-          "El estado del rizoma y de las raíces, que es lo que decide si esto sale adelante.",
-          "La humedad real del cepellón y si está compactado.",
-          "Si la maceta de barro tiene agujero de drenaje.",
-          "Plagas: la foto es nocturna y de baja luz, no sirve para descartar cochinilla ni araña roja.",
-          "Si la mancha de sol de la mañana cae exactamente sobre esta maceta o pasa de largo. Es la comprobación más urgente y se resuelve con una foto del salón a esa hora."
-        ],
-        "titulo": "Podado a ras tras secarse: un solo brote y ningún margen de error",
-        "plan_recuperacion": [
-          {
-            "paso": "Sacarla del sol directo matinal y de la corriente del aire acondicionado.",
-            "senal": "El brote verde sigue verde: ni puntas marrones de papel ni segmentos que se cierran.",
-            "hito": "inmediato; comprobación a los 3 días"
-          },
-          {
-            "paso": "Cortar a ras los tocones marrones con tijera limpia, sin tirar de ellos y sin tocar el brote verde. Lávate las manos al terminar; los guantes aquí no hacen falta, es tejido seco y sin savia.",
-            "senal": "El centro de la maceta queda despejado y se ve la tierra; ninguna mancha blanda ni moho entre los restos.",
-            "hito": "inmediato"
-          },
-          {
-            "paso": "Verificar el drenaje de la maceta de barro y corregirlo si no tiene agujero.",
-            "senal": "Al regar sale agua por abajo y el sustrato no sigue mojado al tercer día.",
-            "hito": "esta semana"
-          },
-          {
-            "paso": "Plato con grava húmeda y riego de ~100 ml cada 3 días comprobando con el dedo.",
-            "senal": "El brote se despliega: los segmentos crecen y aparece una fronde entera.",
-            "hito": "3 semanas"
-          },
-          {
-            "paso": "Esperar 3 o 4 frondes sanas antes de abonar; nada de trasplante hasta primavera.",
-            "senal": "Brotes nuevos sucesivos, cada uno mayor que el anterior.",
-            "hito": "2-3 meses"
-          },
-          {
-            "paso": "Foto diurna de una fronde desarrollada, haz y envés.",
-            "senal": "Se ven los soros bajo el margen replegado y la forma completa de la pinna.",
-            "hito": "cuando haya una fronde adulta: cierra la identificación"
-          }
-        ],
-        "revisar_fecha": "2026-09-01",
-        "revisar_dias": null,
-        "revisar_desde": null
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -317,7 +250,7 @@
           "nota": "Null porque la planta está sin identificar y la toxicidad no se puede valorar sin especie. Además, en la lista de ASPCA (revisada el 2026-08-11 en su listado para gatos) no aparece ninguna entrada para Adiantum ni para \"maidenhair fern\", así que ni siquiera la hipótesis tiene respaldo: ausencia en ASPCA no significa que sea inocua. Se resuelve identificando el helecho y volviendo a buscar por su nombre científico."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -434,6 +367,27 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null: no consta cuándo se regó por última vez, así que no hay punto de partida desde el que contar y el vencimiento no se puede calcular. Pregunta concreta para Carlos o Noah: ¿cuándo la regaste por última vez? Con una sola fecha, el cálculo se activa. Mientras no la haya, la ficha solo puede dar el ritmo y recordar la comprobación con el dedo: una fecha estimada daría vencimientos falsos con aspecto de exactos."
+        },
+        {
+          "campo": "sustrato.mezcla",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null en el helecho y en la margarita a propósito: en el helecho porque no hay que cambiarle el sustrato ahora y proponer una mezcla invitaría a hacerlo; en la margarita porque no se trasplanta durante la floración. En las otras cinco hay mezcla concreta."
         }
       ],
       "ubicacion": {
@@ -510,7 +464,114 @@
           "dias_invierno": 4,
           "calculable": false,
           "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "prioridad": 2,
+          "ancla": null,
+          "ancla_tipo": "sin_dato"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "helecho.jpg",
+          "severidad": "critica",
+          "titulo": "Podado a ras tras secarse: un solo brote y ningún margen de error",
+          "senales": [
+            "Lleva 74 días en casa (llegó el 29 de mayo de 2026). Dentro de esos 74 días se secó por completo y Noah lo podó entero: no es una planta que llevara años deteriorándose, es un colapso rápido en menos de un trimestre.",
+            "En el centro de la maceta, una masa densa de tocones finos, oscuros y alambrados, cortados a pocos centímetros del sustrato: son los restos de la poda, no tejido vivo.",
+            "Un único punto de crecimiento verde, con segmentos pequeños (unos 5 mm) en forma de cuña y margen lobulado, sobre pecíolos finos y oscuros, que cae por el borde izquierdo de la maceta.",
+            "Un segundo brote diminuto, más pálido y aún sin desplegar, junto al centro de la masa de tocones.",
+            "Superficie del sustrato oscura, con restos vegetales secos entremezclados.",
+            "La foto está tomada de noche y con poca luz: el color real de la fronde nueva y el detalle del envés no se pueden juzgar en ella.",
+            "Masa foliar viva estimada: menos del 5 % de lo que tenía la planta antes de secarse.",
+            "La planta está junto al ventanal, donde por la mañana entra sol directo. Para un brote de helecho recién nacido eso no es luz favorable: es un riesgo inmediato."
+          ],
+          "causas_probables": [
+            {
+              "id": "desecacion-previa",
+              "resumen": "Se secó por completo y se podó a ras: el daño ya está hecho",
+              "detalle": "Desecación completa previa, ya confirmada por Carlos: la planta se secó y él la podó entera. Los tocones marrones son consecuencia de la poda, no de una enfermedad activa.",
+              "patron": null
+            },
+            {
+              "id": "secado-puntual",
+              "resumen": "Fue un secado puntual, no un declive lento: ocurrió en 74 días",
+              "detalle": "Que ocurriera en 74 días acota mucho la causa, y apunta a un secado puntual y no a un declive lento. Los 74 días son junio, julio y media de agosto: el tramo más seco y caluroso del año en Móstoles, con el aire acondicionado deshumidificando a diario. En un helecho tierno basta con que el cepellón (la bola de raíces con su tierra) se separe de las paredes de la maceta una vez: a partir de ahí el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
+              "patron": null
+            },
+            {
+              "id": "aire-seco",
+              "resumen": "Aire seco de A/A y calefacción, los doce meses",
+              "detalle": "En un helecho tierno, la causa habitual de esa desecación en Móstoles es la combinación de aire muy seco (calefacción en invierno, calor seco en verano) con un riego que se salta: el cepellón se separa de las paredes de la maceta, el agua siguiente se va por los lados sin mojar nada y la planta se seca aunque parezca que la riegas.",
+              "patron": null
+            },
+            {
+              "id": "margen-cero",
+              "resumen": "Lo crítico no es una plaga: es que no le queda hoja con la que fallar",
+              "detalle": "El estado es crítico no por una plaga ni por una infección, sino por el margen: con esta masa foliar cualquier error de riego, un sol directo o un secado de dos días la mata. La buena noticia del cuadro es que ha rebrotado, lo que indica que el rizoma sigue vivo.",
+              "patron": null
+            },
+            {
+              "id": "ubicacion-sol",
+              "resumen": "Su sitio actual, con sol directo matinal, es incompatible con un helecho",
+              "detalle": "Su ubicación actual, con sol directo matinal, es incompatible con lo que RHS pide para un helecho tierno, y el aire acondicionado añade corriente fría y sequedad en verano. No son la causa del estado actual —eso lo explica la desecación previa que ya ha contado Carlos— pero sí son la vía más probable de que la recuperación fracase.",
+              "patron": null
+            }
+          ],
+          "tratamiento": [
+            "Hoy, y por delante de todo lo demás: sácala del tramo de sol directo de la mañana. Mismo salón, junto al ventanal, pero en un lateral, a un metro del cristal o detrás de un visillo.",
+            "Hoy: comprueba que no está en la línea de aire del aire acondicionado. La corriente fría y seca sobre un brote tierno es de las pocas cosas que pueden matarlo en días.",
+            "Esta semana: corta a ras los tocones marrones y secos con tijera limpia, sin tirar de ellos y sin tocar el brote verde ni el suelo alrededor. Están muertos, estorban a la ventilación y esconden a la cochinilla.",
+            "Esta semana: comprueba si la maceta de barro tiene agujero de drenaje. Si no lo tiene, planta la maceta de plástico dentro y saca esa para regar, o cambia de recipiente antes que arriesgar un encharcado.",
+            "Esta semana: ponla sobre un plato con grava mojada y a un metro largo de cualquier radiador. Prioriza esto por encima de cualquier otra cosa.",
+            "Riego: unos 100 ml cada 3 días en agosto, comprobando el dedo antes. Si el agua atraviesa la maceta en dos segundos, riega por inmersión 10 minutos y deja escurrir bien.",
+            "Nada de abono hasta que haya 3 o 4 frondes desarrolladas. Nada de trasplante hasta primavera.",
+            "Cuando el brote se despliegue del todo (fronde entera, con el envés visible), hazle una foto de día: es lo que hace falta para cerrar la identificación."
+          ],
+          "revisar_en": "Fecha concreta: 1 de septiembre de 2026, tres semanas después de la foto. Para entonces debería haber al menos un brote nuevo más, y el que ya está tendría que haberse desplegado con los segmentos más grandes que ahora. Dos formas distintas de fracasar, y se distinguen: si el brote se pone marrón desde la punta y de golpe, con aspecto de papel, sospecha sol directo o la corriente del aire acondicionado; si se pone marrón despacio y desde la base, y la tierra sigue mojada tres días después de regar, sospecha encharcamiento. Si el 1 de septiembre no hay ningún brote nuevo pero el actual sigue verde, no lo des por perdido: un rizoma que rebrota una vez suele volver a hacerlo, y en septiembre baja el calor.",
+          "revisar_fecha": "2026-09-01",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "La identificación. Lo que se ve son tocones y un brote juvenil. Los rasgos que sí se aprecian —estipes finos, oscuros y alambrados, y segmentos verdes en cuña con margen lobulado— son compatibles con el género Adiantum (culantrillo), que es lo que se vende como helecho de interior con esa morfología, pero no me basta para afirmarlo: hace falta una fronde desarrollada, fotografiada de día, del haz y del envés (buscando los soros bajo el margen replegado).",
+            "El estado del rizoma y de las raíces, que es lo que decide si esto sale adelante.",
+            "La humedad real del cepellón y si está compactado.",
+            "Si la maceta de barro tiene agujero de drenaje.",
+            "Plagas: la foto es nocturna y de baja luz, no sirve para descartar cochinilla ni araña roja.",
+            "Si la mancha de sol de la mañana cae exactamente sobre esta maceta o pasa de largo. Es la comprobación más urgente y se resuelve con una foto del salón a esa hora."
+          ],
+          "plan_recuperacion": [
+            {
+              "paso": "Sacarla del sol directo matinal y de la corriente del aire acondicionado.",
+              "senal": "El brote verde sigue verde: ni puntas marrones de papel ni segmentos que se cierran.",
+              "hito": "inmediato; comprobación a los 3 días"
+            },
+            {
+              "paso": "Cortar a ras los tocones marrones con tijera limpia, sin tirar de ellos y sin tocar el brote verde. Lávate las manos al terminar; los guantes aquí no hacen falta, es tejido seco y sin savia.",
+              "senal": "El centro de la maceta queda despejado y se ve la tierra; ninguna mancha blanda ni moho entre los restos.",
+              "hito": "inmediato"
+            },
+            {
+              "paso": "Verificar el drenaje de la maceta de barro y corregirlo si no tiene agujero.",
+              "senal": "Al regar sale agua por abajo y el sustrato no sigue mojado al tercer día.",
+              "hito": "esta semana"
+            },
+            {
+              "paso": "Plato con grava húmeda y riego de ~100 ml cada 3 días comprobando con el dedo.",
+              "senal": "El brote se despliega: los segmentos crecen y aparece una fronde entera.",
+              "hito": "3 semanas"
+            },
+            {
+              "paso": "Esperar 3 o 4 frondes sanas antes de abonar; nada de trasplante hasta primavera.",
+              "senal": "Brotes nuevos sucesivos, cada uno mayor que el anterior.",
+              "hito": "2-3 meses"
+            },
+            {
+              "paso": "Foto diurna de una fronde desarrollada, haz y envés.",
+              "senal": "Se ven los soros bajo el margen replegado y la forma completa de la pinna.",
+              "hito": "cuando haya una fronde adulta: cierra la identificación"
+            }
+          ],
+          "verificacion": null
         }
       ]
     },
@@ -533,7 +594,9 @@
         "profundidad_cm": 2,
         "ultimo": null,
         "calculable": false,
-        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo"
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": null,
+        "ancla_tipo": "sin_dato"
       },
       "luz": {
         "resumen": "Le sobra sol: el directo de la mañana le está quemando los bordes. Sepárala del cristal.",
@@ -582,7 +645,8 @@
       "sustrato": {
         "resumen": "Universal sin turba de base coco, o John Innes nº 2, con un 20 % de perlita. Ligero y drenante.",
         "detalle": "RHS recomienda sustrato universal, preferiblemente sin turba y a base de coco —lo dice para evitar problemas de mosca del sustrato—, o John Innes nº 2. En la foto se ve un sustrato oscuro con perlita, el típico de vivero: sirve, pero después de meses en la misma maceta está agotado y compactado, y eso explica en parte que las hojas nuevas salgan pequeñas y pálidas. Cuando la cambies de maceta, mezcla dos partes de universal sin turba con una de perlita: la begonia Elatior tiene el tallo carnoso y no perdona un sustrato que se quede empapado.",
-        "mezcla": "2 partes universal sin turba : 1 parte perlita"
+        "mezcla": "2 partes universal sin turba : 1 parte perlita",
+        "cambiar_ahora": true
       },
       "abonado": {
         "resumen": "Cada 2 semanas de mayo a septiembre, abono rico en potasio (tipo tomate) a media dosis.",
@@ -594,7 +658,9 @@
           7,
           8,
           9
-        ]
+        ],
+        "condicion": null,
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "Va tarde: 74 días en la maceta de vivero. Cámbiala esta semana a 15–17 cm con agujero.",
@@ -632,94 +698,6 @@
         "clave": "toxica"
       },
       "dificultad": "media",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "atencion",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Lleva 74 días en casa (llegó el 29 de mayo de 2026) y sigue en la maceta de plástico de vivero con la que vino, con la pegatina y el pasaporte fitosanitario aún pegados.",
-          "Bordes y puntas de las hojas maduras secos, marrones y crujientes, con el centro de la hoja verde y turgente; en varias hojas la necrosis entra en cuña desde el margen.",
-          "El daño no está repartido por igual: las hojas más castigadas —dos de ellas fuertemente enrolladas y con el borde marrón— son las de la parte alta y las del lado derecho, que es el lado por el que entra la luz del ventanal en la foto. Las hojas del interior de la mata y las bajas están claramente mejor.",
-          "Hojas nuevas del ápice pequeñas, de verde pálido amarillento y acucharadas hacia arriba, algunas casi enrolladas en canoa: la hoja se cierra para reducir la superficie expuesta.",
-          "Restos de inflorescencias secas de color marrón papeláceo retenidos en los ápices, y varios ramilletes de flores pasadas sin retirar; una sola flor roja abierta.",
-          "Botones florales pequeños con la punta ya seca y marrón, sin llegar a abrir.",
-          "Tallos carnosos alargados, con tramos desnudos entre nudos y cicatrices de hojas caídas.",
-          "Ninguna hoja caída, blanda ni amarilla sobre el sustrato: el cuadro NO es el del exceso de riego, que empieza precisamente por abajo y por hojas blandas.",
-          "Un tutor de plástico azul clavado en el cepellón, señal de que la planta no se sostiene sola.",
-          "Sigue en la maceta de vivero roja de 15 cm, metida dentro del cachepot blanco de cerámica.",
-          "Sustrato oscuro con perlita, superficie suelta y con restos vegetales secos.",
-          "Etiqueta del productor: «BEGONIA ELATIOR TM 15», «Product from ALMERÍA», GONZA S.A.T., EAN 8437018857012, y pasaporte fitosanitario europeo A BEGONIA ELATIOR · B ES01042001 · C L1 · D NL."
-        ],
-        "causas_probables": [
-          "El cepellón agotado, y la pongo primera. 74 días en una maceta de vivero, con un sustrato de producción pensado para semanas de venta, explica más partes del cuadro que ninguna otra causa: las hojas nuevas cada vez más pequeñas y pálidas, la floración que se apaga con una sola flor abierta frente a muchos restos secos, y que la planta necesite agua cada poco. PATRÓN PARA RECONOCERLA: hoja nueva más pequeña que la anterior, color pálido general, y al regar el agua atraviesa la maceta en un par de segundos porque la tierra está llena de raíces. No lo arregla el riego: lo arregla el cambio de maceta.",
-          "Sol directo de la mañana sobre hoja fina, y va segunda porque es la que tiene mejor prueba en la foto. RHS no le da sol directo a una Elatior en ningún caso. PATRÓN PARA RECONOCERLA: el daño no está repartido, se concentra en las hojas de arriba y en las del lado de la ventana —en la foto, el lado derecho— mientras las del interior de la mata están bien; y las hojas nuevas salen acucharadas hacia arriba, que es lo que hace una hoja para poner menos superficie al sol. Las dos cosas se ven.",
-          "Aire seco, y en esta casa de los doce meses: el aire acondicionado de junio a agosto deshumidifica igual que la calefacción en invierno. Los 74 días que lleva aquí son justo el tramo más duro del año. PATRÓN PARA RECONOCERLA: bordes secos y crujientes de forma general, en hojas expuestas y no expuestas por igual, con el centro de la hoja verde y sano. Se distingue de la quemadura precisamente en eso: la quemadura elige, el aire seco no.",
-          "Sales acumuladas del sustrato viejo, que es consecuencia de la primera causa y merece nombre propio porque su patrón es distinto y muy reconocible. PATRÓN PARA RECONOCERLA: la punta de la hoja marrón con un halo amarillo alrededor, y una costra blanquecina en el borde de la maceta o sobre la tierra. Si ves eso, además de cambiarla de maceta conviene regar dos veces seguidas con abundante agua para lavar el sustrato antes de sacarla.",
-          "Flores pasadas sin retirar, y en 74 días dan para muchas. No causan los bordes secos, pero frenan la floración nueva, gastan energía y son la puerta de entrada del moho gris. PATRÓN: ramilletes marrones y papeláceos retenidos en las puntas, como se ven en la foto.",
-          "Riego irregular, agravado por el cachepot de cerámica sin agujero visible, y va la última a propósito. PATRÓN QUE HABRÍA: hojas de abajo amarillas, blandas y caídas sobre la tierra, y sustrato que sigue mojado días después de regar. En la foto no hay ni una hoja caída ni blanda, así que el exceso de agua no es lo que está causando el daño. Sigue mereciendo corregirse como prevención, porque el agua que se queda en el fondo del cachepot no se ve.",
-          "Corriente fría del aire acondicionado: no explica los bordes secos, pero RHS avisa de que a las begonias les molestan las corrientes. Se descarta mirando dónde apunta el aparato."
-        ],
-        "tratamiento": [
-          "Esta semana, y es la más importante: cámbiala de maceta. A 15-17 cm con agujero de drenaje, universal sin turba con un 20 % de perlita, sin enterrar más el cuello del tallo. Con guantes: al manipular raíces es donde irritan los oxalatos de esta planta.",
-          "Hoy: sepárala del cristal medio metro o un metro, o ponle un visillo que difumine el sol de la mañana.",
-          "Hoy: retira todas las flores pasadas y los restos secos de las puntas, pinzando cada tallo floral hasta su base con tijera limpia, y saca los restos de encima de la tierra.",
-          "Hoy: corta las hojas con más de un tercio del borde seco. Las que solo tengan la punta marrón, déjalas: siguen alimentando la planta y no se van a curar, pero tampoco molestan.",
-          "Hoy: comprueba que no está en la línea de aire del aire acondicionado. Si lo está, muévela o cambia la dirección de la lama.",
-          "Esta semana: ponla sobre un plato con grava o arcilla expandida mojada, con el agua por debajo del nivel de la grava, para que el aire de alrededor esté más húmedo. No la pulverices: la hoja de begonia tiene pelusa, retiene la gota y eso favorece hongos.",
-          "Si ves costra blanquecina en el borde de la maceta, antes de sacarla riega dos veces seguidas con abundante agua dejando escurrir, para lavar las sales del sustrato.",
-          "Desde ya y cada 2 semanas hasta septiembre: abono rico en potasio (el de tomate sirve) a media dosis, siempre sobre tierra ya húmeda, nunca en seco. Espera 4 semanas después del cambio de maceta si el sustrato nuevo ya lleva abono.",
-          "Riego: unos 250 ml cuando los 2 cm de arriba de la tierra estén secos al meter el dedo. En agosto, cada 4 días aproximadamente. Riega por el borde de la maceta, no sobre la hoja ni sobre las flores.",
-          "Gira la maceta un cuarto de vuelta en cada riego.",
-          "Cuando acabe esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes de los brotes nuevos cuando midan 5-7 cm. Ningún cuidado va a rellenar los tramos de tallo que ya están pelados; una poda sí."
-        ],
-        "revisar_en": "3 semanas, contando desde el cambio de maceta: la hoja que salga nueva tiene que ser más grande, de verde más oscuro y plana, no acucharada. Los bordes marrones que ya existen no se curan, porque ese tejido está muerto: lo que se mide siempre es la hoja nueva. Y hay dos pruebas que separan las causas. Una: si al alejarla del cristal las hojas nuevas dejan de salir acucharadas, era el sol. Dos: si tras el cambio de maceta la hoja nueva crece claramente más grande, era el cepellón agotado. Pueden dar las dos positivas a la vez, y sería lo esperable.",
-        "no_visible_en_foto": [
-          "El estado del cepellón, que con 74 días en la maceta de vivero es ahora la comprobación clave. Se resuelve sacándola de la maceta: si es una masa compacta de raíces con poca tierra visible, la primera causa queda confirmada.",
-          "Las raíces y el olor del sustrato, que es lo que decidiría si además hay podredumbre por el agua retenida en el cachepot.",
-          "El envés de las hojas: no se puede descartar araña roja, que prospera justo con el aire seco de esta casa, y que además está bajo sospecha en el coleo grande, a pocos metros y en la misma habitación.",
-          "Si hay oídio incipiente. Hay hojas con zonas grisáceas, pero a esa resolución no distingo polvo de hongo de reflejo y pubescencia. Una foto del haz a contraluz lo resolvería.",
-          "Cuánto sol directo recibe exactamente y durante cuántos minutos. Es el dato que confirmaría la causa que he puesto primera: se resuelve con una foto del salón a la hora en que entra el sol, viendo si la mancha de luz cae sobre la planta.",
-          "Si el cachepot blanco tiene agua estancada en el fondo ahora mismo.",
-          "La humedad real del cepellón: la superficie se ve suelta, pero eso no dice nada de los 10 cm de abajo.",
-          "Si hay costra blanquecina de sales en el borde de la maceta. En la foto el borde queda tapado por el cachepot."
-        ],
-        "titulo": "74 días en la maceta de vivero, sol de mañana y aire seco: tres cosas a la vez",
-        "plan_recuperacion": [
-          {
-            "paso": "Cambiarla a maceta de 15-17 cm con agujero, con guantes puestos.",
-            "senal": "La hoja nueva sale más grande y de verde más oscuro que la actual.",
-            "hito": "3-4 semanas"
-          },
-          {
-            "paso": "Sacarla del tramo de sol directo de la mañana (medio metro del cristal o visillo).",
-            "senal": "Las hojas nuevas salen planas, dejan de acucharse hacia arriba.",
-            "hito": "2-3 semanas"
-          },
-          {
-            "paso": "Retirar todas las flores pasadas y las hojas con más de un tercio del borde seco.",
-            "senal": "No vuelven a aparecer restos marrones papeláceos en las puntas, y ninguna pelusa gris.",
-            "hito": "hoy, y revisión cada semana"
-          },
-          {
-            "paso": "Plato con grava húmeda, y fuera de la corriente del aire acondicionado.",
-            "senal": "Los bordes de las hojas nuevas salen enteros, sin filo crujiente.",
-            "hito": "3 semanas"
-          },
-          {
-            "paso": "Abono rico en potasio a media dosis cada 2 semanas.",
-            "senal": "Aparecen botones florales nuevos que llegan a abrir, en lugar de secarse antes.",
-            "hito": "4-6 semanas"
-          },
-          {
-            "paso": "Poda de rejuvenecimiento a 15 cm y esquejes.",
-            "senal": "Brotes desde la base con los tramos entre hojas cortos, que rellenan la mata.",
-            "hito": "al acabar la floración; brotes visibles 3-4 semanas después de podar"
-          }
-        ],
-        "revisar_fecha": null,
-        "revisar_dias": 21,
-        "revisar_desde": "el día en que la cambies de maceta"
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -805,7 +783,7 @@
           "nota": "Entrada de género: Begonia spp., Begoniaceae, tóxica para perros, gatos y caballos; oxalatos de calcio solubles; vómitos y salivación; la parte subterránea es la de mayor riesgo. No hay entrada específica para el grupo Elatior ni para B. × hiemalis."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -936,6 +914,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "La fecha límite del 15 de junio de 2026 es criterio propio, no de RHS: una planta de floristería debería salir de la maceta de producción en las 2 o 3 semanas siguientes a su llegada, y llegó el 29 de mayo. RHS no publica un plazo para esto. Se marca como `vencida` porque tiene fecha de referencia pasada, no porque nadie haya incumplido nada."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null: no consta cuándo se regó por última vez, así que no hay punto de partida desde el que contar y el vencimiento no se puede calcular. Pregunta concreta para Carlos o Noah: ¿cuándo la regaste por última vez? Con una sola fecha, el cálculo se activa. Mientras no la haya, la ficha solo puede dar el ritmo y recordar la comprobación con el dedo: una fecha estimada daría vencimientos falsos con aspecto de exactos."
         }
       ],
       "ubicacion": {
@@ -999,7 +991,135 @@
           "dias_invierno": 7,
           "calculable": false,
           "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "prioridad": 2,
+          "ancla": null,
+          "ancla_tipo": "sin_dato"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "begonia-elatior.jpg",
+          "severidad": "atencion",
+          "titulo": "74 días en la maceta de vivero, sol de mañana y aire seco: tres cosas a la vez",
+          "senales": [
+            "Lleva 74 días en casa (llegó el 29 de mayo de 2026) y sigue en la maceta de plástico de vivero con la que vino, con la pegatina y el pasaporte fitosanitario aún pegados.",
+            "Bordes y puntas de las hojas maduras secos, marrones y crujientes, con el centro de la hoja verde y turgente; en varias hojas la necrosis entra en cuña desde el margen.",
+            "El daño no está repartido por igual: las hojas más castigadas —dos de ellas fuertemente enrolladas y con el borde marrón— son las de la parte alta y las del lado derecho, que es el lado por el que entra la luz del ventanal en la foto. Las hojas del interior de la mata y las bajas están claramente mejor.",
+            "Hojas nuevas del ápice pequeñas, de verde pálido amarillento y acucharadas hacia arriba, algunas casi enrolladas en canoa: la hoja se cierra para reducir la superficie expuesta.",
+            "Restos de inflorescencias secas de color marrón papeláceo retenidos en los ápices, y varios ramilletes de flores pasadas sin retirar; una sola flor roja abierta.",
+            "Botones florales pequeños con la punta ya seca y marrón, sin llegar a abrir.",
+            "Tallos carnosos alargados, con tramos desnudos entre nudos y cicatrices de hojas caídas.",
+            "Ninguna hoja caída, blanda ni amarilla sobre el sustrato: el cuadro NO es el del exceso de riego, que empieza precisamente por abajo y por hojas blandas.",
+            "Un tutor de plástico azul clavado en el cepellón, señal de que la planta no se sostiene sola.",
+            "Sigue en la maceta de vivero roja de 15 cm, metida dentro del cachepot blanco de cerámica.",
+            "Sustrato oscuro con perlita, superficie suelta y con restos vegetales secos.",
+            "Etiqueta del productor: «BEGONIA ELATIOR TM 15», «Product from ALMERÍA», GONZA S.A.T., EAN 8437018857012, y pasaporte fitosanitario europeo A BEGONIA ELATIOR · B ES01042001 · C L1 · D NL."
+          ],
+          "causas_probables": [
+            {
+              "id": "cepellon-agotado",
+              "resumen": "El cepellón está agotado: 74 días en la maceta de vivero",
+              "detalle": "El cepellón agotado, y la pongo primera. 74 días en una maceta de vivero, con un sustrato de producción pensado para semanas de venta, explica más partes del cuadro que ninguna otra causa: las hojas nuevas cada vez más pequeñas y pálidas, la floración que se apaga con una sola flor abierta frente a muchos restos secos, y que la planta necesite agua cada poco.",
+              "patron": "Hoja nueva más pequeña que la anterior, color pálido general, y al regar el agua atraviesa la maceta en un par de segundos porque la tierra está llena de raíces. No lo arregla el riego: lo arregla el cambio de maceta."
+            },
+            {
+              "id": "sol-directo",
+              "resumen": "El sol directo de la mañana le quema la hoja expuesta",
+              "detalle": "Sol directo de la mañana sobre hoja fina, y va segunda porque es la que tiene mejor prueba en la foto. RHS no le da sol directo a una Elatior en ningún caso.",
+              "patron": "El daño no está repartido, se concentra en las hojas de arriba y en las del lado de la ventana —en la foto, el lado derecho— mientras las del interior de la mata están bien; y las hojas nuevas salen acucharadas hacia arriba, que es lo que hace una hoja para poner menos superficie al sol. Las dos cosas se ven."
+            },
+            {
+              "id": "aire-seco",
+              "resumen": "Aire seco los doce meses: aire acondicionado en verano, calefacción en invierno",
+              "detalle": "Aire seco, y en esta casa de los doce meses: el aire acondicionado de junio a agosto deshumidifica igual que la calefacción en invierno. Los 74 días que lleva aquí son justo el tramo más duro del año.",
+              "patron": "Bordes secos y crujientes de forma general, en hojas expuestas y no expuestas por igual, con el centro de la hoja verde y sano. Se distingue de la quemadura precisamente en eso: la quemadura elige, el aire seco no."
+            },
+            {
+              "id": "sales-sustrato",
+              "resumen": "Sales acumuladas en el sustrato viejo",
+              "detalle": "Sales acumuladas del sustrato viejo, que es consecuencia de la primera causa y merece nombre propio porque su patrón es distinto y muy reconocible.",
+              "patron": "La punta de la hoja marrón con un halo amarillo alrededor, y una costra blanquecina en el borde de la maceta o sobre la tierra. Si ves eso, además de cambiarla de maceta conviene regar dos veces seguidas con abundante agua para lavar el sustrato antes de sacarla."
+            },
+            {
+              "id": "flores-pasadas",
+              "resumen": "Flores pasadas sin retirar en 74 días",
+              "detalle": "Flores pasadas sin retirar, y en 74 días dan para muchas. No causan los bordes secos, pero frenan la floración nueva, gastan energía y son la puerta de entrada del moho gris.",
+              "patron": "Ramilletes marrones y papeláceos retenidos en las puntas, como se ven en la foto."
+            },
+            {
+              "id": "riego-irregular",
+              "resumen": "Riego irregular y agua estancada en el cachepot — la menos probable",
+              "detalle": "Riego irregular, agravado por el cachepot de cerámica sin agujero visible, y va la última a propósito.",
+              "patron": "Hojas de abajo amarillas, blandas y caídas sobre la tierra, y sustrato que sigue mojado días después de regar. En la foto no hay ni una hoja caída ni blanda, así que el exceso de agua no es lo que está causando el daño. Sigue mereciendo corregirse como prevención, porque el agua que se queda en el fondo del cachepot no se ve."
+            },
+            {
+              "id": "corriente-fria",
+              "resumen": "Corriente fría del aire acondicionado",
+              "detalle": "Corriente fría del aire acondicionado: no explica los bordes secos, pero RHS avisa de que a las begonias les molestan las corrientes. Se descarta mirando dónde apunta el aparato.",
+              "patron": null
+            }
+          ],
+          "tratamiento": [
+            "Esta semana, y es la más importante: cámbiala de maceta. A 15-17 cm con agujero de drenaje, universal sin turba con un 20 % de perlita, sin enterrar más el cuello del tallo. Con guantes: al manipular raíces es donde irritan los oxalatos de esta planta.",
+            "Hoy: sepárala del cristal medio metro o un metro, o ponle un visillo que difumine el sol de la mañana.",
+            "Hoy: retira todas las flores pasadas y los restos secos de las puntas, pinzando cada tallo floral hasta su base con tijera limpia, y saca los restos de encima de la tierra.",
+            "Hoy: corta las hojas con más de un tercio del borde seco. Las que solo tengan la punta marrón, déjalas: siguen alimentando la planta y no se van a curar, pero tampoco molestan.",
+            "Hoy: comprueba que no está en la línea de aire del aire acondicionado. Si lo está, muévela o cambia la dirección de la lama.",
+            "Esta semana: ponla sobre un plato con grava o arcilla expandida mojada, con el agua por debajo del nivel de la grava, para que el aire de alrededor esté más húmedo. No la pulverices: la hoja de begonia tiene pelusa, retiene la gota y eso favorece hongos.",
+            "Si ves costra blanquecina en el borde de la maceta, antes de sacarla riega dos veces seguidas con abundante agua dejando escurrir, para lavar las sales del sustrato.",
+            "Desde ya y cada 2 semanas hasta septiembre: abono rico en potasio (el de tomate sirve) a media dosis, siempre sobre tierra ya húmeda, nunca en seco. Espera 4 semanas después del cambio de maceta si el sustrato nuevo ya lleva abono.",
+            "Riego: unos 250 ml cuando los 2 cm de arriba de la tierra estén secos al meter el dedo. En agosto, cada 4 días aproximadamente. Riega por el borde de la maceta, no sobre la hoja ni sobre las flores.",
+            "Gira la maceta un cuarto de vuelta en cada riego.",
+            "Cuando acabe esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes de los brotes nuevos cuando midan 5-7 cm. Ningún cuidado va a rellenar los tramos de tallo que ya están pelados; una poda sí."
+          ],
+          "revisar_en": "3 semanas, contando desde el cambio de maceta: la hoja que salga nueva tiene que ser más grande, de verde más oscuro y plana, no acucharada. Los bordes marrones que ya existen no se curan, porque ese tejido está muerto: lo que se mide siempre es la hoja nueva. Y hay dos pruebas que separan las causas. Una: si al alejarla del cristal las hojas nuevas dejan de salir acucharadas, era el sol. Dos: si tras el cambio de maceta la hoja nueva crece claramente más grande, era el cepellón agotado. Pueden dar las dos positivas a la vez, y sería lo esperable.",
+          "revisar_fecha": null,
+          "revisar_dias": 21,
+          "revisar_desde": "el día en que la cambies de maceta",
+          "no_visible_en_foto": [
+            "El estado del cepellón, que con 74 días en la maceta de vivero es ahora la comprobación clave. Se resuelve sacándola de la maceta: si es una masa compacta de raíces con poca tierra visible, la primera causa queda confirmada.",
+            "Las raíces y el olor del sustrato, que es lo que decidiría si además hay podredumbre por el agua retenida en el cachepot.",
+            "El envés de las hojas: no se puede descartar araña roja, que prospera justo con el aire seco de esta casa, y que además está bajo sospecha en el coleo grande, a pocos metros y en la misma habitación.",
+            "Si hay oídio incipiente. Hay hojas con zonas grisáceas, pero a esa resolución no distingo polvo de hongo de reflejo y pubescencia. Una foto del haz a contraluz lo resolvería.",
+            "Cuánto sol directo recibe exactamente y durante cuántos minutos. Es el dato que confirmaría la causa que he puesto primera: se resuelve con una foto del salón a la hora en que entra el sol, viendo si la mancha de luz cae sobre la planta.",
+            "Si el cachepot blanco tiene agua estancada en el fondo ahora mismo.",
+            "La humedad real del cepellón: la superficie se ve suelta, pero eso no dice nada de los 10 cm de abajo.",
+            "Si hay costra blanquecina de sales en el borde de la maceta. En la foto el borde queda tapado por el cachepot."
+          ],
+          "plan_recuperacion": [
+            {
+              "paso": "Cambiarla a maceta de 15-17 cm con agujero, con guantes puestos.",
+              "senal": "La hoja nueva sale más grande y de verde más oscuro que la actual.",
+              "hito": "3-4 semanas"
+            },
+            {
+              "paso": "Sacarla del tramo de sol directo de la mañana (medio metro del cristal o visillo).",
+              "senal": "Las hojas nuevas salen planas, dejan de acucharse hacia arriba.",
+              "hito": "2-3 semanas"
+            },
+            {
+              "paso": "Retirar todas las flores pasadas y las hojas con más de un tercio del borde seco.",
+              "senal": "No vuelven a aparecer restos marrones papeláceos en las puntas, y ninguna pelusa gris.",
+              "hito": "hoy, y revisión cada semana"
+            },
+            {
+              "paso": "Plato con grava húmeda, y fuera de la corriente del aire acondicionado.",
+              "senal": "Los bordes de las hojas nuevas salen enteros, sin filo crujiente.",
+              "hito": "3 semanas"
+            },
+            {
+              "paso": "Abono rico en potasio a media dosis cada 2 semanas.",
+              "senal": "Aparecen botones florales nuevos que llegan a abrir, en lugar de secarse antes.",
+              "hito": "4-6 semanas"
+            },
+            {
+              "paso": "Poda de rejuvenecimiento a 15 cm y esquejes.",
+              "senal": "Brotes desde la base con los tramos entre hojas cortos, que rellenan la mata.",
+              "hito": "al acabar la floración; brotes visibles 3-4 semanas después de podar"
+            }
+          ],
+          "verificacion": null
         }
       ]
     },
@@ -1021,8 +1141,10 @@
         "ml_aprox": 300,
         "profundidad_cm": 2,
         "ultimo": null,
-        "calculable": false,
-        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo"
+        "calculable": true,
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": "2026-08-11",
+        "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
         "resumen": "El sol directo de la mañana le viene bien: es la planta a la que mejor le sienta ese sitio.",
@@ -1071,7 +1193,8 @@
       "sustrato": {
         "resumen": "Universal sin turba, que retenga algo de humedad y drene. El de vivero le sirve esta temporada.",
         "detalle": "RHS pide sustrato de cultivo sin turba bajo cristal, y al aire libre suelo rico en materia orgánica, húmedo y bien drenado. El sustrato de vivero de esta maceta está en buen estado y aguanta la temporada. Si la cambias de maceta, universal sin turba con un puñado de perlita basta: no necesita nada especial. Lo que no tolera es un sustrato que se quede empapado en invierno con poca luz, que es cuando se pierden la mayoría de coleos de interior.",
-        "mezcla": "universal sin turba + un puñado de perlita"
+        "mezcla": "universal sin turba + un puñado de perlita",
+        "cambiar_ahora": false
       },
       "abonado": {
         "resumen": "Cada 2 semanas en crecimiento con abono rico en nitrógeno: aquí manda la hoja, no la flor.",
@@ -1084,7 +1207,9 @@
           7,
           8,
           9
-        ]
+        ],
+        "condicion": null,
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "Aguanta la temporada en 1,6 L. Lo importante no es trasplantar: son los esquejes de septiembre.",
@@ -1124,59 +1249,6 @@
         "aviso_homonimo": "ASPCA sí tiene ficha de otra especie de nombre casi idéntico, y esa figura como NO tóxica. No es esta planta."
       },
       "dificultad": "media",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "atencion",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Es su primer día en casa: llegó el 11 de agosto de 2026, comprada esa misma mañana, y la foto es de ese día. Nada de lo que se ve lo ha causado esta casa.",
-          "Planta vigorosa y densa, con muchos tallos, hoja grande y turgente, sin marchitez ni caída de hojas.",
-          "Punteado pálido fino, entre verdoso y tostado, sobre el granate de las hojas medias y bajas, en manchas irregulares y más densas junto a los nervios.",
-          "Motas oscuras pequeñas repartidas entre ese punteado, y algún punto negro suelto en el margen lima.",
-          "Varios agujeros pequeños de bordes limpios y alguna muesca en el margen de las hojas bajas.",
-          "Las hojas de la parte alta son casi todas verde lima con muy poco granate, mientras las de abajo mantienen el contraste granate con margen lima y nervio rosa. Son las hojas más jóvenes de la planta.",
-          "Brotes laterales nuevos con hoja pálida y grande; en la foto no llego a ver ninguna espiga floral abierta.",
-          "Una mota blanquecina, mínima, en un nudo de un brote lateral.",
-          "Aro de sujeción verde en la maceta y sustrato de vivero oscuro; maceta blanca de 1,6 L con etiqueta de Viveros Projardín (6,95 €), pasaporte fitosanitario ES13-28/0283F.",
-          "Tallos cuadrangulares y hoja dentada y velluda: rasgos de Lamiaceae, coherentes con la etiqueta \"COLEO\"."
-        ],
-        "causas_probables": [
-          "Lo primero y lo que reordena todo lo demás: la planta lleva horas en casa. El punteado pálido, las motas oscuras y los agujeros de las hojas bajas son daño de producción, de tienda o de transporte, y no de este salón. No hay nada que corregir en los cuidados de casa, porque todavía no ha habido cuidados de casa. Lo que hay que hacer es distinto: comprobar qué ha entrado con ella y evitar que pase a las otras seis.",
-          "El punteado pálido con motas oscuras es daño de chupador y la primera candidata son los trips: RHS describe para ellos moteado pálido fino en el haz, tono plateado y puntitos rojizos o negros de excremento. Encaja. En una planta de vivero es de lo más habitual, porque los invernaderos son su ambiente ideal. PATRÓN: el punteado está en las hojas viejas, las de abajo, que son las que llevan más tiempo vivas; las de arriba están limpias.",
-          "Segunda candidata, araña roja: el punteado inicial es casi idéntico y se distingue mirando el envés con lupa buscando telaraña finísima. No se ve telaraña en la foto, lo que la deja por detrás de los trips sin descartarla.",
-          "Tercera opción, y hay que descartarla antes de tratar nada: que parte de ese punteado sea el dibujo propio del cultivar, porque muchos coleos comerciales lo tienen. PATRÓN QUE LO DELATARÍA: un moteado genético saldría también en las hojas nuevas y con el mismo dibujo en todas. Aquí es asimétrico, en manchas y solo en las viejas, así que probablemente no lo es.",
-          "Los agujeros de bordes limpios son daño mecánico o mordedura, no enfermedad: ni los trips ni la araña roja hacen agujeros. Con un día en casa, lo más probable es el roce del transporte o un mordisco en el vivero.",
-          "Las hojas de arriba casi todas verde lima con poco granate: esto NO es falta de luz de esta casa, porque la planta no ha vivido aquí. Se formaron en el vivero. Y hay una segunda explicación compatible que conviene conocer: en un coleo la hoja nueva sale más pálida y va cogiendo color a medida que madura con luz. PATRÓN PARA SABERLO: si esas mismas hojas se oscurecen en 2 o 3 semanas ya en casa, era hoja joven; si se quedan pálidas al madurar, entonces sí le falta luz y hay que acercarla al cristal."
-        ],
-        "tratamiento": [
-          "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
-          "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
-          "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
-          "Antes de tratar nada, confirma la plaga, esta semana: sacude una hoja sobre un folio blanco y mira lo que cae (los trips se ven como rayitas que se mueven), y fotografía el envés de dos hojas con punteado, lo más cerca que enfoque el móvil. Sin eso, tratar es disparar a ciegas.",
-          "Esta semana: cuelga una trampa cromática azul junto a la planta. Sirve para confirmar trips y para bajar la población.",
-          "Esta semana: retira las 2 o 3 hojas bajas con más punteado y tíralas fuera de casa. Reduce la población y quita el foco.",
-          "Como las siete están en el mismo salón, la separación importa más de lo que parecía: esta es la planta foco. Sepárala de las demás y revisa el envés del resto cada 10 días hasta descartar la plaga.",
-          "Aísla el coleo grande del pequeño y del resto mientras no esté confirmado: comparten vivero, están juntos y una plaga de chupadores pasa de una a otra sin esfuerzo.",
-          "Si se confirma araña roja: sube la humedad, pulveriza agua sobre la planta con regularidad y valora depredadores (RHS cita Phytoseiulus persimilis y Amblyseius californicus, de venta por correo).",
-          "Si se confirman trips: mantén la trampa azul, retira las hojas más dañadas y considera control biológico (RHS cita Orius laevigatus y ácaros depredadores Amblyseius o Hypoaspis).",
-          "En cuanto asome una espiga floral (racimo terminal de florecillas pequeñas azuladas), píncala: florecer le resta energía a la hoja, que es lo que interesa. RHS recomienda además pinzar los ápices para mantenerla compacta.",
-          "En septiembre: 3 o 4 esquejes de 8-10 cm. Es el seguro contra un invierno de poca luz.",
-          "Para el color: no la muevas todavía. Espera 2 o 3 semanas a ver si esas hojas pálidas oscurecen al madurar; si se quedan pálidas, acércala al cristal."
-        ],
-        "revisar_en": "2 semanas: el punteado que ya existe no desaparece porque el tejido está dañado, así que lo que se mide es si las hojas NUEVAS, las formadas ya en casa, salen limpias. Si sale punteado nuevo en hojas que hoy están sanas, la plaga viajó viva con la planta y hay que tratar en serio. Revisa la trampa azul a los 7 días. Y en 2 o 3 semanas comprueba si las hojas pálidas de arriba han cogido granate.",
-        "no_visible_en_foto": [
-          "El envés de las hojas, que es donde se decide entre trips y araña roja. Es la foto que falta.",
-          "Si esa mota blanquecina del nudo es cochinilla algodonosa incipiente, un resto de sustrato o un reflejo. A esta resolución no se puede decidir.",
-          "El estado de las raíces y si la maceta de 1,6 L ya está colonizada.",
-          "La humedad real del cepellón.",
-          "Si hay espigas florales iniciándose entre el follaje alto: la parte central de la mata queda tapada y no se puede afirmar. Lo que sí se ve son brotes laterales con hoja pálida, que no es lo mismo. Se resuelve mirando los ápices desde arriba: una espiga es un racimo alargado de florecillas pequeñas y azuladas, inconfundible una vez que asoma.",
-          "Si la plaga viajó viva o si lo que se ve es el rastro de una plaga que el vivero ya trató. Es la diferencia entre tratar y solo vigilar, y no se decide con una foto del haz: hace falta ver el envés."
-        ],
-        "titulo": "Primer día en casa: el punteado y los agujeros vienen del vivero",
-        "revisar_fecha": "2026-08-25",
-        "revisar_dias": null,
-        "revisar_desde": null
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -1283,7 +1355,7 @@
           "nota": "La otra entrada con \"Coleus\" en el nombre es Plectranthus oertendahlii, que ASPCA da como no tóxica. Tampoco es esta planta: citarla como si lo fuera sería el error de identificación más peligroso de la ficha."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -1407,6 +1479,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
         }
       ],
       "ubicacion": {
@@ -1490,9 +1576,98 @@
           "tipo": "ritmo",
           "dias_verano": 3,
           "dias_invierno": 6,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-11",
+          "ancla_tipo": "llegada_a_casa"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "coleo-grande.jpg",
+          "severidad": "atencion",
+          "titulo": "Primer día en casa: el punteado y los agujeros vienen del vivero",
+          "senales": [
+            "Es su primer día en casa: llegó el 11 de agosto de 2026, comprada esa misma mañana, y la foto es de ese día. Nada de lo que se ve lo ha causado esta casa.",
+            "Planta vigorosa y densa, con muchos tallos, hoja grande y turgente, sin marchitez ni caída de hojas.",
+            "Punteado pálido fino, entre verdoso y tostado, sobre el granate de las hojas medias y bajas, en manchas irregulares y más densas junto a los nervios.",
+            "Motas oscuras pequeñas repartidas entre ese punteado, y algún punto negro suelto en el margen lima.",
+            "Varios agujeros pequeños de bordes limpios y alguna muesca en el margen de las hojas bajas.",
+            "Las hojas de la parte alta son casi todas verde lima con muy poco granate, mientras las de abajo mantienen el contraste granate con margen lima y nervio rosa. Son las hojas más jóvenes de la planta.",
+            "Brotes laterales nuevos con hoja pálida y grande; en la foto no llego a ver ninguna espiga floral abierta.",
+            "Una mota blanquecina, mínima, en un nudo de un brote lateral.",
+            "Aro de sujeción verde en la maceta y sustrato de vivero oscuro; maceta blanca de 1,6 L con etiqueta de Viveros Projardín (6,95 €), pasaporte fitosanitario ES13-28/0283F.",
+            "Tallos cuadrangulares y hoja dentada y velluda: rasgos de Lamiaceae, coherentes con la etiqueta \"COLEO\"."
+          ],
+          "causas_probables": [
+            {
+              "id": "llego-hoy",
+              "resumen": "Llegó hoy: nada de lo que se ve lo ha causado esta casa",
+              "detalle": "Lo primero y lo que reordena todo lo demás: la planta lleva horas en casa. El punteado pálido, las motas oscuras y los agujeros de las hojas bajas son daño de producción, de tienda o de transporte, y no de este salón. No hay nada que corregir en los cuidados de casa, porque todavía no ha habido cuidados de casa. Lo que hay que hacer es distinto: comprobar qué ha entrado con ella y evitar que pase a las otras seis.",
+              "patron": null
+            },
+            {
+              "id": "trips",
+              "resumen": "Trips, la primera candidata del punteado",
+              "detalle": "El punteado pálido con motas oscuras es daño de chupador y la primera candidata son los trips: RHS describe para ellos moteado pálido fino en el haz, tono plateado y puntitos rojizos o negros de excremento. Encaja. En una planta de vivero es de lo más habitual, porque los invernaderos son su ambiente ideal.",
+              "patron": "El punteado está en las hojas viejas, las de abajo, que son las que llevan más tiempo vivas; las de arriba están limpias."
+            },
+            {
+              "id": "arana-roja",
+              "resumen": "Araña roja, segunda candidata",
+              "detalle": "Segunda candidata, araña roja: el punteado inicial es casi idéntico y se distingue mirando el envés con lupa buscando telaraña finísima. No se ve telaraña en la foto, lo que la deja por detrás de los trips sin descartarla.",
+              "patron": null
+            },
+            {
+              "id": "patron-cultivar",
+              "resumen": "Que el punteado sea el dibujo del cultivar: hay que descartarlo antes de tratar",
+              "detalle": "Tercera opción, y hay que descartarla antes de tratar nada: que parte de ese punteado sea el dibujo propio del cultivar, porque muchos coleos comerciales lo tienen.",
+              "patron": "Un moteado genético saldría también en las hojas nuevas y con el mismo dibujo en todas. Aquí es asimétrico, en manchas y solo en las viejas, así que probablemente no lo es."
+            },
+            {
+              "id": "dano-mecanico",
+              "resumen": "Los agujeros son daño mecánico, no enfermedad",
+              "detalle": "Los agujeros de bordes limpios son daño mecánico o mordedura, no enfermedad: ni los trips ni la araña roja hacen agujeros. Con un día en casa, lo más probable es el roce del transporte o un mordisco en el vivero.",
+              "patron": null
+            },
+            {
+              "id": "hoja-nueva-palida",
+              "resumen": "Las hojas altas pálidas se formaron en el vivero, no aquí",
+              "detalle": "Las hojas de arriba casi todas verde lima con poco granate: esto NO es falta de luz de esta casa, porque la planta no ha vivido aquí. Se formaron en el vivero. Y hay una segunda explicación compatible que conviene conocer: en un coleo la hoja nueva sale más pálida y va cogiendo color a medida que madura con luz.",
+              "patron": "Si esas mismas hojas se oscurecen en 2 o 3 semanas ya en casa, era hoja joven; si se quedan pálidas al madurar, entonces sí le falta luz y hay que acercarla al cristal."
+            }
+          ],
+          "tratamiento": [
+            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
+            "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
+            "Antes de tratar nada, confirma la plaga, esta semana: sacude una hoja sobre un folio blanco y mira lo que cae (los trips se ven como rayitas que se mueven), y fotografía el envés de dos hojas con punteado, lo más cerca que enfoque el móvil. Sin eso, tratar es disparar a ciegas.",
+            "Esta semana: cuelga una trampa cromática azul junto a la planta. Sirve para confirmar trips y para bajar la población.",
+            "Esta semana: retira las 2 o 3 hojas bajas con más punteado y tíralas fuera de casa. Reduce la población y quita el foco.",
+            "Como las siete están en el mismo salón, la separación importa más de lo que parecía: esta es la planta foco. Sepárala de las demás y revisa el envés del resto cada 10 días hasta descartar la plaga.",
+            "Aísla el coleo grande del pequeño y del resto mientras no esté confirmado: comparten vivero, están juntos y una plaga de chupadores pasa de una a otra sin esfuerzo.",
+            "Si se confirma araña roja: sube la humedad, pulveriza agua sobre la planta con regularidad y valora depredadores (RHS cita Phytoseiulus persimilis y Amblyseius californicus, de venta por correo).",
+            "Si se confirman trips: mantén la trampa azul, retira las hojas más dañadas y considera control biológico (RHS cita Orius laevigatus y ácaros depredadores Amblyseius o Hypoaspis).",
+            "En cuanto asome una espiga floral (racimo terminal de florecillas pequeñas azuladas), píncala: florecer le resta energía a la hoja, que es lo que interesa. RHS recomienda además pinzar los ápices para mantenerla compacta.",
+            "En septiembre: 3 o 4 esquejes de 8-10 cm. Es el seguro contra un invierno de poca luz.",
+            "Para el color: no la muevas todavía. Espera 2 o 3 semanas a ver si esas hojas pálidas oscurecen al madurar; si se quedan pálidas, acércala al cristal."
+          ],
+          "revisar_en": "2 semanas: el punteado que ya existe no desaparece porque el tejido está dañado, así que lo que se mide es si las hojas NUEVAS, las formadas ya en casa, salen limpias. Si sale punteado nuevo en hojas que hoy están sanas, la plaga viajó viva con la planta y hay que tratar en serio. Revisa la trampa azul a los 7 días. Y en 2 o 3 semanas comprueba si las hojas pálidas de arriba han cogido granate.",
+          "revisar_fecha": "2026-08-25",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "El envés de las hojas, que es donde se decide entre trips y araña roja. Es la foto que falta.",
+            "Si esa mota blanquecina del nudo es cochinilla algodonosa incipiente, un resto de sustrato o un reflejo. A esta resolución no se puede decidir.",
+            "El estado de las raíces y si la maceta de 1,6 L ya está colonizada.",
+            "La humedad real del cepellón.",
+            "Si hay espigas florales iniciándose entre el follaje alto: la parte central de la mata queda tapada y no se puede afirmar. Lo que sí se ve son brotes laterales con hoja pálida, que no es lo mismo. Se resuelve mirando los ápices desde arriba: una espiga es un racimo alargado de florecillas pequeñas y azuladas, inconfundible una vez que asoma.",
+            "Si la plaga viajó viva o si lo que se ve es el rastro de una plaga que el vivero ya trató. Es la diferencia entre tratar y solo vigilar, y no se decide con una foto del haz: hace falta ver el envés."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
         }
       ]
     },
@@ -1514,8 +1689,10 @@
         "ml_aprox": 90,
         "profundidad_cm": 1,
         "ultimo": null,
-        "calculable": false,
-        "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo"
+        "calculable": true,
+        "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": "2026-08-11",
+        "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
         "resumen": "El sol directo de la mañana es justo lo que necesita para mantener el granate.",
@@ -1564,7 +1741,8 @@
       "sustrato": {
         "resumen": "Universal sin turba con algo de perlita. El de vivero está bien, la maceta no.",
         "detalle": "RHS pide sustrato sin turba bajo cristal. El sustrato que trae de vivero está en buen estado; lo que se le queda corto es el volumen. Cuando la pases a 12 cm, universal sin turba con un puñado de perlita, sin enterrar más el cuello del tallo y rellenando alrededor del cepellón sin romperlo.",
-        "mezcla": "universal sin turba + un puñado de perlita"
+        "mezcla": "universal sin turba + un puñado de perlita",
+        "cambiar_ahora": true
       },
       "abonado": {
         "resumen": "Cada 2 semanas con abono rico en nitrógeno, a media dosis. Aquí interesa la hoja.",
@@ -1577,7 +1755,9 @@
           7,
           8,
           9
-        ]
+        ],
+        "condicion": null,
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "Espera 3 o 4 días a que se asiente y pásala a 12 cm. La maceta de vivero es su único problema.",
@@ -1617,51 +1797,6 @@
         "aviso_homonimo": "ASPCA sí tiene ficha de otra especie de nombre casi idéntico, y esa figura como NO tóxica. No es esta planta."
       },
       "dificultad": "media",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "sana",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
-          "Planta pequeña, compacta y bien ramificada, con hojas turgentes y ninguna marchitez.",
-          "Color de hoja intenso: granate profundo con nervios rosas y un filo verde lima muy fino sobre el margen serrado. El contraste está sin degradar.",
-          "Sin bordes secos, sin amarilleo y sin caída de hojas bajas.",
-          "Moteado más oscuro sobre el granate, bastante repartido y simétrico entre hojas: por su regularidad lo leo como patrón del cultivar y no como daño.",
-          "Alguna mota pálida suelta en el margen de dos hojas bajas, muy escasa, no comparable al punteado del coleo grande.",
-          "Sigue en la maceta de vivero de unos 9 cm (cesta gris interior con funda terracota), con el sustrato oscuro y de aspecto húmedo, y una raicilla asomando por el borde.",
-          "Etiqueta de Viveros Projardín, 2,25 €, pasaporte fitosanitario ES13-28/0283F: mismo vivero y mismo lote que el coleo grande.",
-          "Tallos cuadrangulares y hoja dentada y velluda: Lamiaceae, coherente con la etiqueta \"COLEO\"."
-        ],
-        "causas_probables": [
-          "Lleva horas en casa, así que su buen estado es mérito del vivero y todavía no dice nada de esta casa. Lo que decide su futuro son las próximas dos semanas: el cambio de maceta, la introducción gradual al sol de la mañana y que no traiga plaga.",
-          "Está sana y recién comprada: el color y la compacidad son de vivero, con luz alta y riego diario. Lo que se decide en las próximas semanas es si conserva las dos cosas en casa.",
-          "El riesgo real y a corto plazo es la maceta: unos 9 cm de diámetro para esta masa de hoja, en agosto en Móstoles, significa que se seca en un día largo. La forma habitual de perder un coleo pequeño no es una plaga, es un fin de semana sin regar.",
-          "El segundo riesgo es de contagio, no de salud propia: comparte vivero, lote y sitio con el coleo grande, que tiene punteado sospechoso de trips o araña roja. Una plaga de chupadores pasa de una a otra sin esfuerzo.",
-          "El tercero es la luz: en un ventanal NE, un coleo de hoja granate tiende a perder intensidad porque RHS le da pleno sol. Se verá en la hoja nueva, no en la que ya tiene."
-        ],
-        "tratamiento": [
-          "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
-          "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
-          "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
-          "Preventivo, esta semana: pásala a una maceta de 12 cm con universal sin turba. Es lo que convierte un riego diario en un riego cada 3 días.",
-          "Preventivo, esta semana: mira el envés de 3 o 4 hojas con el zoom del móvil, buscando punteado o telaraña finísima. Es la revisión que evita heredar la plaga del coleo grande.",
-          "Mientras el coleo grande esté sin diagnosticar, sepáralas: que no se toquen las hojas.",
-          "Ponla en la zona más luminosa del ventanal y gírala un cuarto de vuelta en cada riego.",
-          "Pinza los ápices cuando empiece a estirarse, y las espigas florales en cuanto asomen: RHS recomienda el pinzado para mantenerla compacta, y en un coleo la hoja vale más que la flor.",
-          "En septiembre, 2 o 3 esquejes de 8-10 cm."
-        ],
-        "revisar_en": "2 semanas: comprueba que la hoja nueva mantiene el granate y no sale verde, y que sigue sin punteado pálido. Si sale más verde, es luz; si sale con punteado, es plaga y viene del coleo grande.",
-        "no_visible_en_foto": [
-          "El envés de las hojas: no puedo descartar araña roja ni trips, y con la planta hermana bajo sospecha esto no es una formalidad.",
-          "Si el cepellón está ya lleno de raíces. Por el tamaño de la maceta y la planta, lo más probable es que sí; se ve una raicilla asomando.",
-          "La humedad real del cepellón: la superficie parece húmeda, pero en 9 cm eso cambia en horas.",
-          "Si el moteado oscuro de la hoja es patrón del cultivar, como creo, o daño antiguo. Una foto de una hoja joven completamente desplegada, plana y a buena luz, lo confirmaría: si el moteado sale también ahí y con el mismo dibujo, es genético."
-        ],
-        "titulo": "Primer día en casa, sana y con buen color: solo le falta maceta",
-        "revisar_fecha": "2026-08-25",
-        "revisar_dias": null,
-        "revisar_desde": null
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -1761,7 +1896,7 @@
           "nota": "Entrada \"Prostrate Coleus\" = Plectranthus oertendahlii, no tóxica. Se cita para dejar claro que NO es esta planta: dar esta ficha por buena sería concluir \"no tóxica\" sobre una especie distinta."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -1885,6 +2020,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
         }
       ],
       "ubicacion": {
@@ -1968,9 +2117,79 @@
           "tipo": "ritmo",
           "dias_verano": 2,
           "dias_invierno": 5,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-11",
+          "ancla_tipo": "llegada_a_casa"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "coleo-pequeno.jpg",
+          "severidad": "sana",
+          "titulo": "Primer día en casa, sana y con buen color: solo le falta maceta",
+          "senales": [
+            "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
+            "Planta pequeña, compacta y bien ramificada, con hojas turgentes y ninguna marchitez.",
+            "Color de hoja intenso: granate profundo con nervios rosas y un filo verde lima muy fino sobre el margen serrado. El contraste está sin degradar.",
+            "Sin bordes secos, sin amarilleo y sin caída de hojas bajas.",
+            "Moteado más oscuro sobre el granate, bastante repartido y simétrico entre hojas: por su regularidad lo leo como patrón del cultivar y no como daño.",
+            "Alguna mota pálida suelta en el margen de dos hojas bajas, muy escasa, no comparable al punteado del coleo grande.",
+            "Sigue en la maceta de vivero de unos 9 cm (cesta gris interior con funda terracota), con el sustrato oscuro y de aspecto húmedo, y una raicilla asomando por el borde.",
+            "Etiqueta de Viveros Projardín, 2,25 €, pasaporte fitosanitario ES13-28/0283F: mismo vivero y mismo lote que el coleo grande.",
+            "Tallos cuadrangulares y hoja dentada y velluda: Lamiaceae, coherente con la etiqueta \"COLEO\"."
+          ],
+          "causas_probables": [
+            {
+              "id": "llego-hoy",
+              "resumen": "Llegó hoy: su buen estado es mérito del vivero, no de esta casa",
+              "detalle": "Lleva horas en casa. El color intenso y el porte compacto se hicieron en el vivero, con luz alta y riego diario, así que todavía no dicen nada de este salón. Lo que decide su futuro son las dos próximas semanas: el cambio de maceta, la entrada gradual al sol de la mañana y que no traiga plaga.",
+              "patron": null
+            },
+            {
+              "id": "maceta-minima",
+              "resumen": "La maceta de vivero de unos 9 cm es una trampa de riego en agosto",
+              "detalle": "Es su riesgo real y a corto plazo. Hay medio litro de tierra para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. La forma habitual de perder un coleo pequeño no es una plaga: es un fin de semana sin regar.",
+              "patron": "Hojas lacias a media tarde y la maceta muy ligera al levantarla."
+            },
+            {
+              "id": "contagio",
+              "resumen": "Riesgo de contagio: comparte lote, vivero y sitio con el coleo grande",
+              "detalle": "No es un problema de su salud, es de vecindad. Viene del mismo vivero y del mismo lote que el coleo grande, que tiene punteado sospechoso de trips o araña roja, y las siete plantas están en el mismo salón. Una plaga de chupadores pasa de una a otra sin esfuerzo.",
+              "patron": "Punteado pálido nuevo en hojas que hoy están limpias."
+            },
+            {
+              "id": "luz-color",
+              "resumen": "Si pierde intensidad de color, se verá en la hoja nueva y no en la que trae",
+              "detalle": "El sol directo de la mañana que entra en este salón es lo que RHS pide para la especie, así que no hay motivo para esperar que se apague donde está. Pero el color que tiene hoy se formó en el vivero: la prueba real es la hoja que salga aquí. Si la nueva sale con más verde y menos granate al madurar, entonces sí le falta luz y hay que acercarla al cristal.",
+              "patron": "Hoja nueva que sigue pálida después de madurar 2 o 3 semanas."
+            }
+          ],
+          "tratamiento": [
+            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
+            "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
+            "Preventivo, esta semana: pásala a una maceta de 12 cm con universal sin turba. Es lo que convierte un riego diario en un riego cada 3 días.",
+            "Preventivo, esta semana: mira el envés de 3 o 4 hojas con el zoom del móvil, buscando punteado o telaraña finísima. Es la revisión que evita heredar la plaga del coleo grande.",
+            "Mientras el coleo grande esté sin diagnosticar, sepáralas: que no se toquen las hojas.",
+            "Ponla en la zona más luminosa del ventanal y gírala un cuarto de vuelta en cada riego.",
+            "Pinza los ápices cuando empiece a estirarse, y las espigas florales en cuanto asomen: RHS recomienda el pinzado para mantenerla compacta, y en un coleo la hoja vale más que la flor.",
+            "En septiembre, 2 o 3 esquejes de 8-10 cm."
+          ],
+          "revisar_en": "2 semanas: comprueba que la hoja nueva mantiene el granate y no sale verde, y que sigue sin punteado pálido. Si sale más verde, es luz; si sale con punteado, es plaga y viene del coleo grande.",
+          "revisar_fecha": "2026-08-25",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "El envés de las hojas: no puedo descartar araña roja ni trips, y con la planta hermana bajo sospecha esto no es una formalidad.",
+            "Si el cepellón está ya lleno de raíces. Por el tamaño de la maceta y la planta, lo más probable es que sí; se ve una raicilla asomando.",
+            "La humedad real del cepellón: la superficie parece húmeda, pero en 9 cm eso cambia en horas.",
+            "Si el moteado oscuro de la hoja es patrón del cultivar, como creo, o daño antiguo. Una foto de una hoja joven completamente desplegada, plana y a buena luz, lo confirmaría: si el moteado sale también ahí y con el mismo dibujo, es genético."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
         }
       ]
     },
@@ -1992,8 +2211,10 @@
         "ml_aprox": 300,
         "profundidad_cm": 2,
         "ultimo": null,
-        "calculable": false,
-        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo"
+        "calculable": true,
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": "2026-08-11",
+        "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
         "resumen": "Luz filtrada brillante. El sol de la mañana le vale; vigila que no queme el margen blanco.",
@@ -2042,7 +2263,8 @@
       "sustrato": {
         "resumen": "Sustrato con base de tierra (John Innes nº 2), sin turba, que retenga humedad y drene.",
         "detalle": "RHS pide sustrato sin turba con base de tierra franca (loam), que retenga humedad, y avisa de que el sustrato seco es su principal problema. Un sustrato de tierra pesa más y se seca más despacio que uno solo de fibra, que en una colgante es justo lo que interesa. Si mezclas: dos partes de universal sin turba, una parte de sustrato con tierra y un puñado de perlita para que no se compacte. Lo que hay que evitar es un sustrato tan ligero que atraviese el agua sin mojarse, que es cómo terminan secas la mayoría de las colgantes.",
-        "mezcla": "2 universal sin turba : 1 sustrato con tierra : puñado de perlita"
+        "mezcla": "2 universal sin turba : 1 sustrato con tierra : puñado de perlita",
+        "cambiar_ahora": false
       },
       "abonado": {
         "resumen": "Abono rico en nitrógeno una vez al mes de primavera a final de verano; en invierno, casi nada.",
@@ -2055,7 +2277,9 @@
           7,
           8,
           9
-        ]
+        ],
+        "condicion": null,
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "No lo cambies aún: recién llegado y con la maceta bien. Cada 2 años en primavera.",
@@ -2099,55 +2323,6 @@
         "aviso_homonimo": "ASPCA sí tiene ficha de otra especie del mismo género, Ficus benjamina, y esa figura como tóxica. No es esta planta."
       },
       "dificultad": "exigente",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "sana",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
-          "Masa foliar densísima y bien repartida, con tallos cayendo por todo el perímetro de la maceta colgante: no hay calvas ni zonas peladas.",
-          "Hojas pequeñas (1-2 cm), ovaladas y de margen ondulado, turgentes, verdes en el centro con un borde blanco crema ancho y bien definido.",
-          "Variegación estable y del mismo dibujo en las hojas nuevas de las puntas que en las viejas del interior: señal de que la luz le está bastando.",
-          "Tallos delgados y rojizos, con abultamientos marrones en los nudos que corresponden a las raíces adventicias propias de la especie.",
-          "Algunas hojas del interior más apagadas y algún borde con un tono pardo mínimo, en muy pocas hojas.",
-          "No se ven telarañas, ni punteado pálido, ni melaza, ni hojas amarillas, ni hojas caídas sobre la mesa.",
-          "Maceta colgante verde de vivero de 15 cm, con etiqueta de Viveros Projardín: \"FICUS SUNNY MACETA 15 CM\", 8,95 €, pasaporte fitosanitario ES13-28/0283F."
-        ],
-        "causas_probables": [
-          "Lleva horas en casa: la densidad y la variegación son de producción de vivero y no reflejan aún nada de este salón. Los pocos bordes con tono pardo que se ven son compatibles con el transporte o con un rato de sequedad en la tienda, no con un error de cuidado.",
-          "Está sana y recién comprada, con la densidad típica de producción de vivero. El estado actual no necesita explicación: lo que necesita es no romperse.",
-          "El riesgo dominante es el riego, no la luz ni las plagas. En esta especie un secado completo del cepellón no se revierte: la hoja afectada se vuelve marrón y crujiente y no recupera color, y la planta se queda con calvas permanentes en la silueta, que es justo lo que hace bonita a una colgante. Y como está colgada y por encima de la vista, es la más fácil de olvidar.",
-          "El segundo riesgo llega en invierno: la calefacción. Bordes marrones crujientes con el centro de la hoja verde serán aire seco, no sed, y el consejo es opuesto (subir humedad, no regar más).",
-          "El tercero es la araña roja, que RHS cita para esta especie en interior y que prospera exactamente con calor y aire seco.",
-          "Los pocos bordes pardos que se ven ahora son compatibles con un episodio breve de sequedad o con el roce del transporte; no forman un patrón."
-        ],
-        "tratamiento": [
-          "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
-          "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
-          "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
-          "Preventivo: pon una alarma de riego. Con esta planta, un recordatorio cada 3 días en verano vale más que cualquier otro consejo de la ficha.",
-          "Preventivo, esta semana: comprueba que al regar el agua no atraviesa la maceta en dos segundos. Si lo hace, el cepellón está compactado: riega por inmersión 10 minutos y deja escurrir bien antes de colgarla.",
-          "Preventivo, en verano: pulveriza las hojas por la mañana 2 o 3 veces por semana. Es la única planta de la casa en la que RHS recomienda expresamente pulverizar el follaje.",
-          "Preventivo, cada 2 semanas: mira el envés de unas cuantas hojas con el zoom del móvil buscando punteado o telaraña. Es la revisión que evita perderla por araña roja.",
-          "Gírala un cuarto de vuelta cada 2 semanas para que el lado de la pared no se pele.",
-          "Antes de tocar cualquier bultito marrón de los nudos, mira con lupa si es raíz adventicia (sale del tallo, no se desprende) o cochinilla. No la trates a ciegas.",
-          "En invierno: a un metro largo del radiador, riego cada 6 días y sin abono.",
-          "Con el sol matinal: mira cada semana las hojas más expuestas. Si el margen blanco se vuelve de color papel, difumina ese sol con un visillo."
-        ],
-        "revisar_en": "1 mes: la planta tiene que seguir sin bordes marrones nuevos y con la variegación igual de contrastada en las hojas de las puntas. Si aparecen bordes crujientes en muchas hojas a la vez, revisa primero si hubo un secado (cepellón separado de las paredes, maceta muy ligera al levantarla) antes de cambiar nada más.",
-        "no_visible_en_foto": [
-          "El envés de las hojas interiores. Con esta densidad, una araña roja podría estar empezando dentro de la mata sin que se note desde fuera.",
-          "La humedad real del cepellón y si está compactado.",
-          "Si las raíces ya han colonizado el fondo de la maceta de 15 cm.",
-          "El cultivar. La descripción de RHS para Ficus pumila 'White Sunny' —hojas ovaladas y de margen ondulado, verdes con margen blanco crema— coincide con lo que se ve, pero RHS cataloga varios cultivares variegados casi idénticos ('Sonny', 'Variegata', 'White Sunny') y la etiqueta solo dice \"FICUS SUNNY\". No se puede cerrar desde una foto.",
-          "Si el sol directo de la mañana llega a la maceta colgante y durante cuánto tiempo. Importa por el margen blanco de la hoja, que se quema antes que la parte verde.",
-          "Si trae plaga del vivero. RHS cita araña roja, trips, cochinilla algodonosa y cochinillas para esta especie en interior, y con esta densidad de mata una infestación incipiente no se ve desde fuera."
-        ],
-        "titulo": "Primer día en casa, impecable: todo depende de que no se seque ni un día",
-        "revisar_fecha": "2026-09-11",
-        "revisar_dias": null,
-        "revisar_desde": null
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -2261,7 +2436,7 @@
           "nota": "Listado completo de ASPCA para gatos, revisado: el único Ficus que aparece es Ficus benjamina, en la sección de tóxicas. Ficus pumila no figura ni como tóxica ni como no tóxica."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -2385,6 +2560,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
         }
       ],
       "ubicacion": {
@@ -2465,9 +2654,82 @@
           "tipo": "ritmo",
           "dias_verano": 3,
           "dias_invierno": 6,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-11",
+          "ancla_tipo": "llegada_a_casa"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "ficus-sunny.jpg",
+          "severidad": "sana",
+          "titulo": "Primer día en casa, impecable: todo depende de que no se seque ni un día",
+          "senales": [
+            "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
+            "Masa foliar densísima y bien repartida, con tallos cayendo por todo el perímetro de la maceta colgante: no hay calvas ni zonas peladas.",
+            "Hojas pequeñas (1-2 cm), ovaladas y de margen ondulado, turgentes, verdes en el centro con un borde blanco crema ancho y bien definido.",
+            "Variegación estable y del mismo dibujo en las hojas nuevas de las puntas que en las viejas del interior: señal de que la luz le está bastando.",
+            "Tallos delgados y rojizos, con abultamientos marrones en los nudos que corresponden a las raíces adventicias propias de la especie.",
+            "Algunas hojas del interior más apagadas y algún borde con un tono pardo mínimo, en muy pocas hojas.",
+            "No se ven telarañas, ni punteado pálido, ni melaza, ni hojas amarillas, ni hojas caídas sobre la mesa.",
+            "Maceta colgante verde de vivero de 15 cm, con etiqueta de Viveros Projardín: \"FICUS SUNNY MACETA 15 CM\", 8,95 €, pasaporte fitosanitario ES13-28/0283F."
+          ],
+          "causas_probables": [
+            {
+              "id": "llego-hoy",
+              "resumen": "Llegó hoy: la densidad y la variegación son de producción de vivero",
+              "detalle": "Lleva horas en casa, así que nada de lo que se ve refleja todavía este salón. Está sano y no necesita explicación: necesita no romperse. Los pocos bordes con tono pardo que se aprecian son compatibles con el transporte o con un rato de sequedad en la tienda, y no forman patrón.",
+              "patron": null
+            },
+            {
+              "id": "riesgo-riego",
+              "resumen": "El riesgo dominante es el riego, no la luz ni las plagas",
+              "detalle": "En esta especie un secado completo del cepellón no se revierte: la hoja afectada se vuelve marrón y crujiente, no recupera color, y la planta se queda con calvas permanentes en la silueta, que es justo lo que hace bonita a una colgante. Y como está colgada por encima de la altura de la vista, es la más fácil de olvidar de las siete.",
+              "patron": "Muchas hojas crujientes de golpe, cepellón separado de las paredes y maceta muy ligera al levantarla."
+            },
+            {
+              "id": "riesgo-invierno",
+              "resumen": "En invierno el problema será la calefacción, y el consejo es el contrario",
+              "detalle": "Con el radiador puesto aparecerán bordes marrones y crujientes con el centro de la hoja verde. Eso es aire seco, no sed: la respuesta es subir la humedad, no regar más. Confundirlo lleva a encharcar una planta que ya está sufriendo.",
+              "patron": "Bordes crujientes con el centro de la hoja verde y turgente."
+            },
+            {
+              "id": "arana-roja",
+              "resumen": "Araña roja: RHS la cita para esta especie y el ambiente de la casa la favorece",
+              "detalle": "Prospera con calor y aire seco, que es exactamente lo que hay aquí en verano y en invierno. Con esta densidad de mata, una infestación incipiente no se ve desde fuera, así que la revisión del envés cada dos semanas no es una formalidad.",
+              "patron": "Punteado pálido fino en el haz y telaraña finísima en el envés."
+            }
+          ],
+          "tratamiento": [
+            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
+            "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
+            "Preventivo: pon una alarma de riego. Con esta planta, un recordatorio cada 3 días en verano vale más que cualquier otro consejo de la ficha.",
+            "Preventivo, esta semana: comprueba que al regar el agua no atraviesa la maceta en dos segundos. Si lo hace, el cepellón está compactado: riega por inmersión 10 minutos y deja escurrir bien antes de colgarla.",
+            "Preventivo, en verano: pulveriza las hojas por la mañana 2 o 3 veces por semana. Es la única planta de la casa en la que RHS recomienda expresamente pulverizar el follaje.",
+            "Preventivo, cada 2 semanas: mira el envés de unas cuantas hojas con el zoom del móvil buscando punteado o telaraña. Es la revisión que evita perderla por araña roja.",
+            "Gírala un cuarto de vuelta cada 2 semanas para que el lado de la pared no se pele.",
+            "Antes de tocar cualquier bultito marrón de los nudos, mira con lupa si es raíz adventicia (sale del tallo, no se desprende) o cochinilla. No la trates a ciegas.",
+            "En invierno: a un metro largo del radiador, riego cada 6 días y sin abono.",
+            "Con el sol matinal: mira cada semana las hojas más expuestas. Si el margen blanco se vuelve de color papel, difumina ese sol con un visillo."
+          ],
+          "revisar_en": "1 mes: la planta tiene que seguir sin bordes marrones nuevos y con la variegación igual de contrastada en las hojas de las puntas. Si aparecen bordes crujientes en muchas hojas a la vez, revisa primero si hubo un secado (cepellón separado de las paredes, maceta muy ligera al levantarla) antes de cambiar nada más.",
+          "revisar_fecha": "2026-09-11",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "El envés de las hojas interiores. Con esta densidad, una araña roja podría estar empezando dentro de la mata sin que se note desde fuera.",
+            "La humedad real del cepellón y si está compactado.",
+            "Si las raíces ya han colonizado el fondo de la maceta de 15 cm.",
+            "El cultivar. La descripción de RHS para Ficus pumila 'White Sunny' —hojas ovaladas y de margen ondulado, verdes con margen blanco crema— coincide con lo que se ve, pero RHS cataloga varios cultivares variegados casi idénticos ('Sonny', 'Variegata', 'White Sunny') y la etiqueta solo dice \"FICUS SUNNY\". No se puede cerrar desde una foto.",
+            "Si el sol directo de la mañana llega a la maceta colgante y durante cuánto tiempo. Importa por el margen blanco de la hoja, que se quema antes que la parte verde.",
+            "Si trae plaga del vivero. RHS cita araña roja, trips, cochinilla algodonosa y cochinillas para esta especie en interior, y con esta densidad de mata una infestación incipiente no se ve desde fuera."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
         }
       ]
     },
@@ -2489,8 +2751,10 @@
         "ml_aprox": 180,
         "profundidad_cm": 2,
         "ultimo": null,
-        "calculable": false,
-        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo"
+        "calculable": true,
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": "2026-08-11",
+        "ancla_tipo": "llegada_a_casa"
       },
       "luz": {
         "resumen": "El sol de la mañana la favorece. Pero no volverá a florecer aquí: es cuestión de fotoperiodo.",
@@ -2539,6 +2803,7 @@
       "sustrato": {
         "resumen": "Fértil, húmedo y bien drenado, sin turba. No la cambies de maceta estando en flor.",
         "detalle": "RHS pide sustrato o suelo fértil, húmedo pero bien drenado y sin turba, y avisa de que no tolera el encharcamiento. El sustrato de vivero que trae es adecuado para lo que queda de floración. Lo importante es lo que no hay que hacer: no cambiarla de maceta ahora. Mover el cepellón de una planta en plena flor le hace tirar los botones. Todo lo de sustrato se pospone al final de la floración.",
+        "mezcla": null,
         "cambiar_ahora": false
       },
       "abonado": {
@@ -2546,7 +2811,8 @@
         "detalle": "RHS: para los de floristería de interior, abono líquido equilibrado semanal durante el crecimiento; para los de maceta en general, abono líquido durante el crecimiento y cambio a uno rico en potasio (tipo tomate) durante la floración. Traducido a esta planta: viene del vivero con el sustrato cargado de fertilizante, así que durante las primeras semanas no le hace falta nada. Si la floración se alarga, un abono de tomate a media dosis cada 10-14 días la sostiene. Si vas a tirarla al acabar la flor, sáltate el abonado: no cambia nada.",
         "temporada": "durante la floración",
         "meses": null,
-        "condicion": "depende de que esté en flor, no del mes: abono rico en potasio mientras dure la floración"
+        "condicion": "depende de que esté en flor, no del mes: abono rico en potasio mientras dure la floración",
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "Nada mientras esté en flor. Después: poda a 20 cm y decides si al jardín, a maceta o fuera.",
@@ -2584,52 +2850,6 @@
         "clave": "toxica"
       },
       "dificultad": "fácil",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "sana",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
-          "Mata compacta en forma de cúpula, muy cargada: decenas de flores dobles blancas tipo pompón abiertas y muchos más botones aún cerrados.",
-          "Follaje verde oscuro, turgente, sin amarilleo, sin bordes secos, sin manchas y sin punteado.",
-          "Hojas anchas, profundamente lobuladas, con lóbulos gruesos e irregulares, y flores dobles con centro amarillo verdoso.",
-          "Ni una flor pasada todavía: la tanda de floración está empezando.",
-          "Sustrato de vivero de aspecto húmedo en superficie; maceta gris de vivero de 12 cm.",
-          "Etiqueta de Viveros Projardín: \"MARGARITA MACETA 12 CM\", 3,95 €, pasaporte fitosanitario ES13-28/0283F.",
-          "Porte anormalmente bajo y denso para la cantidad de flor que lleva: el aspecto típico de una planta forzada en producción."
-        ],
-        "causas_probables": [
-          "Lleva horas en casa y está en el mejor momento de su ciclo: lo que se ve es el resultado de la producción de vivero. Nada que corregir hoy. Lo que hay que saber es que la cuenta atrás de su floración ya está en marcha y no depende de lo que se haga bien o mal aquí.",
-          "Está sana y en el mejor momento de su ciclo. No hay nada que corregir hoy.",
-          "Corrección de identificación, y es la más importante de esta ficha: la etiqueta dice \"MARGARITA\", pero la planta no lo es. La hoja ancha y profundamente lobulada y la flor doble en pompón son de crisantemo de floristería (Chrysanthemum × morifolium). Una margarita arbustiva (Argyranthemum) tiene la hoja finamente dividida, casi de encaje, y flor sencilla con centro amarillo plano; una margarita de pradera (Leucanthemum) tiene hoja estrecha y dentada y flor sencilla grande. Ninguna de las dos encaja. Cambia el consejo por completo: no es un arbusto de exterior de temporada larga, es una planta forzada de flor puntual.",
-          "El porte compacto no es la forma natural de la planta: los crisantemos de maceta se producen con fotoperiodo controlado y a menudo con enanizantes. Cuando rebrote, saldrá más alta y más suelta. No es que se haya estropeado: es que ahora se ve como es de verdad.",
-          "El riesgo a corto plazo es simple y doble: que se seque un día en flor (las flores abiertas no se recuperan) y que las primeras flores pasadas se queden puestas y traigan botritis."
-        ],
-        "tratamiento": [
-          "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
-          "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
-          "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
-          "Riego: unos 180 ml cada 2 días en agosto, comprobando a diario, siempre por el borde de la maceta y nunca sobre las flores.",
-          "Preventivo, desde la primera flor marchita: retira las flores pasadas a medida que aparezcan, cortando el pedúnculo por debajo de la flor. RHS lo dice claramente: retirar las flores marchitas con regularidad mantiene el conjunto. Además corta la vía de entrada del moho gris.",
-          "Preventivo: déjale aire alrededor y no la pulverices. Con esta densidad de mata, el aire quieto es lo que trae oídio y botritis.",
-          "Ponla en el sitio luminoso más fresco que tengas: el sol de la mañana le viene bien y el aire acondicionado a 28 °C juega a su favor. Cada grado menos son días más de flor.",
-          "Revisa los botones tiernos una vez por semana buscando pulgón, que es lo que más probablemente aparezca.",
-          "No la cambies de maceta ni la abones fuerte mientras esté en flor.",
-          "Decisión al terminar la floración (unas 4-6 semanas): tirarla, o cortarla a 20 cm y plantarla en una maceta grande de exterior o en tierra para que rebrote y florezca en otoño. Mantenerla dentro es la opción que peor sale."
-        ],
-        "revisar_en": "2 semanas: deberían haberse abierto buena parte de los botones que hoy están cerrados y no debería haber ninguna flor pasada sin retirar. Si los botones se secan sin abrir, la causa más probable es que se ha secado el cepellón algún día o que hace demasiado calor donde está.",
-        "no_visible_en_foto": [
-          "El estado del cepellón. Los crisantemos de maceta salen del vivero con la maceta llena de raíz, lo que explica parte de su sed; no se puede confirmar sin sacarla.",
-          "Si el sustrato está encharcado por dentro: la superficie húmeda no dice nada de los 10 cm de abajo.",
-          "Si la planta lleva regulador de crecimiento (enanizante). No se ve en una foto, pero condiciona lo que pasará cuando rebrote: se estirará.",
-          "El cultivar. Los crisantemos de maceta se venden por color y forma de flor, sin nombre; POWO no cataloga cultivares comerciales y la etiqueta solo dice \"MARGARITA\".",
-          "El envés de las hojas y el interior de la mata: no se puede descartar pulgón ni araña roja."
-        ],
-        "titulo": "Primer día en casa y en plena floración: planta de temporada, no de colección",
-        "revisar_fecha": "2026-08-25",
-        "revisar_dias": null,
-        "revisar_desde": null
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -2716,7 +2936,7 @@
           "nota": "Entrada de género: Chrysanthemum spp. (Compositae), tóxica para perros, gatos y caballos; sesquiterpenos, lactonas, piretrinas y otros irritantes; vómitos, diarrea, salivación, descoordinación y dermatitis. No hay entrada específica para C. × morifolium."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -2833,6 +3053,27 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 11 de agosto»), no para afirmar «hoy le toca»."
+        },
+        {
+          "campo": "sustrato.mezcla",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null en el helecho y en la margarita a propósito: en el helecho porque no hay que cambiarle el sustrato ahora y proponer una mezcla invitaría a hacerlo; en la margarita porque no se trasplanta durante la floración. En las otras cinco hay mezcla concreta."
         }
       ],
       "ubicacion": {
@@ -2902,9 +3143,80 @@
           "tipo": "ritmo",
           "dias_verano": 2,
           "dias_invierno": 5,
-          "calculable": false,
-          "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-11",
+          "ancla_tipo": "llegada_a_casa"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "margarita.jpg",
+          "severidad": "sana",
+          "titulo": "Primer día en casa y en plena floración: planta de temporada, no de colección",
+          "senales": [
+            "Es su primer día en casa: llegó el 11 de agosto de 2026 y la foto es de ese día.",
+            "Mata compacta en forma de cúpula, muy cargada: decenas de flores dobles blancas tipo pompón abiertas y muchos más botones aún cerrados.",
+            "Follaje verde oscuro, turgente, sin amarilleo, sin bordes secos, sin manchas y sin punteado.",
+            "Hojas anchas, profundamente lobuladas, con lóbulos gruesos e irregulares, y flores dobles con centro amarillo verdoso.",
+            "Ni una flor pasada todavía: la tanda de floración está empezando.",
+            "Sustrato de vivero de aspecto húmedo en superficie; maceta gris de vivero de 12 cm.",
+            "Etiqueta de Viveros Projardín: \"MARGARITA MACETA 12 CM\", 3,95 €, pasaporte fitosanitario ES13-28/0283F.",
+            "Porte anormalmente bajo y denso para la cantidad de flor que lleva: el aspecto típico de una planta forzada en producción."
+          ],
+          "causas_probables": [
+            {
+              "id": "llego-hoy",
+              "resumen": "Llegó hoy y está en el mejor momento de su ciclo: nada que corregir",
+              "detalle": "Lleva horas en casa y lo que se ve es el resultado de la producción de vivero. No hay nada que arreglar. Lo que hay que saber es que la cuenta atrás de su floración ya está en marcha y no depende de lo que se haga bien o mal aquí.",
+              "patron": null
+            },
+            {
+              "id": "identificacion",
+              "resumen": "No es una margarita: es un crisantemo de floristería, y eso cambia el consejo entero",
+              "detalle": "La etiqueta dice MARGARITA, pero la planta no lo es. La hoja ancha y profundamente lobulada y la flor doble en pompón son de crisantemo de floristería (Chrysanthemum × morifolium). Una margarita arbustiva (Argyranthemum) tiene la hoja finamente dividida, casi de encaje, y flor sencilla con centro amarillo plano; una margarita de pradera (Leucanthemum) tiene hoja estrecha y dentada y flor sencilla grande. Ninguna encaja. No es un arbusto de exterior de temporada larga: es una planta forzada de flor puntual.",
+              "patron": "Hoja ancha con 3-5 lóbulos gruesos y flor doble en pompón, en lugar de hoja de encaje y flor sencilla."
+            },
+            {
+              "id": "porte-forzado",
+              "resumen": "El porte compacto es de producción forzada, no su forma natural",
+              "detalle": "Los crisantemos de maceta se producen con fotoperiodo controlado y a menudo con enanizantes para que salgan a la venta bajos y cargados de flor. Cuando rebrote, saldrá más alta y más suelta. No es que se haya estropeado: es que entonces se verá como es de verdad.",
+              "patron": "Mata anormalmente baja y densa para la cantidad de flor que lleva."
+            },
+            {
+              "id": "riesgos",
+              "resumen": "Dos riesgos concretos: que se seque un día en flor y que no retires las flores pasadas",
+              "detalle": "Las flores abiertas no se recuperan de un marchitamiento, y los botones se quedan sin abrir. Y las primeras flores pasadas, si se dejan puestas, son la vía de entrada del moho gris en una mata así de densa.",
+              "patron": "Botones que se secan sin abrir; pelusa gris sobre las flores marchitas."
+            }
+          ],
+          "tratamiento": [
+            "Hoy, primer día en casa: colócala fuera de la franja de sol directo de la mañana, o con un visillo delante. La semana que viene ya puede entrar en ella.",
+            "Esta semana: mira el envés de varias hojas con el zoom del móvil. La plaga que traiga una planta de vivero es lo que se contagia a las otras seis, y las siete están en el mismo salón.",
+            "Durante 10-15 días, no te alarmes si tira alguna hoja de abajo: el cambio de invernadero a salón implica menos humedad y menos luz difusa, y la planta ajusta. Lo que sí es señal de problema es que las hojas nuevas salgan mal.",
+            "Riego: unos 180 ml cada 2 días en agosto, comprobando a diario, siempre por el borde de la maceta y nunca sobre las flores.",
+            "Preventivo, desde la primera flor marchita: retira las flores pasadas a medida que aparezcan, cortando el pedúnculo por debajo de la flor. RHS lo dice claramente: retirar las flores marchitas con regularidad mantiene el conjunto. Además corta la vía de entrada del moho gris.",
+            "Preventivo: déjale aire alrededor y no la pulverices. Con esta densidad de mata, el aire quieto es lo que trae oídio y botritis.",
+            "Ponla en el sitio luminoso más fresco que tengas: el sol de la mañana le viene bien y el aire acondicionado a 28 °C juega a su favor. Cada grado menos son días más de flor.",
+            "Revisa los botones tiernos una vez por semana buscando pulgón, que es lo que más probablemente aparezca.",
+            "No la cambies de maceta ni la abones fuerte mientras esté en flor.",
+            "Decisión al terminar la floración (unas 4-6 semanas): tirarla, o cortarla a 20 cm y plantarla en una maceta grande de exterior o en tierra para que rebrote y florezca en otoño. Mantenerla dentro es la opción que peor sale."
+          ],
+          "revisar_en": "2 semanas: deberían haberse abierto buena parte de los botones que hoy están cerrados y no debería haber ninguna flor pasada sin retirar. Si los botones se secan sin abrir, la causa más probable es que se ha secado el cepellón algún día o que hace demasiado calor donde está.",
+          "revisar_fecha": "2026-08-25",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "El estado del cepellón. Los crisantemos de maceta salen del vivero con la maceta llena de raíz, lo que explica parte de su sed; no se puede confirmar sin sacarla.",
+            "Si el sustrato está encharcado por dentro: la superficie húmeda no dice nada de los 10 cm de abajo.",
+            "Si la planta lleva regulador de crecimiento (enanizante). No se ve en una foto, pero condiciona lo que pasará cuando rebrote: se estirará.",
+            "El cultivar. Los crisantemos de maceta se venden por color y forma de flor, sin nombre; POWO no cataloga cultivares comerciales y la etiqueta solo dice \"MARGARITA\".",
+            "El envés de las hojas y el interior de la mata: no se puede descartar pulgón ni araña roja."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
         }
       ]
     },
@@ -2925,7 +3237,9 @@
         "profundidad_cm": 2,
         "ultimo": null,
         "calculable": false,
-        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo"
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": null,
+        "ancla_tipo": "sin_dato"
       },
       "luz": {
         "resumen": "En la estantería recibe menos de lo ideal. Acércala al ventanal, pero no al tramo de sol directo.",
@@ -2974,7 +3288,8 @@
       "sustrato": {
         "resumen": "Sustrato sin turba con base de tierra, que drene bien. No necesita nada especial.",
         "detalle": "RHS: sustrato sin turba con base de tierra franca, en luz plena o filtrada. Universal de calidad sin turba con un buen puñado de perlita cumple de sobra. Lo importante no es la receta, es que el conjunto drene: en un poto, el 90 % de los problemas viene de un sustrato que se queda empapado, especialmente si la maceta decorativa no tiene salida de agua.",
-        "mezcla": "universal sin turba + un buen puñado de perlita"
+        "mezcla": "universal sin turba + un buen puñado de perlita",
+        "cambiar_ahora": false
       },
       "abonado": {
         "resumen": "Una vez al mes de abril a octubre con abono general de plantas de interior. En invierno, nada.",
@@ -2988,7 +3303,9 @@
           8,
           9,
           10
-        ]
+        ],
+        "condicion": null,
+        "media_dosis": true
       },
       "trasplante": {
         "resumen": "Cada 2–3 años, una talla más. Y comprueba ya si la maceta cerámica tiene agujero.",
@@ -3025,47 +3342,6 @@
         "clave": "toxica"
       },
       "dificultad": "fácil",
-      "notas_carlos": null,
-      "estado": {
-        "severidad": "sana",
-        "fecha_foto": "2026-08-11",
-        "senales": [
-          "Lleva más de veinte años con la familia. Es un dato de diagnóstico y no solo una anécdota: una planta que ha sobrevivido dos décadas en esta casa demuestra que la rutina que se le aplica funciona.",
-          "Hojas grandes, acorazonadas, enteras y turgentes, con brillo normal y sin ninguna marchitez.",
-          "Variegación amarilla y crema amplia, bien repartida y con buen contraste; hay hojas con sectores crema muy extensos.",
-          "Sin clorosis, sin bordes secos, sin puntas marrones, sin punteado y sin hojas amarillas en la base.",
-          "Mata llena y equilibrada, que se abre hacia los dos lados del hueco de la estantería; los tallos no están estirados ni pelados.",
-          "Maceta de cerámica decorativa de cuadros, colocada sobre una estantería de madera oscura, algo retirada del ventanal. En la foto no se ve el fondo de la maceta.",
-          "La escena está bastante en penumbra: el nivel de luz de la foto es coherente con una ubicación un escalón por debajo de lo ideal."
-        ],
-        "causas_probables": [
-          "Antes de buscarle problemas conviene decir lo que significan veinte años: el régimen de luz, riego y sitio que ha tenido hasta hoy es demostradamente suficiente para esta planta. Cualquier cambio que se le proponga —acercarla al ventanal, cambiarla de maceta— es una mejora opcional, no una corrección urgente, y conviene hacerlo de uno en uno para no romper lo que ya funciona.",
-          "Está sana, y lo que lo demuestra no es que esté verde: es que la variegación está bien marcada. En un poto, la variegación es el indicador de luz, y esta la tiene en buen estado, así que hasta ahora la luz le ha bastado.",
-          "Su riesgo dominante no es la luz insuficiente inmediata, es el agua: la podredumbre de raíz por exceso de riego es su problema principal según RHS, y aquí el factor agravante concreto es una maceta cerámica de la que no se puede ver si tiene drenaje.",
-          "El riesgo a medio plazo sí es la luz. RHS avisa de que con poca luz el follaje pierde la variegación y el crecimiento es pobre. En una estantería retirada del ventanal esto no pasa en una semana, se ve en la hoja que salga en 2 o 3 meses.",
-          "Que las hojas sean grandes y bien formadas indica también que no está pasando hambre: no hay nada que corregir en abonado."
-        ],
-        "tratamiento": [
-          "Preventivo, esta semana: mira si la maceta de cuadros tiene agujero de drenaje. Si no lo tiene, deja la planta en su maceta de plástico y usa la cerámica como funda.",
-          "Riego: unos 200 ml cuando los 2 cm de arriba estén secos, en la práctica cada 7 días en agosto. Riega en el fregadero y deja escurrir 10 minutos antes de devolverla a la estantería.",
-          "Preventivo, cada mes o dos: pasa un paño húmedo a las hojas. Quitan polvo y ganan luz, que es el recurso que le falta ahí.",
-          "Gírala un cuarto de vuelta cada 2 o 3 riegos: en un hueco de estantería la luz le entra por un solo lado.",
-          "Abono general de interior a media dosis una vez al mes, de abril a octubre. En invierno, nada.",
-          "Si en unos meses la ves perder variegación, acércala al ventanal —a la zona de luz difusa, no a la del sol directo de la mañana— y no la abones más ni le cambies el sustrato."
-        ],
-        "revisar_en": "3 meses (hacia el 11 de noviembre de 2026): compara una hoja nueva con una de las de hoy. Si la nueva sale claramente más verde y con menos amarillo, o bastante más pequeña, le falta luz y hay que acercarla al ventanal, a la zona de luz difusa y no a la del sol directo de la mañana. La comprobación del drenaje, en cambio, es para el primer riego: no esperes tres meses.",
-        "no_visible_en_foto": [
-          "Si la maceta cerámica tiene agujero de drenaje. Es la comprobación más importante de esta planta y no se ve en la foto.",
-          "El estado de las raíces y el olor del sustrato, que es lo que diría si hay podredumbre empezando.",
-          "El envés de las hojas y las axilas: no se puede descartar cochinilla algodonosa.",
-          "Cuánta luz llega realmente a esa estantería, y si el sol directo de la mañana alcanza el hueco o se queda antes. La foto está tomada en penumbra y no permite estimarlo; se resolvería con una foto de día a la hora en que entra el sol.",
-          "El cultivar. La variegación amarilla jaspeada es la del poto dorado clásico, pero los cultivares del comercio ('Golden Pothos', 'Marble Queen' y otros) se solapan y POWO no cataloga cultivares comerciales. La planta no trae etiqueta."
-        ],
-        "titulo": "Veinte años en casa y bien variegado: solo hay que comprobar el drenaje",
-        "revisar_fecha": "2026-11-11",
-        "revisar_dias": null,
-        "revisar_desde": null
-      },
       "fuentes": [
         {
           "campo": "nombre_cientifico",
@@ -3158,7 +3434,7 @@
           "nota": "RHS confirma en la misma dirección: como muchas aráceas es tóxica, recomienda guantes para manipularla y mantenerla lejos de niños y mascotas."
         },
         {
-          "campo": "notas_carlos",
+          "campo": "notas",
           "fuente": null,
           "url": null,
           "consultado": "2026-08-11",
@@ -3275,6 +3551,20 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Null: nadie registra los riegos. Es el hueco que impide convertir el ritmo de riego en una tarea con fecha. Se resolvería si Noah apunta la fecha de cada riego, aunque sea en una nota del móvil. Mientras no exista, la web solo puede decir el ritmo y recordar la comprobación con el dedo."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: este es el primero. Cuando haya una segunda tanda de fotos, aquí se dirá qué causa del estado anterior quedó confirmada, refutada o sin resolver, apuntando a su `id` y con la evidencia observada. Es lo que convierte una hipótesis ordenada por probabilidad en una causa demostrada, y es donde aterriza el `revisar_en` del estado anterior."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Null: no consta cuándo se regó por última vez, así que no hay punto de partida desde el que contar y el vencimiento no se puede calcular. Pregunta concreta para Carlos o Noah: ¿cuándo la regaste por última vez? Con una sola fecha, el cálculo se activa. Mientras no la haya, la ficha solo puede dar el ritmo y recordar la comprobación con el dedo: una fecha estimada daría vencimientos falsos con aspecto de exactos."
         }
       ],
       "ubicacion": {
@@ -3339,7 +3629,79 @@
           "dias_invierno": 10,
           "calculable": false,
           "por_que_no": "No hay registro de cuándo se regó por última vez (`riego.ultimo` es null en las siete), así que un «hoy toca regar» sería una afirmación sin dato detrás. Y aunque lo hubiera, en riego el disparador correcto no es el calendario sino el estado del sustrato: el ritmo en días es una orientación, la comprobación con el dedo es la orden. Lo honesto es mostrar el ritmo y recordar la comprobación, no marcar una tarea vencida.",
-          "prioridad": 2
+          "prioridad": 2,
+          "ancla": null,
+          "ancla_tipo": "sin_dato"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-11",
+          "foto": "poto.jpg",
+          "severidad": "sana",
+          "titulo": "Veinte años en casa y bien variegado: solo hay que comprobar el drenaje",
+          "senales": [
+            "Lleva más de veinte años con la familia. Es un dato de diagnóstico y no solo una anécdota: una planta que ha sobrevivido dos décadas en esta casa demuestra que la rutina que se le aplica funciona.",
+            "Hojas grandes, acorazonadas, enteras y turgentes, con brillo normal y sin ninguna marchitez.",
+            "Variegación amarilla y crema amplia, bien repartida y con buen contraste; hay hojas con sectores crema muy extensos.",
+            "Sin clorosis, sin bordes secos, sin puntas marrones, sin punteado y sin hojas amarillas en la base.",
+            "Mata llena y equilibrada, que se abre hacia los dos lados del hueco de la estantería; los tallos no están estirados ni pelados.",
+            "Maceta de cerámica decorativa de cuadros, colocada sobre una estantería de madera oscura, algo retirada del ventanal. En la foto no se ve el fondo de la maceta.",
+            "La escena está bastante en penumbra: el nivel de luz de la foto es coherente con una ubicación un escalón por debajo de lo ideal."
+          ],
+          "causas_probables": [
+            {
+              "id": "veinte-anos",
+              "resumen": "Veinte años en casa demuestran que la rutina que se le da funciona",
+              "detalle": "Antes de buscarle problemas conviene decir lo que significan más de dos décadas: el régimen de luz, riego y sitio que ha tenido hasta hoy es demostradamente suficiente para esta planta. Cualquier cambio que se le proponga —acercarla al ventanal, cambiarla de maceta— es una mejora opcional y no una corrección urgente, y conviene hacerlo de uno en uno para no romper lo que ya funciona.",
+              "patron": null
+            },
+            {
+              "id": "sana-variegada",
+              "resumen": "Está sana, y lo que lo demuestra es la variegación, no el verde",
+              "detalle": "En un poto la variegación es el indicador de luz: si las hojas mantienen el jaspeado amarillo amplio y bien repartido, la luz le ha bastado. Una planta verde y sin jaspear puede parecer sana y estar contándote que vive a oscuras.",
+              "patron": "Jaspeado amarillo amplio y bien contrastado en las hojas nuevas, no solo en las viejas."
+            },
+            {
+              "id": "riesgo-agua",
+              "resumen": "El riesgo dominante es el agua: podredumbre de raíz en una maceta sin drenaje visible",
+              "detalle": "Es su problema principal según RHS, por delante de cualquier plaga. Y aquí hay un agravante concreto: la maceta de cerámica decorativa no permite ver si tiene agujero, así que el agua sobrante puede quedarse en el fondo sin que se note nada desde fuera.",
+              "patron": "Hojas de abajo amarillas y blandas, tierra húmeda días después de regar y olor a cerrado."
+            },
+            {
+              "id": "riesgo-luz",
+              "resumen": "A medio plazo, la luz: en la estantería está un escalón por debajo de lo ideal",
+              "detalle": "RHS avisa de que con poca luz el follaje pierde la variegación y el crecimiento es pobre. Está retirada del ventanal, así que recibe alrededor de un nivel 2 cuando le convendría un 3. Esto no pasa en una semana: se ve en la hoja que salga en dos o tres meses.",
+              "patron": "Hoja nueva más verde, con menos amarillo, o bastante más pequeña que las actuales."
+            },
+            {
+              "id": "sin-hambre",
+              "resumen": "Hojas grandes y bien formadas: no le falta alimento",
+              "detalle": "No hay nada que corregir en abonado. Y si algún día pierde variegación, la reacción intuitiva de abonar más sería un error: la variegación depende de la luz, no del abono.",
+              "patron": null
+            }
+          ],
+          "tratamiento": [
+            "Preventivo, esta semana: mira si la maceta de cuadros tiene agujero de drenaje. Si no lo tiene, deja la planta en su maceta de plástico y usa la cerámica como funda.",
+            "Riego: unos 200 ml cuando los 2 cm de arriba estén secos, en la práctica cada 7 días en agosto. Riega en el fregadero y deja escurrir 10 minutos antes de devolverla a la estantería.",
+            "Preventivo, cada mes o dos: pasa un paño húmedo a las hojas. Quitan polvo y ganan luz, que es el recurso que le falta ahí.",
+            "Gírala un cuarto de vuelta cada 2 o 3 riegos: en un hueco de estantería la luz le entra por un solo lado.",
+            "Abono general de interior a media dosis una vez al mes, de abril a octubre. En invierno, nada.",
+            "Si en unos meses la ves perder variegación, acércala al ventanal —a la zona de luz difusa, no a la del sol directo de la mañana— y no la abones más ni le cambies el sustrato."
+          ],
+          "revisar_en": "3 meses (hacia el 11 de noviembre de 2026): compara una hoja nueva con una de las de hoy. Si la nueva sale claramente más verde y con menos amarillo, o bastante más pequeña, le falta luz y hay que acercarla al ventanal, a la zona de luz difusa y no a la del sol directo de la mañana. La comprobación del drenaje, en cambio, es para el primer riego: no esperes tres meses.",
+          "revisar_fecha": "2026-11-11",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "Si la maceta cerámica tiene agujero de drenaje. Es la comprobación más importante de esta planta y no se ve en la foto.",
+            "El estado de las raíces y el olor del sustrato, que es lo que diría si hay podredumbre empezando.",
+            "El envés de las hojas y las axilas: no se puede descartar cochinilla algodonosa.",
+            "Cuánta luz llega realmente a esa estantería, y si el sol directo de la mañana alcanza el hueco o se queda antes. La foto está tomada en penumbra y no permite estimarlo; se resolvería con una foto de día a la hora en que entra el sol.",
+            "El cultivar. La variegación amarilla jaspeada es la del poto dorado clásico, pero los cultivares del comercio ('Golden Pothos', 'Marble Queen' y otros) se solapan y POWO no cataloga cultivares comerciales. La planta no trae etiqueta."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
         }
       ]
     }
