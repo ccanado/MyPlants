@@ -11,6 +11,27 @@
 >   están muertas — y están escritas con el mismo tono que las vivas, porque casi todo lo escribí en
 >   imperativo antes de aprender que eso era el problema.
 >
+> ### ⚠ LA PIEL DE ESTE BRIEF ESTÁ SUSTITUIDA. El criterio, no.
+>
+> **Carlos eligió la propuesta de `ui-designer`, en `alternativa/`.** Así que la dirección visual
+> concreta que defienden las mil seiscientas líneas siguientes **ya no es la de la web**. Están aquí
+> como registro de por qué se decidió cada cosa, no como especificación a cumplir.
+>
+> Lo digo yo, que la escribí, porque **nadie más sabe cuál de las dos cosas era cuál**:
+>
+> | **PIEL — sustituida por `alternativa/`** | **CRITERIO — sigue valiendo con cualquier piel** |
+> | --- | --- |
+> | La teja `#8F4A33` como campo de página y los seis colores medidos de las fotos | **La matriz de validez por superficie**: el contraste es propiedad del **par** (color, superficie), no del color. *Un token no hereda su ratio.* Cazó tres fallos que nadie había medido |
+> | La metáfora de la pegatina térmica de Projardín y su canto troquelado de 3 px | **Los dos tipos de borde distinguidos por el nombre**: control (≥3:1 obligatorio) y separador (sin umbral). El nombre impide el error, no la advertencia |
+> | Las tres familias tipográficas concretas | **Tres voces con tres trabajos, y la monoespaciada en TODA cifra** (ml, °C, cm, €, EAN, fechas). Es lo que da aire de cuaderno de campo y no de landing |
+> | La austeridad: sin fotos en la rejilla cerrada | **El sujeto no puede estar ausente de su propia portada.** La austeridad fue mi error: *la metáfora ganó al sujeto* |
+> | `--texto-parte`, `--sombra-contacto` y los valores concretos | **La arquitectura del expediente**: dos columnas semánticas, `QUÉ HAGO AHORA` **primero en el DOM** para que apile arriba en móvil, índice con recuento contado del DOM, columna de acción `sticky`. Bajó el hueco del 53–65 % al 0–10 % sin tocar una palabra |
+> | Que la severidad crítica se pinte en pálido con filete rojo | **No existe color para «sana»**: el color solo aparece cuando hay un problema, y su fuerza viene de la escasez. Y **ninguna información solo por color**, nunca |
+> | El dibujo concreto de los diagramas | **Un eje logarítmico sin marcas rotuladas miente sobre las proporciones** (R² 0,9993 contra log). Y **la forma codifica la clase de dato**: banda para un intervalo, marcador para un tope |
+> | Dónde va cada bloque de la ficha | **La clase escrita en el dato decide la forma, no el contenedor adivinando** (`tipo` por ítem, rótulo por clase). Cuatro problemas distintos, la misma respuesta |
+>
+> Y estas cuatro no son piel ni maquetación, son **la razón de ser del proyecto**, así que sobreviven a cualquier rediseño: **las fotos de diagnóstico no se filtran** —embellecer la foto del helecho corrompe la prueba—, **el contenido no se recorta para cuadrar una cifra**, **un hueco se marca como hueco** y **una afirmación positiva lleva su condición de falsación** donde pueda llevarla.
+>
 > ### Lo normativo, y lo es porque no es estética: es no mentir
 >
 > Cero nodos de texto por debajo de AA · cero bordes de control por debajo de 3:1 · cero saltos de
