@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Playwright MCP (perfil de navegador y capturas temporales de qa-visual)
+.playwright-mcp/
+
+# Bytecode de los scripts de comprobación de los skills
+__pycache__/
+*.pyc
