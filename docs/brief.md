@@ -2219,6 +2219,124 @@ síntoma: un contador que anuncia trabajo que esconde. **Un índice que dice cu�
 información; un contador que dice cuánto trabajo te oculta es una traba.** Y esto último es lo que
 tenía puesto yo, después de haber escrito lo primero para el expediente.
 
+### Las cuatro palancas — la unidad de la metáfora pasa de la pegatina a la planta en su tiesto
+
+Recomisión del punto 3 por decisión de Carlos, que marcó las cuatro cosas que le faltan: las fotos,
+el color, la profundidad y el movimiento. Y eligió **aflojar este brief donde estorbe**, con el
+argumento de que mi criterio manda sobre él porque lo escribió un agente.
+
+**Y el hallazgo es que en tres de las cuatro no hay que aflojar nada: hay que terminar de ejecutar.**
+`check-tokens` avisa de **17 tokens definidos y nunca usados**, y siete son exactamente lo que pide:
+`--color-sustrato` y `--color-sustrato-humedo` (material), `--retardo-1/2/3` (una escala de
+escalonado), `--dur-larga` («reordenar la rejilla»), `--dur-instante`, `--ease-entrada` y `--space-9`
+(el aire más generoso del sistema). Más `--color-maceta-alta`, definido como *«cara iluminada del
+tiesto — brillo y anillo moldeado»*, usado solo en un gradiente de fondo. **El sistema ya había
+especificado el material, la profundidad, el aire y una secuencia de entrada; la implementación se
+quedó con el subconjunto plano.** Eso no es una tesis equivocada: es una tesis a medio construir.
+
+#### El cambio de fondo, y es el único que sí afloja algo
+
+Fui a `assets/img/coleo-grande-etiqueta.jpg` a defender mi metáfora y encontré lo contrario. **La
+pegatina de Projardín no lleva foto** —texto, código de barras y precio—, así que en eso era fiel.
+**Pero está pegada a un tiesto de plástico blanco, sobre una mesa de madera, con migas de sustrato,
+un aro verde de sujeción, y encima la mata real del coleo con su granate y su lima.**
+
+> **Dibujamos la pegatina y tiramos todo aquello a lo que estaba pegada.**
+
+El objeto real nunca fue una etiqueta: era **una planta en un tiesto con una etiqueta puesta**. Así
+que la unidad de la metáfora cambia, y **queda escrito con su motivo** porque es la condición que
+puse para aflojar nada:
+
+> **La unidad pasa de «la pegatina» a «la planta en su tiesto con la pegatina puesta».** Motivo: la
+> unidad anterior recortaba el sujeto de su propia página, y las siete fotos de Carlos —lo único
+> genuinamente bonito del proyecto— no aparecían hasta abrir una ficha. No es una concesión al gusto
+> del cliente: es corregir un recorte mal hecho al elegir la unidad. Y la justificación que yo le
+> había puesto —«218 KB y cero bytes de foto»— era **un argumento de ingeniería sosteniendo una
+> decisión estética**, que es el movimiento que este brief prohíbe en otros sitios.
+
+#### Palanca 1 — Las fotos en la rejilla, y son también la palanca del color
+
+Tomo la formulación del lead porque es mejor que la mía y **retiro mi «acento por planta derivado del
+follaje»**: yo iba a extraer un color de cada foto y ponerlo de acento. Innecesario. **Las fotos son
+el color.** El coleo grande es granate y lima, el pequeño casi granate entero con filo verde, la
+margarita blanco sobre verde oscuro, la begonia trae una flor roja, el poto es amarillo y verde.
+Siete fotos meten **el color real de sus plantas sin añadir un solo token, sin un segundo acento y
+sin tocar el racionamiento de la alarma.** El color entra por donde tiene procedencia —el sujeto— en
+vez de por la paleta. Dos palancas resueltas por un cambio, y con menos sistema que antes.
+
+- La foto va en la **cara** de la tarjeta, con la etiqueta **encima**, como en la foto real: la
+  pegatina está sobre el tiesto y la planta arriba.
+- **La etiqueta se queda opaca.** Nada de texto leído directamente sobre la fotografía: eso es
+  contraste no medible y hay 24 nodos así de deuda. Todo el texto sigue sobre `--fondo-ficha`, así
+  que **no hay superficie nueva y la matriz de validez no necesita fila.** Ésta es la guarda que
+  mantiene el cero de nodos bajo AA.
+- **Peso.** Las de origen son ~200 KB y la tarjeta mide ~385 px a 1280. La regla: **ningún recorte
+  entregado puede exceder 2× su caja pintada más grande**, `width`/`height` explícitos,
+  `loading="lazy"` bajo el pliegue y `aspect-ratio` para que la rejilla no baile. Reutiliza
+  `--aspecto-foto` (3/4); si el encuadre de tarjeta pide otra proporción, **pídeme el token, no lo
+  escribas.** El presupuesto de carga inicial (< 400 KB) lo mide `qa-visual` y se dice, no se
+  descubre.
+- **Y las de diagnóstico no se filtran.** Más grandes, mejor encuadradas, mejor presentadas: sí.
+  Mejor de lo que están: no. En la única planta que se muere, embellecer la foto corrompe la prueba.
+
+#### La prueba que decide si el color de las plantas cuesta la alarma
+
+El lead levanta el riesgo bueno y sale de mi propio argumento: **el rojo del helecho se ve desde el
+otro lado del monitor porque el campo está callado.** La saliencia de la alarma es **relativa al
+campo**, no absoluta, y siete fotos en color pueblan el campo aunque no porten información.
+
+Mi respuesta es que conviven porque están en **registros distintos**, no solo en tonos distintos:
+**la alarma es tinta y canto —un filete en el borde y un chip con una palabra—, y la foto es imagen
+dentro de un marco.** Una regla roja sobre la etiqueta blanca es una marca de la interfaz; los
+colores de la foto son contenido. No compiten como competirían dos acentos de paleta.
+
+**Pero eso es una predicción mía, no una medición, así que va como criterio de aceptación y no como
+opinión:**
+
+> **Con las siete fotos puestas, el filete del helecho tiene que seguir siendo lo primero que se ve
+> al abrir la portada.** Se comprueba en captura, en color y **en escala de grises**, como ya se hizo
+> con los tres escalones de severidad.
+
+Y si deja de serlo, **la salida no es quitarle el color a las plantas sanas**: es subir la saliencia
+de la alarma por vía **no cromática** —peso, tamaño, posición— y decirlo. Quitar las fotos de las
+sanas volvería a hacer que la información dependa del color, que es la línea que no se cruza.
+
+#### Palanca 3 — Profundidad y suavidad: de la luz y del aire, no de redondear
+
+- **El anillo moldeado y las dos caras del tiesto** (`--color-maceta-alta` / `--color-maceta-baja`),
+  que están definidas para esto y solo se usan en un gradiente.
+- **El sustrato**, `--color-sustrato` y `--color-sustrato-humedo`, hoy sin usar: es material real y
+  medido, y es donde el marrón puede aparecer sin ser un acento inventado.
+- **`--space-9` (6rem)**: aire que el sistema ya autorizaba y nadie gastó. Buena parte de la
+  sensación de "pobre" es densidad, no falta de adorno.
+- **La profundidad la trae la oclusión, no el desenfoque:** ahora la etiqueta está **encima** de algo,
+  y eso es lo que da capas. Un token nuevo y solo uno para la sombra de contacto de la pegatina sobre
+  la foto — se lo pido a `tokens.css` yo, que es mío.
+- **`--radio-troquel` (3 px) no se toca.** El canto troquelado es lo que hace que se lea como
+  pegatina, y **la diferencia entre riqueza y blandura es que la suavidad venga de la luz y del aire
+  en vez de redondear más.**
+
+#### Palanca 4 — Movimiento, con lo que ya está especificado y sin usar
+
+- **`--retardo-1/2/3` (0 · 60 · 120 ms)**: entrada escalonada de la rejilla. Un disparo, al cargar.
+  **Ojo con las fotos `lazy`:** el escalonado va sobre la tarjeta, no sobre la carga de la imagen, o
+  el gesto se romperá de forma distinta en cada visita.
+- **`--dur-larga` (420 ms)**: el reordenado de la rejilla, que ya existe y va sin transición.
+- **La bisagra del despegue** y **el revelado del veredicto**, ya especificados.
+- **`prefers-reduced-motion`: versión alternativa en las cuatro**, no duración corta. Escalonado →
+  aparecen juntas. Bisagra → sin bisagra, la sombra marca el estado. Y la regla de arbitraje que
+  escribí para el umbral: bajo `reduce` **la duración solo tiene umbral si la animación mueve algo**;
+  interpolar opacidad o color no produce movimiento aparente.
+
+#### Lo que sigue descartado, y esto no lo afloja nadie porque no se ha pedido
+
+- **Importar un look.** La herramienta externa **leyó esta web** y aun así fue a crema, salvia y
+  monstera. Riqueza **derivada**, sí; riqueza de moodboard, no. Y si una opción derivada y una
+  convencional compiten y Carlos prefiere la convencional, **gana él** — pero que compitan.
+- **Un segundo acento de paleta.** Ya no hace falta: el color lo traen las fotos.
+- **Decorar el expediente.** Está lleno y es lo mejor que tiene el proyecto.
+- **Información solo por color**, el suelo medido de accesibilidad, y cero terceros.
+
 ## Fases
 
 | Fase | Qué | Quién |

@@ -631,6 +631,20 @@
 
   --sombra-franja: 0 2px 8px -2px rgb(30 16 10 / 0.35);
 
+  /* La sombra de CONTACTO de la pegatina sobre la foto. Es el único token que
+     pide la vuelta visual, y existe porque la relación es nueva: hasta ahora la
+     etiqueta no estaba encima de nada — flotaba sobre el fondo de página.
+
+     Corta y oscura a propósito: una pegatina está PEGADA, no levantada. Es lo
+     contrario de --sombra-despegada, que sí separa. Y es lo que da la
+     profundidad de esta vuelta: la trae la OCLUSIÓN —un plano tapando otro—, no
+     el desenfoque ni un radio mayor. --radio-troquel se queda en 3 px.
+
+     No es superficie: no se lee texto sobre ella y no entra en la matriz de
+     validez. La etiqueta sigue opaca y todo el texto sigue sobre --fondo-ficha,
+     que es la guarda que mantiene el cero de nodos por debajo de AA. */
+  --sombra-contacto: 0 1px 2px rgb(30 16 10 / 0.28), 0 3px 6px -3px rgb(30 16 10 / 0.22);
+
 
   /* ===========================================================================
      10. MATERIALES — tramas de fondo. Cero imágenes, cero peticiones.
