@@ -3,16 +3,17 @@
 **12 de agosto de 2026.** Pasada de la piel elegida por Carlos entre dos versiones renderizadas, y
 cierre de los puntos que quedaban de v1.
 
-> ## ⚠ Estado del árbol al medir
+> ## Sello de la medición
 >
-> Todos los números de abajo se tomaron con **`--sucio`**, o sea sobre el árbol de trabajo y no
-> sobre un commit. El runner los estampa `NO ATRIBUIBLE` y hace bien: **no describen ningún commit
-> y no valen para firmar.** La pasada sellada se hace en worktree limpio inmediatamente después de
-> commitear, con los mismos comandos, y sus cifras sustituyen a estas.
+> **commit `730e97d` · árbol limpio · 14 ficheros medidos · 12 de agosto de 2026.**
+> Ejecutado en un worktree aparte (`git worktree add --detach`), que es la única forma en que este
+> proyecto acepta una firma: el runner se niega a medir con el árbol sucio y estampa
+> `NO ATRIBUIBLE` si se le fuerza con `--sucio`.
 >
 > Y la otra mitad del sello, que este proyecto aprendió el mismo día: **la fecha.** El contenido de
 > la portada se calcula con `new Date()`, así que estas cifras son del **12 de agosto**. El «cero
 > desborde» del informe anterior era cierto el 11 y falso el 12 sin que nadie tocara el código.
+> Un ✓ de ayer no es un ✓.
 
 ## Lo que se midió
 
@@ -23,16 +24,17 @@ cierre de los puntos que quedaban de v1.
             medido con Playwright, NO con el runner — ver «el instrumental», abajo
 
 contraste   ✓ 1.788 nodos medidos · 0 por debajo de AA · 0 bordes de control < 3:1
+            (con --reduce: 1.903 nodos, mismo resultado)
             112 no medibles, todos por el mismo motivo: `background-image` ancestro
             PEOR CASO MEDIDO APARTE → 1.788 nodos · 0 bajo AA · 0 no medibles
-foco        ✓ 294 enfocables · 0 saltos de orden
+foco        ✓ 294 enfocables · 0 saltos de orden (a 1280 y a 1920)
 movimiento  ✓ 185 efectos · 0 fallos · con --reduce: 141 efectos · 0 fallos
 terceros    ✓ 38 recursos · 0 externos · consola limpia (0 errores, 0 warnings, 0 caídos)
 
 franja-hoy  ✓ 0 fallos, 0 abstenciones · 41 tareas con data-tarea
 diagramas   ✓ 5 diagramas · 0 fallos
 expediente  ✓ 7 fichas · ocupación 0 % de bandas cortas (tope 20 %)
-              carrera sin ancla: peor 572 px (tope 600) · alto máx 5.678 px (observación)
+              carrera sin ancla: peor 566 px (tope 600) · alto máx 5.621 px (observación)
 cobertura   ✓ 7 plantas · 20 campos con contenido · 0 campos que no llegan a la página
 autoprueba  ✓ 4 defectos inyectados; franja-hoy y diagramas dan ✗ con ellos puestos,
               que ES el resultado bueno: los instrumentos ven
@@ -134,7 +136,10 @@ esta pasada que se estima en vez de medirse, y queda dicho en vez de descubierto
   incumple en verde no es un tope**: o se deriva o se retira. No lo decido yo en una pasada de QA —
   un informe puede medir contra un objetivo, no crearlo.
 - **La medición en frío del peso transferido**, arriba.
-- **La pasada sellada contra un commit limpio**, que es lo que convierte este informe en una firma.
+- **La publicación.** Estas cifras son de local sobre `730e97d`; el punto 9.6 del checklist pide
+  además la pasada sobre la URL real (`runner.py --url`), que es la única medición inmune al
+  problema del estado en movimiento, porque producción no puede estar sucia. Se hace cuando Pages
+  haya desplegado el commit.
 
 ## El instrumental (esto no genera tarea, salvo lo dicho)
 
