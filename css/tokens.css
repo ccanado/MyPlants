@@ -436,6 +436,23 @@
   --texto-nombre: clamp(2rem, 7cqi, 3.75rem);
   --texto-precio: clamp(1.75rem, 4.5cqi, 2.5rem);  /* el precio en euros */
 
+  /* El veredicto del parte del día — «3 DE 7 PIDEN MIRADA», «LAS 7 ESTÁN BIEN».
+     Es la tesis de la página y hasta ahora iba a --texto-m (17 px) en
+     --texto-meta, o sea más pequeño que el rótulo «PARTE DEL DÍA» que lo
+     encabeza. Este token es el único cambio de escala de la vuelta visual.
+
+     Va en `vw` y NO en `cqi` como --texto-nombre: la franja es una tira a lo
+     ancho de la página, no un componente que reaccione a su hueco, y no tiene
+     ancestro con `container-type`. Con `cqi` sin contenedor el valor caería al
+     viewport pequeño y el clamp se comería el techo sin que nada diera error.
+
+     Suelo 1.75rem (28 px), un escalón POR DEBAJO del --texto-2xl del h1, a
+     propósito: a 320 px el h1 ya rompe en dos líneas y este renglón es más
+     largo. El techo, 3.25rem (52 px), es lo que lo pone por encima del h1 en
+     escritorio, que es toda la intención. Verificar los 320 px antes de
+     cerrarlo: cero desborde horizontal no se negocia. */
+  --texto-parte: clamp(1.75rem, 5vw, 3.25rem);
+
   /* -- Interlineado -------------------------------------------------------- */
 
   --interlinea-apretada: 1.02;  /* nombre de la planta a sangre de caja */
