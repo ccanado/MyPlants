@@ -137,11 +137,16 @@
           <!-- capa 1 · qué le pasa ahora mismo -->
           <section class="estado" hidden>
             <h4 class="estado__titulo"></h4>
-            <p class="estado__severidad">
-              <span class="estado__marca" aria-hidden="true"></span>
-              <span class="estado__severidad-valor"></span>
-              <span class="estado__fecha"></span>
-            </p>
+            <div class="estado__cintillo">
+              <p class="estado__severidad">
+                <span class="estado__marca" aria-hidden="true"></span>
+                <span class="estado__severidad-valor"></span>
+              </p>
+              <!-- La fecha NO va dentro del distintivo: es metadato de la
+                   observación, no parte de la etiqueta de severidad. Metida en
+                   el chip invertido heredaba gris sobre rojo (1,17:1). -->
+              <p class="estado__fecha"></p>
+            </div>
 
             <div class="estado__bloque estado__bloque--senales" hidden>
               <h5 class="estado__sub">Lo que se ve</h5>

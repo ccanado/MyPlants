@@ -25,6 +25,10 @@ Leyenda de gravedad:
 | 0.6 | B | `check-estatico.py` en verde | `python3 .claude/skills/vanilla-web-craft/scripts/check-estatico.py` |
 | 0.7 | B | `validar-plantas.py` en verde | `python3 .claude/skills/plant-expert/scripts/validar-plantas.py` |
 | 0.8 | A | `peso-assets.py` en verde | `python3 tests/peso-assets.py` |
+| 0.9 | B | `coherencia.py` en verde: todo `url()` local resuelve, `foto_etiqueta`/`alt_etiqueta` correctos, ninguna pegatina inventada | `python3 tests/coherencia.py` |
+| 0.10 | B | **Cero cables sueltos**: ningún campo con contenido en las 7 plantas que no se vea en ninguna | `python3 tests/runner.py --abrir-todas --alto 3000 --test cobertura-datos` |
+| 0.11 | A | Toda cita del JSON resuelve (los 403 de POWO se comprueban a mano en navegador) | `python3 tests/enlaces-fuentes.py` |
+| 0.12 | B | La franja del parte **coincide con el JSON**: si hay una `critica`, no puede decir "no hay nada urgente" | comparar `estados[].severidad` del JSON con el texto de `.parte` en el DOM |
 
 ## 1. Estructura semántica
 
@@ -126,6 +130,9 @@ Leyenda de gravedad:
 | 9.2 | B | Tipografías self-hosted en `assets/fonts/`, en woff2, con `font-display: swap` | `tests/terceros.js` → `fuentes_cargadas` + `peso-assets.py` |
 | 9.3 | A | Sin `preconnect`/`dns-prefetch`/analytics/beacons | `tests/terceros.js` → `sospechas` |
 | 9.4 | M | Los `<a>` externos de las fuentes citadas son enlaces legítimos y **no** peticiones; con `rel="noopener"` si abren en pestaña nueva | `tests/terceros.js` → `enlaces_externos` |
+| 9.6 | B | **Publicada en GitHub Pages** (`/MyPlants/`, subdirectorio): las fichas pintan, 0 recursos con error, 0 peticiones externas, 0 imágenes rotas | `browser_navigate` + `performance.getEntriesByType('resource')` sobre la URL real |
+| 9.7 | A | **Peso transferido en la carga inicial** con la rejilla cerrada (HTML+CSS+JS+JSON+fuentes, cero bytes de foto) | suma de `transferSize` en la carga en frío. Presupuesto: **< 400 KB** |
+| 9.8 | M | Peso de abrir una ficha: **una** foto, no acumulado | `transferSize` de la imagen tras desplegar |
 | 9.5 | M | Sin salto de layout al cargar (las imágenes reservan su hueco) | grabar la carga y comparar el primer frame con el estable; `aspect-ratio` + width/height |
 
 ## 10. El trabajo que la página tiene que hacer

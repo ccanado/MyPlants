@@ -47,7 +47,22 @@ python3 .claude/skills/vanilla-web-craft/scripts/check-tokens.py     # disciplin
 python3 .claude/skills/vanilla-web-craft/scripts/check-estatico.py   # cero terceros, img dimensionadas, ES modules
 python3 .claude/skills/plant-expert/scripts/validar-plantas.py       # contenido: campos, fuentes, toxicidad
 python3 tests/peso-assets.py                                         # peso, dimensiones reales, rutas rotas
+python3 tests/coherencia.py                                          # url() locales, foto_etiqueta, pegatinas inventadas
+python3 tests/enlaces-fuentes.py                                     # que cada cita del JSON resuelva (sale a la red)
 ```
+
+`tests/coherencia.py` y `tests/enlaces-fuentes.py` cubren huecos que no mira nadie más:
+
+- Un `url()` **local** roto: `check-estatico.py` busca URLs externas, así que una ruta
+  relativa que no existe le parece correcta. Descarta comentarios antes de buscar, que es
+  el error que nos hizo reportar seis 404 de fuentes que estaban comentadas a propósito.
+- `foto_etiqueta` / `alt_etiqueta`, campos que el validador de contenido no conoce.
+- Datos de pegatina en una planta sin `etiqueta_vivero`: un precio inventado convierte la
+  signature de la página en decoración falsa.
+- Citas rotas. Es el único test que sale a la red, y a propósito: la restricción de cero
+  terceros es para la **página**, no para el QA. Los 403 de POWO no se cuentan como rotos
+  —bloquea clientes automáticos y la URL carga bien en un navegador— sino que se listan
+  aparte como `MANUAL`.
 
 Todo en verde, o no se cierra la tarea. Código de salida 1 = hay incidencias.
 
@@ -112,6 +127,21 @@ que devuelve. Cada uno imprime además un `console.table` con lo que falla.
 | `tests/foco.js` | ¿el orden de Tab es el visual? ¿se ve el anillo de foco? |
 | `tests/movimiento.js` | ¿qué se mueve, y se para con `reduce`? |
 | `tests/terceros.js` | ¿ha salido alguna petición fuera del origen? |
+| `tests/cobertura-datos.js` | ¿todo lo que escribió `botanist` llega a la pantalla? |
+
+`cobertura-datos.js` hay que lanzarlo con **`--abrir-todas`**, o marcará como ausente todo
+lo que vive dentro de un `<details>` cerrado:
+
+```bash
+python3 tests/runner.py --abrir-todas --alto 3000 --test cobertura-datos
+```
+
+Solo reporta como error el **cable suelto**: un campo con contenido en las siete plantas
+que no se ve en ninguna. Ese patrón no tiene explicación de diseño y es la firma del fallo
+que lo motivó (`botanist` renombró `estado` a `estados`, `js/datos.js` siguió leyendo el
+singular, y la portada llegó a afirmar «Las 7 están bien» con el helecho en `critica`, sin
+un solo error en consola y con los cuatro scripts en verde). Lo demás va como aviso: que un
+campo falte en una planta se explica casi siempre porque el render lo reescribe.
 
 ### 2c. Desde Playwright MCP (lo que produce la evidencia del informe)
 

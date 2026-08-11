@@ -31,7 +31,7 @@
       "revisar_fecha": "fecha de la revisión del diagnóstico, YYYY-MM-DD. `null` cuando la revisión no cuenta desde hoy sino desde una acción que aún no se ha hecho: entonces el plazo está en `revisar_dias` y el punto de partida en `revisar_desde`",
       "abonado.meses / trasplante.meses": "meses del año (1-12) en que la tarea aplica. `null` cuando la tarea no depende del calendario, y entonces hay `condicion`",
       "riego.ultimo": "fecha del último riego. `null` en las siete: nadie lo registra. Es la razón por la que el riego no se puede convertir en «hoy toca regar»",
-      "estados": "lista de diagnósticos ordenada del más reciente al más antiguo. `estados[0]` es el vigente. Cada entrada lleva su `fecha_foto` y su `foto`: un diagnóstico describe una imagen concreta, no el presente",
+      "estados": "lista de diagnósticos, con histórico: cada tanda de fotos añade una entrada, no sustituye a la anterior. Se mantiene ordenada del más reciente al más antiguo, pero el consumidor NO debe fiarse del orden: el vigente es el de `fecha_foto` más alta. Cada entrada lleva su `fecha_foto` y su `foto` porque un diagnóstico describe una imagen concreta, no el presente.",
       "estados[].causas_probables": "objetos `{id, resumen, detalle, patron}`. `patron` es la señal que permite distinguir esa causa de las otras mirando la planta; puede ser null si la causa no tiene patrón propio",
       "estados[].verificacion": "qué hipótesis del diagnóstico anterior quedó confirmada, refutada o sin resolver. Null en el primer diagnóstico de cada planta",
       "riego.ancla": "fecha desde la que contar los vencimientos de riego. Con `dias_verano`/`dias_invierno` basta para calcular sin guardar nada",
@@ -39,7 +39,7 @@
       "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
       "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente."
     },
-    "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas, así que sus URLs se citan como referencia localizada pero el nombre aceptado se ha comprobado abriendo el registro equivalente en IPNI, que es también de Kew. Está anotado en cada ficha.",
+    "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas: sus fichas se citan porque son la autoridad nomenclatural y se han localizado una a una, pero no se han podido abrir con herramientas. Por eso cada nombre aceptado se ha comprobado además en IPNI (ipni.org), que es el índice nomenclatural de la misma casa —Kew— del que POWO toma la autoría y la publicación original, y que sí se puede abrir. IPNI no sustituye a POWO: POWO decide qué nombre es el aceptado y cuál es sinónimo, e IPNI aporta la autoría y la referencia de publicación. Las dos citas van juntas en las fichas para que se pueda auditar. Las URLs de ASPCA se citan en su forma final: el patrón antiguo /pet-care/animal-poison-control/toxic-and-non-toxic-plants/… redirige a /pet-care/aspca-poison-control/…, y como son citas de seguridad se guarda el destino y no la redirección. Excepción comprobada: el listado completo para gatos (/pet-care/animal-poison-control/cats-plant-list) NO existe bajo el patrón nuevo, devuelve 404, así que esa se conserva tal cual.",
     "vivero": {
       "nombre": "Viveros Projardín",
       "direccion": "Avda. de Móstoles s/n, Móstoles (Madrid)",
@@ -778,7 +778,7 @@
         {
           "campo": "toxicidad_mascotas",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/begonia",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/begonia",
           "consultado": "2026-08-11",
           "nota": "Entrada de género: Begonia spp., Begoniaceae, tóxica para perros, gatos y caballos; oxalatos de calcio solubles; vómitos y salivación; la parte subterránea es la de mayor riesgo. No hay entrada específica para el grupo Elatior ni para B. × hiemalis."
         },
@@ -1343,14 +1343,14 @@
         {
           "campo": "toxicidad_mascotas",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/coleus",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/coleus",
           "consultado": "2026-08-11",
           "nota": "La entrada de ASPCA titulada \"Coleus\" es de otra especie: Coleus ampoinicus (Indian Borage, Spanish Thyme), tóxica para perros, gatos y caballos por aceites esenciales. Se cita para dejar constancia de que la coincidencia de nombre común no vale como dato para esta planta."
         },
         {
           "campo": "toxicidad_mascotas",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
           "consultado": "2026-08-11",
           "nota": "La otra entrada con \"Coleus\" en el nombre es Plectranthus oertendahlii, que ASPCA da como no tóxica. Tampoco es esta planta: citarla como si lo fuera sería el error de identificación más peligroso de la ficha."
         },
@@ -1455,7 +1455,7 @@
         {
           "campo": "toxicidad_mascotas.aviso_homonimo",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
           "consultado": "2026-08-11",
           "nota": "El aviso del casi-homónimo va en el contenido y no en el diseño a propósito: es una frase de seguridad y no puede depender de que alguien la transcriba bien en una plantilla. La trampa funciona en las dos direcciones y por eso se documenta en las tres plantas: en los coleos, la ficha vecina de ASPCA dice NO tóxica y llevaría a bajar la guardia; en el ficus, la ficha vecina dice tóxica y llevaría a subirla. Ninguna de las dos habla de la especie que hay en esta casa."
         },
@@ -1891,7 +1891,7 @@
         {
           "campo": "toxicidad_mascotas",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
           "consultado": "2026-08-11",
           "nota": "Entrada \"Prostrate Coleus\" = Plectranthus oertendahlii, no tóxica. Se cita para dejar claro que NO es esta planta: dar esta ficha por buena sería concluir \"no tóxica\" sobre una especie distinta."
         },
@@ -1996,7 +1996,7 @@
         {
           "campo": "toxicidad_mascotas.aviso_homonimo",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/prostrate-coleus",
           "consultado": "2026-08-11",
           "nota": "El aviso del casi-homónimo va en el contenido y no en el diseño a propósito: es una frase de seguridad y no puede depender de que alguien la transcriba bien en una plantilla. La trampa funciona en las dos direcciones y por eso se documenta en las tres plantas: en los coleos, la ficha vecina de ASPCA dice NO tóxica y llevaría a bajar la guardia; en el ficus, la ficha vecina dice tóxica y llevaría a subirla. Ninguna de las dos habla de la especie que hay en esta casa."
         },
@@ -2931,7 +2931,7 @@
         {
           "campo": "toxicidad_mascotas",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/chrysanthemum",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/chrysanthemum",
           "consultado": "2026-08-11",
           "nota": "Entrada de género: Chrysanthemum spp. (Compositae), tóxica para perros, gatos y caballos; sesquiterpenos, lactonas, piretrinas y otros irritantes; vómitos, diarrea, salivación, descoordinación y dermatitis. No hay entrada específica para C. × morifolium."
         },
@@ -3422,7 +3422,7 @@
         {
           "campo": "toxicidad_mascotas",
           "fuente": "ASPCA",
-          "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants/golden-pothos",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/golden-pothos",
           "consultado": "2026-08-11",
           "nota": "Entrada de especie, la mejor coincidencia de todas las fichas: Epipremnum aureum (Golden Pothos, Devil's Ivy, Taro Vine, Ivy Arum), Araceae, tóxica para perros y gatos; oxalatos de calcio insolubles; irritación oral, quemazón de boca, lengua y labios, salivación, vómitos y dificultad para tragar."
         },

@@ -37,6 +37,7 @@ import shutil
 import socketserver
 import subprocess
 import sys
+import subprocess as _sp
 import tempfile
 import threading
 from pathlib import Path
@@ -53,6 +54,46 @@ CHROME_CANDIDATOS = [
 ]
 
 ORDEN = ["estructura", "contraste", "foco", "movimiento", "terceros"]
+
+
+def estado_del_arbol(raiz: Path) -> dict:
+    """Sella la medición con el estado exacto que se midió.
+
+    Sin esto, un resultado no se puede atribuir a nada: durante esta sesión el lead
+    midió dos veces el mismo "commit" y le salió 10 fallos y luego 0, porque builder
+    estaba editando ficheros entre pasada y pasada. No era un test inestable: era un
+    blanco en movimiento. Un número sin su estado no es una medición, es una anécdota.
+    """
+    def git(*args):
+        try:
+            return _sp.run(["git", *args], cwd=raiz, capture_output=True, text=True,
+                           timeout=5).stdout.strip()
+        except Exception:
+            return ""
+
+    vigilados = []
+    for patron in ("index.html", "css/*.css", "js/*.js", "content/*.json"):
+        vigilados.extend(sorted(raiz.glob(patron)))
+
+    mtimes = {}
+    ultimo = 0.0
+    for f in vigilados:
+        try:
+            m = f.stat().st_mtime
+        except OSError:
+            continue
+        mtimes[str(f.relative_to(raiz))] = round(m, 1)
+        ultimo = max(ultimo, m)
+
+    sucio = git("status", "--porcelain")
+    return {
+        "commit": git("rev-parse", "--short", "HEAD") or "(sin git)",
+        "arbol_sucio": bool(sucio),
+        "ficheros_modificados": len([l for l in sucio.splitlines() if l.strip()]),
+        "ficheros_medidos": len(mtimes),
+        "mtime_mas_reciente": round(ultimo, 1),
+        "mtimes": mtimes,
+    }
 
 
 def chrome() -> str:
@@ -260,6 +301,7 @@ def main() -> int:
 
     tests = args.test or ORDEN
     buzon = {"informe": None, "listo": threading.Event()}
+    sello_antes = estado_del_arbol(RAIZ)
     inyeccion = construir_inyeccion(tests)
     if args.abrir_todas:
         inyeccion = "<script>window.__QA_ABRIR_TODAS__=true;</script>" + inyeccion
@@ -322,14 +364,28 @@ def main() -> int:
         return 2
 
     informe = buzon["informe"]
+    sello_despues = estado_del_arbol(RAIZ)
+    informe["estado_medido"] = sello_antes
+    movido = [f for f, m in sello_despues["mtimes"].items()
+              if sello_antes["mtimes"].get(f) != m]
+    informe["codigo_movido_durante_la_medida"] = movido
     if args.json:
         Path(args.json).write_text(json.dumps(informe, ensure_ascii=False, indent=2), encoding="utf-8")
 
     meta = informe["meta"]
+    sello = informe["estado_medido"]
     print(f"\n{'═' * 78}")
     print(f"  {meta['ancho']}×{meta['alto']} · dpr {meta['dpr']} · "
           f"reduce: {'sí' if meta['reduce'] else 'no'} · {meta['articles']} ficha(s)")
+    print(f"  commit {sello['commit']}"
+          + (f" + {sello['ficheros_modificados']} fichero(s) sin commitear" if sello["arbol_sucio"] else " (árbol limpio)")
+          + f" · {sello['ficheros_medidos']} ficheros medidos")
     print(f"{'═' * 78}")
+    if informe["codigo_movido_durante_la_medida"]:
+        print("\n⚠  EL CÓDIGO CAMBIÓ MIENTRAS SE MEDÍA — este resultado no es atribuible:")
+        for f in informe["codigo_movido_durante_la_medida"]:
+            print(f"     {f}")
+        print("   Repite la pasada con el árbol quieto.")
 
     if meta["desbordaHorizontal"]:
         print(f"\n✗ DESBORDE HORIZONTAL: scrollWidth {meta['scrollWidth']} > ancho {meta['ancho']}")
