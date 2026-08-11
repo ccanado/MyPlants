@@ -144,8 +144,26 @@
     }
 
     const saltos = [];
+    const noComparables = [];
     for (const [cont, items] of grupos) {
       if (items.length < 2) continue;
+
+      /* Si dentro del contenedor los enfocables se reparten en más de una columna,
+         "arriba→abajo, izquierda→derecha" ya no es el orden de lectura: puede ser
+         columna a columna. Un checker no puede distinguir las dos cosas, así que
+         NO se inventa un veredicto — se marca para mirarlo con Tab de verdad.
+         Afirmar un fallo aquí es justo lo que llenaría el informe de ruido. */
+      const columnas = [...new Set(items.map((it) => Math.round(it.x / 32)))];
+      if (columnas.length > 1) {
+        noComparables.push({
+          contenedor: selector(cont).slice(0, 50),
+          enfocables: items.length,
+          columnas: columnas.length,
+          nota: 'reparte los enfocables en varias columnas: comprobar el orden con Tab real',
+        });
+        continue;
+      }
+
       const visual = [...items].sort((a, b) => {
         const banda = Math.round(a.y / 16) - Math.round(b.y / 16);
         return banda !== 0 ? banda : a.x - b.x;
@@ -224,9 +242,9 @@
     const informe = {
       ok: problemas.length === 0,
       total: lista.length,
-      resumen: `${lista.length} enfocables · ${saltos.length} salto(s) de orden · ${problemas.length} problema(s)`,
+      resumen: `${lista.length} enfocables · ${saltos.length} salto(s) de orden · ${noComparables.length} bloque(s) multicolumna a mirar con Tab · ${problemas.length} problema(s)`,
       secuencia: lista.map((it) => `${it.i}. ${it.selector}  @${it.x},${it.y}`),
-      saltos, saltosContenedor, problemas, dianasPequenas,
+      saltos, saltosContenedor, noComparables, problemas, dianasPequenas,
     };
     if (console.table) { console.log(informe.ok ? '✓ orden de foco' : '✗ orden de foco', informe.resumen); if (saltos.length) console.table(saltos); }
     return informe;

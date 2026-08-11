@@ -356,17 +356,28 @@ levanta del propio artefacto que es la signature.
 
 Siete dibujos, un solo trazo (`--trazo`), silueta cerrada, sin relleno, en `--texto-principal`:
 
-| Planta | Qué tiene que leerse |
-| --- | --- |
-| begonia | base **asimétrica** —las dos mitades no coinciden— y margen ondulado. Es su rasgo diagnóstico |
-| coleo (×2) | margen **serrado** profundo y punta acuminada. Los dos comparten silueta y los distingue el tamaño |
-| ficus pumila | **diminuta**, oval, nervio marcado. Dibujada a la misma escala que las demás para que se vea que es pequeña |
-| margarita | lámina **lobulada** de crisantemo |
-| poto | **acorazonada**, entera, con el ápice en punta |
-| helecho | **fronde**, no hoja: raquis con pinnas. Y ver abajo |
+Los rasgos los ha corregido `botanist` y mandan los suyos, no los míos. **Prefiero un dibujo feo
+y cierto a uno bonito que identifique mal**, y cuatro de mis seis descripciones eran lo segundo:
 
-**El helecho es el caso que hace honesto el sistema.** Está `sin identificar`: no podemos dibujar
-la hoja de una especie que no sabemos cuál es. Su silueta se dibuja **con `--trama-sin-dato`
+| Planta | Qué tiene que leerse | Corrección |
+| --- | --- | --- |
+| begonia | base **asimétrica** —exagerarla, es EL rasgo del género— y margen **crenado-serrado**, dientes redondeados con puntita. Lámina orbicular-cordada | yo decía "ondulado" |
+| coleo (×2) | margen **serrado** profundo, punta acuminada, y **un trozo de tallo con el par de hojas opuestas y cruzadas**: dice "labiada" de un golpe. Los distingue el tamaño | el par opuesto lo aporta `botanist` |
+| *Ficus pumila* | diminuta, oval, margen **festoneado** y **red de nervios hundidos** que la hace rugosa. RHS: "broadly oval, scalloped". A la misma escala que las demás, para que se vea que es pequeña | yo decía "nervio marcado" |
+| margarita | lámina ancha con **3–5 lóbulos gruesos e irregulares, profundamente hendidos, base en cuña** | ver abajo: aquí el dibujo **es la prueba** |
+| poto | **acorazonada, entera**, ápice en punta. **Juvenil**: la adulta es pinnatisecta y la nuestra no lo es | aviso para que nadie la "mejore" |
+| helecho | **fronde** con raquis y pinnas, contorno genérico. Y ver abajo | `botanist` confirma el dibujo |
+
+**La margarita es el caso que justifica todo el sistema.** La etiqueta dice MARGARITA y la planta
+es un crisantemo, y **lo que lo demuestra es la hoja**. Dibujada finamente dividida parecería una
+*Argyranthemum*; estrecha y dentada, una *Leucanthemum*. Gruesa y lobulada, **el dibujo argumenta**
+— deja de ilustrar la identificación y pasa a ser su evidencia. Eso es exactamente lo que separa
+un diagrama que explica de uno que decora, aplicado a un dibujo.
+
+**El helecho es el caso que hace honesto el sistema**, y `botanist` precisa hasta dónde llega el
+dibujo: **que es un helecho sí se sostiene** —la morfología de los segmentos lo es—, lo que no se
+sostiene es el género. Así que el contorno puede ser un fronde genérico sin miedo, y la trama va
+donde está la incertidumbre real. Su silueta se dibuja **con `--trama-sin-dato`
 dentro del contorno** y `aria-label` "fronde de helecho sin identificar". El dibujo dice
 exactamente lo que sabemos —que es un helecho— y marca lo que no. Si algún día `botanist` cierra
 la identificación, se rellena. Un dibujo bonito de *Adiantum* ahí sería afirmar una especie con un
@@ -417,6 +428,7 @@ Especificación única para los nueve: caja de `--icono-tam`, trazo `--trazo`, `
 | trasplante | maceta con flecha ascendente |
 | plagas | insecto de seis patas, muy esquemático |
 | toxicidad | triángulo de aviso |
+| manipulación | **guante** — campo nuevo `manipulacion`, ver abajo |
 | dificultad | uno, dos o tres círculos rellenos según `fácil` / `media` / `exigente` |
 
 `dificultad` es el único que **codifica un valor** en vez de nombrar un campo, y por eso es el
@@ -634,6 +646,288 @@ Refuerzos, y ninguno es negociable:
 - `clave` es el valor que manda (`toxica` · `sin_datos` · campo `null`). El texto se pinta desde
   `gatos` y `perros` por separado.
 
+### Corrección tras ver la ficha del helecho renderizada
+
+Tres fallos, y los tres son míos. Salen de mirar la captura de `docs/qa/1280-inicio.png`, no de
+releer el spec: en el papel los tres estaban bien escritos.
+
+#### La trama de "sin dato" estaba mal usada, y es un error conceptual
+
+En la pegatina del helecho hay **un rectángulo tramado donde iría el código de barras** y **una
+raya `—` suelta** donde iría el precio. Lo especifiqué yo y está mal, por una razón que invalida
+mi propia regla:
+
+> **`--trama-sin-dato` significa "no lo sabemos". Que una planta no traiga etiqueta de vivero no
+> es un dato desconocido: es un hecho conocido.**
+
+Son cosas opuestas. La trama dice "aquí había que poner algo y no se pudo averiguar"; el helecho
+**no tiene** pegatina, y eso no es una laguna, es su procedencia. Renderizado, el rectángulo
+tramado se lee como un placeholder de carga y la raya suelta no se lee como nada.
+
+Corrección: en la variante sin etiqueta de vivero **no hay banda de barras y no hay raya**. Ese
+espacio lo ocupa la única cosa que sí se sabe, en texto:
+
+```
+SIN ETIQUETA DE VIVERO
+Sin trazabilidad comercial de una planta que lleva
+más de veinte años en la familia.
+```
+
+Ni trama, ni gris de sin-dato, ni marca de hueco: **`--texto-secundario`, como contenido normal,
+porque es contenido normal.** Es la misma conclusión a la que llegó `botanist` desde el contenido
+—«ese vacío es información, no un fallo de datos»— y yo la había escrito y luego la había
+traicionado en la implementación.
+
+**Dónde sí sigue la trama:** en la silueta del helecho, dentro del contorno de la fronde. Ahí es
+correcta y por el motivo contrario — la especie **sí** es un dato desconocido. Esa es exactamente
+la línea que separa los dos casos, y verlos juntos en la misma ficha es lo que la hace visible.
+
+#### "(sin identificar)" no es parte del nombre
+
+La pegatina imprime `HELECHO (SIN IDENTIFICAR)` a cuerpo de titular, en dos líneas. El nombre a
+sangre existe para **encontrar la planta de un vistazo**, y "(sin identificar)" es metadato: no
+ayuda a encontrarla, y de paso duplica el largo de la cadena más larga de la página.
+
+`nombre_comun` va grande y solo. El estado de identificación baja al renglón del nombre
+científico, en `--texto-s`, en `--fuente-dato`, en `--color-sin-dato`: *"especie sin identificar"*.
+Ese renglón ya existe para decir qué es la planta; decir que no se sabe qué es le corresponde a él.
+
+Efecto colateral y bienvenido: la cadena más larga de la rejilla pasa de 25 a 7 caracteres, que es
+la mitad del problema de 320 px.
+
+#### La ficha corta deja una banda vacía
+
+El helecho tiene menos texto que sus vecinas y, al igualar alturas la rejilla, su bloque de
+resúmenes acaba antes y queda una franja blanca sobre el botón de despegar que las otras no
+tienen. **El bloque hundido de resúmenes tiene que estirarse hasta el pie de la ficha**, no el
+texto. Una ficha con menos contenido debe verse más vacía por dentro, no rota por fuera.
+
+#### Y una que no es mía pero es del mismo tipo
+
+El pasaporte de la begonia parte dejando `NL` solo en la línea siguiente. Los cuatro segmentos
+(`A …`, `B …`, `C L1`, `D NL`) son **unidades indivisibles**: cada uno en su `<span>` con
+`white-space: nowrap`, y que el salto ocurra entre segmentos. Un código de trazabilidad partido
+por la mitad deja de ser un código.
+
+### La página tiene dos modos, y yo solo había diseñado uno
+
+Con una ficha desplegada a 1280 px quedan **dos tercios de fila en vacío**: unos 850 × 480 px de
+teja continua a la derecha del helecho. No es un hueco de respiración; es el mayor área de la
+pantalla. Y ahí se cobra el riesgo que asumí por escrito: la teja se sostiene porque *"el color
+agresivo ocupa los huecos, nunca la lectura"* — con un hueco de ese tamaño deja de ocupar huecos y
+pasa a mandar.
+
+Ninguna de las tres salidas evidentes me convence. `grid-auto-flow: dense` rellena el hueco pero
+**desacopla el orden visual del orden del DOM**, y con él el orden de foco: llevo todo el proyecto
+negándome a que la información dependa de una sola señal, y esto haría que el recorrido con
+teclado dejara de coincidir con lo que se ve. No se cambia accesibilidad por relleno. Reducir la
+ficha abierta a dos columnas de tres deja el hueco en una y le quita sitio justo al bloque de
+diagnóstico, que es el que más contenido tiene. Y reordenar al desplegar mueve la ficha que
+acabas de tocar.
+
+**El diagnóstico real es otro: esta página hace dos trabajos y yo le había dado una sola forma.**
+
+| | Qué haces | Qué forma le sirve |
+| --- | --- | --- |
+| **Modo estantería** | buscar cuál es, comparar, ver quién pide mirada | **rejilla de columnas** — muchas pegatinas de un vistazo |
+| **Modo ficha** | leer una planta, mirar sus diagramas, hacer lo que dice | **una sola columna** — nada más compite |
+
+Cuando hay una ficha abierta estás en el segundo, y la rejilla de al lado ya no te sirve para
+nada: es ruido alrededor de lo que has decidido leer.
+
+**Regla:** mientras haya una ficha desplegada, **la rejilla colapsa a una columna**.
+
+```css
+.rejilla:has(details[open]) { grid-template-columns: 1fr; }
+```
+
+Una regla, cero JS, y desaparece el hueco **en todos los anchos** en vez de parchear 1280. El
+orden del DOM, el visual y el de foco siguen siendo el mismo, que es lo que no estaba dispuesto a
+negociar. Y no es una degradación estética: **una pegatina ancha se parece más a la etiqueta real
+que una cuadrada** — las de Projardín son apaisadas. El modo ficha se ve como una estantería
+vista de cerca.
+
+**Y las fichas pasan a ser un acordeón exclusivo nativo:** `<details name="planta">`. Solo una
+abierta a la vez, sin una línea de JS. Garantiza que el modo ficha va siempre de **una** planta, y
+de paso elimina que dos fichas a ancho completo abran dos huecos.
+
+**Lo único que hay que compensar es el salto.** Al colapsar la rejilla, la ficha que acabas de
+tocar cambia de sitio. Al abrir, se ancla el `<summary>` desplegado con
+`scrollIntoView({ block: "start" })` y `behavior: "auto"` bajo `prefers-reduced-motion`, más
+`scroll-margin-block-start` para que no lo tape la franja del parte del día. Eso **no es
+reimplementar algo que el navegador ya hace**: es corregir un desplazamiento que provoca nuestro
+propio cambio de layout, que es distinto.
+
+### `manipulacion` — la vía de exposición que sí existe en esta casa
+
+`botanist` ha añadido un campo que corrige un hueco del esquema, y el razonamiento es el que yo
+debería haber hecho: bajé la toxicidad del registro de alarma porque **no hay mascotas y quien
+cuida tiene veinte años**, y eso sigue siendo correcto. Pero de ahí no se sigue que no haya
+riesgo: **quien poda y trasplanta es Noah**, y la vía relevante es **dérmica y ocular**.
+
+`manipulacion` = `{resumen, detalle, epi}`, en las siete, con fuente propia — la lista de plantas
+potencialmente dañinas de **RHS**, que cubre personas, no ASPCA, que es veterinaria. Poto, ficus y
+margarita están en categoría C; begonia, coleo y helecho **no figuran**, y eso se escribe como
+ausencia de clasificación, nunca como inocuidad.
+
+Tratamiento visual, y no es alarma:
+
+- **Campo propio en la ficha**, con icono de **guante**, al mismo nivel que sustrato o abonado.
+  `--texto-principal`, sin relleno, sin borde, sin color. Describe cómo se hace una tarea.
+- **Y la precaución concreta, además, dentro del paso de tratamiento que la provoca** —que es donde
+  se lee cuando hace falta—: *"cámbiala de maceta con guantes: al manipular raíces es donde irritan
+  los oxalatos"*.
+- **El campo se pinta también cuando dice que no hace falta.** En el helecho, `botanist` escribe
+  expresamente que ahí los guantes sobran —tejido seco, sin savia—. Esa frase **entra tal cual**:
+  *inflar la precaución donde no aplica es la forma de que nadie se la crea donde sí*. Es la misma
+  regla que hace que `sana` no lleve distintivo y que el color solo aparezca cuando hay problema,
+  aplicada a la seguridad.
+
+### La ficha abierta tiene dos velocidades de lectura, no una
+
+`docs/qa/1280-ficha-despegada-completa.png`: el bloque de diagnóstico es una columna de ~370 px
+sobre una ficha de 1.280, con **la mitad derecha vacía** y más de dos mil píxeles de scroll. En la
+ficha que más importa.
+
+**Y el problema no es que sobre contenido.** Las trece observaciones de `botanist`, cada causa con
+su patrón, y sobre todo la que descarta con evidencia negativa —*"ninguna hoja caída, blanda ni
+amarilla sobre el sustrato: el cuadro NO es el del exceso de riego"*— son lo mejor que tiene el
+proyecto. Recortarlo destruiría justo lo que hace fiable la web.
+
+El problema es que **todo está al mismo nivel**, y ahí hay dos lecturas distintas compitiendo:
+
+| | Cuándo | Qué se busca |
+| --- | --- | --- |
+| **Con la regadera en la mano** | ahora, de pie, con prisa | *"sepárala del cristal y cámbiale la maceta"* |
+| **El domingo, sentado** | cuando te la miras en serio | *cómo distingo quemadura de aire seco* |
+
+Yo tenía especificadas dos **capas** (dato duro / voz personal) pero no dos **velocidades**. Es el
+eje que faltaba, y resuelve el hueco y la jerarquía de una vez.
+
+#### La ficha abierta se parte en dos columnas semánticas
+
+No es partir el texto en dos para ahorrar scroll: **es que son dos cosas distintas.**
+
+```
+┌─ FICHA DESPEGADA · ancho completo ──────────────────────────────────┐
+│  QUÉ HAGO AHORA            │  EN QUÉ ME BASO                        │
+│  ── 2fr, sticky ────────── │  ── 3fr ────────────────────────────── │
+│  ▨ riego  ▨ luz  ▨ temp    │  LO QUE SE VE                          │
+│  los diagramas: el dato    │  — 13 observaciones                    │
+│  de un golpe               │                                        │
+│                            │  CAUSAS PROBABLES                      │
+│  QUÉ HACER                 │  — causa                               │
+│  1. Sepárala del cristal   │    ╞ PATRÓN PARA RECONOCERLA ────────╡ │
+│  2. Cámbiala de maceta     │    ╞ cómo se distingue de las otras  ╡ │
+│     ⚠ con guantes          │                                        │
+│  3. …                      │  LO QUE LA FOTO NO DICE                │
+│  ▨ línea de hitos          │  — …                                   │
+│                            │                                        │
+│  Revisar: 1 sep 2026       │  FUENTES  RHS ↗ · POWO ↗ · ASPCA ↗     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+- **Izquierda, `QUÉ HAGO AHORA`:** los diagramas y los pasos. Es lo accionable, va **primero en el
+  DOM** y por tanto primero al apilarse en móvil, que es donde de verdad se lee con una mano.
+- **Derecha, `EN QUÉ ME BASO`:** lo que se ve, las causas con su patrón, lo que la foto no dice y
+  las fuentes. Es material de consulta y su sitio es el segundo.
+- **Los diagramas van en la columna izquierda a propósito.** Son la capa de resumen: el SVG dice
+  "cada 4 días, 250 ml" de un golpe y el párrafo de la derecha explica por qué. Y de paso
+  equilibran la masa de las dos columnas, que si no la izquierda acabaría media página antes.
+- **La izquierda va `position: sticky`** mientras se lee la derecha, con
+  `max-block-size: calc(100dvh - var(--space-7))` y `overflow: auto` para que nunca se coma la
+  pantalla. Lo que hay que hacer se queda a la vista mientras lees por qué.
+- **Nada se pliega.** Mi regla se mantiene entera: `LO QUE LA FOTO NO DICE` sigue abierto y también
+  los patrones. **La columna es la jerarquía; no hace falta esconder nada.** Un `<details>` dentro
+  de otro `<details>` habría sido, además, un lío de teclado.
+- **Container query, no media query:** `@container etiqueta (min-width: 52rem)`. Por debajo se
+  apila en una sola columna, acción arriba.
+
+#### `PATRÓN PARA RECONOCERLA` es un elemento, no una frase en versalitas
+
+Hoy va en mayúsculas dentro del mismo párrafo de la causa, y se pierde. **No es una afirmación más:
+es una instrucción para mirar** — lo que hay que hacer con los ojos para distinguir esta causa de
+la de al lado. Merece forma propia: bloque aparte, sangrado, con filete izquierdo en
+`--color-borde-sutil`, rótulo en versalitas a `--texto-2xs` y el texto a `--texto-s`. Sin color:
+no es alarma, es método.
+
+Es la pieza que convierte un listado de causas en algo que se puede usar delante de la planta, y
+ahora mismo es invisible.
+
+### `HOY` — la franja del parte del día, con fecha real
+
+Carlos pide que la web diga **qué hay que hacer hoy**. No es una pieza nueva: es subir de
+categoría la franja que ya existe y que hoy cuenta severidades estáticas. Con `new Date()` en el
+cliente, cero servidor, la franja pasa de decir *"3 de 7 piden mirada"* a decir qué toca.
+
+#### La regla que lo gobierna, y es la misma que rige el contenido
+
+> **La franja no dice nunca "hoy le toca" si nadie ha marcado nunca ese riego.**
+
+Es la línea que este proyecto no cruza en el contenido —no se rellena a ojo— y no la va a cruzar
+en la interacción. **Un contador que se cree más listo de lo que es miente peor que no tener
+contador**, porque un dato ausente se detecta y un dato inventado no. Tres niveles de certeza, y
+cada uno se dice con las palabras que le corresponden:
+
+| Certeza | De dónde sale | Cómo se dice |
+| --- | --- | --- |
+| **Fecha dura** | `revisar_en` como fecha (helecho: 1 sep 2026) | *"Faltan 11 días para comprobar si el rebrote sale con entrenudos cortos"* |
+| **Ritmo** | `dias_verano` / `dias_invierno` + la estación de hoy | *"Cada 4 días — última vez: sin registrar"* |
+| **Vencimiento** | ritmo **+ una marca que alguien puso** | *"Le tocaba ayer"* |
+
+La tercera fila **no existe** hasta que alguien marca. Y la ausencia se dice como ausencia
+—`sin registrar`, en `--color-sin-dato`— exactamente igual que un campo sin verificar. La página
+no cambia de estándar de honestidad porque el dato sea de uso en vez de botánico.
+
+#### Lo que se calcula sin memoria ninguna
+
+- **La estación**, y con ella qué columna de riego manda. En agosto, `dias_verano`. Es un cambio
+  real de contenido que ocurre solo, sin que nadie edite nada, y es el mejor argumento de que la
+  fecha sirve para algo.
+- **Ventanas de abonado y trasplante**, si `botanist` da los meses. *"El trasplante de la begonia
+  va tarde"* es una tarea de hoy, no un consejo de manual.
+- **Días en casa** desde `fecha_llegada`: las cuatro de hoy están en aclimatación.
+- **Plazos de revisión** desde `estado.fecha_foto` hasta `revisar_en`.
+
+#### La memoria: `localStorage`, y dicha en voz alta
+
+Un control por planta, **`Regada hoy`**, dentro de la ficha —no en la franja: la franja informa,
+la ficha es donde estás cuando riegas—. Al confirmarse, el rótulo pasa a pasado y a dato:
+`Regada el 11 ago`. Verbo en la misma forma antes y después, que es la regla de siempre.
+
+Y **una línea, una sola vez, al pie de la franja**: *"lo que marcas se guarda solo en este
+navegador"*. No un aviso de cookies, no un modal: una frase en `--texto-xs`, `--color-sin-dato`.
+El coste honesto es que la memoria no se sincroniza entre el móvil de Noah y el portátil de
+Carlos, y eso se dice en vez de descubrirse.
+
+#### Lo que esto NO es
+
+**No es una app de tareas.** Sin notificaciones, sin rachas, sin porcentaje de cumplimiento, sin
+felicitar a nadie por regar. Esta página se abre con prisa una vez cada quince días: lo que se
+pide es que al abrirla sepas qué hacer hoy, no que te gestione la vida. Cualquier cosa que
+premie abrir la web más a menudo está trabajando contra el uso real.
+
+Y una consecuencia de forma: **la franja no crece.** Sigue siendo una franja de una o dos líneas.
+Si un día hay siete tareas, dice el número y las dos primeras, y el resto están en sus fichas —que
+es donde se hacen—.
+
+#### Accesibilidad y motion
+
+- La franja es `aria-live="polite"`: cuando el filtro o la marca cambian el recuento, quien usa
+  lector de pantalla se entera.
+- El control `Regada hoy` es un `<button>`, y su cambio de estado se anuncia por el propio texto
+  del botón, no solo por un color o un icono.
+- **Nada parpadea ni cuenta atrás en vivo.** Se calcula al cargar. Un número que se mueve solo en
+  pantalla es exactamente lo que `prefers-reduced-motion` existe para apagar, y aquí no aporta:
+  la diferencia entre "faltan 11 días" y "faltan 11 días" dentro de un minuto es ninguna.
+
+#### Lo que hace falta de `botanist`
+
+`revisar_en` es prosa (*"3 semanas: …"*) y para contar días hace falta una fecha. Se pide
+`revisar_en_fecha` **además** del texto, no en su lugar: el texto dice *qué* mirar y eso no lo
+sustituye una fecha. Y las ventanas de `abonado` y `trasplante` como meses, si son afirmables.
+Donde no haya fecha, la franja se calla sobre esa planta — no estima.
+
 ### Estados degradados — qué se dibuja cuando falta el dato
 
 Regla, y es de honestidad, no de estética: **cuando falta un dato se dibuja el marco con el hueco
@@ -661,7 +955,7 @@ gasta es la alarma.
 | Estado | Quién | Tratamiento visual | Texto obligatorio |
 | --- | --- | --- | --- |
 | `toxica` | begonia, poto, margarita | `--texto-principal` sobre `--fondo-hundido`, **borde sólido**, icono de alerta, la palabra `TÓXICA` | "Tóxica para gatos y perros — ASPCA" + enlace |
-| `sin datos` | los dos coleos, ficus | `--color-sin-dato` sobre `--color-sin-dato-relleno`, **borde discontinuo**, icono `?` | "**Sin datos** en ASPCA para esta especie. No significa que sea segura" |
+| `sin datos` | los dos coleos, ficus | `--color-sin-dato` sobre `--color-sin-dato-relleno`, **borde discontinuo**, icono `?` | "**Sin datos** en ASPCA para esta especie. No significa que sea segura: significa que nadie la ha evaluado" |
 | `sin identificar` | helecho (`toxicidad_mascotas: null`) | `--trama-sin-dato`, mismo gris, icono `?` | "Especie sin identificar: no se puede valorar" |
 
 Los tres se distinguen por **forma de borde e icono además de color**, así que en escala de grises
@@ -771,8 +1065,10 @@ que importa de esa planta:
 
 ```
 coleo grande   LA PRUEBA   [foto pegatina]  Projardín · hoy · 2,25 €
-poto           LA PRUEBA   Sin etiqueta: lleva más de veinte años en la familia.
-helecho        LA PRUEBA   Sin etiqueta: regalo de mayo.
+poto           LA PRUEBA   Sin etiqueta de vivero: no hay trazabilidad comercial de una
+                           planta que lleva más de veinte años en la familia.
+helecho        LA PRUEBA   Sin etiqueta de vivero: no se compró, se regaló. En casa desde
+                           el 29 de mayo de 2026, y rescatado de una desecación.
 ```
 
 Y "en aclimatación" es **una línea que se calcula de una fecha**, no un estado: se muestra
@@ -800,13 +1096,19 @@ que sabe**:
 ```
 ┌─ ETIQUETA ───────────────┐          ┌─ ETIQUETA · sin vivero ──┐
 │ VIVEROS PROJARDIN        │          │ SIN ETIQUETA DE VIVERO   │  ← microlínea sustituida
-│ Avda. de Móstoles s/n    │          │ procedencia sin registrar│
-│ C O L E O                │   vs.    │ H E L E C H O            │  ← idéntico
-│ ‹nombre científico›      │          │ ‹nombre científico›      │
-│ ▌▌▎▌▎▌▌▎▌      2,25€     │          │ ░░ trama sin dato ░  —   │  ← barras → trama, precio → raya
-│ P.FITOSANITARIO ES13-28… │          │ ░░░░░░░░░░░░░░░░░░░░░░░  │
+│ Avda. de Móstoles s/n    │          │                          │
+│ C O L E O                │   vs.    │ H E L E C H O            │  ← idéntico, y solo el nombre
+│ ‹nombre científico›      │          │ especie sin identificar  │  ← el estado baja aquí
+│ ▌▌▎▌▎▌▌▎▌      2,25€     │          │ Regalo del 29 de mayo.   │  ← NI trama NI raya:
+│ CÓD. 2040 2174           │          │ Rescatado de una         │     el texto de procedencia
+│ P.FITOSANITARIO ES13-28… │          │ desecación.              │     ocupa ese espacio
 └──────────────────────────┘          └──────────────────────────┘
 ```
+
+⚠ **Corregido tras ver la ficha renderizada.** La versión anterior de este wireframe ponía trama
+de sin-dato en las barras y una raya en el precio. Está mal: la trama significa "no lo sabemos" y
+que el helecho no traiga pegatina es un hecho conocido, no una laguna. Ver
+§ "Corrección tras ver la ficha del helecho renderizada".
 
 El nombre —que es lo que se busca con prisa— se imprime idéntico en las siete. Lo que cambia es
 solo el bloque de procedencia, que es justo el dato que falta. La raya `—` es un carácter, no un

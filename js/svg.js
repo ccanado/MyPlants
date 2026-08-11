@@ -173,7 +173,7 @@ export function diagramaLuz(luz) {
     const conocido = ideal != null ? true : n === actual;
     const dentro = ideal != null && actual != null && n > Math.min(actual, ideal) && n <= Math.max(actual, ideal);
     const clases = ["escala__paso"];
-    if (dentro) clases.push("escala__paso--hueco");
+    if (dentro) clases.push("escala__paso--hueco", actual > ideal ? "escala__paso--sobra" : "escala__paso--falta");
     if (!conocido) clases.push("escala__paso--incierto");
     svg.append(e("rect", {
       class: clases.join(" "),
@@ -196,7 +196,7 @@ export function diagramaLuz(luz) {
       { "text-anchor": "middle", "font-size": CUERPO.micro }));
   };
   marca(ideal, "escala__marca--quiere", "quiere", true);
-  marca(actual, "escala__marca--tiene", "tiene", false);
+  marca(actual, "escala__marca--tiene", "recibe", false);
 
   frag.append(svg);
 
@@ -204,10 +204,18 @@ export function diagramaLuz(luz) {
   const p = document.createElement("p");
   p.className = "diagrama__equivalente";
   if (ideal != null && actual != null) {
-    const falta = Math.abs(ideal - actual);
-    p.textContent = falta === 0
-      ? `Quiere nivel ${ideal} de 5 y lo tiene: está en su sitio.`
-      : `Quiere nivel ${ideal} de 5 y tiene ${actual}: le ${falta === 1 ? "falta un escalón" : `faltan ${falta} escalones`} de luz.`;
+    const diferencia = actual - ideal;
+    const escalones = Math.abs(diferencia);
+    const cuantos = escalones === 1 ? "un escalón" : `${escalones} escalones`;
+    /* El signo importa y no es un detalle de redacción: recibir de más es
+       riesgo de quemadura y recibir de menos es déficit. Decir «le falta luz»
+       a una planta que se está quemando manda hacer justo lo contrario. */
+    p.textContent =
+      diferencia === 0
+        ? `Quiere nivel ${ideal} de 5 y recibe ${actual}: está en su sitio.`
+        : diferencia > 0
+          ? `Quiere nivel ${ideal} de 5 y recibe ${actual}: le sobra${escalones === 1 ? "" : "n"} ${cuantos} de luz.`
+          : `Quiere nivel ${ideal} de 5 y recibe ${actual}: le falta${escalones === 1 ? "" : "n"} ${cuantos} de luz.`;
   } else {
     p.textContent = `Está en el nivel ${actual} de 5 (${NOMBRE_NIVEL.get(Math.round(actual)) ?? "sin clasificar"}). Sin dato de cuál sería el ideal.`;
   }

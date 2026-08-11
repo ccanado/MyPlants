@@ -112,7 +112,13 @@ function normalizarEstado(e) {
   // El tratamiento llega como frases ("Hoy: …", "Esta semana: …"). Se parte por
   // el primer dos puntos para separar el CUÁNDO de la acción: así el <ol> tiene
   // un plazo legible y el diagrama de recuperación tiene sus hitos.
-  const pasos = lista(e.tratamiento ?? e.que_hacer ?? e.acciones ?? e.plan)
+  // `plan_recuperacion` trae {paso, senal, hito} y solo existe en las dos
+  // tocadas; `tratamiento` es la lista llana y está en las siete.
+  const plan = lista(e.plan_recuperacion)
+    .map((x) => ({ accion: texto(x?.paso), senal: texto(x?.senal), plazo: texto(x?.hito) }))
+    .filter((x) => x.accion);
+
+  const pasos = plan.length > 0 ? plan : lista(e.tratamiento ?? e.que_hacer ?? e.acciones ?? e.plan)
     .map((p) => {
       if (typeof p !== "string") {
         return { accion: texto(p?.accion ?? p?.paso ?? p?.texto), plazo: texto(p?.plazo), senal: texto(p?.senal ?? p?.signo) };
@@ -175,8 +181,12 @@ function normalizarVivero(p) {
     nombre_etiqueta: texto(e.nombre_etiqueta),
     precio: formatearEuros(e.precio_eur),
     maceta: texto(e.maceta_texto) ?? (e.maceta_cm ? `Maceta ${e.maceta_cm} cm` : null),
+    /* El número impreso NO es un EAN salvo en la begonia: «2040 2174» es
+       código interno del vivero, de ocho dígitos. Se guardan por separado
+       porque el rótulo que los acompaña no puede mentir. */
     ean: texto(e.ean),
     codigo: texto(e.codigo_vivero),
+    pasaporte: texto(e.pasaporte_fitosanitario),
     fitosanitario: texto(e.fitosanitario ?? e.pasaporte_fitosanitario),
   };
 }
@@ -205,28 +215,35 @@ function normalizarMedidas(p) {
   const temp = objeto(p.temperatura);
   return {
     riego: {
-      profundidad_cm: p.riego_profundidad_cm ?? riego.profundidad_cm ?? null,
+      profundidad_cm: riego.profundidad_seco_cm ?? riego.profundidad_cm ?? null,
       ml: p.riego_ml ?? riego.ml ?? riego.ml_aprox ?? null,
       dias_verano: riego.dias_verano ?? null,
       dias_invierno: riego.dias_invierno ?? null,
     },
+    /* El eje interesante no es «en qué escalón vive» sino la DIFERENCIA entre
+       lo que la especie pide y lo que recibe donde está: si recibe de más hay
+       riesgo de quemadura, si recibe de menos hay déficit. */
     luz: {
-      nivel: luz.nivel ?? p.luz_nivel ?? null,
-      nivel_actual: luz.nivel_actual ?? null,
-      nivel_ideal: luz.nivel_ideal ?? null,
+      nivel_ideal: luz.nivel_ideal ?? luz.nivel ?? p.luz_nivel ?? null,
+      nivel_actual: luz.nivel_actual ?? luz.nivel_recibido_estimado ?? null,
+      categoria_ideal: texto(luz.categoria_ideal),
+      categoria_recibida: texto(luz.categoria_recibida),
       tramos: Array.isArray(luz.tramos) ? luz.tramos : null,
-      sol_directo: texto(luz.sol_directo),
-      orientacion: texto(p.ventana ?? p.orientacion ?? luz.orientacion ?? luz.ventana),
-      distancia_m: p.distancia_ventana_m ?? luz.distancia_m ?? objeto(p.ubicacion).distancia_m ?? null,
+      rusticidad: null,
+      orientacion: texto(luz.orientacion_ventana ?? p.ventana ?? luz.orientacion),
+      distancia_m: luz.distancia_m ?? objeto(p.ubicacion).distancia_m ?? null,
     },
     temperatura: {
       min_tolerado: temp.min_tolerado ?? temp.min_c ?? p.temp_min ?? null,
       max_tolerado: temp.max_tolerado ?? temp.max_c ?? p.temp_max ?? null,
-      min_optimo: temp.min_optimo ?? null,
-      max_optimo: temp.max_optimo ?? null,
-      letal_min: temp.letal_min ?? p.temp_letal ?? null,
-      casa_invierno: temp.casa_invierno ?? p.casa_invierno ?? null,
-      casa_verano: temp.casa_verano ?? p.casa_verano ?? null,
+      min_optimo: temp.optimo_min_c ?? temp.min_optimo ?? null,
+      max_optimo: temp.optimo_max_c ?? temp.max_optimo ?? null,
+      // `minima_letal_c` es null en las siete y es deliberado: RHS publica
+      // bandas de rusticidad, no el grado al que se muere una planta.
+      letal_min: temp.minima_letal_c ?? temp.letal_min ?? null,
+      casa_invierno: temp.casa_invierno_c ?? temp.casa_invierno ?? null,
+      casa_verano: temp.casa_verano_max_c ?? temp.casa_verano ?? null,
+      rusticidad: texto(temp.rusticidad_rhs),
     },
   };
 }
@@ -246,6 +263,11 @@ function normalizarToxicidad(t) {
   const porEspecie = [gatos && `Gatos: ${gatos}`, perros && `Perros: ${perros}`].filter(Boolean);
 
   return {
+    clave: texto(t.clave),
+    // Literales del JSON y no de la plantilla: una frase de seguridad no puede
+    // depender de que alguien la transcriba bien en el render.
+    aviso: texto(t.aviso),
+    aviso_homonimo: texto(t.aviso_homonimo),
     gatos,
     perros,
     nivel: texto(t.nivel ?? t.severidad ?? t.toxica) ?? gatos ?? perros,
@@ -304,9 +326,13 @@ function normalizarPlanta(p) {
     dificultad: texto(p.dificultad),
     nivel_luz: palabraNivelLuz(p.luz_nivel ?? p.nivel_luz ?? objeto(p.luz).nivel),
     historia: texto(p.historia),
-    notas_carlos: texto(p.notas_carlos ?? p.notas),
+    notas_carlos: texto(p.notas_carlos),
+    notas: lista(p.notas).map((n) => ({ autor: texto(n?.autor), texto: texto(n?.texto) })).filter((n) => n.texto),
     ubicacion: normalizarUbicacion(p.ubicacion ?? p.donde ?? p.sala),
     fecha_llegada: texto(p.fecha_llegada),
+    fecha_llegada_texto: texto(p.fecha_llegada_texto),
+    dias_en_casa: p.dias_en_casa ?? null,
+    manipulacion: objeto(p.manipulacion).resumen ? objeto(p.manipulacion) : null,
     procedencia_nota: texto(p.procedencia_nota ?? p.origen),
     vivero: normalizarVivero(p),
     medidas: normalizarMedidas(p),

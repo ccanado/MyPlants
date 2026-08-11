@@ -327,7 +327,13 @@
   /* Fluidos, dimensionados contra su CONTENEDOR (cqi), no contra la ventana:
      la etiqueta debe funcionar igual en la rejilla cerrada y abierta a ancho
      completo. Requieren container-type en el ancestro. */
-  --texto-nombre: clamp(2.25rem, 7cqi, 3.75rem);   /* el nombre a sangre de la etiqueta */
+  /* El nombre a sangre de la etiqueta. El suelo bajó de 2.25rem a 2rem tras ver
+     la ficha del helecho a 320 px: con el contenedor en ~224 px útiles, una
+     palabra como "IDENTIFICAR)" a 36 px ocupaba el 87 % del renglón y no dejaba
+     margen para ningún nombre más largo. A 32 px cabe con holgura y el nombre
+     sigue mandando en la pegatina. Debe ir con `hyphens: auto` y `lang="es"`:
+     una condensada de display sin partición es una bomba de desbordamiento. */
+  --texto-nombre: clamp(2rem, 7cqi, 3.75rem);
   --texto-precio: clamp(1.75rem, 4.5cqi, 2.5rem);  /* el precio en euros */
 
   /* -- Interlineado -------------------------------------------------------- */

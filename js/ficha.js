@@ -15,6 +15,7 @@
 
 import { FOTO, FOTO_ETIQUETA } from "./datos.js";
 import { humanizar, normalizar } from "./filtros.js";
+import { iconoDe, iconoDificultad } from "./iconos.js";
 import {
   diagramaLuz,
   diagramaRecuperacion,
@@ -76,6 +77,9 @@ function estadoToxico(valor) {
 /** El distintivo toma la peor de las dos especies. Hoy coinciden en las siete,
  *  pero el esquema permite que diverjan y entonces manda la peor. */
 function grupoToxicidad(tox) {
+  // `clave` es un conjunto cerrado que mantiene `botanist`: si está, manda.
+  // Olfatear la cadena era un apaño de cuando no existía el campo.
+  if (tox.clave) return normalizar(tox.clave).replace(/\s+/g, "_");
   if (!tox.verificado) return "sin_identificar";
   const estados = [estadoToxico(tox.gatos), estadoToxico(tox.perros)].filter(Boolean);
   if (estados.length === 0) return estadoToxico(tox.nivel ?? tox.texto) ?? "sin_identificar";
@@ -125,11 +129,21 @@ function caraEtiqueta(q, planta, idTitulo) {
   // El nombre se imprime idéntico en las siete: es lo que se busca con prisa.
   const titulo = q(".etiqueta__nombre");
   titulo.id = idTitulo;
-  titulo.textContent = planta.nombre_comun;
+  /* El nombre grande existe para encontrar la planta de un vistazo, y el estado
+     de identificación no ayuda a encontrarla: baja al renglón del binomio, que
+     es el que existe para decir qué es. De paso la cadena más larga de la
+     rejilla pasa de 25 caracteres a 7. */
+  titulo.textContent = planta.nombre_comun.replace(/\s*\((sin identificar|sin determinar)\)\s*$/i, "");
 
-  ponerOQuitar(q(".etiqueta__binomio"), q(".etiqueta__binomio-texto"), planta.nombre_cientifico);
-  ponerOQuitar(q(".etiqueta__maceta"), q(".etiqueta__maceta"), planta.vivero.maceta);
-  ponerOQuitar(q(".etiqueta__fito"), q(".etiqueta__fito"), planta.vivero.fitosanitario);
+  const binomio = q(".etiqueta__binomio");
+  if (planta.nombre_cientifico) {
+    q(".etiqueta__binomio-texto").textContent = planta.nombre_cientifico;
+  } else {
+    binomio.dataset.sinIdentificar = "si";
+    q(".etiqueta__binomio-texto").textContent = "Especie sin identificar";
+  }
+  if (planta.vivero.fitosanitario) segmentar(q(".etiqueta__fito"), planta.vivero.fitosanitario);
+  else if (!planta.vivero.pasaporte) q(".etiqueta__fito").remove();
 
   // Lo único que cambia entre las dos variantes es el bloque de procedencia,
   // que es justo el dato que falta.
@@ -151,26 +165,54 @@ function caraEtiqueta(q, planta, idTitulo) {
     q(".etiqueta__vivero-tfno").remove();
   }
 
-  /* La línea de EAN + precio tiene tres casos y ninguno se puede confundir:
-     · sin pegatina  → trama de «sin dato» y una raya. La ausencia se dibuja.
-     · con pegatina y con cifras transcritas → el código y el precio reales.
-     · con pegatina pero sin transcribir → NO se dibuja la línea. Un código de
-       barras decorativo bajo un precio inventado convierte la signature en
-       atrezo, que es justo lo contrario de lo que la hace buena. */
+  /* Los dígitos impresos NO son un EAN salvo en la begonia. El rótulo tiene que
+     decir cuál es cuál: `CÓD.` para el código interno del vivero y `EAN` solo
+     para el de trece dígitos. La palabra EAN sobre un número que no lo es
+     convierte la signature en atrezo. */
   const linea = q(".etiqueta__linea-precio");
-  const hayCifras = Boolean(planta.vivero.ean || planta.vivero.precio);
 
   if (!planta.vivero.tiene) {
-    // La raya es un carácter, no un hueco: dice «no hay precio», no «se olvidó».
-    q(".etiqueta__precio").textContent = "—";
-  } else if (hayCifras) {
-    if (planta.vivero.ean) q(".etiqueta__ean").dataset.ean = planta.vivero.ean;
-    else q(".etiqueta__ean").remove();
-    q(".etiqueta__precio").textContent = planta.vivero.precio ?? "";
-    if (!planta.vivero.precio) q(".etiqueta__precio").remove();
-  } else {
+    /* Sin etiqueta de vivero NO va trama ni raya. `--trama-sin-dato` significa
+       «no lo sabemos», y que estas dos no traigan pegatina es un hecho
+       conocido, no un dato desconocido: son cosas opuestas. El espacio lo
+       ocupa el texto de procedencia, como contenido normal. */
     linea.remove();
+  } else {
+    const esEan = Boolean(planta.vivero.ean);
+    const digitos = planta.vivero.ean ?? planta.vivero.codigo;
+
+    if (digitos) {
+      q(".etiqueta__digitos").textContent = `${esEan ? "EAN" : "Cód."} ${digitos}`;
+    } else {
+      q(".etiqueta__digitos").remove();
+      q(".etiqueta__barras").remove();
+    }
+
+    // La begonia es etiqueta de productor: no lleva precio, y su celda la ocupa
+    // la procedencia. No es un hueco, es otro dato.
+    ponerOQuitar(q(".etiqueta__precio"), q(".etiqueta__precio"), planta.vivero.precio);
+    ponerOQuitar(q(".etiqueta__calibre"), q(".etiqueta__calibre"), planta.vivero.maceta);
   }
+
+  // El pasaporte de la begonia ocupa el renglón del fitosanitario de las otras.
+  if (!planta.vivero.fitosanitario && planta.vivero.pasaporte) {
+    const fito = q(".etiqueta__fito");
+    if (fito) segmentar(fito, planta.vivero.pasaporte);
+  }
+}
+
+/** Parte un código de trazabilidad por sus separadores y hace cada segmento
+ *  indivisible: un código partido por la mitad deja de ser un código. */
+function segmentar(destino, texto_) {
+  destino.textContent = "";
+  const trozos = String(texto_).split(/\s*·\s*/);
+  trozos.forEach((t, i) => {
+    const span = document.createElement("span");
+    span.className = "segmento";
+    span.textContent = t;
+    destino.append(span);
+    if (i < trozos.length - 1) destino.append(document.createTextNode(" · "));
+  });
 }
 
 function resumenesDeCara(q, planta) {
@@ -208,8 +250,10 @@ function bloqueEstado(q, planta) {
   seccion.hidden = false;
   seccion.dataset.severidad = g;
 
-  // «Qué le pasa» sobre una planta sana sería un titular equivocado.
-  q(".estado__titulo").textContent = g === "sana" ? "Cómo va" : "Qué le pasa";
+  /* Las cuatro sanas también tienen estado poblado: preventivo, plazo y qué
+     mirar. Siguen sin distintivo, pero su contenido tiene que verse, y «Qué le
+     pasa» sobre una planta sana sería un titular equivocado. */
+  q(".estado__titulo").textContent = g === "sana" ? "Qué vigilar" : "Qué le pasa";
 
   // El texto va siempre: el color no puede ser el único portador de la señal.
   q(".estado__severidad-valor").textContent = humanizar(estado.severidad);
@@ -395,7 +439,11 @@ function campoDe(cuidado, diagrama, fuente) {
   const seccion = nodo.querySelector(".campo");
   seccion.dataset.campo = cuidado.clave;
 
-  nodo.querySelector(".campo__clave").textContent = cuidado.etiqueta;
+  const clave = nodo.querySelector(".campo__clave");
+  const icono = iconoDe(cuidado.clave);
+  clave.textContent = cuidado.etiqueta;
+  // El icono acompaña a la versalita, no la sustituye.
+  if (icono) clave.prepend(icono);
 
   const resumen = nodo.querySelector(".campo__resumen");
   if (cuidado.resumen) {
@@ -430,38 +478,53 @@ function bloqueMasDatos(q, planta) {
   for (const clave of RESTO) {
     const c = planta.cuidados.get(clave);
     if (!c) continue;
-    lista.append(datoDe(c.etiqueta, c.resumen, c.detalle, fuenteDe(planta, clave)));
+    lista.append(datoDe(c.etiqueta, c.resumen, c.detalle, fuenteDe(planta, clave), clave));
   }
 
   const plagas = planta.plagas.length > 0 ? planta.plagas.map((x) => x.nombre).join(" · ") : null;
   // La señal de cada plaga es lo que de verdad sirve para reconocerla: va al
   // detalle ampliable en vez de perderse.
   const senales = planta.plagas.filter((x) => x.senal).map((x) => `${x.nombre}: ${x.senal}`).join("\n");
-  lista.append(datoDe("Plagas comunes", plagas, senales || null, fuenteDe(planta, "plagas_comunes")));
+  lista.append(datoDe("Plagas comunes", plagas, senales || null, fuenteDe(planta, "plagas_comunes"), "plagas"));
 
   const tox = planta.toxicidad;
   const g = grupoToxicidad(tox);
+  const sinDatos = g === "sin_datos" || g === "sin_datos_aspca";
   // Ni «sin datos» ni «sin identificar» se abrevian a una palabra: que no haya
   // dato es justo lo que hay que leer entero.
   const textoTox =
     g === "sin_identificar"
       ? "Sin identificar la especie, no se puede valorar. No significa que sea segura."
-      : g === "sin_datos_aspca"
-        ? `${tox.texto ?? "Sin datos en ASPCA"}. No significa que sea segura.`
+      : sinDatos
+        // El aviso viene del JSON y se pinta entero. Si no cabe, se agranda la
+        // caja: recortar una frase de seguridad es peor que no ponerla.
+        ? [tox.texto, tox.aviso].filter(Boolean).join(" ")
         : tox.texto ?? (tox.nivel ? humanizar(tox.nivel) : null);
   const nodoTox = datoDe(
     "Toxicidad para mascotas",
     textoTox,
     tox.detalle,
-    fuenteDe(planta, "toxicidad_mascotas")
+    fuenteDe(planta, "toxicidad_mascotas"),
+    "toxicidad"
   );
   const bloqueTox = nodoTox.querySelector(".dato");
   // El modificador lo pone el render, no la plantilla: este bloque se genera.
   bloqueTox.classList.add("dato--toxicidad");
   bloqueTox.dataset.toxicidad = grupoToxicidad(tox);
+
+  /* El aviso del casi-homónimo va aparte y visible: ASPCA tiene ficha de otra
+     especie de nombre casi idéntico, y la trampa va en las dos direcciones —
+     en el coleo invita a bajar la guardia, en el ficus a subirla. */
+  if (tox.aviso_homonimo) {
+    const nota = document.createElement("p");
+    nota.className = "aviso-homonimo";
+    nota.textContent = tox.aviso_homonimo;
+    bloqueTox.querySelector(".dato__valor").append(nota);
+  }
   lista.append(nodoTox);
 
-  lista.append(datoDe("Dificultad", planta.dificultad ? humanizar(planta.dificultad) : null, null, null));
+  // La palabra es obligatoria al lado de los puntos: tres puntos no dicen cuál es cuál.
+  lista.append(datoDe("Dificultad", planta.dificultad ? humanizar(planta.dificultad) : null, null, null, "dificultad"));
 
   // Fuentes que no cuelgan de ningún campo concreto: no se tiran, se agrupan.
   const sueltas = planta.fuentes.filter((f) => !f.respalda);
@@ -484,9 +547,12 @@ function bloqueMasDatos(q, planta) {
   }
 }
 
-function datoDe(etiqueta, valor, detalle, fuente) {
+function datoDe(etiqueta, valor, detalle, fuente, campoIcono) {
   const nodo = TPL_DATO.content.cloneNode(true);
-  nodo.querySelector(".dato__clave").textContent = etiqueta;
+  const clave = nodo.querySelector(".dato__clave");
+  clave.textContent = etiqueta;
+  const icono = campoIcono === "dificultad" ? iconoDificultad(valor) : iconoDe(campoIcono);
+  if (icono) clave.prepend(icono);
 
   const texto = nodo.querySelector(".dato__texto");
   if (valor) {
@@ -525,16 +591,17 @@ function pintarFuente(contenedor, fuente) {
   const enlace = contenedor.querySelector(".fuente");
   if (fuente.url) {
     enlace.href = fuente.url;
-    contenedor.querySelector(".fuente__dominio").textContent = dominio(fuente.url) ?? fuente.titulo;
+    // Nombre corto («RHS ↗»), no dominio: es como se cita una fuente.
+    contenedor.querySelector(".fuente__dominio").textContent = fuente.titulo;
     enlace.title = fuente.titulo;
   } else {
     // Sin URL no es un enlace: un <a href=""> vacío es una trampa para el teclado.
-    enlace.replaceWith(sinEnlace(fuente.titulo));
+    enlace.replaceWith(sinEnlace(fuente.titulo, fuente.consultado));
   }
 }
 
 function enlaceFuente(f) {
-  if (!f.url) return sinEnlace(f.titulo);
+  if (!f.url) return sinEnlace(f.titulo, f.consultado);
   const a = document.createElement("a");
   a.className = "fuente";
   a.href = f.url;
@@ -542,7 +609,7 @@ function enlaceFuente(f) {
   a.title = f.titulo;
   const dom = document.createElement("span");
   dom.className = "fuente__dominio";
-  dom.textContent = dominio(f.url) ?? f.titulo;
+  dom.textContent = f.titulo;
   const flecha = document.createElement("span");
   flecha.className = "fuente__flecha";
   flecha.setAttribute("aria-hidden", "true");
@@ -554,10 +621,12 @@ function enlaceFuente(f) {
   return a;
 }
 
-function sinEnlace(titulo) {
+/** Una observación propia o una frase de Carlos no es un enlace: sin flecha,
+ *  sin subrayado, y con la fecha de consulta al lado. */
+function sinEnlace(titulo, consultado) {
   const span = document.createElement("span");
   span.className = "fuente fuente--sin-url";
-  span.textContent = titulo;
+  span.textContent = consultado ? `${titulo} · ${fechaLegible(consultado)}` : titulo;
   return span;
 }
 
@@ -573,13 +642,25 @@ function dominio(url) {
 
 function bloqueCarlos(q, planta) {
   const panel = q(".cuaderno");
-  if (!planta.historia && !planta.notas_carlos) {
+  const notas = planta.notas ?? [];
+  if (!planta.historia && !planta.notas_carlos && notas.length === 0) {
     panel.remove();
     return;
   }
   panel.hidden = false;
+
+  /* El rótulo es el AUTOR, no una persona fija: quien riega es Noah. El panel
+     codifica un registro —«esto no tiene fuente y no la necesita»—, no un
+     nombre concreto. */
+  const autores = [...new Set(notas.map((n) => n.autor).filter(Boolean))];
+  q(".cuaderno__rotulo").textContent = autores.length > 0 ? autores.join(" y ") : "En casa";
+
   ponerOQuitar(q(".cuaderno__historia"), q(".cuaderno__historia"), planta.historia);
-  ponerOQuitar(q(".cuaderno__notas"), q(".cuaderno__notas"), planta.notas_carlos);
+
+  const destinoNotas = q(".cuaderno__notas");
+  const sueltas = [planta.notas_carlos, ...notas.map((n) => n.texto)].filter(Boolean);
+  if (sueltas.length > 0) destinoNotas.textContent = sueltas.join(" ");
+  else destinoNotas.remove();
 }
 
 /* ── utilidades ─────────────────────────────────────────────────────────────── */

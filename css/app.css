@@ -449,6 +449,15 @@
     font-size: var(--texto-s);
     color: var(--texto-secundario);
     margin-block-start: var(--space-1);
+
+    /* Aquí la especie SÍ es un dato desconocido, así que aquí sí manda el gris
+       de «sin dato». Es el mismo renglón que en las otras dice qué es. */
+    &[data-sin-identificar="si"] {
+      font-family: var(--fuente-dato);
+      color: var(--texto-sin-dato);
+
+      & em { font-style: normal; }
+    }
   }
 
   .etiqueta__maceta,
@@ -461,6 +470,10 @@
   }
 
   .etiqueta__maceta { margin-block-start: var(--space-2); }
+
+  /* Cada segmento de un código de trazabilidad es indivisible: partido por la
+     mitad deja de ser un código. El salto ocurre ENTRE segmentos. */
+  .segmento { white-space: nowrap; }
 
   .etiqueta__linea-precio {
     display: flex;
@@ -481,6 +494,16 @@
     align-self: end;
   }
 
+  /* Rótulo del hueco: sin él la raya se lee como un descuido. */
+  .etiqueta__sin-codigo {
+    font-family: var(--fuente-dato);
+    font-size: var(--texto-3xs);
+    letter-spacing: var(--tracking-micro);
+    text-transform: uppercase;
+    color: var(--texto-sin-dato);
+    align-self: center;
+  }
+
   .etiqueta__precio {
     font-family: var(--fuente-dato);
     font-weight: var(--peso-fuerte);
@@ -493,16 +516,10 @@
   /* Helecho y poto no vinieron con pegatina. La signature no se rompe: la
      pegatina se dibuja igual e imprime lo que sabe. Las barras pasan a trama de
      «sin dato» y el precio a una raya — un carácter, no un hueco en blanco. */
-  .etiqueta[data-etiqueta-vivero="no"] {
-    & .etiqueta__vivero { color: var(--texto-sin-dato); }
-
-    & .etiqueta__ean {
-      background-image: var(--trama-sin-dato);
-      border: var(--trazo-fino) solid var(--color-sin-dato-trama);
-    }
-
-    & .etiqueta__precio { color: var(--texto-sin-dato); }
-  }
+  /* Sin etiqueta de vivero NO va trama ni raya. `--trama-sin-dato` significa
+     «no lo sabemos», y que estas dos no traigan pegatina es un hecho conocido:
+     son cosas opuestas. Un hueco limpio es más honesto que uno decorado. */
+  .etiqueta[data-etiqueta-vivero="no"] .etiqueta__vivero { color: var(--texto-secundario); }
 
   /* ── los tres datos de la cara ──────────────────────────────────────────── */
 
@@ -538,7 +555,10 @@
 
   /* ── el tirador: despegar ───────────────────────────────────────────────── */
 
-  .despegue { margin-block-start: auto; }
+  /* El hueco de igualar alturas lo absorbe el bloque hundido, que tiene fondo
+     propio: una ficha con menos contenido debe verse más vacía por dentro, no
+     rota por fuera. */
+  .resumenes { flex: 1 0 auto; align-content: start; }
 
   .despegue__tirador {
     display: flex;
@@ -853,6 +873,26 @@
     padding: var(--relleno-panel);
   }
 
+  /* Los iconos de campo: un trazo, sin relleno, y siempre junto a su palabra. */
+  .icono {
+    width: var(--icono-tam);
+    height: var(--icono-tam);
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--trazo);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: text-bottom;
+  }
+
+  /* El de dificultad codifica un valor con puntos rellenos, no con trazo. */
+  .icono--dificultad .icono__punto { fill: none; stroke: currentColor; }
+  .icono--dificultad .icono__punto--lleno { fill: currentColor; }
+
+  .campo__clave,
+  .dato__clave { display: flex; align-items: center; gap: var(--space-2); }
+
   .campo__clave {
     font-family: var(--fuente-etiqueta);
     font-size: var(--texto-2xs);
@@ -933,6 +973,7 @@
   }
 
   /* Discontinuo a propósito: el borde roto dice «esto está sin comprobar». */
+  .dato[data-toxicidad="sin_datos"],
   .dato[data-toxicidad="sin_datos_aspca"],
   .dato[data-toxicidad="sin_identificar"] {
     border-inline-start: var(--trazo-grueso) dashed var(--color-sin-dato-trama);
@@ -941,6 +982,18 @@
   }
 
   .dato[data-toxicidad="segura"] .dato__texto::before { content: "· "; }
+
+  /* La trampa del casi-homónimo va visible y entera. Sin recortar: si no cabe,
+     crece la caja. */
+  .aviso-homonimo {
+    display: block;
+    margin-block-start: var(--space-2);
+    padding-inline-start: var(--space-3);
+    border-inline-start: var(--trazo-fino) solid var(--color-sin-dato-trama);
+    font-size: var(--texto-xs);
+    color: var(--texto-secundario);
+    text-wrap: pretty;
+  }
 
   /* ── fuentes: contenido, no letra pequeña ───────────────────────────────── */
 
@@ -1091,6 +1144,10 @@
      presentación del SVG, así que sin esto el hachurado no se vería nunca. */
   .escala__paso:not(.escala__paso--incierto) { fill: var(--escala-1); }
   .escala__paso--hueco { fill: var(--escala-3); }
+  /* Exceso y déficit no son el mismo problema y no se pintan igual: al que le
+     sobra sol hay que moverlo, al que le falta también, pero al revés. */
+  .escala__paso--sobra { fill: var(--color-aviso); }
+  .escala__paso--falta { fill: var(--escala-3); }
   .escala__marca--quiere { fill: var(--color-tinta); }
   .escala__marca--tiene { fill: var(--color-aviso); }
   .escala__rotulo { fill: var(--texto-meta); }
