@@ -1,16 +1,84 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 -m http.server:*)",
-      "Bash(node --check:*)",
-      "Bash(npx skills:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+
+      "Bash(python3:*)",
+      "Bash(node:*)",
+
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(cut:*)",
+      "Bash(tr:*)",
+      "Bash(diff:*)",
+      "Bash(xxd:*)",
+      "Bash(stat:*)",
+      "Bash(du:*)",
+      "Bash(date)",
+      "Bash(which:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(basename:*)",
+      "Bash(dirname:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(touch:*)",
+      "Bash(cd:*)",
+      "Bash(pwd)",
+
+      "Bash(sips:*)",
+      "Bash(lsof:*)",
+      "Bash(pgrep:*)",
+      "Bash(pkill -f python3 -m http.server:*)",
+
+      "Bash(curl -s:*)",
+      "Bash(curl -sL:*)",
+
+      "Read(//Users/ccanado/.claude/**)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+
       "WebSearch",
       "WebFetch(domain:powo.science.kew.org)",
+      "WebFetch(domain:www.ipni.org)",
       "WebFetch(domain:www.rhs.org.uk)",
       "WebFetch(domain:www.gbif.org)",
       "WebFetch(domain:api.gbif.org)",
+      "WebFetch(domain:www.worldfloraonline.org)",
+      "WebFetch(domain:www.aspca.org)",
       "WebFetch(domain:es.wikipedia.org)",
-      "WebFetch(domain:en.wikipedia.org)"
+      "WebFetch(domain:en.wikipedia.org)",
+      "WebFetch(domain:ccanado.github.io)",
+
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_network_requests",
+      "mcp__plugin_playwright_playwright__browser_press_key",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_hover",
+      "mcp__plugin_playwright_playwright__browser_find",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_close"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Read(./.env)",
+      "Read(./.env.*)"
     ]
   }
 }
