@@ -1,7 +1,64 @@
 # Brief — MyPlants
 
-Documento vivo. Lo posee `ux-lead`. Las secciones marcadas **[pendiente]** se resuelven
-en la fase de diseño, no antes.
+> ## Cómo leer este fichero — 2.594 líneas, y NO son todas especificación
+>
+> Escrito por `ux-lead` para un equipo con reparto de ficheros. Si lo lees en solitario, **léelo
+> como dos documentos mezclados**, porque lo son:
+>
+> - **Un tercio es normativo.** Lo de abajo, y poco más.
+> - **Dos tercios son el registro de cómo se llegó a cada decisión**, incluidas **las que se
+>   retiraron el mismo día**. Si lo lees entero como especificación, vas a implementar cosas que ya
+>   están muertas — y están escritas con el mismo tono que las vivas, porque casi todo lo escribí en
+>   imperativo antes de aprender que eso era el problema.
+>
+> ### Lo normativo, y lo es porque no es estética: es no mentir
+>
+> Cero nodos de texto por debajo de AA · cero bordes de control por debajo de 3:1 · cero saltos de
+> orden de foco · cero desborde horizontal · cero recursos de terceros · `prefers-reduced-motion`
+> con **versión alternativa** y no solo duración corta · ni un dato inventado · **las fotos de
+> diagnóstico no se filtran** · **ninguna información solo por color** · ningún literal de color,
+> tamaño o espaciado fuera de `css/tokens.css`.
+>
+> Y la regla de contenido: los objetivos de forma se cumplen ocupando el ancho, añadiendo anclas de
+> navegación y borrando gráficos que no informan. **Nunca recortando observaciones, causas, límites
+> ni fuentes.**
+>
+> ### Todo lo demás es una propuesta mía con su motivo, y se puede tirar
+>
+> La paleta, la tipografía, la metáfora de la pegatina, los diagramas, el hero: **argumentos, no
+> requisitos.** Carlos no pidió ninguna restricción de diseño. Si una opción convencional le gusta
+> más que una derivada, gana la convencional — ver § "Restricción anti-genérico", que lleva su propia
+> corrección de procedencia al principio.
+>
+> ### RETIRADO — no lo implementes aunque lo leas argumentado más abajo
+>
+> | Qué | Estado |
+> | --- | --- |
+> | Objetivo de **2.400 px** de alto de ficha | **nunca existió.** Nació en un informe de QA atribuido a mí |
+> | Tope de altura **2.700 / 1.800 px** por severidad | **retirado.** Era un número redondo de viewports, no derivado |
+> | `diagrama--recuperacion` (los seis pasos con eje) | **borrado.** Su eje codificaba el índice y rotulaba dos fechas: afirmaba algo falso |
+> | «Retiro la especificación del diagrama de cronología» | **error mío de nombre.** El de cronología **se queda**: es logarítmico de verdad, R² 0,9993 |
+> | Acento de color por planta derivado del follaje | **retirado.** Lo sustituye «las fotos son el color», sin tokens nuevos |
+> | Rótulo **«mejoras opcionales»** en las fichas `sana` | **retirado.** Misfilaba 16 de 17 ítems. Es «lo que hay que saber» + `tipo` por ítem |
+> | Perfil de ocupación medido **por caja** | **retirado.** Se mide por **tinta** (`Range.getClientRects()`) |
+> | «**La franja no crece**»: tope de tareas y línea de «y N más» | **retirado.** Una línea por planta, sin tope: el techo son las 7 plantas |
+> | La restricción anti-genérico como **prohibición** | **degradada a argumento.** No la escribió Carlos |
+>
+> ### Los números que quedan, con su procedencia declarada
+>
+> **Ocupación ≤ 20 %** de bandas de 100 px con la tinta parando antes del **62 %** del ancho, y
+> **ninguna carrera de más de 600 px sin un ancla de navegación**. Los tres cumplen hoy en las siete
+> fichas. **Y los tres umbrales —20, 62 y 600— NO están derivados**, está escrito dónde y por qué, y
+> están en el backlog de `docs/pendiente.md` para revisarlos. Úsalos; no los defiendas como física.
+>
+> ### Dónde está el estado de verdad
+>
+> `docs/retomar.md` (qué queda) · `docs/pendiente.md` (alcance y backlog) · `docs/decisiones.md`
+> (cada decisión con su alternativa descartada) · `docs/aprendizaje.md` (doce casos de instrumentos
+> que afirman lo que no pueden saber — leerlo antes de fiarse de un test, incluido uno mío).
+
+Documento vivo. Lo escribió `ux-lead`. Las secciones marcadas **[pendiente]** se resolvieron en la
+fase de diseño; si queda alguna, es registro y no tarea.
 
 ## El encargo
 
