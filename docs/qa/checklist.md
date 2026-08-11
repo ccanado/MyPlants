@@ -178,6 +178,41 @@ se mira y se dice. Y el brief prohíbe explícitamente el "look de IA".
 
 ---
 
+## 13. La franja `HOY`, el expediente y la cronología
+
+Superficies nuevas de la pasada 3. La franja `HOY` es **contenido de uso**, y el estándar de
+honestidad de este proyecto no baja porque el dato no sea botánico: si un dato botánico que no
+se puede verificar va a `null` y se anota, un dato de calendario que no se puede calcular no
+puede presentarse como una orden.
+
+| # | Gr | Punto | Cómo se comprueba |
+| --- | --- | --- | --- |
+| 13.1 | B | **Ningún «hoy le toca» para un riego que nadie ha marcado.** `helecho`, `begonia-elatior` y `poto` tienen `riego.calculable: false` y `ancla: null` | `tests/franja-hoy.js` → caso `riego afirmado sin dato`. No necesita atributos: la frase se juzga sola |
+| 13.2 | A | **Exactamente una tarea vencida**, y es `begonia-elatior` / `trasplante` (`desde: 2026-06-15`), con el rótulo `VA TARDE` visible | `tests/franja-hoy.js` → casos `vencida inventada` / `vencida perdida` + captura para el rótulo |
+| 13.3 | B | **Ninguna tarea condicionada presentada como debida, aunque el calendario cuadre.** El caso afilado es `helecho` / `abonado`: `tipo: temporada`, `meses: [4,5,6,7,8]`, agosto **sí** entra, pero `condicion` exige 3-4 frondes sanas y el helecho está sin hoja | `tests/franja-hoy.js` → caso `condicionada presentada como debida`. Es el único punto de la web donde un fallo de filtrado **daña la planta** |
+| 13.4 | A | La fecha de la franja es la del navegador, no una constante | `tests/franja-hoy.js` → caso `fecha congelada` |
+| 13.5 | M | Las tareas que sí tocan hoy aparecen: no se pierde trabajo real | `tests/franja-hoy.js` → caso `trabajo real que no se muestra` |
+| 13.6 | A | **La ficha desplegada ≤ 2.400 px** (el objetivo que `ux-lead` se puso a sí mismo) | `tests/expediente.js` → `alto_ficha_px` |
+| 13.7 | A | **El ancho se usa:** hueco derecho medio < 25 %. Altura y hueco son el mismo problema (informe 2) | `tests/expediente.js` → `hueco_derecho_medio_pct`, `superficie_vacia_px2` |
+| 13.8 | M | El expediente pinta **dos columnas de tinta de verdad**, no un `grid` declarado y sin repartir | `tests/expediente.js` → `columnas_de_tinta` |
+| 13.9 | M | La prosa sigue en medida de lectura (≈65-80 caracteres por línea) después de repartir el ancho | `tests/expediente.js` → `caracteres_por_linea_max` |
+| 13.10 | A | **El eje logarítmico de la cronología lleva marcas rotuladas** | `tests/diagramas.js` → caso `eje logarítmico sin marcas rotuladas` |
+| 13.11 | A | **Y es logarítmico de verdad:** la posición en px es lineal en `log(valor)`, R² ≥ 0,97 | `tests/diagramas.js` → `eje_logaritmico.r2_contra_log`, contrastado con `r2_contra_lineal`. Un eje rotulado y mal escalado engaña **más** que uno sin rotular, porque parece verificado |
+| 13.12 | A | **Con `reduce`, las de un disparo pintan el estado final; no parpadean en 1 ms** | `tests/diagramas.js --reduce` → caso `con reduce parpadea en vez de pintarse` |
+| 13.13 | B | **Con `reduce`, ningún diagrama desaparece.** `animation: none` sin fijar `opacity`/`stroke-dashoffset` deja el elemento en su estado inicial: invisible, y sin un error en consola | `tests/diagramas.js --reduce` → caso `con reduce el diagrama no se pinta`. La página no puede castigar a quien activó una opción de accesibilidad |
+| 13.14 | A | Los cinco diagramas tienen equivalente en texto (6.6) y `role`/`title` o `aria-hidden` coherente (6.5) | `tests/diagramas.js` → `inventario` |
+
+## 14. Que los instrumentos vean
+
+Un test que nunca he visto fallar no es un test verificado, es una intención. El falso negativo
+—un test en verde que no mira nada— es el error simétrico del falso positivo y no deja rastro.
+
+| # | Gr | Punto | Cómo se comprueba |
+| --- | --- | --- | --- |
+| 14.1 | A | `franja-hoy` y `diagramas` cazan los defectos que dicen cazar | `python3 tests/runner.py --abrir 0 --alto 6000 --test autoprueba --test franja-hoy --test diagramas`. **Se lee invertido:** ✗ en los dos = los instrumentos ven; ✓ = falso negativo |
+| 14.2 | B | Toda medición va sellada con su commit, y ninguna se firma con el árbol sucio | cabecera de `tests/runner.py`: `commit`, `árbol limpio` / `N sin commitear`, y `⚠ EL CÓDIGO CAMBIÓ MIENTRAS SE MEDÍA` |
+| 14.3 | A | Cuando un test no puede saber, dice `no medible` con el motivo en vez de inventar un veredicto | campos `no_medible` / `abstenciones` en los informes |
+
 ## Cómo se marca
 
 En `docs/qa/informe-N.md`, por punto: **estado** (✓ / ✗ / n/a), **evidencia** (comando ejecutado,

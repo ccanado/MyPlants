@@ -128,6 +128,10 @@ que devuelve. Cada uno imprime además un `console.table` con lo que falla.
 | `tests/movimiento.js` | ¿qué se mueve, y se para con `reduce`? |
 | `tests/terceros.js` | ¿ha salido alguna petición fuera del origen? |
 | `tests/cobertura-datos.js` | ¿todo lo que escribió `botanist` llega a la pantalla? |
+| `tests/expediente.js` | ¿cuánto mide de alto la ficha abierta, y cuánto ancho se queda vacío? |
+| `tests/franja-hoy.js` | ¿la franja `HOY` afirma solo lo que el JSON sostiene? |
+| `tests/diagramas.js` | ¿el eje log es logarítmico, y con `reduce` se pinta el estado final? |
+| `tests/autoprueba.js` | **no audita: contamina.** Inyecta defectos para probar que los dos de arriba ven |
 
 `cobertura-datos.js` hay que lanzarlo con **`--abrir-todas`**, o marcará como ausente todo
 lo que vive dentro de un `<details>` cerrado:
@@ -222,6 +226,66 @@ hay que pararlas desde JS consultando `matchMedia`.
 
 ---
 
+## 2f. Los tres instrumentos de la pasada 3
+
+```bash
+# la única ALTA abierta: alto de la ficha y ancho sin usar, en la misma medición
+python3 tests/runner.py --abrir 0 --alto 6000 --test expediente
+
+# honestidad de la franja HOY: cruza content/plantas.json contra el DOM
+python3 tests/runner.py --abrir 0 --alto 6000 --test franja-hoy
+
+# los cinco diagramas, en los DOS modos
+python3 tests/runner.py --abrir 0 --alto 6000 --test diagramas
+python3 tests/runner.py --abrir 0 --alto 6000 --test diagramas --reduce
+```
+
+`--alto 6000` no es capricho: con un viewport corto, `content-visibility` y el lazy render dejan
+media ficha sin layout y `getBoundingClientRect()` devuelve ceros. Es la misma trampa que hizo
+que medir con `innerText` omitiera texto en la pasada 1.
+
+**`expediente.js` mide la tinta, no las cajas.** Un `<p>` de ancho completo cuya línea de texto
+llena la mitad devuelve la caja entera, y el hueco se vuelve invisible para el instrumento. Por
+eso usa `Range.getClientRects()` sobre los nodos de texto y barre la región en líneas
+horizontales de 4 px. `columnas_de_tinta` es el número que dice si el expediente a dos columnas
+está construido de verdad: un `grid` declarado en CSS y sin repartir da 1.
+
+**`franja-hoy.js` prefiere atributos y degrada cuando no los tiene.** Con `data-tarea`,
+`data-planta` y `data-tarea-estado` en el DOM mide y firma; sin ellos baja el hallazgo a
+`indicio` o se abstiene, salvo el «hoy toca regar», que se juzga solo. Los tres casos que mide
+están en el punto 13 del checklist; el afilado es `helecho`/`abonado`, la condicionada cuyo mes
+sí cuadra.
+
+**`diagramas.js` hace la regresión del eje.** Contar rótulos no basta: comprueba que la posición
+en píxeles sea lineal en `log(valor)` y contrasta el R² contra el ajuste lineal. Lee los valores
+de `data-tick`, y si no están los parsea del rótulo (`1 h`, `1 día`, `1 año`); si tampoco puede,
+se abstiene en vez de firmar.
+
+### Y la autoprueba, que se lee al revés
+
+```bash
+python3 tests/runner.py --abrir 0 --alto 6000 \
+    --test autoprueba --test franja-hoy --test diagramas
+```
+
+`autoprueba` va **primero** (el runner ejecuta en el orden en que se piden) e inyecta cuatro
+defectos conocidos. Después:
+
+- **✗ en `franja-hoy` y ✗ en `diagramas` = BIEN.** Los instrumentos ven.
+- **✓ en cualquiera de los dos = MAL.** Hay un falso negativo.
+
+En la pasada del 11/08 salieron los cuatro, y el discriminante del eje fue inequívoco:
+**R² 0,563 contra log frente a 0,9994 contra lineal.**
+
+Esta pasada **no vale como pasada de QA**: la página queda contaminada a propósito. Se ejecuta
+aparte, se lee, y la medición de verdad se hace en limpio.
+
+Existe por el error simétrico del falso positivo. Un test que nunca se ha visto fallar no está
+verificado: si su primera ejecución sale en verde, no se puede distinguir «no hay defectos» de
+«mi test no sabe verlos», y el falso negativo no deja rastro en ninguna parte.
+
+---
+
 ## 3. Screenshots del informe
 
 Cuatro anchos obligatorios. Se guardan en `docs/qa/` y se referencian desde el informe.
@@ -284,6 +348,29 @@ Y que por eso va siempre en el informe escrito a mano:
 5. Recorrido de teclado completo con capturas del foco (§2c).
 6. `movimiento.js` en normal y en `reduce` (§2d).
 7. Los cuatro anchos + el 200 % (§3).
-8. La lectura crítica: §10 y §11 del checklist.
-9. `docs/qa/informe-N.md`, ordenado por gravedad y con cada fallo atribuido a su dueño.
-10. `SendMessage` a cada dueño con lo suyo, y resumen al lead.
+8. Los tres instrumentos de la pasada 3 (§2f): `expediente`, `franja-hoy`, `diagramas` ×2 modos.
+9. La lectura crítica: §10 y §11 del checklist.
+10. `docs/qa/informe-N.md`, ordenado por gravedad y con cada fallo atribuido a su dueño.
+11. `SendMessage` a cada dueño con lo suyo, y resumen al lead.
+
+### Regla 0, la que se salta cuando hay prisa
+
+**No se mide con el árbol sucio.** Antes de cualquier pasada que vaya a acabar en un informe:
+
+```bash
+git status --short        # tiene que estar vacío
+```
+
+La cabecera del runner lo dice en cada ejecución (`commit abc1234 (árbol limpio)` o
+`+ N fichero(s) sin commitear`) y aborta la atribución si algún fichero se mueve **durante** la
+medición. Los dos avisos existen porque los dos fallos ocurrieron:
+
+- El 11/08 la misma pasada dio 10 fallos y luego 0, y se perdió un ciclo entero discutiendo si
+  el test parpadeaba. No parpadeaba: `botanist` estaba editando el JSON. **El blanco se movía.**
+- Preparando la pasada 3, una medición de la ficha del helecho dio 3.710 px con `js/ficha.js`
+  modificado y sin commitear. El número era real y no significaba nada: no se podía atribuir a
+  ningún estado del código, así que no entró en el informe.
+
+Un número sin su estado no es una medición, es una anécdota. Y un resultado de QA solo vale si
+se puede atribuir a un commit concreto, porque medir mientras alguien edita produce conclusiones
+sobre el instrumento en lugar de sobre el objeto.
