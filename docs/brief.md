@@ -1455,6 +1455,150 @@ color agresivo ocupa los huecos, nunca la lectura.
 > de ser cierta, y por eso la rejilla colapsa a una columna en modo ficha. La declaración de riesgo
 > sirvió para saber **dónde** mirar; no para acertar a la primera.
 
+### Revisión del expediente — el objetivo de 2.400 px no era mío, y el peor caso no es el helecho
+
+Medido por mí sobre `4ce2c90`, 1280×900, las siete fichas abiertas de una en una. El árbol solo
+tenía sin commitear tres ficheros nuevos de `tests/`, que no entran en el render: **el número es
+atribuible**.
+
+| planta | severidad | ficha abierta | `section.estado` | bandas de 100 px donde el contenido para antes del 62 % del ancho |
+| --- | --- | --- | --- | --- |
+| Helecho | `critica` | 3.718 | 2.116 | 73 % |
+| **Begonia Elatior** | `atencion` | **4.727** | 3.094 | 87 % |
+| Coleo grande | `atencion` | 4.558 | 2.810 | 79 % |
+| Coleo pequeño | `sana` | 3.715 | 2.003 | 76 % |
+| Ficus Sunny | `sana` | 4.109 | 2.363 | 79 % |
+| Margarita | `sana` | 3.726 | 2.124 | 82 % |
+| Poto | `sana` | 3.542 | 1.945 | 80 % |
+
+Las siete siguen en `grid-template-columns: 1118px`, o sea **una sola columna**: las dos columnas
+semánticas todavía no están puestas, así que esto es el antes, no el después.
+
+#### 1. El objetivo de 2.400 px no existe, y llevamos dos informes midiéndonos contra él
+
+`git grep` y `git log -S` sobre todo el historial: **2.400 aparece solo en
+`docs/qa/informe-2.md`**, atribuido a mí. No está en este brief, no está en `decisiones.md`, no
+está en ningún commit anterior. Nunca lo decidí ni lo escribí.
+
+Y aun así se ha comportado como un requisito: el informe 1 y el 2 lo dan como "el objetivo de
+`ux-lead`", el ALTA-1 lleva dos pasadas abierta por incumplirlo, y el encargo con el que entro hoy
+me pide justificar un 68 % de desvío contra él. **Es el mismo fallo que la nota de aprendizaje nº1
+—un dato deducido que entra como si viniera de su dueño— pero sobre la especificación en vez de
+sobre el contenido**, y esta vez nadie lo cazó porque el reparto de ficheros protege quién *edita*
+un dato, no quién lo *cita*. Un número atribuido no es un número acordado.
+
+Que la aritmética de `qa-visual` acabe cerca de 2.400 no lo convierte en objetivo: acertar el
+resultado no valida la procedencia.
+
+#### 2. La altura no la manda la severidad — y por eso dos columnas no bastan
+
+El razonamiento de este brief daba por hecho que la ficha crítica es la más larga, porque es la
+que lleva el diagnóstico entero. **Es falso, y lo desmiente el propio contenido:** la begonia
+(`atencion`) mide 4.727 px, mil más que el helecho, y el ficus **sano** (4.109) también le gana.
+Las siete caben en 3.542–4.727: un rango de 1.185 px en el que la severidad no predice nada.
+
+La causa está en el JSON, y es de forma, no de volumen:
+
+| planta | severidad | nº `causas_probables` | caracteres |
+| --- | --- | --- | --- |
+| helecho | `critica` | 5 | 1.970 |
+| **poto** | **`sana`** | **5** | **1.955** |
+
+Un poto que lleva veinte años bien carga el mismo peso de "causas probables" que un helecho que se
+está muriendo. Las cuatro sanas traen 4–5 causas y 1.624–1.955 caracteres cada una. Y el contenido
+**no es relleno** —el del poto dice que veinte años demuestran que la rutina funciona, y que
+acercarlo al ventanal es una mejora opcional y no una corrección—: es una respuesta honesta a una
+pregunta que no había que hacerle.
+
+**El rótulo es el defecto.** El título de sección ya varía (`QUÉ LE PASA` en crítica y atención,
+`QUÉ VIGILAR` en sana) pero el rótulo interior sigue diciendo `CAUSAS PROBABLES` en las siete. A
+una planta sin problema se le está pidiendo la causa de un problema, y el hueco se rellena porque
+`botanist` hace bien su trabajo. **Un rótulo que obliga a escribir contenido para justificarlo es
+peor que decoración: la decoración solo ocupa sitio, esto lo fabrica.**
+
+Corrección de la especificación, y es mía porque el esquema salió de aquí:
+
+- En `sana` el rótulo no puede ser `CAUSAS PROBABLES`. La afirmación de que está bien se queda
+  visible —es una afirmación, y las afirmaciones no se pliegan—, y lo que hoy va detrás son
+  **mejoras opcionales**, que es lo que de verdad son. Con ese nombre pueden ir plegadas sin
+  violar mi regla: no son ni una afirmación sobre un problema ni un límite de lo que sabemos,
+  son propuestas.
+- En `critica` y `atencion` el rótulo se queda como está.
+
+Esto se lleva más altura de las cuatro sanas que las dos columnas, y a diferencia de las dos
+columnas **corrige algo que hoy es falso**, no solo algo que es alto.
+
+#### 3. El diagrama de recuperación se borra: su eje es mentira
+
+Mirado con lupa, que es lo que se pedía. Los seis círculos están en `cx` = 10, 30, 50, 70, 90,
+110: **espaciado perfectamente regular**. Los seis pasos que representan son *inmediato*,
+*inmediato*, *esta semana*, *3 semanas*, *2-3 meses* y *cuando haya una fronde adulta*. Dos pasos
+simultáneos se dibujan tan separados como "3 semanas" de "2-3 meses", y el último no tiene fecha
+por definición.
+
+O sea: **el eje horizontal codifica el índice 1…6, no el tiempo** — y encima va rotulado `hoy` a
+la izquierda y `01/09/2026` a la derecha, que son dos fechas. Un eje de índice con rótulos de
+fecha no es un diagrama impreciso, es un diagrama que **afirma algo que no es cierto**: que el
+paso 6 cae el 1 de septiembre, cuando el 1 de septiembre es el `revisar_fecha` y no corresponde a
+ningún paso.
+
+Mi propia regla eliminatoria lo resuelve sin discusión: si se borra y no se pierde información, es
+decoración. Aquí se borra y **se gana**, porque desaparece una afirmación falsa. Y la lista
+numerada que va justo debajo ya rotula cada paso con su horizonte en palabras (`INMEDIATO`,
+`3 SEMANAS`, `2-3 MESES`), que es **más** preciso que un eje.
+
+**Retiro la especificación del diagrama de cronología.** Pedí "eje logarítmico rotulado" y sobre
+el dato real no es construible con honestidad: dos pasos en el instante 0 no tienen posición en un
+eje logarítmico, y un paso sin fecha no tiene posición en ninguno. La lista rotulada es el
+diagrama. Afecta al helecho y a la begonia, que son las dos con `plan_recuperacion`.
+
+Los otros tres diagramas **se quedan, y los he comprobado uno a uno**: `--riego` tiene las marcas
+en 20 / 21,96 / 27,64 / 36,49 / 47,64 / 60 / 72,36, que es una escala real y no un reparto;
+`--luz` usa bandas regulares y es correcto porque son categorías ordinales, no tiempo; `--temp`
+dibuja rango y sub-rango sobre un eje 0–40 °C con los dos marcadores rotulados. Los tres codifican
+un dato. Solo sobraba el cuarto.
+
+#### 4. Los objetivos que sustituyen al de 2.400 px
+
+Un objetivo tiene que decir de dónde sale y contra qué se falsa. Estos dos sí:
+
+1. **Ocupación — el que de verdad estaba roto.** Ninguna ficha debe tener más del **20 %** de sus
+   bandas de 100 px con el contenido parando antes del 62 % del ancho disponible. Hoy están al
+   73–87 %, las siete. Es la métrica que mide *"la mitad está vacía"*, que era el hallazgo real de
+   `qa-visual`, y no se puede aprobar a ojo.
+2. **Altura, en pantallas y por severidad, no en un número único.** A 1280×900: **≤ 3 pantallas
+   (2.700 px)** para `critica` y `atencion`, **≤ 2 pantallas (1.800 px)** para `sana`. Hoy: 4,1 /
+   5,3 / 5,1 y 3,9–4,6.
+
+La segunda tiene dos tramos a propósito. Un único número para las siete es lo que nos metió en
+esto: obliga a que una planta sin problema y una que se muere quepan en lo mismo, y la única forma
+de conseguirlo es recortarle contenido a la que lo necesita o inventárselo a la que no. **La
+severidad es la variable que manda en cuánto hay que contar, así que tiene que estar en el
+objetivo.** Y el número no es redondo: sale de las pantallas del viewport en el que se mide.
+
+Y la línea que no se cruza, por si el objetivo aprieta: **estos objetivos se cumplen ocupando el
+ancho, quitando rótulos falsos y borrando gráficos que no informan — nunca recortando
+observaciones, causas, límites ni fuentes.** Si un objetivo de altura obliga a borrar una
+observación de `botanist`, el que está mal es el objetivo. Ya se dijo una vez en este brief y se
+repite aquí porque ahora hay un número que podría usarse como excusa.
+
+#### 5. Lo que he comprobado y he decidido NO cambiar
+
+- **`PATRÓN PARA RECONOCERLA` no falta: el helecho no tiene patrones.** Sus cinco causas traen
+  `patron: null`, y es correcto —son hechos históricos ("se secó y lo podaron"), no cuadros que se
+  distingan mirando—. En el resto sí está: **21 de 35 causas** lo traen. El elemento funciona y el
+  render acierta al no dibujar un bloque vacío. Iba a levantarlo como fallo y lo comprobé antes.
+- **Los cuatro diagramas van `aria-hidden="true"` y sin `<title>`.** Es defendible porque son la
+  capa de resumen y el texto de al lado lleva el mismo dato, pero **queda escrito que esa es la
+  condición**: si alguien suprime el texto por duplicado y deja el diagrama solo, el dato
+  desaparece para quien usa lector de pantalla. La supresión del `resumen` duplicado (medida 3 del
+  expediente) toca justo ahí — vale para el campo que además muestra `detalle`, nunca para dejar
+  un diagrama como único portador.
+- **Ni un token nuevo.** Las dos columnas no introducen superficie: el fondo sigue siendo
+  `--color-etiqueta` y el filete entre columnas es `--color-separador`, que no delimita nada
+  pulsable. La matriz de validez no necesita fila nueva **hoy**; si la columna sticky acaba con
+  fondo propio, entonces sí, y se mide antes de usarla.
+
 ## Fases
 
 | Fase | Qué | Quién |
@@ -1488,6 +1632,29 @@ Ir apuntando aquí lo que se observa, que es la mitad del objetivo del proyecto:
 - **Los mensajes cruzados costaron cuatro turnos** de demostrar que algo ya estaba hecho. Se
   corrigió con dos hábitos: el lead comprueba `grep -n "^### " docs/brief.md` antes de encargar, y
   los informes dan **líneas exactas** en vez de nombres de sección.
+- **El reparto de ficheros protege quién edita un dato, no quién lo cita — y por ahí entró un
+  requisito falso.** El "objetivo de 2.400 px de `ux-lead`" no existe en ningún fichero mío ni en
+  ningún commit: nació en un informe de QA que me lo atribuyó, y de ahí pasó a ser el criterio con
+  el que se midió una alta durante dos pasadas y con el que se me encargó el trabajo de hoy. Nadie
+  mintió y nadie editó un fichero ajeno; simplemente **una cita se volvió fuente**. Es la nota nº1
+  otra vez (un dato deducido entrando como si viniera de su dueño) pero sobre la especificación, y
+  el reparto de `CLAUDE.md` no lo cubre porque no hubo ninguna escritura indebida. Regla que sale
+  de esto: **un objetivo que se cita se cita con su sitio** —fichero y línea— y si no lo tiene, no
+  es un objetivo, es una estimación de quien la escribió. Lo baratísimo que fue comprobarlo
+  (`git grep` y dos `git log -S`) frente a las dos pasadas que costó no comprobarlo es el dato.
+- **Una bandera que no hace nada es peor que una que falla.** `tests/runner.py --completa` se
+  ignora en este Chrome: la captura mide siempre exactamente `--alto`, así que "captura de página
+  completa" devuelve el primer viewport y nada avisa. El encargo de hoy me mandaba revisar con
+  `--completa` un expediente de ~4.000 px; de haberme fiado, habría firmado 900 px de una ficha
+  diciendo que la había visto entera. Cae en el mismo tronco que los cinco falsos positivos —una
+  herramienta que afirma lo que no puede saber— con una vuelta de tuerca: **aquí el fallo no
+  produce un dato falso, produce un dato ausente disfrazado de dato completo**, que es más difícil
+  de detectar porque no hay nada raro que mirar.
+- **Medir mientras otro edita mide el instrumento.** Mi primera tanda de números salió con
+  `js/ficha.js` a medias —el `estado` del helecho me dio 2.116, 2.182 y 2.232 px en tres medidas
+  seguidas— y en medio `builder` commiteó el arreglo de una página en blanco. El sello de commit
+  que `qa-visual` le puso al runner es lo que lo hizo visible; sin él habría discutido con mis
+  propias cifras. Repetí entero sobre `4ce2c90` antes de escribir una sola conclusión.
 - Cuándo el lead se puso a implementar en vez de esperar a los teammates.
 - Si los teammates marcaron sus tareas como completadas o se quedaron colgadas.
 - Coste en tokens frente a hacerlo en una sola sesión.
