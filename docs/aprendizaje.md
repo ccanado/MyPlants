@@ -69,6 +69,58 @@ que inyecta defectos conocidos en los instrumentos y se lee al revés — ✗ es
   manda a arreglar lo que no está roto. De ahí que los tests digan "no medible" en vez de
   inventarse un veredicto.
 
+## Sobre cómo se dan las instrucciones
+
+- **Un veredicto se acata; un mecanismo se puede aplicar en otro sitio.** Formulación de
+  `botanist`. `ux-lead` le dijo "tu dato es correcto, no toques nada" y **explicó por qué** había
+  encontrado su propio error de sobre-alcance: deducir una propiedad de la planta desde un número
+  de la habitación. `botanist` fue a comprobar si su prosa cometía el mismo error y lo cometía —
+  el ficus deducía uniformidad térmica de la planta a partir del dato del salón, y ese ficus
+  cuelga junto al cristal. Lo que le hizo mirarlo no fue el veredicto, fue el mecanismo.
+- **Una regla llega mejor a la vez que el contenido al que se aplica.** También de `botanist`, y
+  es la versión más incómoda de lo anterior: *si el criterio hubiera llegado como especificación
+  cerrada en vez de como pregunta sobre 38 ítems reales, habría rellenado el hueco con algo
+  plausible y nadie lo habría notado nunca — porque una buena noticia no la audita nadie.* Lo que
+  funciona no es que el teammate sea prudente: es que **el contenido se resiste y quien escribe la
+  regla no lo tiene delante.**
+- **Un mensaje largo entierra la petición.** Tres avisos del lead sobre un cambio de tres líneas
+  no se aplicaron hasta que el cuarto fue de cinco líneas y sin contexto.
+
+## Sobre inventar números que el dominio ya acota
+
+Dos casos el mismo día, los dos de `ux-lead` y los dos retirados por él:
+
+1. **El tope de altura de la ficha** (1.800 px en `sana`, 2.700 en `critica`). Derivado de "dos
+   pantallas", un número redondo de viewports y no del contenido. Se demostró inalcanzable sin
+   borrar foto, diagramas, límites o fuentes.
+2. **El tope de la franja del día** ("dice el número y las dos primeras"). Protegía el caso *"hay
+   muchas tareas y la portada explota"* cuando el caso real era *"hay diez tareas cortas y quiero
+   verlas de un tirón"*. Y **el techo ya estaba en el dominio**: hay siete plantas, así que una
+   línea por planta no puede pasar de siete renglones ni el día que todas necesiten algo. El tope
+   resolvía un problema que no puede ocurrir y creaba uno que ocurría a diario.
+
+De ahí sale la distinción que conviene aplicar antes de escribir un límite: **un índice que dice
+cuánto documento hay es información; un contador que dice cuánto trabajo te oculta es una traba.**
+
+## Sobre la metáfora y el sujeto
+
+**"La metáfora ganó al sujeto."** El diseño eligió que cada ficha fuera la etiqueta del vivero
+reconstruida en CSS, y de ahí se siguió que en la rejilla cerrada no hubiera fotos —porque una
+pegatina de vivero no lleva foto de la planta—. El resultado: siete etiquetas impecables y **el
+sujeto ausente de su propia portada**. Carlos dijo tres veces que la web se veía "pobre y simple"
+antes de que nadie mirara esa decisión.
+
+Y el agravante, dicho por su propio autor: la justificación escrita en el brief era *"carga
+inicial 218 KB y cero bytes de foto"*, o sea **un argumento de ingeniería sosteniendo una
+decisión estética** — el movimiento que ese mismo brief prohíbe en otros sitios. El motivo real
+era que la metáfora gustaba.
+
+Corolario para el próximo proyecto: **cuando el cliente repite un juicio y el equipo lo explica,
+el equipo suele estar defendiendo una decisión propia.** Tres veces no es ruido, es un veredicto.
+Y la pregunta que sirve no pide un adjetivo: pide un sitio. "¿Pobre en qué pantalla?" y "¿qué
+echas en falta al abrir?" producen respuestas accionables; "¿qué te parece el diseño?" deja
+adivinando.
+
 ## Sobre el mecanismo de equipo
 
 - **El hallazgo del sol directo no lo cazó ningún agente: lo cazó el reparto.** El lead dedujo
