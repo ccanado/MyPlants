@@ -41,6 +41,35 @@ hallazgo: no fue el descuido de nadie, fue una propiedad del montaje.
 un falso positivo es **un test en verde que no comprueba nada**. De ahí salió `tests/autoprueba.js`,
 que inyecta defectos conocidos en los instrumentos y se lee al revés — ✗ es el resultado bueno.
 
+### El complementario, que es peor: el marco demasiado estrecho
+
+Los diez casos de arriba son herramientas que **afirman** donde no pueden saber. El
+complementario apareció el último y no lo teníamos nombrado: **una herramienta que no ve un
+defecto porque el defecto está fuera de su referencia — y la referencia la escribió quien
+buscaba.**
+
+`ux-lead` definió su métrica de ocupación sobre *"el contenedor del expediente de una ficha
+abierta"*. Al ascender la franja a hero introdujo un hueco de **325 px** en la cabecera, con el
+mismo perfil que había pasado el día persiguiendo en las fichas. **Su instrumento le daba 0 %
+mientras el defecto estaba a dos pantallas, visible a simple vista.** Lo encontró mirando con los
+ojos, no midiendo.
+
+Por qué es peor que un falso positivo: **un falso positivo hace ruido y alguien va a mirar; un
+marco demasiado estrecho produce silencio, y el silencio se lee como ausencia de defecto.** Y lo
+agrava que el marco lo escriba el interesado.
+
+**La regla operativa, y no es ampliar el marco** —ampliarlo habría sido el 0,62 viajando a un sitio
+donde no aplica, que es el error del 2.400 otra vez—:
+
+> **Cuando un instrumento dé verde, preguntar qué queda fuera de su referencia antes de creerle.**
+> Basta con que el instrumento **declare qué no mide**. Uno que declara su alcance no produce
+> silencio: produce un hueco declarado — que es exactamente lo que hacemos con los `null` del
+> contenido.
+
+Esa última equivalencia es la que cierra el proyecto sobre sí mismo: **la regla del hueco anotado
+del contenido y la del alcance declarado del instrumento son la misma regla.** Un dato que falta
+se dice; una cosa que no se mide, también.
+
 ## Reglas que quedan del proceso
 
 - **Un objetivo que se cita se cita con fichero y línea.** Si no lo tiene, es una estimación de
