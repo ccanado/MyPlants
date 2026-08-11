@@ -280,15 +280,15 @@ tiene nadie, y `CLAUDE.md` prohíbe rellenarlos a ojo.
 
 | # | SVG | Campo del JSON que consume | Qué dato explica | Animación completa | Versión reducida (obligatoria) |
 | --- | --- | --- | --- | --- | --- |
-| 1 | **El reloj de riego** — corte vertical del tiesto | `riego.dias_verano` · `riego.dias_invierno` (2–10 días) · `riego.ml_aprox` | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
+| 1 | **El reloj de riego** — corte vertical del tiesto | `profundidad_seco_cm` (1–2) · `dias_verano` · `dias_invierno` (2–10) · `ml_aprox` (90–300) | Cada cuánto se riega, y cuánto cambia de verano a invierno — que es lo que de verdad se falla | El sustrato se seca de arriba abajo a lo largo del intervalo (`--frente-humedo`), 900 ms, **una vez** al despegar la ficha | Sustrato ya dibujado en su estado final; 120 ms de opacidad. Sin gota |
 | 2 | **Lo que quiere y lo que tiene** — dos filas: la escala de 1 a 5 con dos marcas, y debajo la tira del día | `luz.nivel_actual` · `luz.nivel_ideal` · el tramo de sol directo de la mañana | **Arriba, el dato**: cuánto le falta — los dos coleos quieren más de la que tienen, el poto está más oscuro de lo ideal, y cuando las marcas coinciden no hay nada que hacer. **Abajo, el porqué**: de dónde sale esa luz — sol directo de primera hora y después claridad sin sol | La marca de "lo que tiene" entra, el hueco hasta "lo que quiere" se rellena, y el tramo de sol se dibuja de izquierda a derecha; 260 ms + 900 ms, **una vez** | Las dos marcas, el hueco y los dos tramos ya dibujados; solo opacidad |
-| 3 | **Rango térmico** — eje de 0 a 40 °C | `temperatura.min_c` · `max_c` (7–30 °C) + las dos temperaturas reales del salón | La banda que aguanta, y **dónde cae la casa dentro de ella**: 28 °C de tope en verano (el aire acondicionado) y la de calefacción en invierno | La banda crece de `min_c` a `max_c` y los dos marcadores de casa entran después, 260 ms | Banda y marcadores ya en su sitio, solo opacidad |
-| 4 | **Curso de recuperación** — línea de tiempo | `estado.tratamiento[]` · `estado.revisar_en` · `estado.fecha_foto` | Solo en las 3 plantas tocadas: de la fecha del diagnóstico a la revisión, con cada paso y la señal observable de cada hito | La línea se traza de izquierda a derecha (`--recorrido`, 900 ms) y el hito de hoy late **una sola vez** | Línea completa desde el principio, sin latido |
+| 3 | **Rango térmico** — eje de 0 a 40 °C | `min_c` · `max_c` · `optimo_*` (solo 2 de 7) · `casa_verano_max_c` (28) · `rusticidad_rhs` | La banda que aguanta, la óptima **donde exista**, y dónde cae la casa dentro de ella. **No hay mínima letal**: `minima_letal_c` es `null` en las siete y RHS no publica ese dato | La banda crece de `min_c` a `max_c` y la marca de casa entra después, 260 ms | Banda y marca ya en su sitio, solo opacidad |
+| 4 | **Curso de recuperación** — eje de **hitos**, no de fechas | `estado.plan_recuperacion[]` (`{paso, senal, hito}`) · `estado.revisar_en` (texto con plazo **y** criterio) | Solo en begonia (5 pasos) y helecho (6): cada nodo es un paso y debajo la **señal observable** que confirma que funcionó. Lo que deja avanzar no es que pasen siete días, es que veas el brote | La línea se traza de izquierda a derecha (`--recorrido`, 900 ms) y el hito de hoy late **una sola vez** | Línea completa desde el principio, sin latido |
 | 5 | **El calendario del domingo** — eje compartido de 2 a 10 días | `riego.dias_verano` de **las siete** | Cuál toca antes. Es la respuesta a "voy a regar y no me acuerdo de a cuál", que es el trabajo primario de la página | Los siete marcadores entran escalonados, 160 ms + `--retardo-*` | Los siete ya en su sitio, sin escalonar |
 
-Redundancia textual obligatoria, por SVG: (1) "cada 4 días en verano, cada 9 en invierno · 250 ml";
-(2) "quiere nivel 4 de 5 y tiene 3: le falta un escalón · sol directo a primera hora, después claridad"; (3) "7–30 °C · en casa,
-28 °C tope en verano"; (4) el mismo tratamiento como `<ol>`
+Redundancia textual obligatoria, por SVG: (1) "cuando los 2 cm de arriba estén secos · cada 4 días
+en verano, 9 en invierno · 250 ml";
+(2) "quiere nivel 4 de 5 y tiene 3: le falta un escalón · sol directo a primera hora, después claridad"; (3) "7–30 °C · en casa, 28 °C de tope en verano"; (4) el mismo tratamiento como `<ol>`
 numerado, del que el SVG es una segunda vista; (5) cada marcador es un `<button>` real con nombre
 accesible ("Poto — cada 7 días"), así que el diagrama es una vista redundante de una lista que ya
 funciona sin él.
@@ -372,6 +372,20 @@ exactamente lo que sabemos —que es un helecho— y marca lo que no. Si algún 
 la identificación, se rellena. Un dibujo bonito de *Adiantum* ahí sería afirmar una especie con un
 lápiz, que es la misma mentira que rellenar un campo a ojo.
 
+**La tensión grabado / plástico: está en el sitio, no en la textura.** El brief nombra los
+diagramas botánicos del XIX entre el material del que salen las buenas decisiones, y la colisión
+entre ese registro y un vivero de plástico de Móstoles es lo mejor que tiene el proyecto. Pero
+**no se consigue añadiendo tramas de grabado a la hoja**: a 40 px el rayado de volumen es barro, y
+un rayado ilegible es decoración disfrazada de técnica. A ese tamaño, el registro de lámina
+decimonónica lo dan tres cosas que ya están en el spec — **trazo de grosor único, ausencia total
+de relleno y fidelidad al margen de la hoja**, que es como se dibuja una lámina de identificación.
+
+La colisión la produce **dónde está**: un dibujo en registro de grabado, impreso en la misma tinta
+que el código de barras, dentro del troquel de una pegatina que dice `2,25€`. No hay que empujarla
+más. Si además le pusiéramos textura de aguafuerte, dejaría de ser una etiqueta de vivero con un
+dibujo serio y pasaría a ser una web bonita de plantas — que es exactamente el lugar del que
+llevamos todo el proyecto huyendo.
+
 - **Sitio:** en el troquel de la etiqueta, arriba a la derecha, a `--silueta-tam`. Nunca sustituye
   al nombre: acompaña.
 - **Animación: ninguna.** Es un elemento de identificación y tiene que estar quieto para servir
@@ -454,6 +468,171 @@ quien riega.** "Riega cuando…", "no te toques la cara". Eso ya era así y ahor
 `notas_carlos` debería llamarse `notas` y traer `{ autor, texto }`. Es cosa de `botanist`; se lo
 paso, y mientras el campo se llame como se llame, el rótulo sale del `autor` y no del nombre del
 campo.
+
+### Revisión contra el JSON definitivo — lo que cambia, y por qué
+
+`botanist` ha cerrado `content/plantas.json` (7 plantas, 157 fuentes) y ha corregido cuatro cosas
+que yo daba por buenas. Todas afectan al diseño y tres afectan a la **signature**, que es lo más
+caro de tocar. Se tocan igual: una etiqueta que imprime un dato falso no es una signature, es un
+error tipografiado en grande.
+
+#### 1. El código de barras: solo la begonia tiene un EAN de verdad
+
+Yo estaba tratando `"2040 2174"` como código EAN. **No lo es**: es el **código interno del vivero**,
+ocho dígitos, y va en `codigo_vivero`. El único EAN-13 real del inventario es el de la begonia,
+`8437018857012`, que es etiqueta de productor (GONZA S.A.T., `Product from ALMERÍA`).
+
+Qué se hace, y la distinción es fina pero es la que separa verdad de adorno:
+
+- **La banda de barras se sigue dibujando** en las etiquetas de Projardín, porque la pegatina real
+  la lleva impresa: eso no es invención, es lo que hay pegado en el tiesto.
+- **Lo que cambia es el rótulo de los dígitos.** Bajo las barras se imprime lo que el dato es:
+  `CÓD. 2040 2174` en las de Projardín, `EAN 8437018857012` solo en la begonia. Nunca la palabra
+  EAN sobre un número que no lo es.
+- Donde no hay ni una cosa ni otra —helecho y poto—, no hay barras. Ver más abajo.
+
+#### 2. La begonia no tiene precio, y no es un fallo
+
+Su etiqueta es **de productor, no de vivero**: no lleva precio porque no se puso a la venta con
+ella. Mi maqueta de la pegatina daba el precio por hecho. La celda del precio pasa a ser **la celda
+de procedencia**, y cada ficha imprime lo que su etiqueta trae de verdad:
+
+```
+coleo pequeño   CÓD. 2040 2174        2,25 €        (sin calibre de maceta)
+coleo grande    CÓD. …                4,95 €        MACETA 1,6 L      ← volumen, no diámetro
+ficus sunny     CÓD. …                8,95 €        MACETA 15 CM
+margarita       CÓD. …                …             MACETA 12 CM
+begonia         EAN 8437018857012     —             PASAPORTE A/B/C/D · ALMERÍA · V-IX
+```
+
+`maceta_cm` es `null` en los dos coleos y **eso también se imprime como es**: el grande dice
+`MACETA 1,6 L` porque su etiqueta da volumen y no diámetro, y el pequeño no dice nada de la maceta
+porque su etiqueta no lo indica. Los 9 cm que aparecen en su ficha son estimación de `botanist`
+sobre la foto, y una estimación no se imprime en la pegatina — la pegatina reproduce lo impreso.
+
+El pasaporte fitosanitario de la begonia (`A BEGONIA ELATIOR · B ES01042001 · C L1 · D NL`) ocupa
+en su ficha el sitio de la línea `P. FITOSANITARIO` de las de Projardín. Es el mismo renglón
+funcional: la trazabilidad legal de la planta, en cuerpo `--texto-3xs`.
+
+> `ES13-28/0283F` identifica **al vivero**, no a la planta, y por eso se repite en ficus, los dos
+> coleos y la margarita. No es un identificador y no se usa como tal.
+
+#### 3. Helecho y poto: el vacío es la información
+
+`etiqueta_vivero` es `null` **entero** en las dos, no parcialmente. `botanist` avisa de que el
+diseño «se cae en 2 de 7 fichas» si la ficha es una reconstrucción de la pegatina. Tiene razón en
+el diagnóstico y la salida ya estaba tomada: **la ausencia de etiqueta no es un hueco, es
+antigüedad y es procedencia**. La pegatina se dibuja igual —el sistema no se rompe en dos de siete—
+pero imprime lo que sabe:
+
+```
+poto      SIN ETIQUETA DE VIVERO     Sin trazabilidad comercial: probablemente un esqueje.
+                                     Más de veinte años en la familia.
+helecho   SIN ETIQUETA DE VIVERO     Regalo del 29 de mayo. Rescatado de una desecación.
+```
+
+Sin barras, sin precio, sin fitosanitario: **una raya `—` donde iría cada uno**, que es un carácter
+y dice "no hay", no "se nos olvidó". Y el renglón de procedencia, que en las otras cinco es
+burocracia comercial, en estas dos es lo único que hay y resulta ser mejor. Esa observación es de
+`botanist` y entra tal cual.
+
+#### 4. Las fuentes van agrupadas, y se citan por nombre corto
+
+`fuentes` es un array de `{campo, fuente, url, consultado, nota?}`, de 15 a 24 por planta. Se
+filtra por `campo` y se pinta la citación **junto a su dato**, que es el efecto que buscaba: el
+cambio es de dónde se lee, no de dónde se ve.
+
+Y se cita por el **nombre corto** —`RHS`, `POWO`, `ASPCA`, `IPNI (Kew)`— no por el dominio, que era
+lo que yo había especificado. `RHS ↗` se lee mejor que `rhs.org.uk ↗` y es lo que el campo trae.
+Cuando `fuente` es `Carlos` u `observación de foto`, **no se pinta como enlace** porque no lo es:
+va en `--texto-secundario`, sin flecha, y `consultado` al lado.
+
+> **Y una línea que es obligatoria, no opcional.** `botanist` avisa de que los mililitros y los
+> días entre riegos son **su traducción** a esta maceta y a este clima, no cifras publicadas por
+> RHS. El pie del diagrama de riego tiene que decirlo: *"días y ml estimados para esta maceta —
+> RHS no publica mililitros"*. Presentarlos con el sello de RHS sería atribuir a una fuente algo
+> que no dice. Es el mismo principio que separa la capa dura de la capa personal, aplicado dentro
+> de la capa dura.
+
+#### 5. Los diagramas, corregidos contra los campos que existen
+
+**Riego (1).** Gana un dato que yo había dado por perdido: **`profundidad_seco_cm`** existe y vale
+1 o 2 cm en las siete. Así que el corte del tiesto vuelve a tener su marca de profundidad, que era
+la idea original. Consume `profundidad_seco_cm`, `dias_verano`, `dias_invierno` y `ml_aprox`, y
+lleva el pie de atribución de arriba. Texto: *"cuando los 2 cm de arriba estén secos · cada 4 días
+en verano, 9 en invierno · 250 ml"*.
+
+**Luz (2) — y aquí `botanist` mejora el diagrama, no lo corrige.** Yo lo había planteado como
+"cuánto le falta". El dato real tiene **signo**: `nivel` es lo que la especie necesita y
+`nivel_recibido_estimado` lo que recibe donde está, y la diferencia va en las dos direcciones:
+
+| | Quién | Qué significa |
+| --- | --- | --- |
+| **exceso** | helecho (necesita 2, recibe 4), begonia (3 vs 4), ficus (3 vs 4) | riesgo de **quemadura** |
+| **en su sitio** | coleo pequeño, coleo grande, margarita (4 vs 4) | nada que hacer |
+| **déficit** | poto (3 vs 2) | pierde **variegación** |
+
+Tres estados con signo, no una escala plana — y el más frecuente es el que yo no había previsto.
+El hueco se dibuja **con dirección**: hacia la derecha si sobra, hacia la izquierda si falta, con
+la palabra `EXCESO` o `DÉFICIT` y la consecuencia al lado. **Sin color**: exceso y déficit no son
+alarmas, son diagnósticos, y el color en este sistema significa "haz algo hoy".
+La segunda fila —la tira del día con el tramo de sol directo matinal— explica **de dónde sale el
+exceso**, y ahora se entiende por qué las tres que sobran de luz están las tres tocadas o al
+límite. `distancia_m` es `null` en las siete: se dibuja el eje sin escala métrica.
+
+**Temperatura (3) — hay que quitarle una cosa que no existe.** Yo había especificado una marca de
+**mínima letal**: `minima_letal_c` es `null` en las siete y `botanist` explica por qué —RHS publica
+bandas de rusticidad, que dicen dónde puede vivir una planta, no a qué grado muere—. **Fuera del
+diagrama.** Lo que sí hay:
+- banda tolerada `min_c`–`max_c` en las siete;
+- banda óptima **solo en begonia (15–22) y poto (18–30)**; en las otras cinco, `--trama-sin-dato`
+  con el rótulo "sin óptimo publicado";
+- `casa_verano_max_c: 28` en las siete, como marca de casa;
+- `casa_invierno_c` `null` → segunda marca en trama, pendiente de que Carlos lo mida;
+- `rusticidad_rhs` (`H1C`, `H2`) como etiqueta de texto donde exista, no como marca en el eje:
+  es una banda climática, no una temperatura, y ponerla en un eje de grados la convierte en otra
+  cosa.
+- **El helecho necesita el eje abierto por la derecha:** `max_c` es `null`, así que su banda se
+  dibuja como `≥ 10 °C`, con el extremo derecho desvanecido en trama y sin punta. Un eje cerrado
+  ahí sería inventar un máximo.
+
+**Recuperación (4) — cambia de eje.** Yo lo había especificado como línea de tiempo de fechas.
+`revisar_en` **no es una fecha ISO**: es texto con plazo *y criterio*, porque dice qué mirar además
+de cuándo. Y `botanist` ha añadido **`plan_recuperacion[]`**, array ordenado de `{paso, senal,
+hito}` — exactamente lo que faltaba. Así que el eje **no es el calendario, son los hitos**: cada
+nodo es un paso, y bajo cada nodo la **señal observable** que confirma que ese paso funcionó. Es
+mejor eje que el temporal, porque lo que decide si avanzas no es que pasen siete días: es que veas
+el brote. Solo en begonia (5 pasos) y helecho (6).
+
+**Cronología (6).** Sin cambios. `fecha_llegada` con el poto en texto aproximado.
+
+#### 6. Las siete sanas también tienen `estado`, y hoy no tienen dónde
+
+`estado` está poblado en las siete, **también en las cuatro sanas**: llevan preventivo, plazo y
+qué mirar. Mi sistema les da distintivo cero —y eso sigue bien, cuatro insignias de "todo bien" son
+ruido— pero eso no puede significar que su contenido no se vea.
+
+Va bajo el rótulo `QUÉ VIGILAR`, en la misma posición de la ficha que ocupa `QUÉ LE PASA` en las
+tocadas, en `--texto-principal` sin relleno ni borde. Misma estructura, distinto rótulo y ningún
+color. Una planta sana no necesita una alarma; necesita saber qué la va a estropear.
+
+#### 7. Toxicidad: el sitio donde el diseño tiene más responsabilidad
+
+`botanist` señala el riesgo concreto, y es serio: ASPCA tiene una entrada **"Prostrate Coleus"**
+que **sí** es no tóxica y que es **otra especie**. Si nuestro distintivo de `sin_datos` se lee como
+"seguro", la web puede acabar contribuyendo a una urgencia veterinaria.
+
+Refuerzos, y ninguno es negociable:
+
+- **Nada que se lea como aprobación.** Ni check, ni tick, ni círculo relleno, ni pulgar, ni verde.
+  El icono de `sin_datos` es un `?` y el borde es **discontinuo** — un borde roto no se lee nunca
+  como confirmación.
+- El texto completo, sin abreviar: **"Sin datos en ASPCA para esta especie. No significa que sea
+  segura."** Si no cabe, se agranda la caja, no se recorta la frase.
+- En los coleos, además, la nota del casi-homónimo: *"ASPCA sí tiene ficha de otra especie de
+  nombre parecido; no es esta."* Es el caso que puede hacer daño y se dice explícito.
+- `clave` es el valor que manda (`toxica` · `sin_datos` · campo `null`). El texto se pinta desde
+  `gatos` y `perros` por separado.
 
 ### Estados degradados — qué se dibuja cuando falta el dato
 

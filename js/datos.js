@@ -62,7 +62,9 @@ export async function cargarPlantas(url = "./content/plantas.json") {
   if (!Array.isArray(crudas)) {
     throw new Error("Formato inesperado en plantas.json: se esperaba un array de plantas");
   }
-  return crudas.map(normalizarPlanta);
+  // `meta` trae el vivero y su dirección: la microlínea de la pegatina sale de
+  // ahí y no de una constante escrita a mano en el render.
+  return { plantas: crudas.map(normalizarPlanta), meta: objeto(datos?.meta) };
 }
 
 /* ── normalizadores ─────────────────────────────────────────────────────────── */

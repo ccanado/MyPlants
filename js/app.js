@@ -4,7 +4,7 @@
  */
 
 import { cargarPlantas, ordenarPorUrgencia } from "./datos.js";
-import { grupoSeveridad, renderLista } from "./ficha.js";
+import { fijarMeta, grupoSeveridad, renderLista } from "./ficha.js";
 import { crearEstado, debounce } from "./estado.js";
 import { facetas, filtrar, filtrosVacios, hayFiltros, humanizar } from "./filtros.js";
 
@@ -31,7 +31,9 @@ arrancar();
 async function arrancar() {
   let plantas;
   try {
-    plantas = ordenarPorUrgencia(await cargarPlantas());
+    const datos = await cargarPlantas();
+    fijarMeta(datos.meta);
+    plantas = ordenarPorUrgencia(datos.plantas);
   } catch (err) {
     // El fallo se ve en la página, no solo en la consola.
     mostrarAviso(

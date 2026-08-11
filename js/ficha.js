@@ -116,11 +116,10 @@ export function fichaDe(planta) {
 
 /* ── la pegatina ────────────────────────────────────────────────────────────── */
 
-const VIVERO = {
-  nombre: "Viveros Projardín",
-  direccion: "Avda. de Móstoles s/n",
-  telefono: "Tfno. 91 644 22 13",
-};
+/** El vivero sale de `meta`, no de una constante: la begonia no es de Projardín
+ *  y la pegatina tiene que decir la verdad de cada planta. */
+let META = {};
+export function fijarMeta(meta) { META = meta ?? {}; }
 
 function caraEtiqueta(q, planta, idTitulo) {
   // El nombre se imprime idéntico en las siete: es lo que se busca con prisa.
@@ -134,13 +133,21 @@ function caraEtiqueta(q, planta, idTitulo) {
 
   // Lo único que cambia entre las dos variantes es el bloque de procedencia,
   // que es justo el dato que falta.
-  if (planta.vivero.tiene) {
-    q(".etiqueta__vivero-nombre").textContent = VIVERO.nombre;
-    q(".etiqueta__vivero-dir").textContent = VIVERO.direccion;
-    q(".etiqueta__vivero-tfno").textContent = VIVERO.telefono;
-  } else {
+  const v = META.vivero ?? {};
+  const esDelVivero = planta.vivero.emisor && planta.vivero.emisor === v.nombre;
+
+  if (!planta.vivero.tiene) {
     q(".etiqueta__vivero-nombre").textContent = "Sin etiqueta de vivero";
     q(".etiqueta__vivero-dir").textContent = "Procedencia sin registrar";
+    q(".etiqueta__vivero-tfno").remove();
+  } else if (esDelVivero) {
+    q(".etiqueta__vivero-nombre").textContent = v.nombre;
+    q(".etiqueta__vivero-dir").textContent = v.direccion ?? "";
+    q(".etiqueta__vivero-tfno").textContent = v.telefono ? `Tfno. ${v.telefono}` : "";
+  } else {
+    // La begonia viene de otro productor y trae pasaporte europeo.
+    q(".etiqueta__vivero-nombre").textContent = planta.vivero.emisor ?? "Productor sin identificar";
+    q(".etiqueta__vivero-dir").textContent = planta.vivero.procedencia ?? "";
     q(".etiqueta__vivero-tfno").remove();
   }
 
@@ -330,18 +337,46 @@ function bloqueProcedencia(q, planta) {
   } else {
     figura.remove();
     sin.hidden = false;
-    // No es lo mismo «no hubo etiqueta» que «hubo y no se fotografió». La ficha
-    // documenta procedencia: confundir las dos ausencias sería inventar una.
-    if (planta.vivero.tiene) sin.textContent = "Etiqueta de vivero no fotografiada.";
+    /* No llevar pegatina no es un hueco de datos: en estas dos es antigüedad, y
+       eso es contenido normal. Por eso NO va en gris de «sin dato». El texto lo
+       da el JSON; si no está, se dice lo único que consta. */
+    sin.textContent = planta.procedencia_nota ?? "Sin etiqueta de vivero: no se conserva.";
   }
 
-  // El precio, el EAN y el fitosanitario son transcripción de una foto, no dato
-  // verificado en fuente. Se dice, porque el resto de la ficha sí lo está.
-  if (planta.vivero.tiene) {
-    nota.textContent = "Precio, código y nº fitosanitario transcritos de la foto de la etiqueta, no verificados en fuente.";
-  } else {
-    nota.remove();
+  // Pie de procedencia: quién la vendió, cuándo llegó y por cuánto.
+  const partes = [
+    planta.vivero.emisor,
+    fechaCorta(planta.fecha_llegada),
+    planta.vivero.precio,
+  ].filter(Boolean);
+  if (partes.length > 0) nota.textContent = partes.join(" · ");
+  else nota.remove();
+
+  // «En aclimatación» no es un estado nuevo: es una fecha calculada. Se apaga
+  // sola a las tres semanas sin que nadie toque contenido ni CSS.
+  const dias = diasDesde(planta.fecha_llegada);
+  if (dias != null && dias < 21) {
+    const p = document.createElement("p");
+    p.className = "prueba__aclimatacion";
+    p.textContent = "Recién llegada, en aclimatación.";
+    q(".prueba").append(p);
   }
+}
+
+/** Días transcurridos desde una fecha ISO, o null si no hay fecha válida. */
+function diasDesde(iso) {
+  if (!iso) return null;
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return null;
+  return Math.floor((Date.now() - t) / 86400000);
+}
+
+function fechaCorta(iso) {
+  if (!iso) return null;
+  const d = diasDesde(iso);
+  if (d === 0) return "hoy";
+  if (d === 1) return "ayer";
+  return fechaLegible(iso);
 }
 
 /* ── capa 2 · los tres campos con diagrama ──────────────────────────────────── */

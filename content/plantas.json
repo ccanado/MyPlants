@@ -1,10 +1,10 @@
 {
   "meta": {
     "fecha_diagnostico": "2026-08-11",
-    "contexto": "Móstoles (Madrid). Clima continental: verano muy seco y caluroso, invierno con calefacción y aire muy seco. Las siete plantas están en el SALÓN, junto a un ventanal grande orientado a noreste; el poto está en un hueco de estantería de madera algo retirado del ventanal. Por la mañana les entra sol DIRECTO donde están, y después el resto del día es sombra o luz difusa. En verano hay aire acondicionado con el objetivo de no pasar de 28 °C; en invierno, calefacción. Sin mascotas: la toxicidad se documenta como dato informativo, no como alarma. Al estar las siete juntas comparten microclima: agrupar para subir la humedad local funciona de verdad aquí, y una plaga en una es una plaga en las siete.",
-    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy.",
+    "contexto": "Móstoles (Madrid). Verano seco y caluroso, invierno con calefacción. Las siete plantas están en el SALÓN, junto a un ventanal grande orientado a noreste; el poto está en un hueco de estantería de madera algo retirado del ventanal. Por la mañana entra SOL DIRECTO donde están y después se va: el patrón real del día son dos tramos, sol directo a primera hora y sombra luminosa el resto. A primera hora en un ventanal a noreste el sol incide bajo y es menos agresivo que un mediodía a sur, pero es sol directo. En verano hay aire acondicionado con el objetivo de no pasar de 28 °C; en invierno, calefacción. No hay mascotas. Quien riega, poda y trasplanta es Noah, el hijo de Carlos, así que las fichas están escritas para quien va a tener la regadera en la mano. Al estar las siete juntas comparten microclima: agrupar para subir la humedad local funciona de verdad aquí, y una plaga en una es una plaga en las siete.",
+    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy. Y hay dos regímenes distintos: begonia y helecho llevan 74 días en casa, así que lo que se ve es de aquí; los dos coleos, el ficus y la margarita llegaron ese mismo día, así que su daño visible viene de producción, tienda o transporte y no de esta casa.",
     "escalas": {
-      "luz.nivel": "necesidad de luz de la ESPECIE, 1-5: 1 = sombra; 2 = luz indirecta suave; 3 = luz indirecta brillante; 4 = muy luminoso con algo de sol suave; 5 = pleno sol",
+      "luz.nivel": "alias de `nivel_ideal`, conservado para no romper el filtro de builder",
       "riego.dias_verano": "días orientativos entre riegos en julio-agosto en Móstoles, en interior",
       "riego.dias_invierno": "días orientativos entre riegos en invierno con calefacción encendida",
       "riego.ml_aprox": "mililitros por riego para la maceta que tiene ahora la planta",
@@ -16,7 +16,15 @@
       "riego.profundidad_seco_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
       "temperatura": "min_c / max_c es el rango de trabajo recomendado; optimo_min_c / optimo_max_c solo se rellenan cuando una fuente publica un óptimo; minima_letal_c va en null en las siete porque no es un dato que publiquen RHS ni POWO; casa_verano_max_c es el objetivo del aire acondicionado que ha dado Carlos y casa_invierno_c está pendiente de que lo mida",
       "toxicidad_mascotas.clave": "conjunto cerrado: toxica | no_toxica | sin_datos. El campo entero puede ser null (planta sin identificar). Ninguna planta de la casa es `no_toxica` confirmada",
-      "etiqueta_vivero": "transcripción literal de la foto de la pegatina; null si la planta no tiene etiqueta. Los campos que no se lean van en null, no se deducen"
+      "etiqueta_vivero": "transcripción literal de la foto de la pegatina; null si la planta no tiene etiqueta. Los campos que no se lean van en null, no se deducen",
+      "luz.nivel_ideal": "1-5, la luz que querría la especie. Es el valor que antes se llamaba `nivel`, que se mantiene como alias",
+      "luz.nivel_actual": "1-5, la luz que la planta recibe donde está hoy. La diferencia con `nivel_ideal` es el dato accionable: positiva = le sobra luz (riesgo de quemadura), negativa = le falta (se estira y pierde color), cero = está en su sitio",
+      "luz.tramos": "el día dividido en tramos: `[{franja, tipo}]`, con `tipo` en el conjunto cerrado directo | indirecto_brillante | indirecto_medio | sombra. Sin horas: Carlos ha dicho «por la mañana sol directo y luego se va», y no se inventan horas que no ha dado",
+      "riego.profundidad_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
+      "fecha_llegada": "fecha en que la planta entró en casa, YYYY-MM-DD. `null` cuando solo se puede decir de forma aproximada: entonces el dato está en `fecha_llegada_texto`",
+      "dias_en_casa": "días desde `fecha_llegada` hasta la fecha del diagnóstico (2026-08-11). `null` si la llegada es aproximada",
+      "notas": "lista de notas personales, `[{autor, texto}]`. Vacía hoy: nadie las ha dictado todavía. `notas_carlos` se mantiene en null por compatibilidad con el validador",
+      "manipulacion": "riesgo al manipular la planta (podar, trasplantar, hacer esquejes): la vía relevante en esta casa, que es dérmica y ocular, no digestiva. Con su propia cita"
     },
     "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas, así que sus URLs se citan como referencia localizada pero el nombre aceptado se ha comprobado abriendo el registro equivalente en IPNI, que es también de Kew. Está anotado en cada ficha.",
     "vivero": {
@@ -35,25 +43,42 @@
       "familia": "Sin determinar",
       "foto": "helecho.jpg",
       "alt": "Maceta de barro con corazones blancos pintados. En el centro, una masa densa de tocones finos, oscuros y alambrados de una poda; a la izquierda, unos pocos brotes verdes pequeños de segmentos en forma de cuña que caen por el borde de la maceta.",
-      "historia": null,
+      "historia": "Regalo de Vanesa a Noah, el 29 de mayo de 2026, el mismo día y del mismo regalo que la begonia. Es una de las dos plantas de Noah. En estos 74 días se secó por completo; Noah la podó entera y ha rebrotado.",
       "riego": {
         "resumen": "Que no se seque nunca del todo: cada 3 días en verano, cada 4 en invierno, ~100 ml.",
         "detalle": "Con la masa foliar casi a cero la planta transpira poquísimo, así que el riesgo ahora no es la sed sino el encharcamiento: el mismo volumen que antes se bebía en dos días puede tardar una semana en irse. Riega poco y a menudo: unos 100 ml cada 3 días en agosto, cada 4-5 en invierno, comprobando siempre con el dedo que el primer centímetro no está mojado. El sustrato tiene que estar fresco al tacto de forma continua, sin llegar a barro. Un helecho tierno de interior es la planta que menos perdona un secado completo: RHS lo resume en que odian el sustrato seco. Si el cepellón se ha vuelto a separar de las paredes de la maceta (síntoma de que se secó del todo), sumerge la maceta 10 minutos en un barreño y deja escurrir; luego vuelve al riego normal. Agua a temperatura ambiente, nunca fría del grifo. Móstoles tiene agua dura: si puedes, usa agua de lluvia o filtrada, que a los helechos les sienta mejor.",
         "dias_verano": 3,
         "dias_invierno": 4,
         "ml_aprox": 100,
-        "profundidad_seco_cm": 1
+        "profundidad_cm": 1
       },
       "luz": {
         "resumen": "Riesgo nuevo: el sol directo de la mañana. Necesita luz difusa, no ese tramo de sol.",
         "detalle": "Los helechos de interior quieren luz indirecta y detestan el sol directo; RHS da para Adiantum sombra parcial y orientaciones este, norte u oeste. Con el dato de que en ese salón entra sol directo por la mañana, la ubicación pasa de correcta a arriesgada, y es de las cosas más urgentes de esta ficha: un brote único y tierno, con la planta sin reservas de hoja, se achicharra en una sola mañana de agosto. Es la planta de la casa con la mayor diferencia entre lo que necesita (nivel 2) y lo que recibe (nivel 4). Qué hacer: mantenla en el salón, junto al ventanal, pero fuera de la mancha de sol; a un metro del cristal, en un lateral, o detrás de un visillo. Lo que no hay que hacer es la reacción contraria y llevarla a un rincón oscuro: sin luz no rebrota.",
         "nivel": 2,
-        "nivel_recibido_estimado": 4,
         "categoria_ideal": "indirecta_brillante",
         "categoria_recibida": "sol_directo_matinal",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": true,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 2,
+        "nivel_actual": 4,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "directo"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_brillante"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "primera hora de la mañana; después la luz pasa a difusa",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Lo que más le falta. 60 % o más, y fuera de la corriente del aire acondicionado.",
@@ -264,13 +289,6 @@
           "nota": "Null porque la planta está sin identificar y la toxicidad no se puede valorar sin especie. Además, en la lista de ASPCA (revisada el 2026-08-11 en su listado para gatos) no aparece ninguna entrada para Adiantum ni para \"maidenhair fern\", así que ni siquiera la hipótesis tiene respaldo: ausencia en ASPCA no significa que sea inocua. Se resuelve identificando el helecho y volviendo a buscar por su nombre científico."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Carlos no ha contado de dónde vino ni desde cuándo la tiene. Pendiente de preguntar; no se inventa."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -325,6 +343,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato de la casa."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -334,7 +387,16 @@
       },
       "etiqueta_vivero": null,
       "foto_etiqueta": null,
-      "alt_etiqueta": null
+      "alt_etiqueta": null,
+      "fecha_llegada": "2026-05-29",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 74,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Sin dato: la planta está sin identificar. Lávate las manos tras podar los tocones.",
+        "detalle": "No se puede valorar el riesgo de manipulación de una planta sin identificar. Adiantum, que es la hipótesis, no figura en la lista de plantas potencialmente dañinas de RHS ni en la de ASPCA, así que ni la hipótesis tiene categoría asignada. La tarea pendiente —cortar a ras los tocones secos— es de bajo riesgo por naturaleza: tejido seco, sin savia. Lávate las manos al terminar y usa tijera limpia, que en su caso importa más por la planta que por ti: un corte sucio en tejido dañado es una vía de entrada de hongos.",
+        "epi": null
+      }
     },
     {
       "id": "begonia-elatior",
@@ -344,26 +406,43 @@
       "foto": "begonia-elatior.jpg",
       "alt": "Begonia Elatior en su maceta de vivero roja metida en un cachepot blanco, con una flor roja doble abierta, varios ramilletes de flores secas sin retirar, tallos alargados con tramos sin hojas y hojas de borde marrón y seco.",
       "foto_etiqueta": "begonia-elatior-etiqueta.jpg",
-      "alt_etiqueta": "Mano sosteniendo la maceta de vivero roja. La etiqueta dice «BEGONIA ELATIOR TM 15» sobre fondo verde, con fotos de flores de varios colores y un pasaporte fitosanitario europeo con el código ES6164 2001.",
-      "historia": null,
+      "alt_etiqueta": "Mano sosteniendo la maceta de vivero roja. La etiqueta ovalada verde dice «BEGONIA ELATIOR TM 15» y «Product from ALMERÍA», con cinco fotos de flores de distintos colores, el sello del productor GONZA S.A.T. y un pasaporte fitosanitario europeo: A BEGONIA ELATIOR, B ES01042001, C L1, D NL.",
+      "historia": "Regalo de Vanesa a Noah, el 29 de mayo de 2026. Llegó el mismo día que el helecho y del mismo regalo. Es una de las dos plantas de Noah, y es él quien la cuida.",
       "riego": {
         "resumen": "Cada 4 días en verano, cada 7 con calefacción. Unos 250 ml, y saca la maceta del cachepot.",
         "detalle": "Comprueba con el dedo: riega cuando los 2 cm de arriba estén secos y el resto solo fresco. En la maceta de vivero de 15 cm eso son unos 250 ml, que en agosto en Móstoles viene a ser cada 4 días y en invierno con la calefacción puesta cada 7 (la calefacción seca el aire, no el sustrato: se riega menos, no más). El detalle que más importa aquí es el cachepot blanco: la maceta de plástico roja va dentro, así que el agua que sobra se queda en el fondo sin que se vea. Riega en el fregadero, espera 10 minutos a que escurra y devuélvela al cachepot; o vacía el cachepot después de cada riego. RHS lo dice en negativo: no dejar que el sustrato se seque, pero sin excederse con el agua. Riega por el borde de la maceta, no por el centro y nunca sobre las hojas ni las flores: en begonia el follaje mojado es la puerta de entrada del oídio y de la botritis.",
         "dias_verano": 4,
         "dias_invierno": 7,
         "ml_aprox": 250,
-        "profundidad_seco_cm": 2
+        "profundidad_cm": 2
       },
       "luz": {
         "resumen": "Le sobra sol: el directo de la mañana le está quemando los bordes. Sepárala del cristal.",
-        "detalle": "Aquí hay una corrección importante respecto a la primera versión de esta ficha, y la explico porque cambia el diagnóstico entero. Cuando solo sabía que el ventanal es a noreste di por bueno que la luz era lo único que esta planta tenía bien, porque RHS pide para las Elatior sombra parcial o sombra luminosa y expresamente NADA de sol directo. Con el dato nuevo —que por la mañana el sol entra directo donde están— la conclusión se invierte: esta planta está recibiendo más luz de la que RHS le da, y el sol directo sobre una hoja fina de begonia es la explicación más económica de los bordes quemados. Lo que necesita: la misma habitación, pero fuera del tramo de sol directo. Retírala medio metro o un metro del cristal, o ponle un visillo que difumine esa primera hora. Sombra luminosa todo el día es su sitio. Y sigue girándola un cuarto de vuelta en cada riego, porque los tallos ya se escoran hacia la ventana.",
+        "detalle": "RHS pide para las Elatior sombra parcial o sombra luminosa y expresamente NADA de sol directo. Y en este salón hay sol directo a primera hora, así que esta planta está recibiendo más luz de la que se le recomienda. El matiz importa y no lo borro: a primera hora, en un ventanal orientado a noreste, el sol entra bajo y es mucho menos agresivo que un mediodía al sur. No es sol abrasador. Pero sobre una hoja de begonia, que es fina y llena de agua, ese rato basta para secar el borde, y lleva 74 días recibiéndolo cada mañana de junio, julio y agosto. Qué hacer: misma habitación, pero fuera del tramo de sol. Sepárala medio metro o un metro del cristal, o cuelga un visillo que difumine esa primera hora. Sombra luminosa todo el día es su sitio. Y gírala un cuarto de vuelta cada vez que la riegues, porque los tallos ya se están escorando hacia la ventana buscando la luz.",
         "nivel": 3,
-        "nivel_recibido_estimado": 4,
         "categoria_ideal": "indirecta_brillante",
         "categoria_recibida": "sol_directo_matinal",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": true,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 3,
+        "nivel_actual": 4,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "directo"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_brillante"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "primera hora de la mañana; después la luz pasa a difusa",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Alta, 50–60 %. En esta casa el aire seco es de los dos: calefacción en invierno y A/A en verano.",
@@ -392,8 +471,8 @@
         "temporada": "mayo a septiembre"
       },
       "trasplante": {
-        "resumen": "Sácala ya de la maceta de vivero a una de 15–17 cm con agujero. Tras florecer, poda a 15 cm.",
-        "detalle": "Sigue en la maceta de vivero de 15 cm (la etiqueta dice \"ELATIOR TM 15\") dentro del cachepot, y eso es medio problema resuelto de un tirón: pásala a una maceta de 15-17 cm con agujero de drenaje, sin enterrar más el cuello del tallo, y riega después con generosidad. El otro momento clave es el rejuvenecimiento: RHS describe que estas plantas, que son de floristería y se suelen tirar al acabar la floración, se pueden recuperar dejándolas descansar unas seis semanas con menos agua y a menor temperatura, y podándolas después a 15 cm de la base; cuando los brotes nuevos midan 5-7 cm se pueden tomar esquejes basales y enraizarlos a 18-22 °C. Es exactamente lo que le toca a esta planta cuando termine este ciclo de flor: no está para tirar, está para poda de rejuvenecimiento.",
+        "resumen": "Va tarde: 74 días en la maceta de vivero. Cámbiala esta semana a 15–17 cm con agujero.",
+        "detalle": "Esto ya no es una tarea pendiente, es un retraso, y creo que es la clave de su estado. Sigue en la maceta de plástico con la que salió del invernadero —la roja, con la pegatina puesta— y lleva 74 días en ella. El sustrato de una planta de floristería está pensado para las semanas que tarda en venderse, no para dos meses y medio de vida en una casa: a estas alturas está agotado de nutrientes, probablemente compactado y con sales del abono acumuladas. Y el cepellón —la bola de raíces con su tierra— habrá llenado la maceta, así que cada riego le dura menos. Cámbiala esta semana a una maceta de 15-17 cm **con agujero de drenaje**, sin enterrar más el cuello del tallo (la línea donde el tallo pasa a raíz), con universal sin turba y un 20 % de perlita, y riega bien después. Ponte guantes: es la tarea en la que se manipulan raíces, y ahí es donde los oxalatos de esta planta irritan (ver `manipulacion`). Un apunte de medida: la etiqueta dice «TM 15», que es formato comercial de maceta de 15 cm; si al medirla salen 13, tanto mejor el argumento, porque es todavía menos tierra para tres meses. El otro momento clave llega después: cuando termine esta tanda de flor, RHS describe dejarla descansar unas seis semanas con menos agua y menos temperatura y podarla luego a 15 cm de la base; cuando los brotes nuevos midan 5-7 cm se pueden cortar y enraizar a 18-22 °C. Esta planta no está para tirar: está para poda de rejuvenecimiento.",
         "cuando": "cambio de maceta ya; poda de rejuvenecimiento al terminar la floración"
       },
       "plagas_comunes": [
@@ -430,6 +509,7 @@
         "severidad": "atencion",
         "fecha_foto": "2026-08-11",
         "senales": [
+          "Lleva 74 días en casa (llegó el 29 de mayo de 2026) y sigue en la maceta de plástico de vivero con la que vino, con la pegatina y el pasaporte fitosanitario aún pegados.",
           "Bordes y puntas de las hojas maduras secos, marrones y crujientes, con el centro de la hoja verde y turgente; en varias hojas la necrosis entra en cuña desde el margen.",
           "El daño no está repartido por igual: las hojas más castigadas —dos de ellas fuertemente enrolladas y con el borde marrón— son las de la parte alta y las del lado derecho, que es el lado por el que entra la luz del ventanal en la foto. Las hojas del interior de la mata y las bajas están claramente mejor.",
           "Hojas nuevas del ápice pequeñas, de verde pálido amarillento y acucharadas hacia arriba, algunas casi enrolladas en canoa: la hoja se cierra para reducir la superficie expuesta.",
@@ -443,60 +523,69 @@
           "Etiqueta del productor: «BEGONIA ELATIOR TM 15», «Product from ALMERÍA», GONZA S.A.T., EAN 8437018857012, y pasaporte fitosanitario europeo A BEGONIA ELATIOR · B ES01042001 · C L1 · D NL."
         ],
         "causas_probables": [
-          "Quemadura por sol directo, y con el contexto nuevo la pongo primera. RHS no le da sol directo a una Elatior en ningún caso, y el patrón de la foto encaja: el daño se concentra en las hojas expuestas y en el lado de la ventana, mientras el interior de la mata está bien, y las hojas nuevas están acucharadas hacia arriba, que es lo que hace una hoja para reducir la superficie que recibe. Esto revisa lo que escribí en la primera versión de la ficha, donde di la luz por correcta: con el dato de que hay sol directo matinal, ya no lo es.",
-          "Aire seco, segunda y muy próxima. Bordes crujientes con el centro de la hoja sano es su firma clásica, y aquí el aire seco es de todo el año: calefacción en invierno y aire acondicionado en verano. La diferencia práctica con la causa anterior es el reparto: el aire seco afecta a los bordes de forma más general y la quemadura se ceba en lo expuesto. En esta planta se ven las dos cosas a la vez, y por eso el tratamiento ataca las dos.",
-          "Cepellón agotado tras meses en la maceta de vivero: es lo que hace que las hojas nuevas salgan pequeñas y pálidas, y no lo explica ni el sol ni la humedad. Se corrige abonando ya y cambiando de maceta.",
-          "Ciclo de floración avanzado, con flores pasadas sin limpiar. Frenan la floración nueva, gastan energía y son la puerta de la botritis. Parte de los tallos desnudos es el envejecimiento normal de una Elatior tras una tanda larga de flor, no una enfermedad.",
-          "Riego irregular agravado por el cachepot sin drenaje visible: baja al último puesto, porque el cuadro del exceso de agua —hojas bajas amarillas, blandas y caídas— no está. Sigue mereciendo la corrección, pero como prevención y no como causa del daño que se ve.",
-          "Corriente fría del aire acondicionado: no explica los bordes secos, pero RHS avisa de que a las begonias les molestan las corrientes. Es un factor a descartar mirando dónde apunta el split."
+          "El cepellón agotado, y la pongo primera. 74 días en una maceta de vivero, con un sustrato de producción pensado para semanas de venta, explica más partes del cuadro que ninguna otra causa: las hojas nuevas cada vez más pequeñas y pálidas, la floración que se apaga con una sola flor abierta frente a muchos restos secos, y que la planta necesite agua cada poco. PATRÓN PARA RECONOCERLA: hoja nueva más pequeña que la anterior, color pálido general, y al regar el agua atraviesa la maceta en un par de segundos porque la tierra está llena de raíces. No lo arregla el riego: lo arregla el cambio de maceta.",
+          "Sol directo de la mañana sobre hoja fina, y va segunda porque es la que tiene mejor prueba en la foto. RHS no le da sol directo a una Elatior en ningún caso. PATRÓN PARA RECONOCERLA: el daño no está repartido, se concentra en las hojas de arriba y en las del lado de la ventana —en la foto, el lado derecho— mientras las del interior de la mata están bien; y las hojas nuevas salen acucharadas hacia arriba, que es lo que hace una hoja para poner menos superficie al sol. Las dos cosas se ven.",
+          "Aire seco, y en esta casa de los doce meses: el aire acondicionado de junio a agosto deshumidifica igual que la calefacción en invierno. Los 74 días que lleva aquí son justo el tramo más duro del año. PATRÓN PARA RECONOCERLA: bordes secos y crujientes de forma general, en hojas expuestas y no expuestas por igual, con el centro de la hoja verde y sano. Se distingue de la quemadura precisamente en eso: la quemadura elige, el aire seco no.",
+          "Sales acumuladas del sustrato viejo, que es consecuencia de la primera causa y merece nombre propio porque su patrón es distinto y muy reconocible. PATRÓN PARA RECONOCERLA: la punta de la hoja marrón con un halo amarillo alrededor, y una costra blanquecina en el borde de la maceta o sobre la tierra. Si ves eso, además de cambiarla de maceta conviene regar dos veces seguidas con abundante agua para lavar el sustrato antes de sacarla.",
+          "Flores pasadas sin retirar, y en 74 días dan para muchas. No causan los bordes secos, pero frenan la floración nueva, gastan energía y son la puerta de entrada del moho gris. PATRÓN: ramilletes marrones y papeláceos retenidos en las puntas, como se ven en la foto.",
+          "Riego irregular, agravado por el cachepot de cerámica sin agujero visible, y va la última a propósito. PATRÓN QUE HABRÍA: hojas de abajo amarillas, blandas y caídas sobre la tierra, y sustrato que sigue mojado días después de regar. En la foto no hay ni una hoja caída ni blanda, así que el exceso de agua no es lo que está causando el daño. Sigue mereciendo corregirse como prevención, porque el agua que se queda en el fondo del cachepot no se ve.",
+          "Corriente fría del aire acondicionado: no explica los bordes secos, pero RHS avisa de que a las begonias les molestan las corrientes. Se descarta mirando dónde apunta el aparato."
         ],
         "tratamiento": [
-          "Hoy: sepárala del cristal medio metro o un metro, o ponle un visillo que difumine el sol de la mañana. Es la acción que cambia con el contexto nuevo y ahora es la primera de la lista.",
-          "Hoy: retira todas las inflorescencias pasadas y los restos secos de los ápices, pinzando cada tallo floral hasta su base con tijera limpia, y saca los restos de la superficie del sustrato.",
-          "Hoy: corta las hojas con más de un tercio del borde seco. Las que solo tengan la punta marrón, déjalas: siguen alimentando la planta.",
-          "Hoy: comprueba que no está en la línea de aire del aire acondicionado. Si lo está, muévela o redirige la lama.",
-          "Esta semana: ponla sobre un plato con grava o arcilla expandida húmeda, con el agua por debajo del nivel de la grava. No la pulverices.",
-          "Esta semana: cámbiala a una maceta de 15-17 cm con agujero. Si no puedes, riega en el fregadero y no la devuelvas al cachepot hasta que haya escurrido 10 minutos.",
-          "Esta semana: empieza a abonar con abono rico en potasio (tipo tomate) a media dosis, cada 2 semanas hasta septiembre, siempre sobre sustrato húmedo.",
-          "Riego: unos 250 ml cuando los 2 cm de arriba estén secos, por el borde y sin mojar hoja ni flor. En agosto, cada 4 días aproximadamente.",
+          "Esta semana, y es la más importante: cámbiala de maceta. A 15-17 cm con agujero de drenaje, universal sin turba con un 20 % de perlita, sin enterrar más el cuello del tallo. Con guantes: al manipular raíces es donde irritan los oxalatos de esta planta.",
+          "Hoy: sepárala del cristal medio metro o un metro, o ponle un visillo que difumine el sol de la mañana.",
+          "Hoy: retira todas las flores pasadas y los restos secos de las puntas, pinzando cada tallo floral hasta su base con tijera limpia, y saca los restos de encima de la tierra.",
+          "Hoy: corta las hojas con más de un tercio del borde seco. Las que solo tengan la punta marrón, déjalas: siguen alimentando la planta y no se van a curar, pero tampoco molestan.",
+          "Hoy: comprueba que no está en la línea de aire del aire acondicionado. Si lo está, muévela o cambia la dirección de la lama.",
+          "Esta semana: ponla sobre un plato con grava o arcilla expandida mojada, con el agua por debajo del nivel de la grava, para que el aire de alrededor esté más húmedo. No la pulverices: la hoja de begonia tiene pelusa, retiene la gota y eso favorece hongos.",
+          "Si ves costra blanquecina en el borde de la maceta, antes de sacarla riega dos veces seguidas con abundante agua dejando escurrir, para lavar las sales del sustrato.",
+          "Desde ya y cada 2 semanas hasta septiembre: abono rico en potasio (el de tomate sirve) a media dosis, siempre sobre tierra ya húmeda, nunca en seco. Espera 4 semanas después del cambio de maceta si el sustrato nuevo ya lleva abono.",
+          "Riego: unos 250 ml cuando los 2 cm de arriba de la tierra estén secos al meter el dedo. En agosto, cada 4 días aproximadamente. Riega por el borde de la maceta, no sobre la hoja ni sobre las flores.",
           "Gira la maceta un cuarto de vuelta en cada riego.",
-          "Cuando termine esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes basales de los brotes nuevos cuando midan 5-7 cm. Ningún cuidado va a rellenar los tramos de tallo que ya están desnudos."
+          "Cuando acabe esta tanda de flor: poda de rejuvenecimiento a 15 cm de la base y esquejes de los brotes nuevos cuando midan 5-7 cm. Ningún cuidado va a rellenar los tramos de tallo que ya están pelados; una poda sí."
         ],
-        "revisar_en": "3 semanas: la hoja que salga nueva tiene que ser más grande, de verde más oscuro y sin acucharar. Los bordes marrones que ya existen no se curan porque el tejido está muerto: lo que se mide es la hoja nueva. Y hay una prueba que separa las dos causas principales: si al alejarla del cristal las hojas nuevas dejan de salir acucharadas, era sol directo; si siguen saliendo con el borde seco pero planas, pesa más el aire seco.",
+        "revisar_en": "3 semanas, contando desde el cambio de maceta: la hoja que salga nueva tiene que ser más grande, de verde más oscuro y plana, no acucharada. Los bordes marrones que ya existen no se curan, porque ese tejido está muerto: lo que se mide siempre es la hoja nueva. Y hay dos pruebas que separan las causas. Una: si al alejarla del cristal las hojas nuevas dejan de salir acucharadas, era el sol. Dos: si tras el cambio de maceta la hoja nueva crece claramente más grande, era el cepellón agotado. Pueden dar las dos positivas a la vez, y sería lo esperable.",
         "no_visible_en_foto": [
+          "El estado del cepellón, que con 74 días en la maceta de vivero es ahora la comprobación clave. Se resuelve sacándola de la maceta: si es una masa compacta de raíces con poca tierra visible, la primera causa queda confirmada.",
           "Las raíces y el olor del sustrato, que es lo que decidiría si además hay podredumbre por el agua retenida en el cachepot.",
           "El envés de las hojas: no se puede descartar araña roja, que prospera justo con el aire seco de esta casa, y que además está bajo sospecha en el coleo grande, a pocos metros y en la misma habitación.",
           "Si hay oídio incipiente. Hay hojas con zonas grisáceas, pero a esa resolución no distingo polvo de hongo de reflejo y pubescencia. Una foto del haz a contraluz lo resolvería.",
           "Cuánto sol directo recibe exactamente y durante cuántos minutos. Es el dato que confirmaría la causa que he puesto primera: se resuelve con una foto del salón a la hora en que entra el sol, viendo si la mancha de luz cae sobre la planta.",
           "Si el cachepot blanco tiene agua estancada en el fondo ahora mismo.",
-          "La humedad real del cepellón: la superficie se ve suelta, pero eso no dice nada de los 10 cm de abajo."
+          "La humedad real del cepellón: la superficie se ve suelta, pero eso no dice nada de los 10 cm de abajo.",
+          "Si hay costra blanquecina de sales en el borde de la maceta. En la foto el borde queda tapado por el cachepot."
         ],
-        "titulo": "Bordes quemados y flores pasadas: el sol de la mañana y el aire seco",
+        "titulo": "74 días en la maceta de vivero, sol de mañana y aire seco: tres cosas a la vez",
         "plan_recuperacion": [
           {
-            "paso": "Sacarla del tramo de sol directo (medio metro del cristal o visillo).",
-            "senal": "Las hojas nuevas dejan de salir acucharadas y salen planas.",
+            "paso": "Cambiarla a maceta de 15-17 cm con agujero, con guantes puestos.",
+            "senal": "La hoja nueva sale más grande y de verde más oscuro que la actual.",
+            "hito": "3-4 semanas"
+          },
+          {
+            "paso": "Sacarla del tramo de sol directo de la mañana (medio metro del cristal o visillo).",
+            "senal": "Las hojas nuevas salen planas, dejan de acucharse hacia arriba.",
             "hito": "2-3 semanas"
           },
           {
             "paso": "Retirar todas las flores pasadas y las hojas con más de un tercio del borde seco.",
-            "senal": "No vuelven a aparecer restos marrones papeláceos en los ápices; ninguna pelusa gris.",
-            "hito": "inmediato, y revisión semanal"
+            "senal": "No vuelven a aparecer restos marrones papeláceos en las puntas, y ninguna pelusa gris.",
+            "hito": "hoy, y revisión cada semana"
           },
           {
-            "paso": "Plato con grava húmeda y fuera de la corriente del aire acondicionado.",
+            "paso": "Plato con grava húmeda, y fuera de la corriente del aire acondicionado.",
             "senal": "Los bordes de las hojas nuevas salen enteros, sin filo crujiente.",
             "hito": "3 semanas"
           },
           {
-            "paso": "Cambio a maceta de 15-17 cm con drenaje y abono de potasio a media dosis cada 2 semanas.",
-            "senal": "La hoja nueva es más grande y de verde más oscuro que la actual.",
-            "hito": "3-4 semanas"
+            "paso": "Abono rico en potasio a media dosis cada 2 semanas.",
+            "senal": "Aparecen botones florales nuevos que llegan a abrir, en lugar de secarse antes.",
+            "hito": "4-6 semanas"
           },
           {
-            "paso": "Poda de rejuvenecimiento a 15 cm y esquejes basales.",
-            "senal": "Brotes nuevos desde la base, con entrenudos cortos, que rellenan la mata.",
-            "hito": "al terminar la floración; brotes visibles 3-4 semanas después de podar"
+            "paso": "Poda de rejuvenecimiento a 15 cm y esquejes.",
+            "senal": "Brotes desde la base con los tramos entre hojas cortos, que rellenan la mata.",
+            "hito": "al acabar la floración; brotes visibles 3-4 semanas después de podar"
           }
         ]
       },
@@ -585,13 +674,6 @@
           "nota": "Entrada de género: Begonia spp., Begoniaceae, tóxica para perros, gatos y caballos; oxalatos de calcio solubles; vómitos y salivación; la parte subterránea es la de mayor riesgo. No hay entrada específica para el grupo Elatior ni para B. × hiemalis."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Carlos no ha contado de dónde vino ni desde cuándo la tiene. La etiqueta permite rastrear el origen comercial —productor GONZA S.A.T., «Product from ALMERÍA», pasaporte fitosanitario B ES01042001, EAN 8437018857012— pero eso es trazabilidad, no historia personal. Pendiente de preguntar."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -646,6 +728,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato de la casa."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -667,6 +784,15 @@
         "pasaporte_fitosanitario": "A BEGONIA ELATIOR · B ES01042001 · C L1 · D NL",
         "otros": "Iconos de cultivo y la indicación «V-IX», que en las etiquetas comerciales marca los meses de floración (mayo a septiembre).",
         "nota": "Etiqueta distinta a las demás: no es del vivero de Móstoles sino del productor, y no lleva precio. «TM 15» es formato comercial de maceta de 15 cm; la etiqueta no escribe los centímetros en claro, así que `maceta_cm` es esa lectura y no una cifra impresa."
+      },
+      "fecha_llegada": "2026-05-29",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 74,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Guantes en el trasplante: los oxalatos irritan al contacto, y la parte de abajo es la peor.",
+        "detalle": "El principio activo que ASPCA describe para Begonia son oxalatos de calcio solubles, y precisa que la parte subterránea es la de mayor riesgo. Eso importa aquí porque el trasplante pendiente es justo el momento en que se manipulan raíces y base del tallo. Guantes, no te toques los ojos mientras trabajas y lávate las manos al terminar. Begonia no figura en la lista de plantas potencialmente dañinas de RHS, así que no hay una categoría oficial de irritación cutánea: lo que se afirma aquí sale del principio activo descrito por ASPCA, no de una clasificación de contacto.",
+        "epi": "guantes"
       }
     },
     {
@@ -678,25 +804,42 @@
       "alt": "Coleo grande y frondoso en maceta blanca de vivero de 1,6 litros con aro de sujeción verde, de hojas dentadas granate oscuro con margen ancho verde lima y nervio central rosa; en varias hojas bajas se ve un punteado pálido y algún agujero.",
       "foto_etiqueta": "coleo-grande-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta blanca de vivero con la etiqueta de Viveros Projardín (Avda. de Móstoles): «COLEO MACETA 1,6L», 6,95 €, con el número de pasaporte fitosanitario ES13-28/0283F.",
-      "historia": null,
+      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 6,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
         "resumen": "Cada 3 días en verano, cada 6 en invierno; unos 300 ml en la maceta de 1,6 L.",
         "detalle": "El coleo es de las plantas de interior que más agua mueven: mucha superficie de hoja, tallo semisuculento y ninguna tolerancia a marchitarse. RHS lo resume en regar con generosidad durante el crecimiento. Traducido a esta maceta de 1,6 litros y a agosto en Móstoles: unos 300 ml cada 3 días, comprobando antes con el dedo, y en invierno cada 6. Si un día la ves con las hojas lacias, riega y en dos horas se recupera, pero cada marchitez le cuesta hojas bajas. Riega por el borde y deja escurrir; no la dejes con plato con agua. En esta maceta blanca de vivero el drenaje es bueno, así que el riesgo real aquí es el defecto y no el exceso.",
         "dias_verano": 3,
         "dias_invierno": 6,
         "ml_aprox": 300,
-        "profundidad_seco_cm": 2
+        "profundidad_cm": 2
       },
       "luz": {
         "resumen": "El sol directo de la mañana le viene bien: es la planta a la que mejor le sienta ese sitio.",
         "detalle": "RHS le da a esta especie pleno sol y orientaciones este, sur u oeste; bajo cristal, luz plena o sombra parcial. Con el dato nuevo de que por la mañana entra sol directo, la lectura cambia y a favor: este es el sitio de la casa donde un coleo tiene sentido, y ya no procede el aviso de que se va a estirar o a perder el color por falta de luz que escribí en la primera versión. El sol suave de la mañana en un ventanal a noreste es exactamente lo que mantiene el granate; lo que no tolera es el sol de las horas fuertes tras un cristal, y aquí no lo hay porque después la luz pasa a difusa. Déjala en la franja donde entra ese sol y gírala un cuarto de vuelta en cada riego para que se ilumine por igual. Si aun así las hojas nuevas siguen saliendo pálidas cuando maduren, entonces sí faltaría luz y habría que acercarla más al cristal.",
         "nivel": 4,
-        "nivel_recibido_estimado": 4,
         "categoria_ideal": "sol_directo",
         "categoria_recibida": "sol_directo_matinal",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": true,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 4,
+        "nivel_actual": 4,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "directo"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_brillante"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "primera hora de la mañana; después la luz pasa a difusa",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Media le basta, pero el aire seco le trae araña roja. 45–55 % y ojo al envés.",
@@ -908,13 +1051,6 @@
           "nota": "La otra entrada con \"Coleus\" en el nombre es Plectranthus oertendahlii, que ASPCA da como no tóxica. Tampoco es esta planta: citarla como si lo fuera sería el error de identificación más peligroso de la ficha."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Sin contar por Carlos. Lo único documentado es la compra: Viveros Projardín (Avda. de Móstoles), 6,95 €. Eso es procedencia comercial, no historia. Pendiente de preguntar."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -969,6 +1105,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato de la casa."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -990,6 +1161,15 @@
         "pasaporte_fitosanitario": null,
         "otros": null,
         "nota": "La etiqueta da el volumen de la maceta (1,6 L) y no el diámetro, así que `maceta_cm` va en null. «2040 1849» es código interno del vivero, no un EAN-13."
+      },
+      "fecha_llegada": "2026-08-11",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 0,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Sin dato de irritación por contacto. Savia herbácea; lávate las manos al pinzar.",
+        "detalle": "Coleus scutellarioides no figura ni en la lista de plantas potencialmente dañinas de RHS ni en la de ASPCA, así que no hay categoría de irritación cutánea que citar. Que no figure no significa que no irrite: significa que nadie lo ha clasificado. Es una labiada de savia herbácea y las tareas habituales —pinzar ápices, cortar espigas florales, hacer esquejes— no piden guantes en la práctica normal de jardinería. Lávate las manos al terminar, que es lo razonable con cualquier planta.",
+        "epi": null
       }
     },
     {
@@ -1001,25 +1181,42 @@
       "alt": "Coleo pequeño y compacto en maceta de vivero de unos 9 cm, con hojas dentadas de color granate intenso, nervios rosas y un filo verde lima muy fino en el borde serrado.",
       "foto_etiqueta": "coleo-pequeno-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta de vivero de unos 9 cm, con cesta gris interior y funda terracota, y la etiqueta de Viveros Projardín: «COLEO», 2,25 €, pasaporte fitosanitario ES13-28/0283F.",
-      "historia": null,
+      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 2,25 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
         "resumen": "Maceta mínima: en agosto puede pedir agua cada 2 días. Unos 90 ml y comprobación diaria.",
         "detalle": "Aquí el problema no es la planta, es el recipiente: en una maceta de vivero de unos 9 cm hay medio litro de sustrato para una planta que mueve mucha agua, y en agosto en Móstoles eso se seca en un día largo. Unos 90 ml cada 2 días, pero mete el dedo a diario: la señal de alarma es el sustrato seco al primer centímetro. En invierno, con menos luz y menos crecimiento, cada 5 días. RHS pide riego generoso durante el crecimiento; con esta maceta \"generoso\" significa sobre todo \"frecuente\". El día que la veas lacia ya llegas tarde: recupera en dos horas, pero pierde hojas bajas cada vez. Trasplantarla a 12 cm es lo que de verdad arregla el riego.",
         "dias_verano": 2,
         "dias_invierno": 5,
         "ml_aprox": 90,
-        "profundidad_seco_cm": 1
+        "profundidad_cm": 1
       },
       "luz": {
         "resumen": "El sol directo de la mañana es justo lo que necesita para mantener el granate.",
         "detalle": "RHS le da pleno sol y orientaciones este, sur u oeste; bajo cristal, luz plena o sombra parcial. Con el dato nuevo de que por la mañana entra sol directo en el salón, retiro el aviso de la primera versión de esta ficha: no hay razón para esperar que pierda el color donde está. Ese tramo de sol suave de mañana seguido de luz difusa es un buen régimen para un coleo de hoja granate. Mantenla en la franja donde entra el sol, gírala un cuarto de vuelta en cada riego, y si el color de la hoja madura se apaga con el tiempo, acércala al cristal antes de pensar en abono.",
         "nivel": 4,
-        "nivel_recibido_estimado": 4,
         "categoria_ideal": "sol_directo",
         "categoria_recibida": "sol_directo_matinal",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": true,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 4,
+        "nivel_actual": 4,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "directo"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_brillante"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "primera hora de la mañana; después la luz pasa a difusa",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Media, 45–55 %. Aguanta el ambiente de un piso; el riesgo del aire seco es la araña roja.",
@@ -1217,13 +1414,6 @@
           "nota": "Entrada \"Prostrate Coleus\" = Plectranthus oertendahlii, no tóxica. Se cita para dejar claro que NO es esta planta: dar esta ficha por buena sería concluir \"no tóxica\" sobre una especie distinta."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Sin contar por Carlos. Consta la compra: Viveros Projardín, 2,25 €, mismo lote que el coleo grande. Eso es procedencia, no historia. Pendiente de preguntar."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -1278,6 +1468,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato de la casa."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -1299,6 +1524,15 @@
         "pasaporte_fitosanitario": null,
         "otros": null,
         "nota": "La etiqueta no indica calibre de maceta: `maceta_cm` va en null. Los 9 cm que se citan en la ficha son estimación a partir de la foto, no dato de etiqueta. El código «2040 2174» es el código interno del vivero, no un EAN-13."
+      },
+      "fecha_llegada": "2026-08-11",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 0,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Sin dato de irritación por contacto. Savia herbácea; lávate las manos al pinzar.",
+        "detalle": "Coleus scutellarioides no figura ni en la lista de plantas potencialmente dañinas de RHS ni en la de ASPCA, así que no hay categoría de irritación cutánea que citar. Que no figure no significa que no irrite: significa que nadie lo ha clasificado. Es una labiada de savia herbácea y las tareas habituales —pinzar ápices, hacer esquejes y el cambio de maceta que tiene pendiente— no piden guantes en la práctica normal de jardinería. Lávate las manos al terminar, que es lo razonable con cualquier planta.",
+        "epi": null
       }
     },
     {
@@ -1310,25 +1544,42 @@
       "alt": "Ficus Sunny muy denso en una maceta colgante verde de 15 cm, con cientos de hojas pequeñas, ovaladas y de margen ondulado, verdes en el centro y con un borde blanco crema ancho; los tallos rojizos caen por todos los lados.",
       "foto_etiqueta": "ficus-sunny-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta colgante verde rodeada de hojas de borde blanco, con la etiqueta de Viveros Projardín: «FICUS SUNNY MACETA 15 CM», 8,95 €, pasaporte fitosanitario ES13-28/0283F.",
-      "historia": null,
+      "historia": "Comprado en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 8,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
         "resumen": "La que menos perdona un olvido: cada 3 días en verano, cada 6 en invierno, ~300 ml.",
         "detalle": "RHS lo dice sin rodeos para las higueras ornamentales de hoja pequeña: la mayoría lo pasa mal con el sustrato seco y con el aire seco, y da la regla concreta de regar cuando los 2 cm de arriba del sustrato estén secos. En una maceta colgante de 15 cm, con esta masa de hoja y en agosto en Móstoles, eso son unos 300 ml cada 3 días; en invierno, cada 6, manteniendo el sustrato solo ligeramente húmedo. Lo importante de esta planta es que un secado completo no se recupera: las hojas afectadas se vuelven marrones y crujientes y no vuelven a ponerse verdes; la planta rebrota, pero se queda con calvas. Como está colgada, se seca más rápido que las que están en una mesa, y es fácil olvidarla porque queda por encima de la altura de la vista. Riega hasta que salga agua por los agujeros y déjala escurrir antes de volver a colgarla.",
         "dias_verano": 3,
         "dias_invierno": 6,
         "ml_aprox": 300,
-        "profundidad_seco_cm": 2
+        "profundidad_cm": 2
       },
       "luz": {
         "resumen": "Luz filtrada brillante. El sol de la mañana le vale; vigila que no queme el margen blanco.",
         "detalle": "RHS pide para Ficus pumila pleno sol o sombra parcial en exterior, y bajo cristal luz plena o filtrada; en la guía de higueras ornamentales matiza que las variegadas necesitan más luz que las de hoja verde, porque la parte blanca no fotosintetiza, y recomienda luz indirecta brillante en interior. Con casi la mitad de cada hoja en blanco crema, a esta le conviene estar en la parte luminosa del ventanal, y el tramo de sol directo de la mañana es asumible y probablemente le viene bien. El punto de vigilancia es concreto: el margen blanco no tiene clorofila y se quema antes que la parte verde. Si ves bordes blancos que se vuelven de color papel o pardo translúcido en las hojas más expuestas, ese sol ya es demasiado y toca un visillo. Lo que no tolera en ningún caso es el sol de las horas fuertes tras el cristal. Gírala un cuarto de vuelta cada dos semanas: en una colgante, el lado que mira a la pared se pela.",
         "nivel": 3,
-        "nivel_recibido_estimado": 4,
         "categoria_ideal": "indirecta_brillante",
         "categoria_recibida": "sol_directo_matinal",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": true,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 3,
+        "nivel_actual": 4,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "directo"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_brillante"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "primera hora de la mañana; después la luz pasa a difusa",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Alta, 50–60 %. RHS recomienda pulverizar la hoja: aquí sí, es la excepción.",
@@ -1543,13 +1794,6 @@
           "nota": "Listado completo de ASPCA para gatos, revisado: el único Ficus que aparece es Ficus benjamina, en la sección de tóxicas. Ficus pumila no figura ni como tóxica ni como no tóxica."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Sin contar por Carlos. Consta la compra: Viveros Projardín, 8,95 €. Pendiente de preguntar."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -1604,6 +1848,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato de la casa."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -1625,6 +1904,15 @@
         "pasaporte_fitosanitario": null,
         "otros": null,
         "nota": "«2080 5364» es código interno del vivero, no un EAN-13."
+      },
+      "fecha_llegada": "2026-08-11",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 0,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "El látex blanco de los Ficus es alérgeno cutáneo: guantes al podar, y no te frotes los ojos.",
+        "detalle": "Al cortar cualquier Ficus sale un látex blanco. RHS incluye Ficus benjamina en su lista de plantas potencialmente dañinas, categoría C, como «skin allergen, harmful if eaten», y ASPCA describe para esa misma especie ficina y ficusina con irritación gastrointestinal y dérmica. No hay entrada específica para Ficus pumila en ninguna de las dos, así que esto es información de género y así hay que leerla. Como esta planta se poda a menudo —es colgante y hay que recortar los tallos que se pelan—, la precaución es la que más veces va a aplicar: guantes, no frotarse los ojos, limpiar la tijera y lavarse las manos. En piel sensible el látex puede dar picor o enrojecimiento.",
+        "epi": "guantes"
       }
     },
     {
@@ -1636,25 +1924,42 @@
       "alt": "Crisantemo de floristería en maceta gris de vivero de 12 cm, formando una cúpula compacta con decenas de flores dobles blancas de tipo pompón y centro amarillo verdoso, muchos botones aún cerrados y hojas verde oscuro profundamente lobuladas.",
       "foto_etiqueta": "margarita-etiqueta.jpg",
       "alt_etiqueta": "Detalle de la maceta gris de vivero con la etiqueta de Viveros Projardín: «MARGARITA MACETA 12 CM», 3,95 €, pasaporte fitosanitario ES13-28/0283F. Alrededor se ven bien las hojas anchas y profundamente lobuladas que delatan que es un crisantemo, no una margarita.",
-      "historia": null,
+      "historia": "Comprada en Viveros Projardín (Avda. de Móstoles) el 11 de agosto de 2026 por 3,95 €, el mismo día en que se hizo la foto de esta ficha. Es su primer día en casa.",
       "riego": {
         "resumen": "Mientras esté en flor, mucha sed: cada 2 días en verano, unos 180 ml en la maceta de 12 cm.",
         "detalle": "Una planta en plena floración con esta densidad de flor y de hoja en una maceta de 12 cm bebe muchísimo. RHS lo formula así: no dejar nunca que el sustrato se seque del todo, pero sin encharcar, porque no toleran el suelo saturado. En agosto en Móstoles eso son unos 180 ml cada 2 días; comprueba a diario metiendo el dedo, porque si se marchita en flor, las flores abiertas no se recuperan y los botones se quedan sin abrir. Riega por el borde de la maceta, nunca sobre las flores: las flores dobles mojadas se pudren y son la puerta de la botritis. Si la mantienes después de la floración, el consumo baja mucho: cada 5 días.",
         "dias_verano": 2,
         "dias_invierno": 5,
         "ml_aprox": 180,
-        "profundidad_seco_cm": 2
+        "profundidad_cm": 2
       },
       "luz": {
         "resumen": "El sol de la mañana la favorece. Pero no volverá a florecer aquí: es cuestión de fotoperiodo.",
         "detalle": "RHS pide para los crisantemos sitio cálido y soleado y avisa de que no van bien en sombra; para los de floristería de interior, luz filtrada brillante con buena ventilación y mínimo de 10 °C. Con el dato nuevo de que por la mañana entra sol directo, la ubicación es buena para ella: es de las que mejor aprovecha ese tramo, y el sol matinal ayuda a que la mata se mantenga compacta y la flor firme. Lo que no cambia es lo otro, porque no depende de la cantidad de luz sino de su duración: un crisantemo de maceta se produce forzando el fotoperiodo con días cortos artificiales, y a menudo con enanizantes, para que salga a la venta compacto y cargado de flor. Eso no se reproduce en un salón por muy bien iluminado que esté. Aquí es una planta de temporada: dará unas 4 a 6 semanas de flor y luego hay que decidir qué hacer con ella.",
         "nivel": 4,
-        "nivel_recibido_estimado": 4,
         "categoria_ideal": "sol_directo",
         "categoria_recibida": "sol_directo_matinal",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": true,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 4,
+        "nivel_actual": 4,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "directo"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_brillante"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "primera hora de la mañana; después la luz pasa a difusa",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Media le basta. Lo que necesita es aire moviéndose: en aire quieto salen oídio y botritis.",
@@ -1840,13 +2145,6 @@
           "nota": "Entrada de género: Chrysanthemum spp. (Compositae), tóxica para perros, gatos y caballos; sesquiterpenos, lactonas, piretrinas y otros irritantes; vómitos, diarrea, salivación, descoordinación y dermatitis. No hay entrada específica para C. × morifolium."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Sin contar por Carlos. Consta la compra: Viveros Projardín, 3,95 €. Pendiente de preguntar."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -1901,6 +2199,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato de la casa."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -1922,6 +2255,15 @@
         "pasaporte_fitosanitario": null,
         "otros": null,
         "nota": "El nombre de la etiqueta («MARGARITA») no coincide con la planta, que es un crisantemo de floristería. Se transcribe lo que dice la etiqueta, no lo que es. «2040 6899» es código interno del vivero."
+      },
+      "fecha_llegada": "2026-08-11",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 0,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Alérgeno cutáneo según RHS. Si retiras muchas flores pasadas, hazlo con guantes.",
+        "detalle": "RHS incluye Chrysanthemum en su lista de plantas potencialmente dañinas, categoría C, descrito como «skin allergen», y en sus fichas recomienda guantes y equipo de protección al manipularlo. El grupo responsable son las lactonas sesquiterpénicas, que ASPCA también nombra entre sus principios activos y que son una causa conocida de dermatitis de contacto. Aquí aplica más que en otras plantas por una razón práctica: la tarea que más veces vas a hacer con ella es retirar flores pasadas, y eso son muchos minutos de manos entre el follaje. Con piel sensible, guantes; en cualquier caso, lavarse las manos al terminar.",
+        "epi": "guantes si tienes piel sensible"
       }
     },
     {
@@ -1931,25 +2273,42 @@
       "familia": "Araceae",
       "foto": "poto.jpg",
       "alt": "Poto en una maceta cerámica de cuadros blancos y negros, sobre una estantería de madera oscura, con hojas grandes acorazonadas de verde intenso muy jaspeadas de amarillo y crema, que se abren hacia los lados del hueco.",
-      "historia": null,
+      "historia": "Lleva más de veinte años con la familia: es, con diferencia, la planta más antigua de la casa. No tiene etiqueta de vivero ni trazabilidad comercial, cosa coherente con dos décadas de convivencia.",
       "riego": {
         "resumen": "Cada 7 días en verano, cada 10–14 en invierno. ~200 ml, y comprueba el drenaje del cachepot.",
         "detalle": "RHS da la regla exacta: no regar en exceso y dejar que los 2 cm de arriba del sustrato se secen entre riegos; en su guía lo repite como \"riega solo cuando el sustrato esté acercándose a la sequedad, compruébalo con el dedo\". Para esta maceta, unos 200 ml cada 7 días en verano y cada 10-14 en invierno. Es la planta más tolerante de la casa a que te olvides, y la más fácil de matar por lo contrario: la podredumbre de raíz por exceso de agua es su problema principal según RHS. Aquí hay un detalle concreto de esta maceta: es cerámica decorativa y en la foto no se ve si tiene agujero. Si no lo tiene, el agua sobrante se queda en el fondo y las raíces se ahogan sin que se vea nada desde fuera. Lo mejor: riégala en el fregadero, deja escurrir 10 minutos y devuélvela a su sitio.",
         "dias_verano": 7,
         "dias_invierno": 10,
         "ml_aprox": 200,
-        "profundidad_seco_cm": 2
+        "profundidad_cm": 2
       },
       "luz": {
         "resumen": "En la estantería recibe menos de lo ideal. Acércala al ventanal, pero no al tramo de sol directo.",
         "detalle": "RHS: prefiere luz indirecta brillante, como una ventana al este o al oeste, y crece también con algo de sombra aunque más despacio; con poca luz el follaje pierde la variegación y el crecimiento es pobre. Esta es la única de las siete que no está pegada al ventanal, sino en un hueco de estantería algo retirado, así que es la única con déficit de luz y no con exceso: recibe alrededor de un nivel 2 cuando le convendría un 3. La buena noticia es que las hojas actuales están muy bien jaspeadas, lo que indica que hasta ahora le ha bastado. Si decides acercarla, hay un matiz que importa con el contexto nuevo: acércala a la luz difusa, no al tramo donde entra el sol directo de la mañana, porque en una variegada el sol directo quema primero las zonas claras de la hoja. La comprobación no es teórica: en 2 o 3 meses compara una hoja nueva con una vieja. Si la nueva sale más verde y con menos amarillo, es falta de luz.",
         "nivel": 3,
-        "nivel_recibido_estimado": 2,
         "categoria_ideal": "indirecta_brillante",
         "categoria_recibida": "indirecta_media",
-        "orientacion_ventana": "noreste",
         "sol_directo_matinal": false,
-        "distancia_m": null
+        "distancia_m": null,
+        "nivel_ideal": 3,
+        "nivel_actual": 2,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "indirecto_medio"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_medio"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "no consta que la mancha de sol llegue al hueco de la estantería",
+          "confirmado_por": "Carlos"
+        }
       },
       "humedad": {
         "resumen": "Le da igual: es la única que no necesita humedad extra. Con el ambiente del piso va bien.",
@@ -2134,13 +2493,6 @@
           "nota": "RHS confirma en la misma dirección: como muchas aráceas es tóxica, recomienda guantes para manipularla y mantenerla lejos de niños y mascotas."
         },
         {
-          "campo": "historia",
-          "fuente": null,
-          "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Carlos no ha contado de dónde vino. Esta planta no trae etiqueta de vivero, así que ni siquiera hay procedencia comercial documentada: es de las que más probablemente venga de un esqueje o de un regalo, pero eso hay que preguntárselo, no deducirlo."
-        },
-        {
           "campo": "notas_carlos",
           "fuente": null,
           "url": null,
@@ -2195,6 +2547,41 @@
           "url": null,
           "consultado": "2026-08-11",
           "nota": "Que las siete comparten habitación es dato de la casa aportado por Carlos, y es lo que convierte el contagio en un riesgo real y no en un tópico. La descripción de los síntomas de trips y araña roja está citada en las entradas de RHS de esta misma ficha."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Dato personal, aportado por Carlos: no se verifica en fuente botánica y no se completa más de lo que él ha contado. Deliberadamente NO se escribe el motivo del regalo, porque el motivo era un cumpleaños y decirlo junto a la fecha publicaría en una web la fecha de nacimiento de una persona. La fecha sí está porque explica la antigüedad de la planta, que es lo que hace falta para el diagnóstico."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Solo se puede afirmar de forma aproximada («hace más de 20 años»), así que `fecha_llegada` y `dias_en_casa` van en null y el dato está en `fecha_llegada_texto`. Una fecha exacta inventada sería peor que un texto impreciso y cierto."
+        },
+        {
+          "campo": "luz.tramos",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Carlos, textual: «por la mañana da sol directo donde están, luego se va». No ha dado horas, así que `sol_directo.desde` y `.hasta` van en null y los tramos se describen como «primera hora de la mañana» y «resto del día». Corrige una versión anterior de esta ficha que decía «sin sol directo», deducida de la orientación noreste: la deducción era razonable y era falsa, y manda el dueño mirando su salón. En esta planta hay además una duda propia: está en un hueco de estantería retirado del ventanal y no consta si la mancha de sol llega hasta ahí. Pregunta concreta: ¿le toca el sol de la mañana al poto?"
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-11",
+          "nota": "Lista vacía: nadie ha dictado todavía notas personales. Cuando Noah o Carlos cuenten algo, entra como {autor, texto}. `notas_carlos` sigue en null."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-11",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, con categorías A (más tóxicas) a C. Es la fuente que cubre el riesgo para personas por contacto, que ASPCA no cubre porque es veterinaria. Lo que dice de estos géneros: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant»; Ficus benjamina, categoría C, «skin allergen, harmful if eaten»; Chrysanthemum, categoría C, «skin allergen». Begonia, Coleus y Adiantum NO figuran en la lista: eso se dice como ausencia de clasificación, no como inocuidad."
         }
       ],
       "ubicacion": {
@@ -2204,7 +2591,16 @@
       },
       "etiqueta_vivero": null,
       "foto_etiqueta": null,
-      "alt_etiqueta": null
+      "alt_etiqueta": null,
+      "fecha_llegada": null,
+      "fecha_llegada_texto": "hace más de 20 años",
+      "dias_en_casa": null,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Guantes al hacer esquejes: RHS lo clasifica como irritante de piel y ojos.",
+        "detalle": "Es la mejor documentada de las siete por esta vía. RHS lo incluye en su lista de plantas potencialmente dañinas, categoría C, con la descripción «harmful if eaten; skin & eye irritant», y en su guía de cultivo recomienda expresamente guantes para manipularlo. El irritante son oxalatos de calcio insolubles (ASPCA), que actúan por contacto mecánico: al cortar un tallo para un esqueje sale savia. Guantes, no te frotes los ojos y lávate las manos después. Es precaución de jardinería normal, no una alarma.",
+        "epi": "guantes"
+      }
     }
   ]
 }

@@ -679,8 +679,9 @@
   }
 
   /* Los límites del diagnóstico se leen distinto del diagnóstico: no son
-     hallazgos, son la frontera de lo que la foto permite afirmar. */
-  .estado__bloque--limites .estado__lista { color: var(--texto-sin-dato); }
+     hallazgos, son la frontera de lo que la foto permite afirmar. Van en
+     secundario, no en gris de «sin dato»: son contenido, no una ausencia. */
+  .estado__bloque--limites .estado__lista { color: var(--texto-secundario); }
 
   .estado__revisar {
     font-size: var(--texto-s);
@@ -810,11 +811,20 @@
     border: var(--trazo-fino) solid var(--color-borde-sutil);
   }
 
-  .prueba__sin,
-  .prueba__nota {
+  /* La frase de «sin etiqueta» NO va en gris de sin-dato: en estas dos plantas
+     la ausencia de pegatina es antigüedad, y eso es contenido, no un hueco. */
+  .prueba__sin {
+    font-size: var(--texto-s);
+    color: var(--texto-secundario);
+    max-width: var(--medida-corta);
+    text-wrap: pretty;
+  }
+
+  .prueba__nota,
+  .prueba__aclimatacion {
     font-family: var(--fuente-dato);
     font-size: var(--texto-xs);
-    color: var(--texto-sin-dato);
+    color: var(--texto-meta);
     max-width: var(--medida-corta);
   }
 
@@ -900,26 +910,32 @@
 
   /* Toxicidad: tres estados que se distinguen por BORDE e ICONO además de por
      color, así que en escala de grises siguen siendo tres cosas distintas.
-     Ninguno es verde: no hay ni una planta con «no tóxica» confirmada. */
-  .dato--toxicidad .dato__texto::before {
-    font-family: var(--fuente-dato);
-    font-weight: var(--peso-fuerte);
+
+     Sin rojo, y es deliberado: en esta casa no hay mascotas, así que la
+     toxicidad es informativa y no urgente. --color-alerta queda EXCLUSIVAMENTE
+     para la severidad crítica. En este sistema el color significa «haz algo
+     hoy», y una planta tóxica en una casa sin gato no pide nada hoy. */
+  .dato--toxicidad {
+    background: var(--fondo-hundido);
+    border-radius: var(--radio-panel);
+    padding: var(--relleno-panel);
+
+    & .dato__texto::before {
+      font-family: var(--fuente-dato);
+      font-weight: var(--peso-fuerte);
+    }
   }
 
   .dato[data-toxicidad="toxica"] {
-    border-inline-start: var(--trazo-grueso) solid var(--color-alerta);
-    padding-inline-start: var(--space-3);
-
-    & .dato__texto { color: var(--color-alerta); }
-    & .dato__texto::before { content: "!! "; }
+    border-inline-start: var(--trazo-grueso) solid var(--color-borde);
+    & .dato__texto { color: var(--texto-principal); }
+    & .dato__texto::before { content: "▲ "; }
   }
 
   /* Discontinuo a propósito: el borde roto dice «esto está sin comprobar». */
   .dato[data-toxicidad="sin_datos_aspca"],
   .dato[data-toxicidad="sin_identificar"] {
     border-inline-start: var(--trazo-grueso) dashed var(--color-sin-dato-trama);
-    padding-inline-start: var(--space-3);
-
     & .dato__texto { color: var(--texto-sin-dato); }
     & .dato__texto::before { content: "? "; }
   }
@@ -995,8 +1011,11 @@
     .mas-datos,
     .cuaderno { grid-column: 1 / -1; }
 
-    /* La foto queda en la columna estrecha y los cuidados en la ancha. */
+    /* La foto y su prueba documental en la columna estrecha; los cuidados en la
+       ancha. Sin esto queda un hueco muerto grande bajo la foto. */
     .cuidados { grid-column: 2; }
+    .foto { grid-column: 1; }
+    .prueba { grid-column: 1; }
 
     .campos-diagrama { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
 
@@ -1066,27 +1085,36 @@
     to { opacity: 1; }
   }
 
-  /* ── 2 · la mañana del salón ────────────────────────────────────────────── */
+  /* ── 2 · lo que quiere y lo que tiene ──────────────────────────────────── */
 
-  .dia__eje { fill: var(--escala-1); }
-  .dia__tramo--sol-directo { fill: var(--color-aviso); }
-  .dia__tramo--sombra-luminosa,
-  .dia__tramo--sombra { fill: var(--escala-3); }
-  .dia__tramo--luz-indirecta { fill: var(--escala-2); }
-  .dia__tramo--sin-tipo { fill: var(--escala-2); }
-  .dia__hora, .dia__pie { fill: var(--texto-meta); }
+  /* El :not() es imprescindible: una regla CSS de `fill` pisa el atributo de
+     presentación del SVG, así que sin esto el hachurado no se vería nunca. */
+  .escala__paso:not(.escala__paso--incierto) { fill: var(--escala-1); }
+  .escala__paso--hueco { fill: var(--escala-3); }
+  .escala__marca--quiere { fill: var(--color-tinta); }
+  .escala__marca--tiene { fill: var(--color-aviso); }
+  .escala__rotulo { fill: var(--texto-meta); }
 
   /* El hachurado es el portador NO cromático de «no hay dato»: tiene que verse. */
   .hachurado__fondo { fill: var(--color-sin-dato-relleno); }
   .hachurado__linea { stroke: var(--color-sin-dato-trama); stroke-width: var(--trazo); }
 
-  .despegue[open] .dia__tramo {
-    animation: barrer var(--dur-dibujo) var(--ease-salida) both;
+  /* El equivalente en texto del diagrama. No es un pie decorativo: el SVG va
+     aria-hidden, así que esta frase es la única versión que llega a un lector. */
+  .diagrama__equivalente {
+    font-size: var(--texto-s);
+    color: var(--texto-principal);
+    margin-block-start: var(--space-2);
+    text-wrap: pretty;
+  }
+
+  .despegue[open] .escala__paso--hueco {
+    animation: aparecer-hueco var(--dur-media) var(--ease-salida) both;
     transform-origin: left center;
   }
-  @keyframes barrer {
-    from { transform: scaleX(0); }
-    to { transform: none; }
+  @keyframes aparecer-hueco {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   /* ── 3 · rango térmico ──────────────────────────────────────────────────── */
@@ -1135,7 +1163,7 @@
        Se anula la animación y se pinta directamente el estado final. */
     .despegue[open] .reloj__aguja,
     .despegue[open] .reloj__punta,
-    .despegue[open] .dia__tramo,
+    .despegue[open] .escala__paso--hueco,
     .despegue[open] .temp__casa,
     .despegue[open] .recup__trazo {
       animation: none;

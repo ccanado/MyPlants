@@ -149,6 +149,8 @@ const NOMBRE_NIVEL = new Map([
   [4, "mucha luz"], [5, "sol directo"],
 ]);
 
+let secuenciaPatron = 0;
+
 export function diagramaLuz(luz) {
   const actual = numero(luz?.nivel_actual) ?? numero(luz?.nivel);
   const ideal = numero(luz?.nivel_ideal);
@@ -156,7 +158,10 @@ export function diagramaLuz(luz) {
 
   const frag = document.createDocumentFragment();
   const svg = lienzo("0 0 120 46", "diagrama--luz");
-  svg.append(hachurado());
+  // Un id por instancia: siete patrones llamados igual es HTML inválido y todas
+  // las referencias acabarían apuntando al primero.
+  const idPatron = `hachurado-${(secuenciaPatron += 1)}`;
+  svg.append(hachurado(idPatron));
 
   const x0 = 10, ancho = 100, y = 18, alto = 12, hueco = 2;
   const paso = ancho / PASOS_LUZ;
@@ -174,7 +179,7 @@ export function diagramaLuz(luz) {
       class: clases.join(" "),
       x: x0 + paso * (n - 1) + hueco / 2,
       y, width: paso - hueco, height: alto, rx: 1,
-      fill: conocido ? null : "url(#hachurado)",
+      fill: conocido ? null : `url(#${idPatron})`,
     }));
   }
 
@@ -211,8 +216,8 @@ export function diagramaLuz(luz) {
 }
 
 /** Patrón de diagonales para «no hay dato». El CSS le da el color con tokens. */
-function hachurado() {
-  const patron = e("pattern", { id: "hachurado", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+function hachurado(id) {
+  const patron = e("pattern", { id, width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
   patron.append(e("rect", { class: "hachurado__fondo", width: 6, height: 6 }));
   patron.append(e("line", { class: "hachurado__linea", x1: 0, y1: 0, x2: 0, y2: 6 }));
   const defs = e("defs");

@@ -120,8 +120,24 @@ export function normalizar(s) {
     .trim();
 }
 
+/**
+ * Etiquetas de presentación. Los valores del JSON van sin tilde a propósito
+ * (`atencion`, `critica`) para que comparar cadenas sea seguro; pero en pantalla
+ * se escribe en español correcto. La clave sigue siendo la del JSON: esto solo
+ * decide cómo se lee.
+ */
+const ETIQUETAS = new Map([
+  ["critica", "Crítica"],
+  ["atencion", "Atención"],
+  ["sana", "Sana"],
+  ["facil", "Fácil"],
+  ["dificil", "Difícil"],
+]);
+
 /** «luz indirecta» → «Luz indirecta», para pintar el valor crudo del JSON. */
 export function humanizar(valor) {
-  const s = String(valor).replace(/[_-]+/g, " ").trim();
-  return s.charAt(0).toUpperCase() + s.slice(1);
+  const crudo = String(valor).replace(/[_-]+/g, " ").trim();
+  const etiqueta = ETIQUETAS.get(normalizar(crudo));
+  if (etiqueta) return etiqueta;
+  return crudo.charAt(0).toUpperCase() + crudo.slice(1);
 }

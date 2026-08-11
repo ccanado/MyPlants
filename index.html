@@ -145,6 +145,14 @@
               <ul class="estado__lista"></ul>
             </div>
 
+            <!-- Lo que NO se puede afirmar desde una foto. Va aquí, debajo de
+                 señales y causas, y NO en un plegable: un diagnóstico que no
+                 dice dónde acaba su alcance se lee como si lo supiera todo. -->
+            <div class="estado__bloque estado__bloque--limites" hidden>
+              <h5 class="estado__sub">Lo que la foto no dice</h5>
+              <ul class="estado__lista"></ul>
+            </div>
+
             <div class="estado__tratamiento" hidden>
               <h5 class="estado__sub">Qué hacer</h5>
               <div class="estado__diagrama"></div>
@@ -155,13 +163,6 @@
               </p>
             </div>
 
-            <!-- Lo que NO se puede afirmar desde una foto. Va en la ficha a
-                 propósito: un diagnóstico que no dice dónde se acaba su
-                 alcance se lee como si lo supiera todo. -->
-            <div class="estado__bloque estado__bloque--limites" hidden>
-              <h5 class="estado__sub">No se ve en la foto</h5>
-              <ul class="estado__lista"></ul>
-            </div>
           </section>
 
           <figure class="foto" hidden>

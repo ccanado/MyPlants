@@ -69,6 +69,13 @@ RECOLECTOR = """
   const salida = { tests: {}, errores: [] };
   const espera = (ms) => new Promise(r => setTimeout(r, ms));
 
+  // Si hay que abrir una ficha antes de medir (para auditar el estado desplegado)
+  if (window.__QA_ABRIR__) {
+    for (let i = 0; i < 60 && !document.querySelector('.despegue'); i++) await espera(100);
+    const d = document.querySelectorAll('details.despegue')[window.__QA_ABRIR_N__ || 0];
+    if (d) { d.open = true; await espera(700); }
+  }
+
   // esperar a que la página termine de pintar sus fichas desde el JSON
   for (let i = 0; i < 60; i++) {
     if (document.querySelectorAll('article').length > 0) break;
@@ -83,6 +90,7 @@ RECOLECTOR = """
     catch (e) { salida.errores.push(nombre + ': ' + (e && e.message)); }
   }
 
+  salida.consola = window.__QA_CONSOLA__ || [];
   salida.meta = {
     url: location.href,
     ancho: innerWidth, alto: innerHeight,
@@ -134,8 +142,46 @@ def envolver(nombre: str, cuerpo: str) -> str:
     )
 
 
+# Se inyecta ANTES que todo lo demás. Los <script type="module"> se aplazan hasta
+# después de parsear el documento, así que un script clásico puesto al final del
+# body se ejecuta antes que js/app.js y llega a tiempo de cazar sus errores.
+VIGILANTE = """
+window.__QA_CONSOLA__ = [];
+(function () {
+  const registra = (nivel) => {
+    const orig = console[nivel].bind(console);
+    console[nivel] = function (...a) {
+      try {
+        window.__QA_CONSOLA__.push({
+          nivel,
+          texto: a.map(x => {
+            if (x instanceof Error) return x.message;
+            if (typeof x === 'object') { try { return JSON.stringify(x); } catch (e) { return String(x); } }
+            return String(x);
+          }).join(' ').slice(0, 300),
+        });
+      } catch (e) {}
+      return orig(...a);
+    };
+  };
+  ['error', 'warn'].forEach(registra);
+  addEventListener('error', (e) => {
+    const t = e.target;
+    if (t && t !== window && (t.src || t.href)) {
+      window.__QA_CONSOLA__.push({ nivel: 'recurso', texto: 'no carga: ' + (t.src || t.href) });
+    } else {
+      window.__QA_CONSOLA__.push({ nivel: 'excepcion', texto: (e.message || '') + ' @' + (e.filename || '') + ':' + e.lineno });
+    }
+  }, true);
+  addEventListener('unhandledrejection', (e) => {
+    window.__QA_CONSOLA__.push({ nivel: 'promesa', texto: String((e.reason && e.reason.message) || e.reason).slice(0, 300) });
+  });
+})();
+"""
+
+
 def construir_inyeccion(tests: list[str]) -> str:
-    trozos = []
+    trozos = [f"<script>\n{VIGILANTE}\n</script>"]
     for nombre in tests:
         ruta = TESTS / f"{nombre}.js"
         if not ruta.is_file():
@@ -198,12 +244,17 @@ def main() -> int:
     ap.add_argument("--completa", action="store_true", help="captura de página completa")
     ap.add_argument("--json", default=None, help="vuelca el informe crudo a un fichero")
     ap.add_argument("--puerto", type=int, default=8011)
+    ap.add_argument("--abrir", type=int, default=None, help="abre la ficha N (0-based) antes de medir")
     ap.add_argument("--verboso", action="store_true")
     args = ap.parse_args()
 
     tests = args.test or ORDEN
     buzon = {"informe": None, "listo": threading.Event()}
-    srv = servidor(construir_inyeccion(tests), args.puerto, buzon)
+    inyeccion = construir_inyeccion(tests)
+    if args.abrir is not None:
+        inyeccion = (f"<script>window.__QA_ABRIR__=true;window.__QA_ABRIR_N__={args.abrir};</script>"
+                     + inyeccion)
+    srv = servidor(inyeccion, args.puerto, buzon)
     url = f"http://127.0.0.1:{args.puerto}/"
 
     perfil = tempfile.mkdtemp(prefix="qa-chrome-")
@@ -286,6 +337,15 @@ def main() -> int:
         for clave in ("fallos", "texto_fallos", "controles_fallos", "problemas"):
             for f in (r.get(clave) or [])[:14]:
                 print(f"    · {json.dumps(f, ensure_ascii=False)[:190]}")
+
+    consola = informe.get("consola", [])
+    if consola:
+        print(f"\n✗ CONSOLA: {len(consola)} mensaje(s)")
+        for c in consola[:15]:
+            print(f"    [{c['nivel']}] {c['texto']}")
+        fallo = True
+    else:
+        print("\n✓ consola limpia: 0 errores, 0 warnings, 0 recursos caídos")
 
     for e in informe.get("errores", []):
         print(f"\n!! error ejecutando {e}")
