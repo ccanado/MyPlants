@@ -39,7 +39,8 @@
       "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
       "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente.",
       "estados[].causas_probables[].tipo": "conjunto cerrado que dice QUÉ CLASE de ítem es, porque en un mismo bloque conviven cosas distintas y un rótulo único misfila la grave: `causa` (explica algo que se ve en la foto), `afirmacion` (lo que la ficha sostiene: por qué está bien, con su evidencia), `riesgo` (lo que puede matar la planta y todavía no ha pasado), `mejora` (opcional: se puede hacer o no y no pasa nada), `aclaracion` (reencuadra cómo se lee todo lo demás: de dónde viene la planta, qué especie es de verdad, qué acota el cuadro). Ausente = `causa`, así que no rompe nada anterior. Reparto real hoy: 15 causa, 9 riesgo, 7 aclaracion, 4 afirmacion y 1 mejora. Solo `mejora` se pliega; las otras cuatro van abiertas, porque una afirmación, un riesgo y una aclaración no son letra pequeña. Regla acordada con ux-lead: toda ficha `sana` lleva al menos una `afirmacion`, la primera y sin plegar, porque en una planta sana la afirmación ES el diagnóstico — un bloque que solo enseña riesgos afirma que la planta está en apuros, que es tan falso como preguntarle la causa de un problema que no tiene. En `critica` y `atencion` NO se exige: forzar una afirmación de salud en una planta enferma sería el mismo error al revés.",
-      "anos_en_casa_min": "años que la planta lleva en casa como MÍNIMO, en número. Solo existe en el poto, que es la única sin `fecha_llegada`: es la forma numérica de `fecha_llegada_texto` («hace más de 20 años»). No es una medida, es un suelo, así que quien lo dibuje tiene que dejarlo abierto hacia arriba y nunca leerlo como «20 años exactos». Existe para que nadie tenga que sacar el número de una frase con una expresión regular: la prosa es para el lector y el número para el render, y si algún día se reescribe la frase el diagrama no se entera. Si aparece la fecha exacta, este campo se retira y manda `fecha_llegada`."
+      "anos_en_casa_min": "años que la planta lleva en casa como MÍNIMO, en número. Solo existe en el poto, que es la única sin `fecha_llegada`: es la forma numérica de `fecha_llegada_texto` («hace más de 20 años»). No es una medida, es un suelo, así que quien lo dibuje tiene que dejarlo abierto hacia arriba y nunca leerlo como «20 años exactos». Existe para que nadie tenga que sacar el número de una frase con una expresión regular: la prosa es para el lector y el número para el render, y si algún día se reescribe la frase el diagrama no se entera. Si aparece la fecha exacta, este campo se retira y manda `fecha_llegada`.",
+      "estados[].limitacion_foto": "qué NO permite afirmar ESA imagen concreta: luz, hora, encuadre o resolución. Es distinto de `no_visible_en_foto`, y la diferencia importa: `no_visible_en_foto` es lo que ninguna foto puede contener —raíces, olor del sustrato, humedad real del cepellón— y `limitacion_foto` es lo que ésta no alcanza y otra mejor sí alcanzaría. Por eso lo segundo se arregla haciendo otra foto y lo primero no. Va en null cuando no consta ninguna limitación de la imagen (begonia y margarita), y ese null NO significa «sin limitaciones»: significa que no se ha registrado ninguna, así que no se rotula como afirmación. Cinco de las siete lo tienen, y en dos casos explica un límite del propio diagnóstico: la foto nocturna del helecho es la razón de que su identificación se quede en el género, y la penumbra del poto es la razón de que su variegación se juzgue por el patrón y no por el tono."
     },
     "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas: sus fichas se citan porque son la autoridad nomenclatural y se han localizado una a una, pero no se han podido abrir con herramientas. Por eso cada nombre aceptado se ha comprobado además en IPNI (ipni.org), que es el índice nomenclatural de la misma casa —Kew— del que POWO toma la autoría y la publicación original, y que sí se puede abrir. IPNI no sustituye a POWO: POWO decide qué nombre es el aceptado y cuál es sinónimo, e IPNI aporta la autoría y la referencia de publicación. Las dos citas van juntas en las fichas para que se pueda auditar. Las URLs de ASPCA se citan en su forma final: el patrón antiguo /pet-care/animal-poison-control/toxic-and-non-toxic-plants/… redirige a /pet-care/aspca-poison-control/…, y como son citas de seguridad se guarda el destino y no la redirección. Excepción comprobada: el listado completo para gatos (/pet-care/animal-poison-control/cats-plant-list) NO existe bajo el patrón nuevo, devuelve 404, así que esa se conserva tal cual.",
     "vivero": {
@@ -493,6 +494,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "helecho.jpg",
+          "limitacion_foto": "Tomada de noche y con luz baja. En ella no se pueden juzgar ni el color real de la fronde nueva ni el detalle del envés, y es la razón de que la identificación se quede en el género y no llegue a especie. Una foto diurna del brote ya desarrollado resolvería las tres cosas.",
           "severidad": "critica",
           "titulo": "Podado a ras tras secarse: un solo brote y ningún margen de error",
           "senales": [
@@ -821,7 +823,7 @@
           "fuente": "observación de foto",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Diagnóstico sobre la foto del 2026-08-11 y su etiqueta, con recortes ampliados del ápice, de una hoja madura, de las flores pasadas y de la superficie del sustrato."
+          "nota": "Diagnóstico sobre la foto del 2026-08-11 y su etiqueta, con recortes ampliados del ápice, de una hoja madura, de las flores pasadas y de la superficie del sustrato. No consta ninguna limitación propia de la imagen —ni luz escasa, ni encuadre que deje fuera algo que hiciera falta, ni falta de resolución para lo que se afirma—, así que `limitacion_foto` va en null. Null aquí no dice «no tiene limitaciones»: dice que no se ha registrado ninguna, y lo que la imagen no puede contener por su naturaleza —raíces, olor del sustrato, envés— sigue en `no_visible_en_foto`."
         },
         {
           "campo": "ubicacion",
@@ -1041,6 +1043,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "begonia-elatior.jpg",
+          "limitacion_foto": null,
           "severidad": "atencion",
           "titulo": "74 días en la maceta de vivero, sol de mañana y aire seco: tres cosas a la vez",
           "senales": [
@@ -1659,6 +1662,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "coleo-grande.jpg",
+          "limitacion_foto": "El envés de las hojas no está fotografiado, y es donde se decide entre trips y araña roja: la imagen ordena las dos hipótesis, no elige. Y la mota blanquecina de un nudo queda por debajo de su resolución, así que no se puede decidir si es cochinilla algodonosa incipiente, un resto de sustrato o un reflejo.",
           "severidad": "atencion",
           "titulo": "Un día en casa: el punteado y los agujeros vienen del vivero",
           "senales": [
@@ -2222,6 +2226,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "coleo-pequeno.jpg",
+          "limitacion_foto": "El envés no está fotografiado, así que en esta imagen no se pueden descartar ni trips ni araña roja — y con la planta hermana bajo sospecha, eso no es una formalidad. Las pocas motas pálidas del margen de dos hojas bajas están además en el límite de la resolución: da para decir que son escasas, no para clasificarlas.",
           "severidad": "sana",
           "titulo": "Un día en casa, sana y con buen color: solo le falta maceta",
           "senales": [
@@ -2786,6 +2791,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "ficus-sunny.jpg",
+          "limitacion_foto": "La mata es tan densa que la foto solo muestra su superficie: el interior no se ve, y es justo donde una araña roja empezaría sin notarse desde fuera. Eso no se arregla ampliando la imagen, se arregla abriendo la mata con la mano.",
           "severidad": "sana",
           "titulo": "Un día en casa, impecable: todo depende de que no se seque ni un día",
           "senales": [
@@ -3081,7 +3087,7 @@
           "fuente": "observación de foto",
           "url": null,
           "consultado": "2026-08-11",
-          "nota": "Diagnóstico e identificación sobre la foto del 2026-08-11 y la de su etiqueta, que muestra bien la hoja lobulada."
+          "nota": "Diagnóstico e identificación sobre la foto del 2026-08-11 y la de su etiqueta, que muestra bien la hoja lobulada. No consta ninguna limitación propia de la imagen —ni luz escasa, ni encuadre que deje fuera algo que hiciera falta, ni falta de resolución para lo que se afirma—, así que `limitacion_foto` va en null. Null aquí no dice «no tiene limitaciones»: dice que no se ha registrado ninguna, y lo que la imagen no puede contener por su naturaleza —raíces, olor del sustrato, envés— sigue en `no_visible_en_foto`."
         },
         {
           "campo": "ubicacion",
@@ -3302,6 +3308,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "margarita.jpg",
+          "limitacion_foto": null,
           "severidad": "sana",
           "titulo": "Un día en casa y en plena floración: planta de temporada, no de colección",
           "senales": [
@@ -3814,6 +3821,7 @@
         {
           "fecha_foto": "2026-08-11",
           "foto": "poto.jpg",
+          "limitacion_foto": "Tomada en penumbra. El dibujo de la variegación se lee bien —amplio y repartido— pero su intensidad de color no: lo que sostiene aquí que la luz le basta es el patrón del jaspeado, no el tono. Una foto con luz de día lo confirmaría.",
           "severidad": "sana",
           "titulo": "Veinte años en casa y bien variegado: solo hay que comprobar el drenaje",
           "senales": [
