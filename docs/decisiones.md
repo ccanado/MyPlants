@@ -433,3 +433,41 @@ anti-genérico no la había escrito nadie: **dos versiones renderizadas y decide
   pedía en su punto 12.2.
 - [agente] **`--color-sup-3` se borra por redundante**: valía exactamente lo mismo que
   `--color-separador`. Dos nombres para un color son dos sitios donde equivocarse.
+
+## Vigesimonovena vuelta — marcar lo hecho: aprobado en concepto, con lo abierto abierto
+
+Conversación con Carlos del **12 de agosto de 2026**, al cerrar el día. La especificación completa
+está en `docs/retomar.md` § 2; aquí solo las decisiones y sus alternativas descartadas.
+
+- [Carlos] **La web tiene que poder recibir «esto ya está hecho», y la marca tiene que vivir en
+  todos los clientes** — de ahí que se elijan las dos vías a la vez: `localStorage` para que marcar
+  sea inmediato y **la vuelta al repo** para que sobreviva. Sus palabras: *«el que use la web, por
+  eso hay que hacer 1+2 para que viva en todos los clientes»*.
+- [Carlos] **Descartado cualquier servidor o servicio externo** — *«estoy de acuerdo en no complicar
+  con servidores; lo que podamos hacer gracias a Pages de GitHub»*. Se mantiene «cero recursos de
+  terceros en runtime», que es de las cuatro cosas que el brief clasifica como no mentir y no
+  estética.
+- [agente] **Esto no es añadir persistencia: es automatizar la entrada de un campo que ya existe.**
+  Tres plantas tienen `riego.ultimo` con `ancla_tipo: riego_registrado` porque Carlos regó y se
+  anotó a mano. La marca ya está en el modelo de datos; lo que falta es el gesto.
+- [agente/Carlos] **«Hacer todo» son las cinco clases de tarea, pero marcar NO significa lo mismo en
+  las cinco** — descartado un botón uniforme: el `tipo` que ya está escrito en el dato decide. En
+  `fecha`, `temporada` y `vencida` la marca cierra; en `ritmo` **solo enriquece la observación** y
+  nunca produce un «hoy toca», porque el disparador del riego es el sustrato y no el calendario; en
+  `condicionada` no hace nada. Un vencimiento aritméticamente impecable y agronómicamente falso
+  sigue siendo falso, y esa distinción no la afloja el alcance.
+- [agente] **La fuente de verdad no se mueve:** `content/plantas.json` manda y `localStorage` es un
+  buzón. Si el JSON trae una fecha más reciente que la marca local, gana el JSON y la marca se borra
+  sola — descartado dejar la reconciliación para cuando aparezca el conflicto, que es cómo se
+  acumulan dos verdades.
+- [agente] **El coste de `localStorage` se dice en voz alta**, como ya se decidió en la décima
+  vuelta: es por navegador, y si se limpian datos la marca se va **en silencio**, que es peor que no
+  tenerla — un dato ausente se detecta y uno que desaparece no.
+- [agente] **Queda ABIERTO, y marcado como no verificado, qué permite Pages para que la marca viaje
+  entre clientes sin servidor.** Cuatro candidatas anotadas en `retomar.md` con lo que se sospecha
+  de cada una. La que más matiz tiene: navegar a github.com al pulsar un enlace **no es una petición
+  a terceros en runtime**, pero se le parece lo bastante como para merecer su propia línea aquí
+  antes de colarse.
+- [agente] **El riesgo no es técnico: es convertirse en un gestor de tareas**, que es justo lo que el
+  proyecto decidió no ser —sin rachas, sin porcentajes, sin premiar la visita—. La contención no es
+  no hacerlo: es que marcar registre una **observación fechada** y no puntúe a nadie.

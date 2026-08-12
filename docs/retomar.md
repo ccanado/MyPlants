@@ -105,20 +105,112 @@ planta, de quien la riega. **No se inventan nunca.**
 
 Sitio para escribirlas: `docs/inventario.md`, que está preparado con las siete y su hueco.
 
-### 2. La pasada con `--url` sobre la web publicada
+### 2. Marcar lo hecho, y que quede — **aprobado en concepto por Carlos el 12 de agosto**
+
+La web pide cosas al que cuida las plantas y no puede recibir respuesta: no hay forma de decir
+«esto ya está». Carlos quiere que la haya. Sus respuestas a las tres preguntas que se le hicieron:
+
+1. **¿Quién marca?** *«El que use la web, por eso hay que hacer 1+2 para que viva en todos los
+   clientes.»*
+2. **¿Tiene que sobrevivir?** *«Si queda sería mejor, pero estoy de acuerdo en no complicar con
+   servidores. Lo que podamos hacer gracias a Pages de GitHub —quizás hay que explorar qué se puede
+   hacer.»*
+3. **¿Por dónde se empieza?** *«Yo diría de hacer todo.»*
+
+#### Esto ya está medio hecho, y por ahí se entra
+
+Tres plantas tienen hoy `riego.ultimo: "2026-08-11"` con `ancla_tipo: riego_registrado`. **Eso ya
+es una marca**: Carlos regó, se registró como dato con su fecha, y la ficha dice «se regó hace un
+día» en vez de «sin registrar». El campo existe, el render lo usa y el test lo verifica. Así que
+esto **no es añadir persistencia: es automatizar la entrada de un campo que ya existe**, y por eso
+es mucho más pequeño y mucho más seguro de lo que parece.
+
+#### La regla que gobierna, y no la afloja el alcance
+
+«Hacer todo» significa las cinco clases de tarea, **no** que marcar signifique lo mismo en todas. El
+`tipo` que ya está escrito en el dato lo decide:
+
+| tipo | cuántas | qué hace la marca |
+| --- | --- | --- |
+| `fecha` | 14 | **cierra la tarea**: el calendario manda de verdad |
+| `temporada` | 9 | **cierra la ventana** de este año |
+| `vencida` | 1 | **deja de vencer** |
+| `ritmo` (riego) | 7 | **solo enriquece la observación**: «se regó hace 3 días». **NUNCA «hoy toca»** |
+| `condicionada` | 4 | **nada**: su disparador es mirar la planta, no el calendario |
+
+Los dos últimos renglones no son alcance recortado, son honestidad de contenido. Está argumentado
+en `js/tareas.js`: para el riego el disparador real **no es el calendario, es el sustrato**. Con una
+marca perfecta la aritmética saldría —«regaste hace 4 días, cada 3 en verano, toca»— y sería
+*aritméticamente impecable y agronómicamente falsa*. Marcar convierte un hueco en una **observación
+fechada**; no convierte una observación en una orden.
+
+Y entra también **el plan de recuperación** —los seis pasos del helecho, cada uno con su señal
+observable—, que probablemente sea el mejor caso de todos: baja frecuencia, riesgo cero y es
+justo lo que esta web debería recordar.
+
+#### Dónde viven las marcas: 1 + 2, decidido
+
+1. **`localStorage`**, para que marcar sea inmediato. Gratis, cero peticiones, cero terceros,
+   funciona offline y no rompe ninguna restricción dura. Su coste **se dice en voz alta y no se
+   descubre** —ya estaba decidido así en `docs/decisiones.md`, décima vuelta—: es por navegador, y
+   si se limpian datos la marca se va **en silencio**, que es peor que no tenerla.
+2. **Que la marca vuelva al repo.** La web acumula lo marcado y ofrece un gesto deliberado
+   —copiar/descargar— que se le pasa a Claude Code, que lo escribe en `content/plantas.json` como
+   dato de verdad con su fecha. Es el único camino que sobrevive al móvil de uno, al portátil del
+   otro y a un borrado de caché, y usa el canal que ya existe para plantas y fotos nuevas.
+
+**Regla de reconciliación, escrita antes de programar nada:** si el JSON trae una fecha más reciente
+que la marca local, gana el JSON y la marca local se borra sola. La fuente de verdad sigue siendo
+`content/plantas.json`; `localStorage` es un buzón, no un archivo.
+
+**Descartado: cualquier servicio externo** (Firebase, un backend, un formulario de terceros). Rompe
+«cero recursos de terceros en runtime», que es de las cuatro cosas que el brief dice que no son
+estética sino no mentir.
+
+#### Lo que hay que explorar antes de decidir el punto 2 — **sin verificar, para mañana**
+
+GitHub Pages sirve ficheros y **no escribe nada**: eso es seguro. Lo que no está comprobado es qué
+alternativas hay para que la marca viaje entre clientes sin servidor propio. Candidatas a mirar, con
+lo que ya se sospecha de cada una:
+
+- **Un enlace con el estado codificado en la URL.** Cero servidores de verdad: marcas en el móvil y
+  te mandas el enlace. Funciona seguro; la duda es si el gesto es aceptable o es un juguete.
+- **Descargar un `.json` pequeño y commitearlo con Claude Code.** Es la opción 2 tal cual. Sin
+  incógnitas técnicas; la duda es la fricción.
+- **Escribir en el repo desde el navegador con la API de GitHub.** Necesitaría un token en el
+  cliente, y el repo es público: **casi con seguridad descartable**, pero conviene escribir por qué
+  para no re-descubrirlo.
+- **Una issue de GitHub prerrellenada por enlace.** Ojo con el matiz que hay que decidir: navegar a
+  github.com al pulsar **no es una petición a terceros en runtime**, pero se le parece bastante como
+  para que merezca una línea en `decisiones.md` en vez de colarse.
+
+#### El riesgo, que no es técnico
+
+Está escrito en el proyecto: *«sin notificaciones, sin rachas, sin porcentaje de cumplimiento, sin
+premiar la visita — la página se abre con prisa una vez cada quince días»*. Poner casillas es **la
+puerta de entrada a convertirse en un gestor de tareas**, que es justo lo que se decidió que no
+fuera. La contención no es no hacerlo: es que marcar registre una observación fechada y **no puntúe
+a nadie**.
+
+#### Coste estimado
+
+El código es pequeño —un módulo de almacén, el botón por tarea, que el render lo lea y la
+reconciliación—: dos o tres tardes. Lo caro es lo de arriba, que ya está pensado.
+
+### 3. La pasada con `--url` sobre la web publicada
 
 `python3 tests/runner.py --url https://ccanado.github.io/MyPlants/`. Es el punto 9.6 del checklist y
 la única medición inmune al problema del estado en movimiento, **porque producción no puede estar
 sucia**. Falta también la medición en frío del peso transferido (9.7), que hoy se estima.
 
-### 3. Dos presupuestos que se incumplen en verde
+### 4. Dos presupuestos que se incumplen en verde
 
 `peso-assets.py` avisa de `css/app.css` (78,8 KB contra un tope de 60) y de `js/` (156,6 KB contra
 60). Los dos topes son números redondos sin procedencia, igual que el 20/62/600. **Un tope que se
 incumple en verde no es un tope**: o se deriva o se retira. Y no lo decide un informe de QA — un
 informe puede medir contra un objetivo, no crearlo.
 
-### 4. El índice de síntomas como lista navegable
+### 5. El índice de síntomas como lista navegable
 
 El nivel 1 está hecho: el buscador ya indexa `senales`, `causas[].resumen` y `patron`, así que
 «hojas amarillas» encuentra algo y el placeholder dejó de mentir. Falta la entrada por síntoma como
@@ -126,24 +218,24 @@ lista, **generada de esos mismos campos y no de una taxonomía fija** — así c
 menos una planta por construcción y desaparece el problema de qué decir de un síntoma que hoy nadie
 tiene. Va en el buscador, no en la portada.
 
-### 5. Los tres umbrales sin derivar
+### 6. Los tres umbrales sin derivar
 
 Ocupación ≤ 20 %, tinta parando antes del 62 %, carrera de 600 px sin ancla. Cumplen los tres
 (0 %, y 566 px el peor); el criterio de aprobado no está justificado. Úsalos; no los defiendas como
 física.
 
-### 6. La prueba del imperativo a los dos skills
+### 7. La prueba del imperativo a los dos skills
 
 `.claude/skills/vanilla-web-craft/` y `plant-expert/` están escritos en imperativo y **son el
 vehículo más peligroso del ascenso de calificadores**, porque se leen como el manual del proyecto.
 La prueba es barata: leer cada imperativo y preguntar *«¿esto tiene dueño humano, o soy yo con voz
 de norma?»*. Lo que no lo tenga, se reescribe como propuesta con su motivo.
 
-### 7. La propuesta de `botanist`
+### 8. La propuesta de `botanist`
 
 Hacer comprobable una cita correcta que apunta al taxón equivocado.
 
-### 8. Fotos nuevas, cuando Carlos quiera registrar un estado nuevo
+### 9. Fotos nuevas, cuando Carlos quiera registrar un estado nuevo
 
 El esquema ya es histórico: la ficha diagnostica un momento fechado y no el presente. Añadir un
 estado nuevo no rompe nada — el distintivo toma el peor de todos y el vigente se lee por
