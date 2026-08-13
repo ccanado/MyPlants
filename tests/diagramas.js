@@ -155,13 +155,30 @@
       : [...s.querySelectorAll('[class*="tic"], [class*="nombre"], [class*="valor"]')]
       ).map(texto).filter(Boolean);
 
-    // Equivalente en texto: el propio title cuenta, los <text> internos cuentan, y
-    // un párrafo hermano cuenta. Si no hay ninguno, el dato vive solo en el dibujo.
+    /* Equivalente en texto: el propio title cuenta, los <text> internos cuentan, y
+       un párrafo hermano cuenta. Si no hay ninguno, el dato vive solo en el dibujo.
+
+       SUBE MIENTRAS EL CONTENEDOR NO APORTE TEXTO PROPIO, y esto es un arreglo del
+       13/08/2026 con su motivo. Miraba solo `parentElement`, y las siluetas de hoja
+       van dentro de un `<div class="identificacion__silueta">` que existe para
+       colocarlas y **no contiene nada más**: el rótulo con el rasgo («hoja de croton,
+       alargada y de borde entero…») es hermano de ese div, no del SVG. O sea que el
+       equivalente en texto estaba ahí, a un nivel de distancia, y el comprobador
+       informaba de «el dato solo existe en el dibujo» sobre nueve dibujos que sí lo
+       tienen. Era un falso positivo anterior a las plantas nuevas —cuatro en el
+       commit `aa7838e`, siete al pasar de siete a diez plantas—, y lo que lo delató
+       fue justo que creciera con el inventario.
+
+       Dos niveles como tope, para que un contenedor de sección con mucho texto no
+       acabe avalando a un SVG que no tiene nada al lado. Si un día algo pasa por
+       aquí sin merecerlo, el tope es lo que hay que bajar. */
     const hermanoConTexto = (() => {
-      const cont = s.parentElement;
-      if (!cont) return '';
-      const t = texto(cont).replace(texto(s), '').trim();
-      return t.length > 25 ? t.slice(0, 90) : '';
+      let cont = s.parentElement;
+      for (let nivel = 0; cont && nivel < 3; nivel += 1, cont = cont.parentElement) {
+        const t = texto(cont).replace(texto(s), '').trim();
+        if (t.length > 25) return t.slice(0, 90);
+      }
+      return '';
     })();
 
     const equivalente = rotulos.length >= 2 || !!hermanoConTexto || titulo.length > 20;
