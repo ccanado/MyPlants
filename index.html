@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Las plantas de casa — MyPlants</title>
-<meta name="description" content="Fichas de cuidado de las siete plantas que Carlos tiene en casa: riego, luz, sustrato, plagas y toxicidad, con las fuentes citadas.">
+<meta name="description" content="Fichas de cuidado de las diez plantas que Carlos tiene en casa: riego, luz, sustrato, plagas y toxicidad, con las fuentes citadas.">
 <!-- Favicon en línea como data: URI. Un .ico suelto sería una petición más y un
      404 en consola; esto son cero peticiones. Campo oscuro y el ácido del coleo,
      que es la piel de la web desde el 12 de agosto de 2026. -->
@@ -19,7 +19,11 @@
 <header class="banda cabecera">
   <div class="marco cabecera__fila">
     <h1 class="cabecera__titulo">Las plantas de casa<span class="cabecera__punto" aria-hidden="true">.</span></h1>
-    <p class="cabecera__bajada" id="cabecera-meta">Móstoles · siete macetas · un salón a noreste</p>
+    <!-- Este texto es el que se ve si el JS no llega: `montarCabecera()` lo
+         sustituye por el recuento real y el rango de fechas de los diagnósticos.
+         Dice «un salón y una cocina» desde el 13/08/2026, que es cuando la casa
+         dejó de tener todas las plantas en la misma habitación. -->
+    <p class="cabecera__bajada" id="cabecera-meta">Móstoles · diez macetas · un salón a noreste y una cocina</p>
   </div>
 </header>
 
@@ -50,7 +54,7 @@
            el nivel semántico es otra cosa y no se negocian entre sí.
 
            `aria-live` va SOLO aquí y no en la sección entera: lo que cambia al
-           filtrar es el recuento, y releerle a un lector de pantalla las siete
+           filtrar es el recuento, y releerle a un lector de pantalla las diez
            líneas de tareas en cada repintado es ruido, no accesibilidad. -->
       <p class="parte__veredicto" id="parte-veredicto" aria-live="polite"></p>
       <p class="parte__resumen" id="parte-resumen"></p>
@@ -62,8 +66,11 @@
     <ul class="parte__chips" id="parte-chips"></ul>
 
     <!-- UNA LÍNEA POR PLANTA, no por tarea, y sin truncar. No hace falta tope
-         porque el techo ya está en el dominio: hay siete plantas, así que la lista
-         no pasa de siete renglones ni el día que todas pidan algo. -->
+         porque el techo ya está en el dominio: hay diez plantas, así que la lista
+         no pasa de diez renglones ni el día que todas pidan algo. Eran siete hasta
+         el 13/08/2026, y el argumento aguanta el cambio porque el techo es «cuántas
+         plantas tiene Carlos» y no una cifra: el día que sean treinta, deja de
+         aguantar y habrá que truncar. -->
     <ul class="parte__tareas" id="parte-tareas"></ul>
 
     <!-- El buscador vive en la franja, al lado de la lista de lo que hay que
@@ -126,10 +133,10 @@
     </section>
 
     <!-- ══ LA CRONOLOGÍA ══════════════════════════════════════════════════════
-         Décadas, semanas y horas en siete macetas del mismo salón. El eje es
-         LOGARÍTMICO —en lineal el poto ocupa el ancho entero y las otras seis son
-         un borrón— y las marcas van ROTULADAS, porque un eje logarítmico sin
-         rótulos miente sobre las proporciones.
+         Décadas, semanas y horas en diez macetas de dos habitaciones. El eje es
+         LOGARÍTMICO —en lineal los dos potos ocupan el ancho entero y las otras
+         ocho son un borrón— y las marcas van ROTULADAS, porque un eje logarítmico
+         sin rótulos miente sobre las proporciones.
 
          Va DESPUÉS de la rejilla desde el 12 de agosto de 2026, y antes iba
          delante. El motivo del cambio: con las fotos en la rejilla, el primer
@@ -353,8 +360,11 @@
                  tarjeta ya no es la pegatina, así que la pegatina baja aquí, que
                  es donde la etiqueta real está: pegada al tiesto y fotografiada.
                  Se lee junto a su propia foto, y las dos son la misma prueba
-                 documental — para cinco de las siete plantas, la fuente más
-                 fuerte que existe de qué compró Carlos.
+                 documental — para siete de las diez plantas, la fuente más
+                 fuerte que existe de qué compró Carlos. Y ya no todas son de
+                 Projardín: la begonia trae etiqueta de productor y las dos del
+                 13/08/2026, de tienda (Leroy Merlin). La pegatina se dibuja con
+                 el emisor que traiga cada una, no con una constante.
                  Sin estilizar la foto: una prueba retocada no prueba nada.
                  ──────────────────────────────────────────────────────────── -->
             <section class="prueba">

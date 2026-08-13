@@ -59,6 +59,26 @@ DOMINIOS_CITABLES = {
     # familia coinciden con las fichas.
     "www.ipni.org": "IPNI/Kew — autoría y publicación del nombre",
     "ipni.org": "IPNI/Kew — autoría y publicación del nombre",
+    # api.gbif.org — el MISMO GBIF, por la puerta que sí abre.
+    #
+    # www.gbif.org devuelve 403 a clientes automáticos, igual que POWO, así que una
+    # cita a la ficha web sería otra que hay que comprobar a mano. La API pública
+    # devuelve el registro entero en JSON —nombre aceptado, autoría, familia, orden,
+    # estado taxonómico— y se abre sin credenciales. No es una fuente nueva: es la
+    # misma, citada por la URL que de verdad se ha abierto. Añadido el 13/08/2026 al
+    # necesitar la familia del helecho nuevo, que es donde IPNI y GBIF discrepan.
+    "api.gbif.org": "GBIF — registro taxonómico (API pública, la que sí abre)",
+    # Pet Poison Helpline — toxicidad veterinaria DONDE ASPCA NO LLEGA.
+    #
+    # Esto sí es una fuente nueva y conviene que se vea. ASPCA es la referencia del
+    # proyecto para toxicidad en mascotas y no tiene entrada para Codiaeum variegatum:
+    # comprobado el 13/08/2026 en su listado por letra C y en el imprimible para
+    # perros. Dejar el croton en `sin_datos` habría sido peor que citar un centro de
+    # toxicología veterinaria que sí lo cubre, teniendo además a RHS afirmando que
+    # todas las partes de la planta son venenosas. Se usa como suplente, no como
+    # sustituto: donde ASPCA tenga entrada, manda ASPCA.
+    "www.petpoisonhelpline.com": "Pet Poison Helpline — toxicidad veterinaria (suplente de ASPCA)",
+    "petpoisonhelpline.com": "Pet Poison Helpline — toxicidad veterinaria (suplente de ASPCA)",
 }
 
 AGENTE = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " \
@@ -96,7 +116,21 @@ def comprobar(url: str, timeout: int) -> tuple[str, int | str, str]:
     for metodo in ("HEAD", "GET"):
         req = urllib.request.Request(url, method=metodo, headers={
             "User-Agent": AGENTE,
-            "Accept": "text/html,application/xhtml+xml",
+            # `Accept` incluye JSON y un comodín, y no es un detalle.
+            #
+            # Con «text/html,application/xhtml+xml» a secas, este comprobador daba
+            # ERROR 406 «Not Acceptable» en https://api.gbif.org/v1/species/3071476 —
+            # una cita perfectamente viva—, porque esa URL sirve JSON y el script le
+            # estaba diciendo que solo aceptaba HTML. O sea que el servidor respondía
+            # correctamente y el instrumento lo apuntaba como cita rota.
+            #
+            # Es el patrón de siempre de este proyecto: el fallo estaba en quien mide.
+            # Y hacía daño del peor tipo, porque el veredicto de este script es «una
+            # ficha con una cita rota parece verificada sin estarlo» — con lo cual una
+            # cita buena parecía mala y la única salida habría sido quitar la fuente.
+            # Lo que se comprueba aquí es si una URL resuelve, no de qué tipo es lo
+            # que devuelve.
+            "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
         })
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -106,7 +140,7 @@ def comprobar(url: str, timeout: int) -> tuple[str, int | str, str]:
                     nota = f"redirige a {final}"
                 return url, r.status, nota
         except urllib.error.HTTPError as e:
-            if e.code in (403, 405, 501) and metodo == "HEAD":
+            if e.code in (403, 405, 406, 501) and metodo == "HEAD":
                 continue  # hay servidores que rechazan HEAD: reintentar con GET
             return url, e.code, e.reason or ""
         except urllib.error.URLError as e:

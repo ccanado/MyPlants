@@ -365,3 +365,35 @@ Y una del método, que es la más incómoda de las cinco:
 > con `subgrid` la columna existe igual»*. `hidden` es `display: none` y un elemento así **no es
 > ítem de la rejilla**, así que la columna no existía y la fila entera se corría. El comentario
 > estaba escrito para prevenir exactamente el fallo que causaba.
+
+## Tres del instrumental, del día de las tres plantas nuevas (13 de agosto de 2026)
+
+Las tres son de la misma familia que todo lo anterior y una es nueva de verdad: aquí no hubo un
+instrumento que afirmara de más, hubo **un instrumento que se opuso a contenido legítimo**.
+
+- **Un presupuesto con la forma equivocada convierte añadir una planta en un fallo de
+  rendimiento.** `peso-assets.py` tenía un tope plano de 2.500 KB para todas las imágenes juntas.
+  Entraron tres plantas con fotos del mismo peso y las mismas dimensiones que las siete anteriores,
+  y el comprobador dio ERROR. El número no estaba mal calibrado: estaba mal **planteado**, porque un
+  total fijo depende de cuántas plantas tenga Carlos y eso lo decide Carlos. Las dos únicas formas
+  de «arreglarlo» eran recomprimir fotos que estaban bien o no añadir la planta — o sea que el
+  instrumento estaba pidiendo degradar el producto para que él siguiera en verde. Sustituido por dos
+  presupuestos POR PLANTA derivados de lo medido. **La pregunta que se le hace a un tope no es solo
+  “¿de dónde sale el número?”, es “¿de qué depende?”**: si depende de algo que decide el dueño del
+  proyecto, tiene que escalar con ello o no es un tope, es un techo al proyecto.
+- **Un comprobador que solo acepta HTML declara rota una API que funciona.**
+  `tests/enlaces-fuentes.py` pedía `Accept: text/html,application/xhtml+xml` y
+  `https://api.gbif.org/v1/species/3071476` respondía **406 Not Acceptable**, que es la respuesta
+  correcta del servidor a lo que se le pedía. El script lo apuntó como cita rota, y su veredicto es
+  *«una ficha con una cita rota parece verificada sin estarlo»*: o sea que una cita **buena** salía
+  marcada como mala, y la salida natural habría sido quitar la fuente. Lo que se comprueba ahí es si
+  una URL resuelve, no de qué tipo es lo que devuelve. Arreglado el `Accept`.
+- **Un dato puede ser coherente en el JSON, pasar los cinco comprobadores y solo verse mal en la
+  frase renderizada.** Tres fichas tenían el rango óptimo de temperatura copiado del tolerado
+  (18-30 y 18-30), y el equivalente en texto del diagrama decía *«aguanta de 18 a 30 °C, le gusta
+  entre 18 y 30»*: la misma cifra dicha dos veces con dos significados distintos, afirmando un
+  óptimo que ninguna fuente publica. Ningún validador podía cazarlo —los dos campos son válidos por
+  separado— y se vio **leyendo la página en el navegador**. Es la misma lección que el código de
+  barras que no se pintaba, por el otro lado: allí faltaba un dibujo, aquí sobraba una frase, y las
+  dos cosas solo existen cuando algo se pinta. Uno de los tres venía del 11 de agosto, así que
+  llevaba dos días publicado.

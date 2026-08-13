@@ -53,7 +53,7 @@ desfasado no avisa: alguien lo cita como si fuera cierto.** Antes de crear un fi
 | `docs/decisiones.md` | REGISTRO. Una línea por decisión, con la alternativa descartada y el motivo | solo crece, por vueltas |
 | `docs/aprendizaje.md` | REGISTRO. Los instrumentos que han mentido y el mecanismo de coordinación. **No genera trabajo** salvo que impida verificar algo | solo crece |
 | `docs/brief.md` | REGISTRO. La dirección visual y cómo se llegó a ella. **Su piel está sustituida**; dos tercios son historia y lleva su propio aviso al principio | no |
-| `docs/inventario.md` | INPUT HUMANO. Las siete plantas y el hueco de las notas de la casa | lo rellena Carlos |
+| `docs/inventario.md` | INPUT HUMANO. Las diez plantas, el hueco de las notas de la casa y las preguntas abiertas | lo rellena Carlos |
 | `docs/qa/checklist.md` | El criterio de aceptación, punto por punto | cuando cambia un criterio |
 | `docs/qa/como-ejecutar.md` | Cómo se pasa cada comprobador y qué NO mide cada uno | cuando cambia un instrumento |
 | `docs/qa/informe-N.md` | REGISTRO. Cada pasada, sellada contra un commit y una fecha | solo se añade uno nuevo |
@@ -77,9 +77,13 @@ Reglas de contenido:
   que la rejilla quede simétrica.
 - Los datos botánicos se **verifican** y se citan en `fuentes` (POWO/Kew, RHS, GBIF).
   Si un dato no se puede verificar, se marca como `null` y se anota — nunca se rellena a ojo.
-- `toxicidad_mascotas` es información de seguridad: se cita fuente siempre, o se deja `null`.
+- `toxicidad_mascotas` es información de seguridad: se cita fuente siempre, o se deja `null`. La
+  referencia es **ASPCA**; cuando ASPCA no tenga entrada para la especie —pasó con el croton el 13
+  de agosto de 2026— se puede citar otro centro de toxicología veterinaria diciendo que es un
+  suplente y por qué, en vez de dejar en `sin_datos` una planta de la que sí se sabe algo. Donde
+  ASPCA tenga entrada, manda ASPCA.
 - `historia` y `notas` son personales. Se preguntan; **no se fabrican nunca**. `notas` está vacío
-  en las siete y es el hueco más grande que tiene el proyecto: el panel del cuaderno solo se pinta
+  en las diez y es el hueco más grande que tiene el proyecto: el panel del cuaderno solo se pinta
   con contenido, así que no se ve un hueco — se ve una web sin voz. El sitio para escribirlas es
   `docs/inventario.md`.
 

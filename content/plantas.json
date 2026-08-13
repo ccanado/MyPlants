@@ -1,10 +1,10 @@
 {
   "meta": {
-    "fecha_diagnostico": "2026-08-11",
-    "contexto": "Móstoles (Madrid). Verano seco y caluroso, invierno con calefacción. Las siete plantas están en el SALÓN, junto a un ventanal grande orientado a noreste; el poto está en un hueco de estantería de madera algo retirado del ventanal. Por la mañana entra SOL DIRECTO donde están y después se va: el patrón real del día son dos tramos, sol directo a primera hora y sombra luminosa el resto. A primera hora en un ventanal a noreste el sol incide bajo y es menos agresivo que un mediodía a sur, pero es sol directo. En verano hay aire acondicionado con el objetivo de no pasar de 28 °C; en invierno, la calefacción mantiene el salón normalmente entre 21 y 24 °C. Las dos cifras las ha dado Carlos. Que el invierno sea cálido y no frío cambia el consejo de varias fichas: el riesgo de esta casa en enero no es que las plantas pasen frío, es que no tengan reposo y que el aire de la calefacción esté seco. No hay mascotas. Quien riega, poda y trasplanta es Noah, el hijo de Carlos, así que las fichas están escritas para quien va a tener la regadera en la mano. Al estar las siete juntas comparten microclima: agrupar para subir la humedad local funciona de verdad aquí, y una plaga en una es una plaga en las siete.",
-    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos del 2026-08-11. No son el estado de hoy. Y hay dos regímenes distintos: begonia y helecho llevan 74 días en casa, así que lo que se ve es de aquí; los dos coleos, el ficus y la margarita habían llegado el día antes, el 10 de agosto, así que su daño visible viene de producción, tienda o transporte y no de esta casa.",
+    "fecha_diagnostico": "2026-08-13",
+    "contexto": "Móstoles (Madrid). Verano seco y caluroso, invierno con calefacción. **Diez plantas en dos habitaciones**, y esa cuenta importa porque hasta el 13 de agosto de 2026 el fichero podía decir «las siete, en el salón» y ya no puede. NUEVE están en el SALÓN, junto a un ventanal grande orientado a noreste: por la mañana entra sol directo donde están y después se va, así que el patrón real del día son dos tramos, sol directo a primera hora y sombra luminosa el resto. En un ventanal a noreste el sol de primera hora incide bajo y es menos agresivo que un mediodía a sur, pero es sol directo. De esas nueve, dos —el helecho nuevo y el croton, comprados el 13 de agosto en Leroy Merlin— van a la parte del salón ALEJADA del ventanal, a media distancia, con luz difusa y sin sol directo; y el poto de siempre está en un hueco de estantería de madera algo retirado. La DÉCIMA está en la COCINA: el segundo poto, en una estantería bajo el mueble alto, con la ventana cerca y sin sol directo. Consecuencia que hay que respetar y no arreglar copiando: las cifras de la casa —28 °C de tope del aire acondicionado en verano y 21-24 °C de calefacción en invierno, las dos dadas por Carlos— son del SALÓN, así que en la ficha de la cocina los tres campos `casa_*` van en null en vez de heredarse. Que el invierno sea cálido y no frío cambia el consejo de varias fichas: el riesgo de esta casa en enero no es que las plantas pasen frío, es que no tengan reposo y que el aire de la calefacción esté seco. No hay mascotas. Quien riega, poda y trasplanta es Noah, el hijo de Carlos, así que las fichas están escritas para quien va a tener la regadera en la mano. Las nueve del salón comparten microclima: agrupar para subir la humedad local funciona de verdad ahí, y una plaga en una es una plaga en las nueve. El poto de la cocina queda fuera de esa cadena, que es lo único bueno de estar en otra habitación.",
+    "aviso": "Los diagnósticos del campo `estado` describen lo que se ve en las fotos, y hay DOS TANDAS de fotos: las siete primeras son del 2026-08-11 y las tres nuevas del 2026-08-13. No son el estado de hoy, y ninguna de las siete se ha vuelto a fotografiar: un ✓ del 11 sigue siendo del 11. Y hay tres regímenes distintos que conviene tener presentes al leer el daño visible. Uno: begonia y helecho llevaban 74 días en casa el día de su foto, así que lo que se ve es de aquí. Dos: los dos coleos, el ficus y la margarita habían llegado el día antes, el 10 de agosto, así que su daño visible viene de producción, tienda o transporte y no de esta casa. Y tres, nuevo: el helecho nuevo y el croton se fotografiaron el mismo día de la compra, en la cocina y sobre una tabla, antes de colocarlos en su sitio — de ellos, la foto no dice nada de la luz que van a recibir, y lo que se ve es cómo salieron de la tienda. El segundo poto es aparte: lleva más de veinte años en casa y su primera foto es del 13 de agosto solo porque nadie la había hecho antes.",
     "escalas": {
-      "luz.nivel": "duplicado de `nivel_ideal`, y hoy NO lo lee nadie: el filtro de la rejilla y los diagramas leen `nivel_ideal` (`js/datos.js`, `normalizarMedidas` y `nivel_luz`). Se conserva porque quitar un campo es más arriesgado que dejarlo, no porque haga falta. Si lo quitas, comprueba `js/datos.js` y que los dos valores no se hayan separado antes: mientras exista, `luz.nivel` y `luz.nivel_ideal` tienen que valer lo mismo en las siete, y hoy valen lo mismo",
+      "luz.nivel": "duplicado de `nivel_ideal`, y hoy NO lo lee nadie: el filtro de la rejilla y los diagramas leen `nivel_ideal` (`js/datos.js`, `normalizarMedidas` y `nivel_luz`). Se conserva porque quitar un campo es más arriesgado que dejarlo, no porque haga falta. Si lo quitas, comprueba `js/datos.js` y que los dos valores no se hayan separado antes: mientras exista, `luz.nivel` y `luz.nivel_ideal` tienen que valer lo mismo en las DIEZ, y hoy valen lo mismo",
       "riego.dias_verano": "días orientativos entre riegos en julio-agosto en Móstoles, en interior",
       "riego.dias_invierno": "días orientativos entre riegos en invierno, con la calefacción encendida y el salón a 21-24 °C. No es la mitad del ritmo de verano, y ese es el error fácil: RHS avisa de que las macetas se secan MÁS deprisa en invierno cuando la calefacción baja la humedad del aire, y de que una planta en habitación cálida necesita riego más a menudo que la misma en habitación fría. Cinco de estos siete intervalos se acortaron al saber que la casa está a 21-24 y no a 17",
       "riego.ml_aprox": "mililitros por riego para la maceta que tiene ahora la planta",
@@ -14,44 +14,69 @@
       "luz.categoria_ideal": "conjunto cerrado: sol_directo | sol_directo_matinal | indirecta_brillante | indirecta_media | sombra",
       "luz.categoria_recibida": "mismo conjunto cerrado que categoria_ideal",
       "riego.profundidad_seco_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
-      "temperatura": "min_c / max_c es el rango de trabajo recomendado; optimo_min_c / optimo_max_c solo se rellenan cuando una fuente publica un óptimo; minima_letal_c va en null en las siete porque no es un dato que publiquen RHS ni POWO; casa_verano_max_c es el objetivo del aire acondicionado que ha dado Carlos. El invierno es una BANDA y no un punto —la calefacción mantiene el salón entre 21 y 24 °C—, así que va en casa_invierno_min_c y casa_invierno_max_c; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única (22,5) sería inventar una precisión que nadie ha medido. Aviso sobre los tres campos de casa —casa_verano_max_c, casa_invierno_min_c y casa_invierno_max_c—: son CONSTANTES DEL SALÓN replicadas en las siete plantas, no medidas en el sitio de cada una. Nadie ha puesto un termómetro junto a ninguna maceta. Van por planta porque el esquema es por planta, no porque se sepan por planta, y por eso se rotulan como la temperatura del salón: una constante rotulada como constante es honesta y una constante rotulada como medida de esa planta, no. La diferencia deja de ser teórica en dos sitios que ya están escritos en las fichas: junto a un radiador la hoja se deshidrata y coge margen marrón, y pegado a un cristal en enero hace bastante menos que en el termostato. El día que Carlos diga dónde están los radiadores, estos campos pasan a ser por planta en las que corresponda —el esquema no cambia, solo dejan de ser iguales— y entonces sí serán medida de esa planta",
-      "toxicidad_mascotas.clave": "conjunto cerrado: toxica | no_toxica | sin_datos. El campo entero puede ser null (planta sin identificar). Ninguna planta de la casa es `no_toxica` confirmada",
+      "temperatura": "min_c / max_c es el rango de trabajo recomendado; optimo_min_c / optimo_max_c solo se rellenan cuando una fuente publica un óptimo; minima_letal_c va en null en las DIEZ porque no es un dato que publiquen RHS ni POWO —RHS publica bandas de rusticidad (H1a-H7), que dicen dónde puede vivir una planta y no a qué grado muere—; casa_verano_max_c es el objetivo del aire acondicionado que ha dado Carlos. El invierno es una BANDA y no un punto —la calefacción mantiene el salón entre 21 y 24 °C—, así que va en casa_invierno_min_c y casa_invierno_max_c; casa_invierno_c se queda en null a propósito, porque reducir 21-24 a una cifra única (22,5) sería inventar una precisión que nadie ha medido. Aviso sobre los tres campos de casa: son CONSTANTES DEL SALÓN, no medidas en el sitio de cada planta — nadie ha puesto un termómetro junto a ninguna maceta. Van por planta porque el esquema es por planta, no porque se sepan por planta, y por eso se rotulan como la temperatura de la habitación. Desde el 13 de agosto de 2026 eso tiene una consecuencia que antes era teórica: el segundo poto está en la COCINA, así que sus tres campos `casa_*` van en NULL. Copiar ahí los del salón habría sido presentar una constante de otra habitación como medida de ésta, que es justo lo que este aviso existe para evitar. La diferencia deja de ser teórica también en dos sitios ya escritos en las fichas: junto a un radiador la hoja se deshidrata y coge margen marrón, y pegado a un cristal en enero hace bastante menos que en el termostato. El día que Carlos diga dónde están los radiadores, o qué temperatura hace en la cocina, estos campos pasan a ser por planta en las que corresponda — el esquema no cambia, solo dejan de ser iguales",
+      "toxicidad_mascotas.clave": "conjunto cerrado: toxica | no_toxica | sin_datos. El campo entero puede ser null (planta sin identificar). Reparto en las diez desde el 13 de agosto de 2026: cuatro `toxica` (begonia, margarita y los dos potos), tres `sin_datos` (los dos coleos y el ficus: no figuran en ASPCA), una null (el helecho viejo, sin identificar), una `toxica` documentada sin ASPCA (el croton, que no tiene entrada allí y se cita de Pet Poison Helpline y RHS) y **una `no_toxica`, la primera de la casa**: el helecho nuevo, que ASPCA lista expresamente como no tóxico para perros ni gatos. Hasta ese día la nota de esta línea decía que ninguna planta de la casa era `no_toxica` confirmada, y era verdad hasta ese día",
       "etiqueta_vivero": "transcripción literal de la foto de la pegatina; null si la planta no tiene etiqueta. Los campos que no se lean van en null, no se deducen",
       "luz.nivel_ideal": "1-5, la luz que querría la especie. Es el valor que antes se llamaba `nivel`, que se mantiene como alias",
       "luz.nivel_actual": "1-5, la luz que la planta recibe donde está hoy. La diferencia con `nivel_ideal` es el dato accionable: positiva = le sobra luz (riesgo de quemadura), negativa = le falta (se estira y pierde color), cero = está en su sitio",
       "luz.tramos": "el día dividido en tramos: `[{franja, tipo}]`, con `tipo` en el conjunto cerrado directo | indirecto_brillante | indirecto_medio | sombra. Sin horas: Carlos ha dicho «por la mañana sol directo y luego se va», y no se inventan horas que no ha dado",
       "riego.profundidad_cm": "centímetros de sustrato que deben estar secos antes de volver a regar",
       "fecha_llegada": "fecha en que la planta entró en casa, YYYY-MM-DD. `null` cuando solo se puede decir de forma aproximada: entonces el dato está en `fecha_llegada_texto`",
-      "dias_en_casa": "días entre `fecha_llegada` y la fecha del diagnóstico (2026-08-11). `null` si la llegada es aproximada. Es una cifra congelada de ese día y NO los días que la planta lleva en casa hoy: para eso se cuenta desde `fecha_llegada`. Ver `meta.regla_tiempo`",
-      "notas": "lista de notas personales, `[{autor, texto}]`, hoy vacía en las siete: nadie las ha dictado. Sustituye a `notas_carlos`, que se ha retirado del fichero: había dos campos para lo mismo y la duplicación es peor que el hueco. Los autores posibles son Carlos, Noah y Vanesa.",
+      "dias_en_casa": "días entre `fecha_llegada` y la fecha del diagnóstico VIGENTE DE ESA PLANTA, o sea el `estados[].fecha_foto` más alto de su propia lista — no `meta.fecha_diagnostico`, que desde el 13 de agosto de 2026 es la fecha de la última TANDA y no la de todas las fichas. La definición se precisó ese día al aparecer la segunda tanda: con la anterior, «días hasta la fecha del diagnóstico», los 74 de la begonia se habrían vuelto falsos sin que nadie tocara su ficha. `null` si la llegada es aproximada. Es una cifra CONGELADA de ese día y NO los días que la planta lleva en casa hoy: para eso se cuenta desde `fecha_llegada`. Ver `meta.regla_tiempo`",
+      "notas": "lista de notas personales, `[{autor, texto}]`, hoy vacía en las DIEZ: nadie las ha dictado. Sustituye a `notas_carlos`, que se ha retirado del fichero: había dos campos para lo mismo y la duplicación es peor que el hueco. Los autores posibles son Carlos, Noah y Vanesa.",
       "manipulacion": "riesgo al manipular la planta (podar, trasplantar, hacer esquejes): la vía relevante en esta casa, que es dérmica y ocular, no digestiva. Con su propia cita",
       "nombre_comun": "el nombre con el que Carlos llama a la planta, y nada más. El estado de identificación NO va aquí: cuando `nombre_cientifico` es null, ese es el renglón donde se rotula «sin identificar». Y la discrepancia entre el nombre de la etiqueta y la especie real (caso de la margarita, que es un crisantemo) se cuenta en `nombre_cientifico` y en `estado`, no metida entre paréntesis en el nombre grande.",
       "tareas": "lista de tareas por planta. `tipo` es conjunto cerrado y dice CÓMO se calcula cada una, que es lo que evita afirmar lo que no se sabe: `vencida` (tenía fecha límite y ya pasó: usa `desde`), `fecha` (fecha concreta en `fecha`), `temporada` (meses en `meses`), `condicionada` (no depende del calendario sino de que se cumpla `condicion`), `ritmo` (cada tantos días, pero SOLO calculable si hay registro del último día; ver `calculable`)",
       "tareas.calculable": "false significa que la web NO debe decir «hoy toca»: falta el dato de origen. Está explicado en `por_que_no`",
       "revisar_fecha": "fecha de la revisión del diagnóstico, YYYY-MM-DD. `null` cuando la revisión no cuenta desde hoy sino desde una acción que aún no se ha hecho: entonces el plazo está en `revisar_dias` y el punto de partida en `revisar_desde`",
       "abonado.meses / trasplante.meses": "meses del año (1-12) en que la tarea aplica. `null` cuando la tarea no depende del calendario, y entonces hay `condicion`",
-      "riego.ultimo": "fecha del último riego. Ya no es null en las siete: la begonia, el helecho y el poto la tienen (11 de agosto de 2026, dicho por Carlos). En las cuatro que llegaron ese mismo día sigue en null, y no es lo mismo: de ellas consta cuándo entraron en casa, no cuándo las regaron. Con esta fecha el ritmo ya se puede contar; lo que sigue sin poder afirmarse es «hoy toca regar», porque eso lo decide el sustrato y no el calendario",
+      "riego.ultimo": "fecha del último riego. La tienen OCHO de las diez, y las fechas se actualizaron el 13 de agosto de 2026 con lo que dijo Carlos: el 12 el helecho, la begonia y los dos potos; el 13 los dos coleos, el ficus y la margarita. En las cuatro que llegaron el 10 de agosto esto sustituye a un null que llevaba tres días anotado. Siguen en null el helecho nuevo y el croton, que llegaron el 13 SIN regar, y no es lo mismo que un hueco: de ellos consta cuándo entraron en casa, no cuándo se regaron. Con esta fecha el ritmo se puede contar; lo que sigue sin poder afirmarse es «hoy toca regar», porque eso lo decide el sustrato y no el calendario",
       "estados": "lista de diagnósticos, con histórico: cada tanda de fotos añade una entrada, no sustituye a la anterior. Se mantiene ordenada del más reciente al más antiguo, pero el consumidor NO debe fiarse del orden: el vigente es el de `fecha_foto` más alta. Cada entrada lleva su `fecha_foto` y su `foto` porque un diagnóstico describe una imagen concreta, no el presente.",
       "estados[].causas_probables": "objetos `{id, resumen, detalle, patron}`. `patron` es lo que se mira EN LA PLANTA para resolver ese ítem, y qué significa depende de `tipo`: en una `causa`, cómo distinguirla de las otras; en un `riesgo`, la señal de que está pasando; en una `afirmacion`, QUÉ LA DESMENTIRÍA — y ahí se escribe empezando por la falsación y no por la confirmación, porque el efecto está en el orden de la frase. Puede ser null, y hay dos motivos legítimos distintos. Uno: la causa no tiene patrón propio (14 de 35 en el primer diagnóstico; en el helecho las cinco, porque sus causas son hechos históricos —se secó, lo podaron— y no cuadros reconocibles a la vista). Dos, y es la excepción que hay que respetar: una afirmación INFERENCIAL no tiene falsación propia. «Veinte años en casa demuestran que la rutina funciona» no describe nada mirable hoy, es una conclusión de la historia, y lo que la tumbaría es que fallen las afirmaciones OBSERVACIONALES de debajo —jaspeado, tamaño de hoja, drenaje—: su falsación es heredada. Inventarle una señal propia duplicaría esas tres y diría menos. Regla general y vale para todo este fichero: un criterio de la forma «donde pueda, que lo lleve» no es un cupo que haya que completar, y quien lo aplique con diligencia es justo quien se pasará si el caso en que NO aplica no está escrito al lado",
       "estados[].verificacion": "qué hipótesis del diagnóstico anterior quedó confirmada, refutada o sin resolver. Null en el primer diagnóstico de cada planta",
       "riego.ancla": "fecha desde la que contar los vencimientos de riego. Con `dias_verano`/`dias_invierno` basta para calcular sin guardar nada",
-      "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (consta la fecha de un riego real, dicha por quien riega o apuntada: el cálculo es firme; es el caso de la begonia, el helecho y el poto desde el 11 de agosto de 2026), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe), `sin_dato` (no se puede contar). Hoy ninguna planta usa `sin_dato`: se conserva en el conjunto porque el hueco puede volver — si nadie apunta el siguiente riego, la fecha envejece y hay que devolverla a null en lugar de arrastrarla",
-      "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras cinco, false: cambiarlo ahora haría más daño que bien.",
-      "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las siete, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente.",
-      "estados[].causas_probables[].tipo": "conjunto cerrado que dice QUÉ CLASE de ítem es, porque en un mismo bloque conviven cosas distintas y un rótulo único misfila la grave: `causa` (explica algo que se ve en la foto), `afirmacion` (lo que la ficha sostiene: por qué está bien, con su evidencia), `riesgo` (lo que puede matar la planta y todavía no ha pasado), `mejora` (opcional: se puede hacer o no y no pasa nada), `aclaracion` (reencuadra cómo se lee todo lo demás: de dónde viene la planta, qué especie es de verdad, qué acota el cuadro). Ausente = `causa`, así que no rompe nada anterior. Reparto en la tanda de fotos del 2026-08-11, 38 ítems: 15 causa, 9 riesgo, 7 aclaracion, 6 afirmacion y 1 mejora. Va fechado a propósito, porque es un recuento y los recuentos envejecen: si añades un diagnóstico, cuéntalos otra vez en vez de fiarte de esta línea. Solo `mejora` se pliega; las otras cuatro van abiertas, porque una afirmación, un riesgo y una aclaración no son letra pequeña. Regla: toda ficha `sana` lleva al menos una `afirmacion`, la primera y sin plegar, porque en una planta sana la afirmación ES el diagnóstico — un bloque que solo enseña riesgos afirma que la planta está en apuros, que es tan falso como preguntarle la causa de un problema que no tiene. En `critica` y `atencion` NO se exige: forzar una afirmación de salud en una planta enferma sería el mismo error al revés.",
-      "anos_en_casa_min": "años que la planta lleva en casa como MÍNIMO, en número. Solo existe en el poto, que es la única sin `fecha_llegada`: es la forma numérica de `fecha_llegada_texto` («hace más de 20 años»). No es una medida, es un suelo, así que quien lo dibuje tiene que dejarlo abierto hacia arriba y nunca leerlo como «20 años exactos». Existe para que nadie tenga que sacar el número de una frase con una expresión regular: la prosa es para el lector y el número para el render, y si algún día se reescribe la frase el diagrama no se entera. Si aparece la fecha exacta, este campo se retira y manda `fecha_llegada`.",
-      "estados[].limitacion_foto": "qué NO permite afirmar ESA imagen concreta: luz, hora, encuadre o resolución. Es distinto de `no_visible_en_foto`, y la diferencia importa: `no_visible_en_foto` es lo que ninguna foto puede contener —raíces, olor del sustrato, humedad real del cepellón— y `limitacion_foto` es lo que ésta no alcanza y otra mejor sí alcanzaría. Por eso lo segundo se arregla haciendo otra foto y lo primero no. Va en null cuando no consta ninguna limitación de la imagen (begonia y margarita), y ese null NO significa «sin limitaciones»: significa que no se ha registrado ninguna, así que no se rotula como afirmación. Cinco de las siete lo tienen, y en dos casos explica un límite del propio diagnóstico: la foto nocturna del helecho es la razón de que su identificación se quede en el género, y la penumbra del poto es la razón de que su variegación se juzgue por el patrón y no por el tono."
+      "riego.ancla_tipo": "conjunto cerrado: `riego_registrado` (consta la fecha de un riego real, dicha por quien riega o apuntada: el cálculo es firme; son ocho de las diez desde el 13 de agosto de 2026), `llegada_a_casa` (se cuenta desde el día en que entró en casa, que es lo mejor que se sabe: hoy el helecho nuevo y el croton), `sin_dato` (no se puede contar). Ninguna planta usa hoy `sin_dato`: se conserva en el conjunto porque el hueco puede volver — si nadie apunta el siguiente riego, la fecha envejece y hay que devolverla a null en lugar de arrastrarla",
+      "sustrato.cambiar_ahora": "bool: si el sustrato hay que cambiarlo ya. True solo en la begonia (74 días en maceta de vivero, va tarde) y en el coleo pequeño (maceta de 9 cm insuficiente). En las otras ocho, false, y por tres motivos distintos que conviene no mezclar: en cinco, cambiarlo ahora haría más daño que bien; en el helecho nuevo y el croton, porque llegaron el mismo día de la foto y trasplantar el día de la compra suma el estrés de la raíz al del cambio de sitio; y en el poto de la cocina, porque no hay síntomas — no porque se haya visto la maceta, que no sale en la foto",
+      "abonado.media_dosis": "bool: si el abono se aplica a la mitad de la dosis de la etiqueta. True en las diez, y no es un descuido: en maceta, la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente. Matiz que trae el helecho nuevo: en las nueve primeras la media dosis es criterio propio de cultivo en maceta, pero en su ficha la publica RHS textualmente («fertilizante líquido equilibrado a media concentración, mensualmente»), así que ahí es dato citado y no criterio. Conviene no confundir las dos cosas al reutilizar el campo",
+      "estados[].causas_probables[].tipo": "conjunto cerrado que dice QUÉ CLASE de ítem es, porque en un mismo bloque conviven cosas distintas y un rótulo único misfila la grave: `causa` (explica algo que se ve en la foto), `afirmacion` (lo que la ficha sostiene: por qué está bien, con su evidencia), `riesgo` (lo que puede matar la planta y todavía no ha pasado), `mejora` (opcional: se puede hacer o no y no pasa nada), `aclaracion` (reencuadra cómo se lee todo lo demás: de dónde viene la planta, qué especie es de verdad, qué acota el cuadro). Ausente = `causa`, así que no rompe nada anterior. Reparto con las dos tandas de fotos ya dentro, a 13 de agosto de 2026, 56 ítems: 18 riesgo, 15 causa, 11 aclaracion, 10 afirmacion, 2 mejora. Va fechado a propósito, porque es un recuento y los recuentos envejecen: si añades un diagnóstico, cuéntalos otra vez en vez de fiarte de esta línea — es lo que se hizo al añadir las tres plantas nuevas, y por eso las cifras no son las de la primera tanda. Detalle del reparto nuevo que dice algo: las tres fichas del 13 de agosto no traen ni una `causa`, y es coherente con lo que son — dos plantas sanas recién compradas y una sana de veinte años no tienen nada que explicar, tienen cosas que afirmar y riesgos que evitar. Solo `mejora` se pliega; las otras cuatro van abiertas, porque una afirmación, un riesgo y una aclaración no son letra pequeña. Regla: toda ficha `sana` lleva al menos una `afirmacion`, la primera y sin plegar, porque en una planta sana la afirmación ES el diagnóstico — un bloque que solo enseña riesgos afirma que la planta está en apuros, que es tan falso como preguntarle la causa de un problema que no tiene. En `critica` y `atencion` NO se exige: forzar una afirmación de salud en una planta enferma sería el mismo error al revés.",
+      "anos_en_casa_min": "años que la planta lleva en casa como MÍNIMO, en número. Existe en los DOS potos, que son las dos únicas sin `fecha_llegada`: es la forma numérica de `fecha_llegada_texto` («hace más de 20 años»). No es una medida, es un suelo, así que quien lo dibuje tiene que dejarlo abierto hacia arriba y nunca leerlo como «20 años exactos». Existe para que nadie tenga que sacar el número de una frase con una expresión regular: la prosa es para el lector y el número para el render, y si algún día se reescribe la frase el diagrama no se entera. Si aparece la fecha exacta, este campo se retira y manda `fecha_llegada`.",
+      "estados[].limitacion_foto": "qué NO permite afirmar ESA imagen concreta: luz, hora, encuadre o resolución. Es distinto de `no_visible_en_foto`, y la diferencia importa: `no_visible_en_foto` es lo que ninguna foto puede contener —raíces, olor del sustrato, humedad real del cepellón— y `limitacion_foto` es lo que ésta no alcanza y otra mejor sí alcanzaría. Por eso lo segundo se arregla haciendo otra foto y lo primero no. Lo tienen 8 de las 10 plantas; va en null cuando no consta ninguna limitación de la imagen (begonia y margarita), y ese null NO significa «sin limitaciones»: significa que no se ha registrado ninguna, así que no se rotula como afirmación. En cuatro casos explica un límite del propio diagnóstico: la foto nocturna del helecho viejo es la razón de que su identificación se quede en el género, la penumbra del poto del salón es la razón de que su variegación se juzgue por el patrón y no por el tono, la del poto de la cocina no incluye la maceta y por eso su riego no tiene mililitros, y las del helecho nuevo y el croton están hechas en la cocina antes de colocarlos, así que no dicen nada de la luz que van a recibir.",
+      "fecha_diagnostico": "fecha de la TANDA de fotos más reciente, que desde el 13 de agosto de 2026 no es la fecha de todas las fichas: las siete primeras siguen diagnosticadas el 11. La verdad por planta está en `estados[].fecha_foto`, y de ahí la saca la cabecera de la web, que calcula el rango («visto entre el 11 y el 13 de agosto») en vez de afirmar una fecha única que sería falsa para siete de las diez. El reparto exacto está en `meta.tandas`"
     },
-    "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas: sus fichas se citan porque son la autoridad nomenclatural y se han localizado una a una, pero no se han podido abrir con herramientas. Por eso cada nombre aceptado se ha comprobado además en IPNI (ipni.org), que es el índice nomenclatural de la misma casa —Kew— del que POWO toma la autoría y la publicación original, y que sí se puede abrir. IPNI no sustituye a POWO: POWO decide qué nombre es el aceptado y cuál es sinónimo, e IPNI aporta la autoría y la referencia de publicación. Las dos citas van juntas en las fichas para que se pueda auditar. Las URLs de ASPCA se citan en su forma final: el patrón antiguo /pet-care/animal-poison-control/toxic-and-non-toxic-plants/… redirige a /pet-care/aspca-poison-control/…, y como son citas de seguridad se guarda el destino y no la redirección. Excepción comprobada: el listado completo para gatos (/pet-care/animal-poison-control/cats-plant-list) NO existe bajo el patrón nuevo, devuelve 404, así que esa se conserva tal cual.",
+    "limitaciones": "POWO (powo.science.kew.org) devuelve 403 a peticiones automáticas: sus fichas se citan porque son la autoridad nomenclatural y se han localizado una a una, pero no se han podido abrir con herramientas. Por eso cada nombre aceptado se comprueba además en IPNI (ipni.org), que es el índice nomenclatural de la misma casa —Kew— del que POWO toma la autoría y la publicación original, y que sí se puede abrir. IPNI no sustituye a POWO: POWO decide qué nombre es el aceptado y cuál es sinónimo, e IPNI aporta la autoría y la referencia de publicación. Las dos citas van juntas para que se pueda auditar. Con las plantas del 13 de agosto de 2026 se añaden tres limitaciones más. Primera: www.gbif.org también devuelve 403, así que las citas de GBIF apuntan a su API (api.gbif.org/v1/species/…), que devuelve el registro entero en JSON y sí se abre; es la URL que se ha abierto de verdad y por eso es la que se cita. Segunda: IPNI y GBIF DISCREPAN en la familia del helecho nuevo —Oleandraceae en IPNI, Nephrolepidaceae en GBIF—, porque la clasificación de los helechos se reorganizó y IPNI conserva la familia de publicación; se elige la de GBIF y se declara la otra, y quien lo cerraría es POWO, que no abre. Tercera: ASPCA no tiene entrada para Codiaeum variegatum —comprobado en su listado por letra C y en el imprimible para perros—, así que la toxicidad del croton se cita de Pet Poison Helpline, que es un centro de toxicología veterinaria, más la afirmación de RHS de que todas las partes son venenosas. Es la primera vez que este fichero cita una fuente veterinaria que no es ASPCA, y queda dicho para que se vea que es sustitución deliberada y no descuido. Las URLs de ASPCA se citan en su forma final: el patrón antiguo /pet-care/animal-poison-control/toxic-and-non-toxic-plants/… redirige a /pet-care/aspca-poison-control/…, y como son citas de seguridad se guarda el destino y no la redirección. Excepción comprobada: el listado completo para gatos (/pet-care/animal-poison-control/cats-plant-list) NO existe bajo el patrón nuevo, devuelve 404, así que esa se conserva tal cual.",
     "vivero": {
       "nombre": "Viveros Projardín",
       "direccion": "Avda. de Móstoles s/n, Móstoles (Madrid)",
       "telefono": "91.644.22.13",
       "fitosanitario": "ES13-28/0283F",
-      "nota": "El nº fitosanitario ES13-28/0283F es del vivero y es el mismo en las etiquetas del ficus, los dos coleos y la margarita: identifica al operador, no a la planta. La begonia viene de otro productor y trae pasaporte fitosanitario europeo en lugar de esta etiqueta. El helecho y el poto no tienen etiqueta."
+      "nota": "El nº fitosanitario ES13-28/0283F es del vivero y es el mismo en las etiquetas del ficus, los dos coleos y la margarita: identifica al operador, no a la planta. Las otras seis plantas no vienen de ahí, y a partir del 13 de agosto de 2026 este campo describe a UN comercio de los tres que hay en el fichero, no al proveedor de la casa. La begonia viene de otro productor (GONZA S.A.T., Almería) y trae pasaporte fitosanitario europeo en lugar de esta etiqueta. El helecho nuevo y el croton se compraron en Leroy Merlin y traen etiqueta de TIENDA: precio, código de artículo con prefijo «LM», código de barras y el pasaporte fitosanitario del productor, sin nombre ni dirección de vivero; que la tienda sea Leroy Merlin lo dice Carlos y lo respalda ese prefijo. El helecho viejo y los dos potos no tienen etiqueta."
     },
-    "nota_calendario": "Las siete anclas de riego caen en dos días seguidos: el 11 de agosto de 2026 las tres que Carlos regó ese día (begonia, helecho, poto) y el 10 las cuatro que llegaron a casa esa fecha (los dos coleos, el ficus y la margarita). Consecuencia que conviene tener presente al pintar el calendario: los vencimientos arrancan sincronizados y van a caer juntos o casi durante las primeras semanas, aunque los ritmos van de 2 a 10 días y se desacoplan solos. El riesgo es de manejo, no de datos: que ver las siete alineadas invite a regar las siete el mismo día. No se riegan igual —90 ml en una maceta de 9 cm y 300 ml en una de 1,6 L— y el disparador es el sustrato de cada una. Las que pagan un riego «de oficio» son las dos que van en recipiente sin agujero visible: la begonia en su cachepot y el poto en su cerámica decorativa.",
-    "regla_tiempo": "El contenido de este fichero guarda HECHOS ABSOLUTOS y no expresiones relativas al momento en que se escribieron: `fecha_llegada: \"2026-08-10\"` es verdad para siempre y «es su primer día en casa» deja de serlo en veinticuatro horas. Quien calcula «ayer», «hace tres días» o «hace dos semanas» es la interfaz, a partir de `fecha_llegada`, `estados[].fecha_foto`, `riego.ancla` y `riego.ultimo`. La distinción fina, porque no todo lo que suena relativo lo es: caduca lo que se mide desde el día en que se ESCRIBIÓ («lleva horas en casa», «acaba de llegar», «ahora mismo»); no caduca lo que se mide desde el día en que se LEE —el «Hoy:» de un paso de tratamiento sigue queriendo decir hoy para quien lo lea—, ni lo que relaciona dos hechos fechados entre sí («llevaba un día en casa cuando se hizo esta foto», «el mismo día y del mismo regalo que la begonia»), ni un «hace más de veinte años», que solo se vuelve más cierto. Y ojo con `dias_en_casa`: es una cifra CONGELADA entre `fecha_llegada` y `meta.fecha_diagnostico`, no los días que lleva hoy. Para «lleva X días» se calcula desde `fecha_llegada` y no se lee ese campo."
+    "nota_calendario": "Las anclas de riego de las diez caen en dos días seguidos y ninguna en el 10 de agosto, como estaba antes: el 12 de agosto de 2026 las cuatro que Carlos regó ese día (helecho, begonia y los DOS potos) y el 13 las cuatro que se regaron ese día (los dos coleos, el ficus y la margarita). Las dos que faltan son el helecho nuevo y el croton, que llegaron el 13 sin regar: su ancla es la llegada a casa y no un riego, y por eso su primera tarea es meter el dedo en el sustrato. Consecuencia que conviene tener presente al pintar el calendario: los vencimientos arrancan sincronizados y van a caer juntos o casi durante las primeras semanas, aunque los ritmos van de 2 a 10 días y se desacoplan solos. El riesgo es de manejo, no de datos: que ver ocho anclas alineadas invite a regar ocho plantas el mismo día. No se riegan igual —90 ml en una maceta de 9 cm y 300 ml en una de 1,6 L— y el disparador es el sustrato de cada una. Las que pagan un riego «de oficio» son las que van en recipiente sin agujero visible, y ahora son cuatro: la begonia en su cachepot, el poto del salón en su cerámica decorativa, el helecho nuevo en el tiesto transparente en que viene de la tienda, y el poto de la cocina, del que directamente no se sabe en qué maceta está porque no sale en la foto.",
+    "regla_tiempo": "El contenido de este fichero guarda HECHOS ABSOLUTOS y no expresiones relativas al momento en que se escribieron: `fecha_llegada: \"2026-08-10\"` es verdad para siempre y «es su primer día en casa» deja de serlo en veinticuatro horas. Quien calcula «ayer», «hace tres días» o «hace dos semanas» es la interfaz, a partir de `fecha_llegada`, `estados[].fecha_foto`, `riego.ancla` y `riego.ultimo`. La distinción fina, porque no todo lo que suena relativo lo es: caduca lo que se mide desde el día en que se ESCRIBIÓ («lleva horas en casa», «acaba de llegar», «ahora mismo»); no caduca lo que se mide desde el día en que se LEE —el «Hoy:» de un paso de tratamiento sigue queriendo decir hoy para quien lo lea—, ni lo que relaciona dos hechos fechados entre sí («llevaba un día en casa cuando se hizo esta foto», «el mismo día y del mismo regalo que la begonia»), ni un «hace más de veinte años», que solo se vuelve más cierto. Y ojo con `dias_en_casa`: es una cifra CONGELADA entre `fecha_llegada` y `meta.fecha_diagnostico`, no los días que lleva hoy. Para «lleva X días» se calcula desde `fecha_llegada` y no se lee ese campo.",
+    "tandas": [
+      {
+        "fecha": "2026-08-11",
+        "plantas": [
+          "helecho",
+          "begonia-elatior",
+          "coleo-grande",
+          "coleo-pequeno",
+          "ficus-sunny",
+          "margarita",
+          "poto"
+        ],
+        "nota": "Primera tanda: las siete plantas del salón que había entonces."
+      },
+      {
+        "fecha": "2026-08-13",
+        "plantas": [
+          "poto2",
+          "helecho2",
+          "croton"
+        ],
+        "nota": "Segunda tanda: el poto de la cocina, que llevaba veinte años en casa sin ficha, y las dos plantas compradas ese día en Leroy Merlin. Ninguna de las siete primeras se volvió a fotografiar, así que sus diagnósticos siguen siendo del 11 y así se rotulan."
+      }
+    ]
   },
   "plantas": [
     {
@@ -69,10 +94,10 @@
         "dias_invierno": 4,
         "ml_aprox": 100,
         "profundidad_cm": 1,
-        "ultimo": "2026-08-11",
+        "ultimo": "2026-08-12",
         "calculable": true,
         "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-12",
         "ancla_tipo": "riego_registrado"
       },
       "luz": {
@@ -372,8 +397,8 @@
           "campo": "riego.ultimo",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Regada el 11 de agosto de 2026: lo ha dicho Carlos. Es el primer riego con fecha real del fichero, y con él el ritmo ya se puede contar. Lo que no cambia: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador sigue siendo el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: a partir del segundo riego vuelve a depender de que alguien lo apunte. Si no se apunta, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 12 de agosto de 2026: lo ha dicho Carlos el 13. Esta ficha traía el 11, que es lo que dijo aquel día; `ultimo` guarda el riego MÁS RECIENTE, y si el 11 y el 12 fueron dos riegos seguidos o una corrección de la fecha no consta y no se deduce. Para el cálculo del ritmo da igual: manda el último. Lo que no cambia es lo de siempre: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador es el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: si nadie apunta el siguiente riego, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
         },
         {
           "campo": "estados[0].verificacion",
@@ -386,8 +411,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que Carlos dice que la regó. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme y no una aproximación. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 12 de agosto de 2026, el último riego que consta. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
         },
         {
           "campo": "sustrato.mezcla",
@@ -486,7 +511,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-12",
           "ancla_tipo": "riego_registrado"
         }
       ],
@@ -619,10 +644,10 @@
         "dias_invierno": 5,
         "ml_aprox": 250,
         "profundidad_cm": 2,
-        "ultimo": "2026-08-11",
+        "ultimo": "2026-08-12",
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-12",
         "ancla_tipo": "riego_registrado"
       },
       "luz": {
@@ -927,8 +952,8 @@
           "campo": "riego.ultimo",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Regada el 11 de agosto de 2026: lo ha dicho Carlos. Es el primer riego con fecha real del fichero, y con él el ritmo ya se puede contar. Lo que no cambia: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador sigue siendo el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: a partir del segundo riego vuelve a depender de que alguien lo apunte. Si no se apunta, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 12 de agosto de 2026: lo ha dicho Carlos el 13. Esta ficha traía el 11, que es lo que dijo aquel día; `ultimo` guarda el riego MÁS RECIENTE, y si el 11 y el 12 fueron dos riegos seguidos o una corrección de la fecha no consta y no se deduce. Para el cálculo del ritmo da igual: manda el último. Lo que no cambia es lo de siempre: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador es el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: si nadie apunta el siguiente riego, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
         },
         {
           "campo": "estado.revisar_fecha",
@@ -955,8 +980,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que Carlos dice que la regó. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme y no una aproximación. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 12 de agosto de 2026, el último riego que consta. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -1035,7 +1060,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-12",
           "ancla_tipo": "riego_registrado"
         }
       ],
@@ -1199,11 +1224,11 @@
         "dias_invierno": 5,
         "ml_aprox": 300,
         "profundidad_cm": 2,
-        "ultimo": null,
+        "ultimo": "2026-08-13",
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-10",
-        "ancla_tipo": "llegada_a_casa"
+        "ancla": "2026-08-13",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "El sol directo de la mañana le viene bien: es la planta a la que mejor le sienta ese sitio.",
@@ -1536,10 +1561,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 13 de agosto de 2026: lo ha dicho Carlos ese día («el resto menos el helecho nuevo y el croton se han regado hoy»). Es la primera fecha de riego real de esta planta: hasta hoy su ancla era la llegada a casa, que es evidencia más débil porque dice cuándo entró y no cuándo se regó. Con esto, ocho de las diez plantas de la casa tienen riego registrado. Lo que no cambia: la fecha dice cuándo toca MIRAR, no «hoy toca regar» — eso lo decide el sustrato."
         },
         {
           "campo": "estados[0].verificacion",
@@ -1552,8 +1577,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 13 de agosto de 2026, día del primer riego que consta de esta planta, y sustituye al ancla anterior, que era el 10 de agosto por ser el día en que entró en casa. El tipo pasa de `llegada_a_casa` a `riego_registrado`: es un ancla más fuerte, porque el 10 nunca afirmó que la hubieran regado ese día."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -1654,8 +1679,8 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-10",
-          "ancla_tipo": "llegada_a_casa"
+          "ancla": "2026-08-13",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
@@ -1770,11 +1795,11 @@
         "dias_invierno": 4,
         "ml_aprox": 90,
         "profundidad_cm": 1,
-        "ultimo": null,
+        "ultimo": "2026-08-13",
         "calculable": true,
         "disparador": "comprobar que los 1 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-10",
-        "ancla_tipo": "llegada_a_casa"
+        "ancla": "2026-08-13",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "El sol directo de la mañana es justo lo que necesita para mantener el granate.",
@@ -2100,10 +2125,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 13 de agosto de 2026: lo ha dicho Carlos ese día («el resto menos el helecho nuevo y el croton se han regado hoy»). Es la primera fecha de riego real de esta planta: hasta hoy su ancla era la llegada a casa, que es evidencia más débil porque dice cuándo entró y no cuándo se regó. Con esto, ocho de las diez plantas de la casa tienen riego registrado. Lo que no cambia: la fecha dice cuándo toca MIRAR, no «hoy toca regar» — eso lo decide el sustrato."
         },
         {
           "campo": "estados[0].verificacion",
@@ -2116,8 +2141,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 13 de agosto de 2026, día del primer riego que consta de esta planta, y sustituye al ancla anterior, que era el 10 de agosto por ser el día en que entró en casa. El tipo pasa de `llegada_a_casa` a `riego_registrado`: es un ancla más fuerte, porque el 10 nunca afirmó que la hubieran regado ese día."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -2218,8 +2243,8 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-10",
-          "ancla_tipo": "llegada_a_casa"
+          "ancla": "2026-08-13",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
@@ -2320,11 +2345,11 @@
         "dias_invierno": 5,
         "ml_aprox": 300,
         "profundidad_cm": 2,
-        "ultimo": null,
+        "ultimo": "2026-08-13",
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-10",
-        "ancla_tipo": "llegada_a_casa"
+        "ancla": "2026-08-13",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "Luz filtrada brillante. El sol de la mañana le vale; vigila que no queme el margen blanco.",
@@ -2668,10 +2693,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 13 de agosto de 2026: lo ha dicho Carlos ese día («el resto menos el helecho nuevo y el croton se han regado hoy»). Es la primera fecha de riego real de esta planta: hasta hoy su ancla era la llegada a casa, que es evidencia más débil porque dice cuándo entró y no cuándo se regó. Con esto, ocho de las diez plantas de la casa tienen riego registrado. Lo que no cambia: la fecha dice cuándo toca MIRAR, no «hoy toca regar» — eso lo decide el sustrato."
         },
         {
           "campo": "estados[0].verificacion",
@@ -2684,8 +2709,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 13 de agosto de 2026, día del primer riego que consta de esta planta, y sustituye al ancla anterior, que era el 10 de agosto por ser el día en que entró en casa. El tipo pasa de `llegada_a_casa` a `riego_registrado`: es un ancla más fuerte, porque el 10 nunca afirmó que la hubieran regado ese día."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -2783,8 +2808,8 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-10",
-          "ancla_tipo": "llegada_a_casa"
+          "ancla": "2026-08-13",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
@@ -2888,11 +2913,11 @@
         "dias_invierno": 4,
         "ml_aprox": 180,
         "profundidad_cm": 2,
-        "ultimo": null,
+        "ultimo": "2026-08-13",
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-10",
-        "ancla_tipo": "llegada_a_casa"
+        "ancla": "2026-08-13",
+        "ancla_tipo": "riego_registrado"
       },
       "luz": {
         "resumen": "El sol de la mañana la favorece. Pero no volverá a florecer aquí: es cuestión de fotoperiodo.",
@@ -3189,10 +3214,10 @@
         },
         {
           "campo": "riego.ultimo",
-          "fuente": null,
+          "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Null: sigue sin constar un riego real de esta planta. El cálculo del ritmo no depende de esto —hay ancla de llegada a casa, el 10 de agosto de 2026—, pero el ancla de llegada es evidencia más débil: dice cuándo entró en casa, no cuándo se regó. Las tres que ya llevaban tiempo aquí (begonia, helecho y poto) sí tienen fecha de riego desde el 11 de agosto de 2026, dicha por Carlos. Esto se resolvería igual: apuntando la fecha de cada riego, aunque sea en una nota del móvil."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 13 de agosto de 2026: lo ha dicho Carlos ese día («el resto menos el helecho nuevo y el croton se han regado hoy»). Es la primera fecha de riego real de esta planta: hasta hoy su ancla era la llegada a casa, que es evidencia más débil porque dice cuándo entró y no cuándo se regó. Con esto, ocho de las diez plantas de la casa tienen riego registrado. Lo que no cambia: la fecha dice cuándo toca MIRAR, no «hoy toca regar» — eso lo decide el sustrato."
         },
         {
           "campo": "estados[0].verificacion",
@@ -3205,8 +3230,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 10 de agosto de 2026, el día en que entró en casa, que es lo mejor que se sabe. Ojo con lo que esto NO afirma: no consta que la regaran ese día. Las plantas de vivero salen normalmente regadas, pero el sustrato puede llegar empapado del último riego de la tienda o seco del viaje, y por eso la ficha manda comprobar con el dedo antes del primer riego. El ancla sirve para hablar del ritmo («cada 3 días · se cuenta desde el 10 de agosto»), no para afirmar «hoy le toca»."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 13 de agosto de 2026, día del primer riego que consta de esta planta, y sustituye al ancla anterior, que era el 10 de agosto por ser el día en que entró en casa. El tipo pasa de `llegada_a_casa` a `riego_registrado`: es un ancla más fuerte, porque el 10 nunca afirmó que la hubieran regado ese día."
         },
         {
           "campo": "sustrato.mezcla",
@@ -3300,8 +3325,8 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-10",
-          "ancla_tipo": "llegada_a_casa"
+          "ancla": "2026-08-13",
+          "ancla_tipo": "riego_registrado"
         }
       ],
       "estados": [
@@ -3394,10 +3419,10 @@
         "dias_invierno": 10,
         "ml_aprox": 200,
         "profundidad_cm": 2,
-        "ultimo": "2026-08-11",
+        "ultimo": "2026-08-12",
         "calculable": true,
         "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
-        "ancla": "2026-08-11",
+        "ancla": "2026-08-12",
         "ancla_tipo": "riego_registrado"
       },
       "luz": {
@@ -3437,8 +3462,8 @@
         "min_c": 18,
         "max_c": 30,
         "detalle": "RHS da para el poto una franja de 18 a 30 °C, evitando corrientes frías y sin ponerlo junto a fuentes de calor directo. Es un rango cómodo para un piso de Móstoles todo el año: en verano estará en la parte alta y en invierno con calefacción, en la media. El único punto de atención es no dejarlo pegado a un cristal en una noche fría de enero ni encima de un radiador. Los 21-24 °C del invierno caen de lleno en la franja de 18 a 30 °C de RHS: es la que mejor encaja térmicamente de las siete, y los doce meses. El aviso de RHS que sí aplica es el otro, el de no ponerlo junto a una fuente de calor directo: con la calefacción encendida eso significa no dejarlo sobre un radiador ni pegado a él. El punto flojo es la combinación de diciembre, calor sin luz: RHS asocia la poca luz a pérdida de variegación y crecimiento pobre, y el calor con poca luz a crecimiento débil, y este poto ya recibe un escalón menos del que querría, en un hueco de estantería retirado del ventanal. Diciembre y enero son justo los meses de acercarlo al cristal: RHS dice que en invierno las plantas de interior aprovechan el sol pleno cuando la luz del día es débil.",
-        "optimo_min_c": 18,
-        "optimo_max_c": 30,
+        "optimo_min_c": null,
+        "optimo_max_c": null,
         "minima_letal_c": null,
         "rusticidad_rhs": null,
         "casa_verano_max_c": 28,
@@ -3717,8 +3742,8 @@
           "campo": "riego.ultimo",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Regada el 11 de agosto de 2026: lo ha dicho Carlos. Es el primer riego con fecha real del fichero, y con él el ritmo ya se puede contar. Lo que no cambia: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador sigue siendo el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: a partir del segundo riego vuelve a depender de que alguien lo apunte. Si no se apunta, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
+          "consultado": "2026-08-13",
+          "nota": "Regada el 12 de agosto de 2026: lo ha dicho Carlos el 13. Esta ficha traía el 11, que es lo que dijo aquel día; `ultimo` guarda el riego MÁS RECIENTE, y si el 11 y el 12 fueron dos riegos seguidos o una corrección de la fecha no consta y no se deduce. Para el cálculo del ritmo da igual: manda el último. Lo que no cambia es lo de siempre: la fecha sirve para saber cuándo toca MIRAR, no para afirmar «hoy toca regar» — el disparador es el estado del sustrato (`riego.disparador`). Y el dato tiene fecha de caducidad: si nadie apunta el siguiente riego, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
         },
         {
           "campo": "estados[0].verificacion",
@@ -3731,8 +3756,8 @@
           "campo": "riego.ancla",
           "fuente": "Carlos",
           "url": null,
-          "consultado": "2026-08-11",
-          "nota": "Se cuenta desde el 11 de agosto de 2026, el día en que Carlos dice que la regó. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme y no una aproximación. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 12 de agosto de 2026, el último riego que consta. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, no solo la entrada en casa, así que el punto de partida es firme. Lo que sigue sin habilitar es el «hoy le toca»: con el ancla la web puede decir el ritmo y desde cuándo se cuenta, y la comprobación con el dedo sigue siendo la orden."
         },
         {
           "campo": "temperatura.invierno_casa",
@@ -3747,6 +3772,13 @@
           "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
           "consultado": "2026-08-11",
           "nota": "El intervalo de invierno se revisó al saber que el salón está a 21-24 °C, y en cinco de las siete se acortó. RHS, en su guía de plantas de interior: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida»; y el «en invierno se pueden dejar una o dos semanas sin regar» de esa misma guía lo condiciona expresamente a que la habitación esté FRÍA. Ésta no lo está, así que el ritmo de invierno se separa poco del de verano. Los días siguen siendo orientativos: la orden es el dedo."
+        },
+        {
+          "campo": "temperatura.optimo_min_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null a propósito, y corrige un dato que estaba mal puesto. Este campo solo se rellena «cuando una fuente publica un óptimo» (ver `meta.escalas.temperatura`), y RHS publica para esta especie UNA franja de trabajo, no un óptimo dentro de ella. Al copiar la franja en los dos pares de campos, el equivalente en texto del diagrama decía «aguanta de 18 a 30 °C, le gusta entre 18 y 30», que es la misma cifra dicha dos veces con dos significados distintos: afirma un óptimo que nadie ha publicado y encima no añade información. Detectado el 13 de agosto de 2026 al leer la frase renderizada en el navegador, no el JSON — el fichero se veía perfectamente coherente. Lo que rellenaría este campo es una fuente que publique un óptimo distinto del rango tolerado, como la begonia, que sí lo tiene (10-13 °C dentro de 10-22)."
         }
       ],
       "ubicacion": {
@@ -3813,7 +3845,7 @@
           "calculable": true,
           "por_que_no": null,
           "prioridad": 2,
-          "ancla": "2026-08-11",
+          "ancla": "2026-08-12",
           "ancla_tipo": "riego_registrado"
         }
       ],
@@ -3888,6 +3920,1557 @@
             "El envés de las hojas y las axilas: no se puede descartar cochinilla algodonosa.",
             "Cuánta luz llega realmente a esa estantería, y si el sol directo de la mañana alcanza el hueco o se queda antes. La foto está tomada en penumbra y no permite estimarlo; se resolvería con una foto de día a la hora en que entra el sol.",
             "El cultivar. La variegación amarilla jaspeada es la del poto dorado clásico, pero los cultivares del comercio ('Golden Pothos', 'Marble Queen' y otros) se solapan y POWO no cataloga cultivares comerciales. La planta no trae etiqueta."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
+        }
+      ]
+    },
+    {
+      "id": "poto2",
+      "nombre_comun": "Poto 2",
+      "nombre_cientifico": "Epipremnum aureum",
+      "familia": "Araceae",
+      "foto": "poto2.jpg",
+      "alt": "Poto sobre una estantería de la cocina, bajo un mueble alto de madera clara: hojas grandes acorazonadas de verde intenso, muy jaspeadas de amarillo y crema, que se extienden hacia los lados sobre la superficie blanca. La maceta queda oculta detrás del follaje.",
+      "historia": "Comprada hace más de veinte años, lo mismo que el poto del salón: entre las dos son las plantas más antiguas de la casa. Ésta vive en la cocina y no en el salón, y por eso no entró en la primera tanda de fichas.",
+      "riego": {
+        "resumen": "Cada 7 días en verano, cada 10 en invierno. La cantidad depende de la maceta y no se ve en la foto.",
+        "detalle": "Misma especie que el poto del salón y por tanto la misma regla de RHS: no regar en exceso y dejar que los 2 cm de arriba del sustrato se secen entre riegos, comprobándolo con el dedo antes de volver a regar. En Móstoles y en interior eso son unos 7 días en agosto y unos 10 en invierno; el intervalo de invierno no es el doble del de verano porque la calefacción baja la humedad del aire y la maceta se seca más deprisa de lo que sugiere el «en invierno se riega menos». Lo que aquí NO se puede decir son los mililitros: la maceta no aparece en la foto —el follaje la tapa entera— y el volumen por riego depende del tamaño del tiesto, así que `ml_aprox` va en null hasta que se sepa en qué maceta está. Mientras tanto la orden es la de siempre y funciona sin la cifra: riega hasta que el agua asome por abajo y deja escurrir. Y hay un motivo de más para regarla en el fregadero: está en una estantería de cocina, así que el agua que sobre no tiene dónde ir.",
+        "dias_verano": 7,
+        "dias_invierno": 10,
+        "ml_aprox": null,
+        "profundidad_cm": 2,
+        "ultimo": "2026-08-12",
+        "calculable": true,
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": "2026-08-12",
+        "ancla_tipo": "riego_registrado"
+      },
+      "luz": {
+        "resumen": "Luz difusa de cocina, sin sol directo. Un escalón por debajo de lo ideal, y la variegación dice que le basta.",
+        "detalle": "RHS: prefiere luz indirecta brillante —una ventana al este o al oeste— y crece también con algo de sombra, aunque más despacio; con poca luz el follaje pierde la variegación y el crecimiento es pobre. Carlos ha dicho que en ese sitio hay ventana cerca, la luz es difusa y no le da sol directo: eso la deja alrededor de un nivel 2 cuando le convendría un 3, o sea el mismo escalón de menos que su hermana del salón. Y la prueba de que ese escalón lo tolera está en la propia planta: el jaspeado amarillo y crema es amplio y bien repartido, que es exactamente lo que se pierde primero cuando a un poto le falta luz. Hay un detalle del sitio que sí importa: está bajo un mueble alto, y un mueble alto corta la luz que viene de arriba, así que la que recibe le entra de lado. Consecuencia práctica: gírala de vez en cuando, porque si no crecerá hacia la ventana y se pelará por detrás. La comprobación es la misma que en el otro poto y tarda meses, no días: compara una hoja nueva con una vieja: si la nueva sale más verde y con menos amarillo, la luz ha dejado de bastar.",
+        "nivel": 3,
+        "categoria_ideal": "indirecta_brillante",
+        "categoria_recibida": "indirecta_media",
+        "sol_directo_matinal": false,
+        "distancia_m": null,
+        "nivel_ideal": 3,
+        "nivel_actual": 2,
+        "orientacion": null,
+        "tramos": [
+          {
+            "franja": "todo el día",
+            "tipo": "indirecto_medio"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "no le da sol directo en ningún tramo del día, dicho por Carlos",
+          "confirmado_por": "Carlos"
+        }
+      },
+      "humedad": {
+        "resumen": "Le da igual, y en una cocina menos aún. Lo único que pide es que le quites la grasa de las hojas.",
+        "detalle": "RHS lo dice explícitamente y es una de las razones por las que el poto es la planta más fácil de la casa: no necesita humedad alta y se adapta a las condiciones normales de una vivienda. Aquí no hace falta plato de grava ni pulverizar, y `hr_objetivo_pct` va en null porque no hay objetivo que perseguir: no es un dato que falte. Lo que sí tiene esta planta y no tiene la del salón es que vive en una cocina, y en una cocina las hojas cogen una película de grasa además de polvo. Eso resta luz, que es justo el recurso del que va un escalón corta, y la grasa además no se va sola. Un paño húmedo cada mes o dos, hoja por hoja y por el haz, y con jabón suave si está pegajosa. Esto último es criterio propio de mantenimiento, no una recomendación de RHS.",
+        "hr_objetivo_pct": null
+      },
+      "temperatura": {
+        "min_c": 18,
+        "max_c": 30,
+        "detalle": "RHS da para el poto una franja de 18 a 30 °C, evitando corrientes frías y sin ponerlo junto a una fuente de calor directo. Y aquí llega el hueco honesto de esta ficha: las tres cifras de casa que llevan las otras plantas —28 °C de tope del aire acondicionado en verano y 21-24 °C de la calefacción en invierno— son del SALÓN, dichas por Carlos para el salón, y esta planta no está en el salón. Nadie ha medido la cocina, así que sus tres campos `casa_*` van en null en vez de copiar los del salón: una constante de otra habitación, replicada aquí, se leería como una medida de este sitio. Lo que sí se puede razonar, y va como razonamiento y no como dato: una cocina es la habitación de la casa con más variación térmica, porque el horno y los fuegos suben la temperatura a ratos y el extractor mueve aire. Para un poto, que aguanta de 18 a 30, eso probablemente no sea un problema; lo que sí lo sería es tenerlo justo encima de un electrodoméstico que caliente, porque el aviso de RHS de no ponerlo junto a una fuente de calor directo vale igual para un horno que para un radiador. Lo que cerraría el dato es un termómetro en la cocina, en invierno y en verano.",
+        "optimo_min_c": null,
+        "optimo_max_c": null,
+        "minima_letal_c": null,
+        "rusticidad_rhs": null,
+        "casa_verano_max_c": null,
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": null,
+        "casa_invierno_max_c": null
+      },
+      "sustrato": {
+        "resumen": "Sustrato sin turba con base de tierra, que drene. No necesita nada especial ni cambiarlo ahora.",
+        "detalle": "RHS: sustrato sin turba con base de tierra franca, en luz plena o filtrada. Un universal de calidad sin turba con un buen puñado de perlita cumple de sobra. Lo importante no es la receta sino que el conjunto drene: en un poto, la mayoría de los problemas vienen de un sustrato que se queda empapado. `cambiar_ahora` va en false, y conviene decir en qué se apoya y en qué no: se apoya en que la planta no muestra ningún síntoma de maceta agotada —hojas grandes, bien formadas y bien variegadas— y no se apoya en haber visto la maceta, porque en la foto no sale. O sea que es «no hay motivo para cambiarlo», no «he comprobado que está bien».",
+        "mezcla": "universal sin turba + un buen puñado de perlita",
+        "cambiar_ahora": false
+      },
+      "abonado": {
+        "resumen": "Una vez al mes de abril a octubre, abono general de interior a media dosis. En invierno, nada.",
+        "detalle": "RHS: abonar una vez al mes durante la temporada de crecimiento, de abril a octubre, con un fertilizante general para plantas de interior. A media dosis y sobre sustrato húmedo, porque en maceta la dosis de etiqueta está pensada para suelo y acumula sales con el riego frecuente. Y el mismo aviso que en el otro poto, que es el error intuitivo de esta especie: si algún día pierde variegación, no la abones más. La variegación depende de la luz y no del abono; abonar más solo añade sales al sustrato.",
+        "temporada": "abril a octubre",
+        "meses": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "condicion": null,
+        "media_dosis": true
+      },
+      "trasplante": {
+        "resumen": "Cada 2–3 años, una talla más, en primavera. Antes hay que ver en qué maceta está.",
+        "detalle": "RHS: cambiar de maceta cada dos o tres años a una talla mayor, cuando las raíces estén apretadas o salgan por los agujeros de drenaje. Para esta planta el paso previo es más básico y es la tarea número uno de su ficha: saber en qué maceta está y si tiene agujero, porque la foto no la muestra. Si resulta ser un recipiente decorativo sin salida de agua —el caso del poto del salón y de la begonia—, la solución simple es dejar la planta en su maceta de plástico y usar el bonito como funda, sacándola para regar. Aprovecha el trasplante para la poda de mantenimiento que recomienda RHS: cortar los tallos justo por encima de una hoja, para que brote de esa yema y ramifique. Los trozos que cortes enraízan en un vaso de agua en dos o tres semanas y sirven para rellenar la propia maceta.",
+        "cuando": "cada 2-3 años, en primavera",
+        "meses": [
+          3,
+          4,
+          5
+        ],
+        "condicion": "cada 2-3 años, cuando las raíces estén apretadas o salgan por los agujeros"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Podredumbre de raíz",
+          "senal": "Hojas inferiores amarillas y blandas, sustrato que sigue húmedo días después de regar, olor a cerrado.",
+          "respuesta": "Es su problema principal según RHS, por delante de cualquier plaga. Deja secar los 2 cm de arriba entre riegos y asegúrate de que el agua sobrante sale de la maceta. Si ya ha pasado: saca el cepellón, corta las raíces blandas y oscuras, cambia el sustrato y riega mucho menos durante un mes."
+        },
+        {
+          "plaga": "Cochinilla algodonosa",
+          "senal": "Grumos blancos algodonosos en las axilas de las hojas y en los tallos, a veces con melaza pegajosa.",
+          "respuesta": "RHS describe el poto como planta fácil y en general libre de problemas, así que esto es vigilancia y no una alerta: cuando le pases el paño para la grasa, mira las axilas. Si aparecen, se retiran con un bastoncillo mojado en alcohol. La vigilancia es criterio propio de mantenimiento, no una plaga que RHS destaque para esta especie."
+        },
+        {
+          "plaga": "Mosca del sustrato",
+          "senal": "Mosquitas pequeñas y oscuras que salen de la maceta al mover la planta, sobre todo si el sustrato se mantiene húmedo.",
+          "respuesta": "En una cocina se confunde con la mosca de la fruta y se le echa la culpa a la planta o al revés, así que conviene saber distinguirlas: la del sustrato sale de la tierra al remover la maceta. La respuesta es la misma que para la podredumbre y por el mismo motivo —dejar secar los 2 cm de arriba entre riegos—, porque la larva vive en sustrato permanentemente húmedo. Es criterio propio a partir del sitio donde está la planta, no un dato de RHS para esta especie."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Tóxica",
+        "perros": "Tóxica",
+        "detalle": "ASPCA lista Epipremnum aureum («Golden Pothos», «Devil's Ivy», «Taro Vine», «Ivy Arum»), Araceae, como tóxica para perros y gatos: el principio activo son oxalatos de calcio insolubles y los signos son irritación oral, quemazón intensa de boca, lengua y labios, salivación abundante, vómitos y dificultad para tragar. RHS va en la misma dirección y añade la vía humana: la clasifica en categoría C, «harmful if eaten; skin & eye irritant», y recomienda guantes para manipularla. En esta casa no hay animales, así que es dato informativo — pero esta planta tiene una consecuencia práctica que la del salón no tiene, y es dónde vive: está en una cocina, o sea a un palmo de superficies donde se manipula comida. Si le cortas un tallo o le haces esquejes, no lo hagas sobre la tabla ni sobre la encimera de trabajo, y lávate las manos al terminar.",
+        "clave": "toxica"
+      },
+      "dificultad": "fácil",
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/87014-1",
+          "consultado": "2026-08-13",
+          "nota": "Registro abierto y comprobado: Epipremnum aureum (Linden ex André) G.S.Bunting, Araceae, Ann. Missouri Bot. Gard. 50(1): 28 (1964). Es la misma especie que el poto del salón y la identificación se apoya en lo mismo: hoja acorazonada entera con jaspeado amarillo y crema, hábito trepador-colgante. Sinónimos antiguos muy usados en internet: Pothos aureus, Scindapsus aureus, Rhaphidophora aurea; y en horticultura también se cataloga como Epipremnum pinnatum 'Aureum'."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:87014-1",
+          "consultado": "2026-08-13",
+          "nota": "Ficha de POWO localizada para Epipremnum aureum (Linden & André) G.S.Bunting. POWO devuelve 403 a peticiones automáticas y no he podido abrirla; nombre y familia comprobados en IPNI (Kew), que es el índice nomenclatural de la misma casa."
+        },
+        {
+          "campo": "familia",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/87014-1",
+          "consultado": "2026-08-13",
+          "nota": "Araceae, en el registro abierto de IPNI."
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: «riega solo cuando el sustrato se esté acercando a la sequedad, compruébalo antes con el dedo»; evitar el riego excesivo, que causa podredumbre de raíz; dejar secar los 2 cm superiores entre riegos. Los días son traducción a Móstoles y a interior; los mililitros no se dan porque no se conoce la maceta."
+        },
+        {
+          "campo": "riego.ml_aprox",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato: el follaje tapa la maceta entera en la única foto que hay, y los mililitros por riego dependen del tamaño del tiesto. Se resuelve con una foto que incluya la maceta, o diciendo su diámetro. Mientras falte, la orden operativa no se pierde: regar hasta que asome agua por abajo y dejar escurrir."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: luz indirecta brillante, ventana al este o al oeste; tolera algo de sombra creciendo más despacio; con poca luz «el follaje pierde la variegación y el crecimiento es pobre». Que esté en la cocina, bajo un mueble alto, con ventana cerca y sin sol directo, es dato de la casa dado por Carlos el 13 de agosto de 2026."
+        },
+        {
+          "campo": "luz.orientacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato. El «noreste» de las otras fichas es la orientación del ventanal del SALÓN y no se puede copiar aquí: la ventana de la cocina puede mirar a otro sitio. Pregunta concreta: ¿a qué orientación da la ventana de la cocina? Se deja en null antes que heredar la orientación de otra habitación."
+        },
+        {
+          "campo": "luz.distancia_m",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato: son los metros de la estantería a la ventana de la cocina y solo los puede medir alguien de la casa. El diagrama de luz los usa cuando existen."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: a diferencia de muchas tropicales de interior, los potos no requieren humedad alta y se adaptan a las condiciones normales de una casa. Por eso `hr_objetivo_pct` va en null: no hay objetivo que perseguir, no es un hueco. La película de grasa de una cocina y el paño con jabón suave son criterio propio."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: mantener las plantas entre 18 y 30 °C, evitando corrientes frías y alejándolas de fuentes directas de calor. Ese aviso es el que aquí se traduce a «no encima de un electrodoméstico que caliente»."
+        },
+        {
+          "campo": "temperatura.casa_verano_max_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato para la cocina, y es un null nuevo en este fichero. Los 28 °C son el objetivo del aire acondicionado del SALÓN, dado por Carlos para el salón; copiarlos aquí sería presentar una constante de otra habitación como si se hubiera medido en ésta. Lo mismo vale para `casa_invierno_min_c` y `casa_invierno_max_c`. Se resuelve con un termómetro en la cocina, una lectura de invierno y otra de verano."
+        },
+        {
+          "campo": "temperatura.casa_invierno_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato para la cocina, por lo mismo: la banda 21-24 °C es la del salón con la calefacción puesta. Aquí no se sabe si llega la calefacción, ni cuánto sube cuando se cocina. Los tres campos `casa_*` de esta planta van en null a propósito."
+        },
+        {
+          "campo": "temperatura.minima_letal_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato verificable, igual que en las otras nueve: ni RHS ni POWO publican temperatura letal. RHS publica bandas de rusticidad, que dicen dónde puede vivir una planta y no a qué grado muere."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: sustrato sin turba con base de tierra franca, en luz plena o filtrada. La perlita es criterio propio. El `cambiar_ahora: false` se apoya en la ausencia de síntomas, no en haber visto la maceta: no sale en la foto."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: abonar una vez al mes durante la temporada de crecimiento, de abril a octubre, con fertilizante general de plantas de interior. La media dosis es criterio de cultivo en maceta."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: cambiar de maceta cada dos o tres años a una talla mayor cuando las raíces estén apretadas o salgan por los agujeros; poda cortando el tallo justo por encima de una hoja para que brote de la yema y ramifique."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/epipremnum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: la podredumbre de raíz por exceso de riego es el problema principal; por lo demás describe el poto como muy fácil y libre de problemas. La cochinilla algodonosa y la mosca del sustrato van como vigilancia de criterio propio —la segunda por estar en una cocina— y así están rotuladas en su respuesta."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/golden-pothos",
+          "consultado": "2026-08-13",
+          "nota": "Entrada de especie: Epipremnum aureum (Golden Pothos, Devil's Ivy, Taro Vine, Ivy Arum), Araceae, tóxica para perros y gatos; oxalatos de calcio insolubles; irritación oral, quemazón de boca, lengua y labios, salivación, vómitos y dificultad para tragar."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-13",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, comprobada el 13 de agosto de 2026: Epipremnum figura en categoría C, «harmful if eaten; skin & eye irritant». Es la fuente de la vía humana, que ASPCA no cubre porque es veterinaria, y la que sostiene el aviso de no hacer esquejes sobre la encimera."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Dato personal, dicho por Carlos el 13 de agosto de 2026: «comprada también hace 20 años como el otro poto». No se completa más de lo que él ha contado: no consta si las dos se compraron el mismo día ni en el mismo sitio, y no se deduce."
+        },
+        {
+          "campo": "fecha_llegada",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Solo se puede afirmar de forma aproximada («hace más de 20 años»), así que `fecha_llegada` y `dias_en_casa` van en null y el dato vive en `fecha_llegada_texto` y, en número, en `anos_en_casa_min`. Una fecha exacta inventada sería peor que un texto impreciso y cierto."
+        },
+        {
+          "campo": "anos_en_casa_min",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Mismo dato que `fecha_llegada_texto` y del mismo origen, en número para que el diagrama no tenga que sacarlo de una frase. Es un SUELO y no una medida: veinte años o más, y por eso se dibuja abierto hacia la derecha."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Lista vacía: nadie ha dictado todavía una nota de esta planta. Cuando Carlos, Noah o Vanesa cuenten algo, entra como {autor, texto}. Y aquí hay más que contar que en otras: son veinte años de cocina."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-13",
+          "nota": "Misma entrada de la lista de plantas dañinas: Epipremnum, categoría C, «harmful if eaten; skin & eye irritant». RHS recomienda además guantes en su guía de cultivo. Lo específico de esta planta no es el riesgo sino el sitio: la cocina."
+        },
+        {
+          "campo": "ubicacion",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Dato de la casa, dicho por Carlos el 13 de agosto de 2026 al preguntárselo expresamente: este poto está en la COCINA, en una estantería bajo el mueble alto, con la ventana cerca, luz difusa y sin sol directo; y el poto de siempre sigue en el salón. Es la primera planta del fichero que no está en el salón, y eso es lo que obliga a dejar en null los tres campos `casa_*` de temperatura y la orientación."
+        },
+        {
+          "campo": "procedencia_nota",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "No tiene pegatina, y el hueco es la información: es una planta de hace más de veinte años. Lo que NO se escribe es de dónde salió —vivero, esqueje, regalo—, porque no consta. Pregunta concreta, la misma que quedó abierta para el otro poto: ¿de dónde vinieron los dos potos?"
+        },
+        {
+          "campo": "etiqueta_vivero",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null: esta planta no tiene pegatina de vivero y no existe foto de etiqueta. Sin ella no hay precio, ni código, ni fitosanitario, ni procedencia, y no se deducen por analogía con las demás."
+        },
+        {
+          "campo": "nombre_comun",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Carlos la llama «poto2» al distinguirla del otro poto, y así se guarda: «Poto 2». Lo que la distingue de verdad para un lector —que está en la cocina— no se mete en el nombre: vive en `ubicacion` y lo rotula la interfaz. Es la misma regla por la que el estado de identificación no va en este campo."
+        },
+        {
+          "campo": "tareas",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Las tareas se derivan de los campos de cuidado de esta misma ficha y de sus fuentes; no son un dato nuevo. Los meses de abonado y trasplante salen de las ventanas que publica RHS, traducidas a Madrid. La tarea de ver la maceta sale de que no se ve en la foto, que es el hueco propio de esta ficha."
+        },
+        {
+          "campo": "riego.ultimo",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Regada el 12 de agosto de 2026: lo ha dicho Carlos el 13 («helecho, begoña y los dos potos se regaron el 12 de agosto»). Con la fecha, el ritmo se puede contar; lo que sigue sin poder afirmarse es «hoy toca regar», porque eso lo decide el sustrato. Y el dato tiene fecha de caducidad: si nadie apunta el siguiente riego, esta fecha envejece y hay que devolverla a null en lugar de arrastrarla."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 12 de agosto de 2026, el día del riego que consta. El tipo es `riego_registrado` y no `llegada_a_casa`: aquí consta el riego mismo, así que el punto de partida es firme."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "Guía de plantas de interior de RHS: «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida». Por eso el intervalo de invierno se separa poco del de verano. Ojo con el matiz propio de esta planta: no consta que la calefacción de la casa llegue igual a la cocina, así que este ajuste es el de una casa cálida y habrá que revisarlo en diciembre mirando el sustrato."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Diagnóstico sobre la foto del 13 de agosto de 2026, tomada en la cocina con luz artificial cálida y sin la maceta en el encuadre. Es la segunda tanda de fotos del proyecto y la primera de esta planta."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: éste es el primero de esta planta. Cuando haya una segunda tanda, aquí se dirá qué quedó confirmado, refutado o sin resolver, apuntando a su `id`."
+        },
+        {
+          "campo": "temperatura.optimo_min_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null a propósito, y corrige un dato que estaba mal puesto. Este campo solo se rellena «cuando una fuente publica un óptimo» (ver `meta.escalas.temperatura`), y RHS publica para esta especie UNA franja de trabajo, no un óptimo dentro de ella. Al copiar la franja en los dos pares de campos, el equivalente en texto del diagrama decía «aguanta de 18 a 30 °C, le gusta entre 18 y 30», que es la misma cifra dicha dos veces con dos significados distintos: afirma un óptimo que nadie ha publicado y encima no añade información. Detectado el 13 de agosto de 2026 al leer la frase renderizada en el navegador, no el JSON — el fichero se veía perfectamente coherente. Lo que rellenaría este campo es una fuente que publique un óptimo distinto del rango tolerado, como la begonia, que sí lo tiene (10-13 °C dentro de 10-22)."
+        }
+      ],
+      "ubicacion": {
+        "habitacion": "cocina",
+        "relacion_ventana": "en una estantería bajo el mueble alto, con la ventana cerca y sin sol directo",
+        "distancia_m": null
+      },
+      "etiqueta_vivero": null,
+      "foto_etiqueta": null,
+      "alt_etiqueta": null,
+      "fecha_llegada": null,
+      "fecha_llegada_texto": "hace más de 20 años",
+      "anos_en_casa_min": 20,
+      "dias_en_casa": null,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Guantes al hacer esquejes, y no los hagas sobre la encimera: es una planta irritante en una cocina.",
+        "detalle": "RHS la incluye en su lista de plantas potencialmente dañinas, categoría C, «harmful if eaten; skin & eye irritant», y en la guía de cultivo recomienda guantes expresamente. El irritante son oxalatos de calcio insolubles (ASPCA), que actúan por contacto mecánico: al cortar un tallo sale savia. Lo que cambia respecto al poto del salón no es el riesgo sino el escenario: esta vive en una cocina. Así que guantes, no te frotes los ojos, lávate las manos al terminar y haz los esquejes en el fregadero o sobre papel, no en la tabla de cortar ni en la encimera de trabajo. Es precaución de jardinería normal en un sitio donde se manipula comida, no una alarma.",
+        "epi": "guantes"
+      },
+      "procedencia_nota": "Sin etiqueta de vivero: no hay trazabilidad comercial de una planta comprada hace más de veinte años. De dónde salió no consta.",
+      "tareas": [
+        {
+          "id": "ver-maceta",
+          "titulo": "Mirar en qué maceta está y si tiene agujero de drenaje",
+          "tipo": "fecha",
+          "fecha": "2026-08-13",
+          "prioridad": 2
+        },
+        {
+          "id": "abonado",
+          "titulo": "Abonar",
+          "tipo": "temporada",
+          "meses": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "condicion": null,
+          "prioridad": 3
+        },
+        {
+          "id": "trasplante",
+          "titulo": "Cambiar de maceta",
+          "tipo": "temporada",
+          "meses": [
+            3,
+            4,
+            5
+          ],
+          "condicion": "cada 2-3 años, cuando las raíces estén apretadas o salgan por los agujeros",
+          "prioridad": 3
+        },
+        {
+          "id": "riego",
+          "titulo": "Regar",
+          "tipo": "ritmo",
+          "dias_verano": 7,
+          "dias_invierno": 10,
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-12",
+          "ancla_tipo": "riego_registrado"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-13",
+          "foto": "poto2.jpg",
+          "limitacion_foto": "Tomada en la cocina con luz artificial cálida y desde arriba: el verde y el amarillo salen desviados hacia el cálido, así que lo que se juzga aquí es el PATRÓN del jaspeado y la turgencia, no el tono exacto. Y la maceta no está en el encuadre —el follaje la tapa entera—, que es lo que deja sin cifra los mililitros de riego y sin comprobar el drenaje. Las dos cosas las arreglaría otra foto: una de día y otra que incluya el tiesto.",
+          "severidad": "sana",
+          "titulo": "Veinte años en la cocina y muy bien jaspeada: lo único que falta es ver la maceta",
+          "senales": [
+            "Lleva más de veinte años en casa. Es dato de diagnóstico y no anécdota: una planta que ha sobrevivido dos décadas en este sitio demuestra que el régimen de luz, riego y temperatura que tiene ahí le vale.",
+            "Hojas grandes, acorazonadas, enteras y turgentes, con brillo normal, sin marchitez y sin bordes secos.",
+            "Variegación amarilla y crema amplia y bien repartida, con hojas de sectores claros muy extensos. En un poto eso es el indicador de que la luz le ha bastado.",
+            "Sin clorosis, sin puntas marrones, sin punteado en el haz y sin hojas amarillas en la base.",
+            "Los tallos se extienden a lo largo de la estantería y descansan sobre la superficie, no cuelgan al aire; los entrenudos son cortos y no hay tallos pelados, o sea que no se ha estirado buscando luz.",
+            "Está bajo un mueble alto de madera, con la luz entrándole de lado y con una lámpara cerca. La foto se hizo con luz artificial cálida.",
+            "La maceta no aparece: el follaje la cubre por completo."
+          ],
+          "causas_probables": [
+            {
+              "id": "veinte-anos",
+              "tipo": "afirmacion",
+              "resumen": "Veinte años en ese mismo sitio demuestran que el sitio le sirve",
+              "detalle": "Antes de proponerle cambios conviene decir lo que significan dos décadas en la misma estantería: el régimen que tiene ahí es demostradamente suficiente. Cualquier cosa que se le proponga —moverla, cambiarle la maceta, acercarla a la ventana— es mejora opcional y no corrección urgente, y se hace de una en una para no romper lo que ya funciona.",
+              "patron": null
+            },
+            {
+              "id": "sana-variegada",
+              "tipo": "afirmacion",
+              "resumen": "Está sana, y lo que lo demuestra es la variegación, no el verde",
+              "detalle": "En un poto la variegación es el indicador de luz: si las hojas mantienen el jaspeado amarillo amplio y repartido, la luz le ha bastado. Una planta verde y sin jaspear puede parecer sana y estar contando que vive a oscuras. Aquí el jaspeado es amplio, así que la luz de esa cocina le llega.",
+              "patron": "Que el jaspeado de las hojas NUEVAS salga pobre o casi verde comparado con el de las viejas: eso diría que la luz ha dejado de bastar. Es el primer indicador y llega antes que cualquier otro síntoma."
+            },
+            {
+              "id": "maceta-desconocida",
+              "tipo": "aclaracion",
+              "resumen": "De esta planta no se sabe la maceta, y eso acota lo que la ficha puede decir",
+              "detalle": "El follaje tapa el tiesto en la única foto que hay. Por eso su ficha no da mililitros por riego y su `cambiar_ahora` significa «no hay síntomas», no «lo he comprobado». Es un hueco pequeño y con arreglo trivial: una foto de la maceta. Se dice aquí para que nadie lea el null como un descuido.",
+              "patron": "Lo que lo resuelve no es mirar la planta, es mirar la maceta: diámetro y si tiene agujero."
+            },
+            {
+              "id": "riesgo-agua",
+              "tipo": "riesgo",
+              "resumen": "El riesgo dominante es el agua, y en una estantería de cocina más",
+              "detalle": "La podredumbre de raíz por exceso de riego es su problema principal según RHS, por delante de cualquier plaga. Y el sitio añade dos cosas: no se sabe si la maceta drena, y en una estantería el agua que sobra no tiene dónde ir, así que la tentación es regar poco a poco y a menudo sin que nunca escurra. La forma correcta es al revés: llevarla al fregadero, regar hasta que asome agua por abajo y dejar escurrir diez minutos antes de devolverla.",
+              "patron": "Hojas de abajo amarillas y blandas, sustrato húmedo días después de regar, olor a cerrado al acercarse a la maceta."
+            },
+            {
+              "id": "riesgo-luz",
+              "tipo": "mejora",
+              "resumen": "A medio plazo, la luz: bajo el mueble alto está un escalón por debajo de lo ideal",
+              "detalle": "RHS avisa de que con poca luz el follaje pierde variegación y el crecimiento es pobre. Ahí recibe alrededor de un nivel 2 cuando le convendría un 3, y además le entra de lado porque el mueble corta la de arriba. Esto no pasa en una semana: se ve en la hoja que salga en dos o tres meses. Lo barato y sin riesgo es girarla un cuarto de vuelta cada pocos riegos.",
+              "patron": "Hoja nueva más verde, con menos amarillo, o bastante más pequeña que las de hoy; y tallos que se alargan todos hacia el mismo lado."
+            },
+            {
+              "id": "grasa",
+              "tipo": "riesgo",
+              "resumen": "Vive en una cocina: la película de grasa en la hoja le resta la luz que le falta",
+              "detalle": "Es el riesgo específico de esta planta y no lo tiene ninguna de las nueve del salón. En una cocina las hojas cogen una película grasa que no se va sola y que resta luz, justo el recurso del que va corta. No es grave y se arregla con un paño húmedo cada mes o dos, con jabón suave si está pegajosa. Es criterio propio, no una recomendación de RHS.",
+              "patron": "Pasa el dedo por el haz de una hoja: si queda pegajoso o mate en vez de limpio y brillante, toca paño."
+            }
+          ],
+          "tratamiento": [
+            "Hoy: mira en qué maceta está y si tiene agujero de drenaje. Si no lo tiene, deja la planta en su maceta de plástico y usa la bonita como funda, sacándola para regar.",
+            "Riego: cuando los 2 cm de arriba estén secos al meter el dedo, en la práctica cada 7 días en agosto. Llévala al fregadero, riega hasta que asome agua por abajo y deja escurrir 10 minutos antes de devolverla a la estantería.",
+            "Cada mes o dos: paño húmedo por el haz de las hojas. En una cocina no es solo polvo, es grasa, y la grasa resta luz.",
+            "Gírala un cuarto de vuelta cada 2 o 3 riegos: bajo el mueble alto la luz le entra por un solo lado.",
+            "Abono general de interior a media dosis una vez al mes, de abril a octubre. En invierno, nada.",
+            "Si en unos meses la ves perder variegación, acércala a la ventana de la cocina. Lo que NO hay que hacer es abonarla más: la variegación depende de la luz y no del abono.",
+            "Cuando le hagas esquejes o le cortes un tallo: guantes, y en el fregadero o sobre papel. No en la tabla de cortar."
+          ],
+          "revisar_en": "3 meses (hacia el 13 de noviembre de 2026): compara una hoja nueva con una de las de hoy. Si sale claramente más verde, con menos amarillo o bastante más pequeña, le falta luz y hay que acercarla a la ventana. Lo de la maceta, en cambio, es para hoy: no esperes tres meses a saber si el tiesto drena.",
+          "revisar_fecha": "2026-11-13",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "La maceta entera: ni el diámetro ni el material ni si tiene agujero de drenaje. Es lo que deja sin cifra los mililitros por riego, y la comprobación más útil de esta planta.",
+            "El estado de las raíces y el olor del sustrato, que es lo que diría si hay podredumbre empezando.",
+            "El envés de las hojas y las axilas de los tallos: no se puede descartar cochinilla algodonosa.",
+            "Cuánta luz llega de verdad a esa estantería y a qué orientación da la ventana de la cocina. La foto está hecha con luz artificial y no permite estimarlo.",
+            "El cultivar. La variegación amarilla jaspeada es la del poto dorado clásico, pero los cultivares del comercio se solapan, POWO no cataloga cultivares comerciales y esta planta no trae etiqueta.",
+            "Si es la misma planta que el poto del salón dividida en dos, o dos plantas distintas. No consta y no se deduce de la foto."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
+        }
+      ]
+    },
+    {
+      "id": "helecho2",
+      "nombre_comun": "Helecho 2",
+      "nombre_cientifico": "Nephrolepis exaltata",
+      "familia": "Nephrolepidaceae",
+      "foto": "helecho2.jpg",
+      "alt": "Helecho recién comprado sobre una tabla de madera de la cocina: una mata densa y muy verde, con frondes arqueadas de pinnas pequeñas y borde festoneado que caen por los cuatro lados. La maceta de plástico verde oscuro va metida dentro de un tiesto transparente.",
+      "historia": "Comprada en Leroy Merlin el 13 de agosto de 2026, el mismo día y en el mismo sitio que el croton. Llega a una casa que ya ha secado un helecho: el otro, el del salón, está en cuidados intensivos después de secarse entero y ser podado a ras. Éste entra sano, y saberlo es la mitad de su ficha.",
+      "riego": {
+        "resumen": "Que no se seque nunca del todo: cada 3 días en verano, cada 5 en invierno, ~150 ml.",
+        "detalle": "RHS lo resume en dos órdenes que hay que leer juntas: «riega moderadamente con agua blanda durante la temporada de crecimiento» y «riega con parquedad en invierno», con el aviso de que las frondes se pudren si se mojan demasiado. O sea, sustrato fresco de forma continua y nunca barro. Para esta maceta son unos 150 ml cada 3 días en agosto y cada 5 en invierno, comprobando siempre con el dedo que el primer centímetro no está mojado. Un Nephrolepis es la planta que menos perdona un secado completo de las diez de la casa, y en esta casa eso no es teoría: el otro helecho llegó a esto por secarse. La señal de que se ha secado del todo es que el cepellón se separa de las paredes de la maceta; si pasa, sumerge la maceta diez minutos en un barreño y deja escurrir. Móstoles tiene agua dura y RHS pide agua blanda: si puedes, agua de lluvia o filtrada, y siempre a temperatura ambiente. Y lo más importante de este riego no es la cantidad, es el recipiente: la maceta viene dentro de un tiesto transparente sin salida de agua. Riega en el fregadero y vacía el transparente después, o quítalo directamente.",
+        "dias_verano": 3,
+        "dias_invierno": 5,
+        "ml_aprox": 150,
+        "profundidad_cm": 1,
+        "ultimo": null,
+        "calculable": true,
+        "disparador": "meter el dedo un centímetro: si no lo notas fresco y húmedo, riega",
+        "ancla": "2026-08-13",
+        "ancla_tipo": "llegada_a_casa"
+      },
+      "luz": {
+        "resumen": "La parte alejada del ventanal le va bien: luz difusa y nada de sol directo.",
+        "detalle": "RHS lo pone en dos sitios y con dos palabras distintas que no se contradicen: en cultivo pide «luz filtrada brillante» y en posición dice «sombra parcial», con orientación norte, este u oeste y sitio abrigado. Traducido a este salón: la parte alejada del ventanal, que es donde va, le da luz difusa sin sol directo, y eso es un escalón por debajo de la luz filtrada brillante ideal. En un helecho ese escalón no es un problema —la tolerancia a la sombra parcial la publica RHS— y conviene compararlo con lo que le pasa al croton, que llega el mismo día al mismo rincón: mismo escalón de menos, consecuencia distinta. Aquí es tolerancia documentada; allí es pérdida de color documentada. Lo que sí sería un problema es lo contrario: el tramo de sol directo de la mañana junto al cristal, que es exactamente lo que está quemando al otro helecho. Ese sitio, para éste, está prohibido.",
+        "nivel": 3,
+        "categoria_ideal": "indirecta_brillante",
+        "categoria_recibida": "indirecta_media",
+        "sol_directo_matinal": false,
+        "distancia_m": null,
+        "nivel_ideal": 3,
+        "nivel_actual": 2,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "indirecto_medio"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_medio"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "el tramo de sol directo de la mañana no llega a la parte alejada del ventanal",
+          "confirmado_por": "Carlos"
+        }
+      },
+      "humedad": {
+        "resumen": "Es su punto débil y el de esta casa: 60 % o más, y fuera de la corriente del aire acondicionado.",
+        "detalle": "RHS pide «humedad moderada a alta y buena ventilación», y las dos mitades importan: humedad sin aire quieto. En Móstoles esto es lo difícil, y no por el clima de fuera sino por dos aparatos de dentro: el aire acondicionado en verano deshumidifica y además añade corriente fría, y la calefacción en invierno seca el aire del salón durante meses. O sea que el aire seco de esta casa dura los doce meses, y es la causa por la que un helecho pone las puntas marrones aquí antes que por riego. Lo que funciona: la maceta sobre un plato con grava o arcilla expandida mojada, con el nivel del agua justo por debajo de la superficie de la grava —no tocando el fondo de la maceta—, y agrupada con las otras plantas del salón, que suben la humedad local de verdad al estar juntas. Lo que no funciona: pulverizar las hojas, que sube la humedad tres minutos y favorece que las frondes se queden mojadas, justo lo que RHS avisa que las pudre. El 60 % es el mismo objetivo que se fijó para el otro helecho, y sigue siendo criterio propio: RHS no publica un porcentaje, dice «moderada a alta».",
+        "hr_objetivo_pct": 60
+      },
+      "temperatura": {
+        "min_c": 10,
+        "max_c": null,
+        "detalle": "RHS le da rusticidad H1B, que es «mínima de 10 a 15 °C» y significa planta de interior o invernadero templado en el clima británico. Es un dato que el otro helecho no tiene y no puede tener: sin especie no hay banda de rusticidad, así que éste es el primer helecho de la casa con una cifra publicada detrás. Dos avisos sobre cómo leerla. Uno: una banda de rusticidad dice dónde puede vivir una planta, no a qué grado se muere, así que `minima_letal_c` sigue en null. Dos: RHS no publica máximo para esta especie, y por eso `max_c` va en null y no en una cifra redonda; el diagrama lo dibuja abierto por la derecha y rotula «≥ 10°», que es lo que se sabe. Para esta casa el margen es cómodo: el salón está a 21-24 °C en invierno con la calefacción y con tope de 28 en verano, muy por encima del mínimo. El riesgo térmico real de este helecho no es el frío sino lo que viene con el calor: aire seco en invierno y corriente fría del aire acondicionado en verano. Y el aviso de RHS sobre radiadores —la proximidad a uno deshidrata la hoja y le pone el margen marrón— aplica aquí más que en ninguna otra ficha, porque una fronde tierna se tuesta antes que una hoja gruesa.",
+        "optimo_min_c": null,
+        "optimo_max_c": null,
+        "minima_letal_c": null,
+        "rusticidad_rhs": "H1B",
+        "casa_verano_max_c": 28,
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
+      },
+      "sustrato": {
+        "resumen": "Universal sin turba, ligero y que retenga algo de agua. No lo cambies ahora: acaba de llegar.",
+        "detalle": "RHS da dos opciones: un universal sin turba, o una mezcla de 1 parte de mantillo de tierra, 2 de arena gruesa y 3 de mantillo de hojas. La segunda receta es de invernadero y no hace falta reproducirla: lo que describe es un sustrato ligero, airado y que retiene humedad sin encharcarse, y eso lo da un universal sin turba con un puñado de fibra de coco o de mantillo de hojas si lo tienes. El sustrato que trae de vivero se ve grueso, con trozos de corteza y perlita, que es lo normal en producción y sirve. `cambiar_ahora` va en false por el mismo motivo que en los coleos y el ficus cuando llegaron: acaba de entrar en casa hoy, y trasplantar el mismo día suma el estrés del cambio de raíz al del cambio de sitio. Lo que sí hay que hacer hoy es quitarle el tiesto transparente, que no es sustrato pero es la mitad del problema de agua.",
+        "mezcla": "universal sin turba + fibra de coco o mantillo de hojas",
+        "cambiar_ahora": false
+      },
+      "abonado": {
+        "resumen": "Mensual en temporada de crecimiento, líquido equilibrado a MEDIA dosis. Lo dice RHS así.",
+        "detalle": "Aquí RHS es inusualmente preciso y la media dosis no es criterio propio como en las otras nueve fichas: dice literalmente «aplica un fertilizante líquido equilibrado a media concentración, mensualmente» durante la temporada de crecimiento. En Madrid esa temporada se extiende de abril a septiembre. En invierno, nada: con riego escaso y crecimiento parado, el abono solo acumula sales. Y una espera razonable en una planta recién comprada: viene de producción con el sustrato ya fertilizado, así que el primer abono puede esperar tres o cuatro semanas.",
+        "temporada": "abril a septiembre",
+        "meses": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "condicion": null,
+        "media_dosis": true
+      },
+      "trasplante": {
+        "resumen": "Cuando las raíces llenen la maceta, en primavera. Y hoy, fuera el tiesto transparente.",
+        "detalle": "Un Nephrolepis llena la maceta deprisa y agradece un cambio de talla en primavera, cuando las raíces ocupen el cepellón entero o asomen por los agujeros. RHS no publica una frecuencia para esta especie —lo que sí publica es cómo multiplicarla, y es la vía práctica que tiene esta planta: separar los estolones enraizados a finales de invierno o principios de primavera, esos hilos finos que se ven ya saliendo de la mata en la foto—. Lo urgente no es el trasplante sino el recipiente: la maceta viene dentro de un tiesto transparente sin salida de agua, y eso convierte cualquier riego generoso en un cepellón encharcado. O se quita, o se vacía después de cada riego. Dicho de otra forma: esta planta comparte con la begonia y con los dos potos el mismo problema de la casa, que es el recipiente decorativo sin agujero.",
+        "cuando": "en primavera, cuando las raíces llenen la maceta",
+        "meses": [
+          3,
+          4,
+          5
+        ],
+        "condicion": "cuando las raíces llenen el cepellón o asomen por los agujeros; no el año de la compra salvo que venga muy apretada"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Cochinilla (insectos escama)",
+          "senal": "Bultitos pardos ovalados y pegados al raquis o al envés de las pinnas, que no se mueven; a veces melaza pegajosa alrededor.",
+          "respuesta": "Es la plaga que RHS nombra expresamente para esta especie. Se retiran a mano o con un bastoncillo mojado en alcohol, fronde por fronde; en un helecho hay que hacerlo con cuidado porque la pinna se rompe. Como acaba de llegar del vivero, revísale el envés esta semana: una plaga que entra con una planta nueva se reparte por las otras nueve en unas semanas."
+        },
+        {
+          "plaga": "Podredumbre de frondes y de raíz",
+          "senal": "Frondes que se ponen marrones y blandas desde la base, no crujientes desde la punta; sustrato húmedo días después de regar.",
+          "respuesta": "RHS avisa de que las frondes se pudren si se mojan demasiado, y aquí el agravante es el tiesto transparente sin drenaje. Distinguir las dos formas de marrón es lo más útil de esta ficha: marrón crujiente y desde la punta es aire seco o sol; marrón blando y desde la base es exceso de agua. La respuesta es opuesta en cada caso, así que confundirlas empeora la planta."
+        },
+        {
+          "plaga": "Contagio entre las nueve del salón",
+          "senal": "Punteado pálido, telaraña fina o grumos algodonosos apareciendo en una segunda planta pocas semanas después de la primera.",
+          "respuesta": "Las nueve plantas del salón comparten habitación, así que una plaga en una es una plaga en las nueve; el poto de la cocina es el único que queda fuera. Esta planta llega hoy del vivero, o sea que hoy es la sospechosa: revisa su envés antes de acercarla a las demás y otra vez a la semana. El punteado del coleo grande sigue siendo el foco sospechoso de la casa."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "No tóxica",
+        "perros": "No tóxica",
+        "detalle": "ASPCA lista el helecho de Boston como NO tóxico para perros y gatos, y es la primera planta de esta casa con toxicidad descartada en fuente: de las diez, tres son tóxicas, cuatro no figuran en ASPCA, una no se ha podido identificar y ésta es la única con un «no» explícito. Dicho eso, hay dos matices que conviene leer antes de fiarse del todo. Uno: la entrada de ASPCA es del cultivar —«Nephrolepis exalta bostoniensis», con esa grafía— y la etiqueta de esta planta solo dice la especie, así que el nombre coincide en especie pero no consta el cultivar; para toxicidad eso es razonablemente suficiente, porque el rasgo se atribuye a la especie y no a la variedad. Dos, y es más interesante: ASPCA clasifica esa entrada en la familia «Dryopteridaceae», que no es la familia que dan ni GBIF (Nephrolepidaceae) ni IPNI (Oleandraceae). Es la señal de que ASPCA es un índice de nombres comunes con criterio veterinario y no una autoridad taxonómica — la cita vale para lo que dice de toxicidad y no para clasificar la planta. En esta casa no hay animales, así que es dato informativo; que la casa cambie es justo el motivo de tenerlo escrito.",
+        "clave": "no_toxica"
+      },
+      "dificultad": "exigente",
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "Etiqueta de vivero",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "La etiqueta de Leroy Merlin da el binomio en claro: «Helecho (Nephrolepis exaltata)», y el pasaporte fitosanitario de la misma etiqueta repite el nombre en su campo A. Es evidencia comercial y no taxonómica, así que se ha comprobado en IPNI y en GBIF, y contra la planta: frondes pinnadas de raquis único, pinnas sésiles de borde festoneado-serrado y punta redondeada, mata en fuente que arquea por los cuatro lados, y estolones finos saliendo del cepellón. Todo eso es Nephrolepis y encaja con exaltata. Lo que la etiqueta NO dice es el cultivar, y la foto no lo resuelve: 'Bostoniensis', 'Green Lady' y otros del comercio se solapan y se venden indistintamente como «helecho»."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/17160830-1",
+          "consultado": "2026-08-13",
+          "nota": "Registro abierto y comprobado: Nephrolepis exaltata (L.) Schott, publicado en Genera Filicum (1834). Aviso importante que se ve al abrirlo: IPNI archiva este nombre bajo la familia Oleandraceae, que es la clasificación antigua. Ver la entrada de `familia`."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:17160830-1",
+          "consultado": "2026-08-13",
+          "nota": "Ficha de POWO localizada por el identificador de IPNI (17160830-1). POWO devuelve 403 a peticiones automáticas y NO he podido abrirla, así que no se le atribuye nada: el nombre aceptado y la familia se citan de IPNI y de GBIF, que sí se abren. Se deja la URL porque POWO es la autoridad nomenclatural y para que se pueda auditar a mano."
+        },
+        {
+          "campo": "familia",
+          "fuente": "GBIF",
+          "url": "https://api.gbif.org/v1/species/2650927",
+          "consultado": "2026-08-13",
+          "nota": "Registro abierto del backbone de GBIF (clave 2650927): Nephrolepis exaltata (L.) Schott, ACEPTADO, familia Nephrolepidaceae, orden Polypodiales. Y aquí hay una discrepancia real que se declara en vez de esconderse: IPNI lo archiva en Oleandraceae y GBIF en Nephrolepidaceae. No es que una fuente esté mal, es que la clasificación de los helechos se reorganizó (PPG I separó Nephrolepidaceae) y IPNI conserva la familia con la que se publicó el nombre. Se elige Nephrolepidaceae porque es la clasificación vigente en el backbone que sí he podido abrir, y se escribe la otra al lado. Lo que cerraría el asunto es POWO, que es el que decide, y devuelve 403."
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "Ficha de RHS para Nephrolepis exaltata, abierta y comprobada. Cultivo, literal: «riega moderadamente con agua blanda durante la temporada de crecimiento… riega con parquedad en invierno», y en problemas: se pudre «si las frondes se mojan demasiado». Los 150 ml y los días son traducción a esta maceta y a Móstoles, no cifras de RHS."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS, cultivo: «en luz filtrada brillante, con humedad moderada a alta y buena ventilación»; y en posición: sombra parcial, orientación norte, oeste o este, sitio abrigado. Que vaya a la parte alejada del ventanal del salón es dato de la casa, dicho por Carlos el 13 de agosto de 2026: luz difusa decente, a media distancia, sin sol directo."
+        },
+        {
+          "campo": "luz.distancia_m",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato: son los metros de la maceta al cristal y solo los puede medir alguien de la casa. Carlos ha dicho «a media distancia», que sirve para el consejo pero no para el diagrama, que necesita un número."
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS pide «humedad moderada a alta y buena ventilación». El 60 % es criterio propio —RHS no publica porcentaje— y es el mismo objetivo que se fijó para el otro helecho, para que las dos fichas no digan cifras distintas de lo mismo. El plato de grava y el agrupar están descritos en la guía de plantas de interior de RHS; que pulverizar no sirve es criterio propio y encaja con el aviso de RHS sobre frondes mojadas."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS da rusticidad H1B para esta especie, definida como mínima de 10 a 15 °C. De ahí sale `min_c: 10` y `rusticidad_rhs: \"H1B\"`. RHS no publica máximo, así que `max_c` va en null: el diagrama lo dibuja abierto y rotula «≥ 10°»."
+        },
+        {
+          "campo": "temperatura.max_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato: RHS no publica temperatura máxima para Nephrolepis exaltata y no se inventa una cifra redonda. Es el mismo hueco que tiene el otro helecho, y aquí no viene de no saber la especie sino de que la fuente no lo publica."
+        },
+        {
+          "campo": "temperatura.minima_letal_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato verificable. La banda de rusticidad H1B dice dónde puede vivir la planta, no a qué grado muere: convertir H1B en «muere a 10 °C» sería inventar precisión. Se deja en null como en las otras nueve."
+        },
+        {
+          "campo": "temperatura.casa_invierno_c",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "La calefacción mantiene el SALÓN entre 21 y 24 °C, dicho por Carlos; se guarda como banda —min 21, max 24— y `casa_invierno_c` se queda en null a propósito, porque reducir 21-24 a 22,5 sería inventar una precisión que nadie ha medido. Son constantes de la habitación replicadas en las nueve plantas del salón, no medidas junto a esta maceta."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS: «un universal sin turba o una mezcla de 1 parte de tierra franca, 2 de arena gruesa y 3 de mantillo de hojas». La lectura de que esa receta describe un sustrato ligero, airado y con retención, y la sustitución por coco, es criterio propio."
+        },
+        {
+          "campo": "abonado",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS, literal: «aplica un fertilizante líquido equilibrado a media concentración, mensualmente» durante la temporada de crecimiento. Ojo con el detalle, que es raro en este fichero: aquí la MEDIA DOSIS la publica RHS y no es criterio propio como en las otras nueve. La extensión de abril a septiembre es traducción a Madrid; la espera de tres o cuatro semanas por venir de producción es criterio propio."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS no publica frecuencia de trasplante para esta especie; lo que sí publica es la multiplicación: «separa los estolones enraizados a finales de invierno o principios de primavera», y en la foto se ven estolones. La frecuencia («cuando llene el cepellón») es criterio propio de cultivo en maceta. La urgencia del tiesto transparente sale de la observación de la foto."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/11508/nephrolepis-exaltata/details",
+          "consultado": "2026-08-13",
+          "nota": "RHS nombra para esta especie los insectos escama (cochinilla) y la podredumbre por frondes mojadas. La distinción entre marrón crujiente desde la punta y marrón blando desde la base es criterio propio de diagnóstico, y es lo que más falta hace aquí. El contagio entre las nueve del salón sale de que comparten habitación, dato de Carlos."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "ASPCA",
+          "url": "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/boston-fern",
+          "consultado": "2026-08-13",
+          "nota": "Entrada abierta y comprobada, y además localizada en el listado imprimible para perros: «Boston Fern», nombre científico «Nephrolepis exalta bostoniensis», NO tóxica para perros ni para gatos. Dos matices que van en el `detalle` de la ficha porque cambian cómo se lee la cita: la entrada es del cultivar 'Bostoniensis' y esta planta no declara cultivar; y ASPCA la clasifica en Dryopteridaceae, familia que no coincide ni con GBIF ni con IPNI, lo que confirma que es un índice veterinario de nombres comunes y no una autoridad taxonómica. Es la primera planta `no_toxica` del fichero: hasta hoy ninguna lo era."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+          "consultado": "2026-08-13",
+          "nota": "Lista de plantas potencialmente dañinas de RHS, comprobada el 13 de agosto de 2026: no he encontrado Nephrolepis en ella. Eso se dice como ausencia de clasificación y no como inocuidad demostrada, igual que se hizo con Begonia, Coleus y Adiantum. Con eso y con el «no tóxica» de ASPCA, es la planta más inofensiva de la casa al tacto, y su `epi` va en null porque no hay riesgo que citar."
+        },
+        {
+          "campo": "etiqueta_vivero",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Transcripción literal de la pegatina de la foto `helecho2-etiqueta.jpg`. La primera letra del nombre queda tapada por el borde de la etiqueta y se lee «…elecho (Nephrolepis exaltata)»; se transcribe «Helecho» porque el pasaporte de la misma etiqueta lo repite en su campo A, no por deducirlo de una letra que no se ve. Los campos B y C del pasaporte están borrosos por la tinta y NO se transcriben: van dichos como ilegibles, no adivinados. No hay nombre de vivero ni de productor impreso; que sea de Leroy Merlin lo dice Carlos y lo respalda el prefijo «LM» del código."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Dato personal, dicho por Carlos el 13 de agosto de 2026: comprada ese día en Leroy Merlin, para el salón en la parte alejada de la ventana. El párrafo que compara con el otro helecho no es dato personal: es diagnóstico, y sale de la ficha del helecho del salón que está en este mismo fichero."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Lista vacía: acaba de llegar hoy y nadie ha dictado nada. Cuando Carlos, Noah o Vanesa cuenten algo, entra como {autor, texto}."
+        },
+        {
+          "campo": "ubicacion",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Dato de la casa, dicho por Carlos el 13 de agosto de 2026: va al salón, «en la parte alejada de la ventana», con luz difusa decente a media distancia y sin sol directo. `distancia_m` sigue en null: hace falta que alguien lo mida."
+        },
+        {
+          "campo": "tareas",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Las tareas se derivan de los campos de cuidado y de sus fuentes; no son un dato nuevo. Las tres de hoy salen de la observación de la foto y de que la planta llega hoy: el tiesto transparente, el plato de humedad y el sustrato sin regar. La revisión del envés a la semana copia el patrón que se usó con las cuatro que llegaron el 10 de agosto."
+        },
+        {
+          "campo": "riego.ultimo",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null: Carlos ha dicho expresamente que el helecho nuevo y el croton son las dos que NO se han regado hoy. Así que de esta planta consta cuándo entró en casa, no cuándo se regó, y por eso el ancla es `llegada_a_casa`. En cuanto alguien la riegue y lo apunte, esto pasa a `riego_registrado` con su fecha."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 13 de agosto de 2026, el día en que entró en casa, porque es lo mejor que se sabe: no hay riego registrado. El tipo es `llegada_a_casa`, igual que las cuatro plantas que llegaron el 10 de agosto."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "El «riega con parquedad en invierno» de RHS está escrito para un clima británico y una casa fría. Ésta no lo es: la guía de plantas de interior de RHS avisa de que «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y de que «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida». Con el salón a 21-24 °C, el invierno de este helecho son 5 días y no dos semanas."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Diagnóstico sobre las dos fotos del 13 de agosto de 2026 —la planta entera y el detalle de la maceta con la etiqueta—, más dos recortes ampliados del centro de la mata y de las puntas de las frondes de abajo. Tomadas en la cocina, sobre la tabla, antes de llevarla a su sitio."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: éste es el primero de esta planta."
+        }
+      ],
+      "ubicacion": {
+        "habitacion": "salón",
+        "relacion_ventana": "en la parte del salón alejada del ventanal, a media distancia y fuera del tramo de sol directo",
+        "distancia_m": null
+      },
+      "etiqueta_vivero": {
+        "vivero": "Leroy Merlin",
+        "productor": null,
+        "procedencia": null,
+        "nombre_etiqueta": "Helecho (Nephrolepis exaltata)",
+        "precio_eur": 6.79,
+        "maceta_cm": null,
+        "maceta_texto": null,
+        "ean": "8430284068564",
+        "codigo_vivero": "LM16937641",
+        "fitosanitario": null,
+        "pasaporte_fitosanitario": "A. Helecho (Nephr… · B. ilegible en la foto · C. ilegible en la foto · D. ES",
+        "otros": "La etiqueta lleva además la marca «NB: 32» junto a la bandera de la Unión Europea del pasaporte. La primera letra del nombre queda tapada por el borde de la pegatina.",
+        "nota": "Etiqueta de tienda, no de vivero: no imprime nombre de productor ni dirección, solo el precio, el código de artículo con prefijo «LM» y el código de barras. Que sea de Leroy Merlin lo ha dicho Carlos y lo respalda ese prefijo. Es la primera etiqueta del fichero que lleva a la vez precio de venta y pasaporte fitosanitario europeo: el precio es de la tienda y el pasaporte, del productor. Los campos B y C del pasaporte están borrosos por la tinta y van dichos como ilegibles en vez de adivinados; `maceta_cm` va en null porque la etiqueta no dice el diámetro."
+      },
+      "foto_etiqueta": "helecho2-etiqueta.jpg",
+      "alt_etiqueta": "Detalle de la maceta del helecho: dentro de un tiesto transparente, la etiqueta blanca dice «Helecho (Nephrolepis exaltata)», PVP 6,79 €, el código LM16937641 y un código de barras. A la izquierda, girado 90 grados, el pasaporte fitosanitario europeo con la bandera de la UE y la marca NB: 32.",
+      "fecha_llegada": "2026-08-13",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 0,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "La única de la casa sin riesgo citado al manipularla: ni guantes ni precauciones.",
+        "detalle": "No he encontrado Nephrolepis en la lista de plantas potencialmente dañinas de RHS, y ASPCA lo da como no tóxico para perros y gatos. Las dos cosas juntas la convierten en la planta más inofensiva de las diez al tacto y a la boca, y eso tiene un valor concreto: es la que se puede podar, dividir y manipular sin pensar, y la única que se podría poner al alcance de un niño o de un animal sin buscar antes la ficha. Un matiz para no convertir esto en una afirmación más fuerte de lo que es: no aparecer en una lista es ausencia de clasificación, no inocuidad demostrada; el «no tóxica» explícito es el de ASPCA, y es de mascotas.",
+        "epi": null
+      },
+      "procedencia_nota": null,
+      "tareas": [
+        {
+          "id": "quitar-tiesto",
+          "titulo": "Sacar la maceta del tiesto transparente, o vaciarlo después de cada riego",
+          "tipo": "fecha",
+          "fecha": "2026-08-13",
+          "prioridad": 1
+        },
+        {
+          "id": "regar-al-llegar",
+          "titulo": "Meter el dedo en el sustrato y regar si no está fresco: llegó sin regar",
+          "tipo": "fecha",
+          "fecha": "2026-08-13",
+          "prioridad": 1
+        },
+        {
+          "id": "plato-humedad",
+          "titulo": "Ponerla sobre un plato con grava o arcilla mojada, y lejos de la corriente del aire acondicionado",
+          "tipo": "fecha",
+          "fecha": "2026-08-13",
+          "prioridad": 1
+        },
+        {
+          "id": "revisar-enves",
+          "titulo": "Revisar el envés de varias frondes por si trae cochinilla del vivero",
+          "tipo": "fecha",
+          "fecha": "2026-08-20",
+          "prioridad": 1
+        },
+        {
+          "id": "abonado",
+          "titulo": "Abonar",
+          "tipo": "temporada",
+          "meses": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "condicion": "líquido equilibrado a media concentración, y no antes de 3 o 4 semanas desde la compra",
+          "prioridad": 3
+        },
+        {
+          "id": "trasplante",
+          "titulo": "Cambiar de maceta",
+          "tipo": "condicionada",
+          "meses": null,
+          "condicion": "cuando las raíces llenen el cepellón o asomen por los agujeros, y en primavera; no el mismo año de la compra salvo que venga muy apretada",
+          "prioridad": 3
+        },
+        {
+          "id": "riego",
+          "titulo": "Regar",
+          "tipo": "ritmo",
+          "dias_verano": 3,
+          "dias_invierno": 5,
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-13",
+          "ancla_tipo": "llegada_a_casa"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-13",
+          "foto": "helecho2.jpg",
+          "limitacion_foto": "Tomada sobre la tabla de la cocina y no en su sitio del salón, así que la foto no dice nada de la luz que va a recibir: eso viene de lo que ha dicho Carlos, no de la imagen. Y en ninguna de las dos fotos se ve el envés de las frondes, que es donde estaría la cochinilla que RHS nombra para esta especie. Las dos cosas se resuelven con fotos: una en su sitio y otra levantando una fronde.",
+          "severidad": "sana",
+          "titulo": "Recién comprada y sin un defecto: todo depende del aire seco y del tiesto transparente",
+          "senales": [
+            "Mata densa y equilibrada, con frondes arqueadas saliendo del centro y cayendo por los cuatro lados. No hay hueco ni lado pelado.",
+            "Color verde claro uniforme y brillante en todas las frondes, incluidas las de abajo. Sin amarilleo, sin manchas y sin decoloración entre nervios.",
+            "Ni una punta marrón ni una pinna crujiente en las frondes que se ven. En un helecho de tienda eso es lo primero que suele fallar, y aquí no falla.",
+            "Pinnas turgentes, de borde festoneado-serrado y punta redondeada; no están cerradas ni acartuchadas hacia dentro, que es lo que hacen cuando les falta agua.",
+            "Se ven estolones —hilos finos y rígidos— saliendo del cepellón: son los que RHS dice separar para multiplicarla, y su presencia indica planta en crecimiento activo.",
+            "El sustrato del cepellón se ve grueso y con trozos de corteza y perlita, oscuro, sin costra blanca de sales ni verdín.",
+            "Un par de restos secos marrones sueltos sobre el borde de la maceta: frondes viejas ya secas, no daño en curso.",
+            "La maceta de plástico verde oscuro va METIDA dentro de un tiesto transparente sin salida de agua visible.",
+            "Sobre el borde del tiesto se ve una mota oscura pequeña que no se puede identificar a esta resolución."
+          ],
+          "causas_probables": [
+            {
+              "id": "sana-de-verdad",
+              "tipo": "afirmacion",
+              "resumen": "Está sana, y en un helecho eso se demuestra en las puntas",
+              "detalle": "En un Nephrolepis el primer sitio donde aparece cualquier problema es la punta de las pinnas: se ponen marrones y crujientes con el aire seco, o pardas y blandas con el exceso de agua. Aquí no hay ni una, y el color es uniforme hasta las frondes de abajo, que son las más viejas. Sumado a los estolones nuevos, el cuadro es de planta en crecimiento activo y bien cultivada. Es el punto de partida bueno: esta ficha no describe un problema, describe cómo no llegar a tenerlo.",
+              "patron": "Lo que desmentiría esto: puntas marrones en las pinnas, pinnas que se cierran hacia dentro, o frondes de abajo amarilleando. Cualquiera de las tres en las próximas semanas convierte esta ficha en otra."
+            },
+            {
+              "id": "precedente-helecho",
+              "tipo": "aclaracion",
+              "resumen": "Esta casa ya ha secado un helecho, y eso cambia cómo hay que leer esta ficha",
+              "detalle": "El otro helecho del salón está en severidad crítica: se secó entero, lo podaron a ras y hoy tiene un solo brote. No es un dato de esta planta, pero es el dato más relevante de su contexto: en esta casa el factor que mata helechos ya está identificado y es el aire seco de los doce meses, más el tramo de sol directo de la mañana. Este ejemplar llega sano; el trabajo no es curarlo, es no repetir el camino del otro. La diferencia entre las dos fichas es la diferencia entre prevención y rescate.",
+              "patron": "Compáralas: si a este helecho le empiezan a salir puntas marrones crujientes, es el mismo mecanismo que se llevó al otro, y hay que actuar sobre humedad y corriente antes que sobre riego."
+            },
+            {
+              "id": "tiesto-transparente",
+              "tipo": "riesgo",
+              "resumen": "El tiesto transparente sin agujero es una trampa de agua",
+              "detalle": "La maceta viene dentro de un tiesto transparente sin salida de agua visible. Con una planta que pide sustrato fresco de forma continua, la combinación es peligrosa: el agua sobrante se queda abajo, el cepellón se queda encharcado y RHS avisa expresamente de que las frondes se pudren si se mojan demasiado. Es el mismo problema que tienen la begonia en su cachepot y los dos potos en cerámica, y la solución es la misma y cuesta un minuto: quitarlo, o vaciarlo después de cada riego.",
+              "patron": "Mira el fondo del tiesto transparente un rato después de regar: si hay agua ahí, ese agua se la está bebiendo el cepellón desde abajo. Y en la planta: frondes marrones y BLANDAS desde la base, no crujientes desde la punta."
+            },
+            {
+              "id": "aire-seco",
+              "tipo": "riesgo",
+              "resumen": "El aire seco de esta casa dura doce meses, y es lo que mata helechos aquí",
+              "detalle": "RHS pide humedad moderada a alta. En este salón hay aire acondicionado en verano —que deshumidifica y añade corriente fría— y calefacción en invierno, que seca el aire durante meses; el aviso de RHS sobre la hoja que se deshidrata y coge margen marrón junto a un radiador aplica aquí más que en ninguna otra ficha, porque una pinna tierna se tuesta antes que una hoja gruesa. No es un riesgo futuro difuso: es el mecanismo documentado que se llevó al otro helecho de la casa.",
+              "patron": "Puntas de las pinnas marrones y CRUJIENTES, empezando por las frondes más expuestas al chorro del aire acondicionado. Crujiente y desde la punta es aire; blando y desde la base es agua."
+            },
+            {
+              "id": "plaga-de-vivero",
+              "tipo": "riesgo",
+              "resumen": "Llega hoy del vivero, así que hoy es la sospechosa de las diez",
+              "detalle": "RHS nombra los insectos escama para esta especie, y una planta recién comprada es la vía normal de entrada de una plaga en una casa. Las nueve del salón comparten habitación, así que lo que entre con ésta se reparte. Hay además una mota oscura sin identificar sobre el borde del tiesto en la foto de la etiqueta, que a esa resolución no se puede llamar insecto ni suciedad. Revísale el envés antes de juntarla con las demás, y otra vez a la semana.",
+              "patron": "Bultitos pardos ovalados y quietos, pegados al raquis o al envés de las pinnas; melaza pegajosa en las hojas de debajo. Y para la mota del borde: mírala con lupa o quítala con el dedo y comprueba si se mueve."
+            },
+            {
+              "id": "cultivar-desconocido",
+              "tipo": "aclaracion",
+              "resumen": "Es Nephrolepis exaltata; el cultivar no se sabe y no hace falta",
+              "detalle": "La etiqueta da la especie y el pasaporte fitosanitario la repite, así que ésta es la primera etiqueta de la casa cuyo nombre coincide con la planta —lo contrario de la margarita, que dice margarita y es un crisantemo—. El cultivar no lo dice ni la etiqueta ni la foto: 'Bostoniensis', 'Green Lady' y otros del comercio se solapan y se venden como «helecho». Para el cuidado no cambia nada, y por eso se queda sin afirmar en vez de estimarse.",
+              "patron": "Lo que lo resolvería no es mirar más la planta, es una etiqueta que lo diga. POWO no cataloga cultivares comerciales."
+            }
+          ],
+          "tratamiento": [
+            "Hoy, lo primero: sácala del tiesto transparente. Si te gusta cómo queda, úsalo solo como funda y vacíalo después de cada riego.",
+            "Hoy: mete el dedo un centímetro en el sustrato. No se ha regado al llegar, así que si no lo notas fresco, riega ~150 ml en el fregadero y deja escurrir antes de ponerla en su sitio.",
+            "Hoy: ponla sobre un plato con grava o arcilla expandida mojada, con el agua justo por debajo de la superficie de la grava, y agrúpala con las otras del salón. Y elige el sitio mirando por dónde sale el aire acondicionado: no en su chorro.",
+            "Hoy: sitio definitivo en la parte alejada del ventanal. Nada de acercarla al cristal por la mañana: ese tramo de sol directo es lo que está quemando al otro helecho.",
+            "Esta semana: revísale el envés de varias frondes y el raquis buscando bultitos pardos. Repítelo el día 20.",
+            "Riego de mantenimiento: ~150 ml cada 3 días en agosto, cada 5 en invierno, comprobando siempre el primer centímetro con el dedo. Agua a temperatura ambiente, filtrada o de lluvia si puedes.",
+            "No la pulverices. Sube la humedad tres minutos y deja las frondes mojadas, que es lo que RHS avisa que las pudre. La humedad se sube con el plato y agrupando.",
+            "Retira los restos secos marrones del borde de la maceta: no son daño en curso, pero en un sustrato húmedo son sitio donde empieza el moho.",
+            "Abono a partir de mediados de septiembre: líquido equilibrado a media concentración, una vez al mes hasta que acabe la temporada."
+          ],
+          "revisar_en": "1 semana (20 de agosto de 2026): mira dos cosas concretas. Primera, las puntas de las pinnas: si hay marrón crujiente, el aire seco ya está actuando y hay que reforzar humedad y alejarla más del aire acondicionado. Segunda, el envés y el raquis: si hay bultitos pardos, es cochinilla de vivero y hay que tratarla antes de que pase a las otras ocho del salón. A los tres meses (hacia el 13 de noviembre), con la calefacción ya encendida, toca revisar el ritmo de riego de invierno mirando el sustrato y no el calendario.",
+          "revisar_fecha": "2026-08-20",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "El envés de las frondes y el raquis, que es donde estaría la cochinilla que RHS nombra para esta especie. Ninguna de las dos fotos lo muestra.",
+            "Si el tiesto transparente tiene agua dentro o alguna salida por abajo. Se ve que la maceta está metida en él, no si retiene agua.",
+            "El estado de las raíces y si el cepellón está apretado, que es lo que decidiría si necesita maceta más grande.",
+            "La humedad real del cepellón. Llegó sin regar, y cuánto le queda de la última vez que la regaron en la tienda no se ve en una foto.",
+            "Qué es la mota oscura del borde del tiesto. A esta resolución no se puede decir si es un insecto, un resto de sustrato o suciedad, y por eso va como señal observada sin interpretar.",
+            "El cultivar. La etiqueta se queda en la especie y la forma de la fronde no lo resuelve.",
+            "Cuánta luz le va a llegar de verdad en su sitio: la foto está hecha en la cocina, sobre una tabla, antes de colocarla."
+          ],
+          "plan_recuperacion": null,
+          "verificacion": null
+        }
+      ]
+    },
+    {
+      "id": "croton",
+      "nombre_comun": "Croton",
+      "nombre_cientifico": "Codiaeum variegatum",
+      "familia": "Euphorbiaceae",
+      "foto": "croton.jpg",
+      "alt": "Croton recién comprado sobre una tabla de madera de la cocina: hojas gruesas y brillantes, oblongas y terminadas en punta, de verde muy oscuro con la nervadura marcada en amarillo. Las hojas más viejas tienen el nervio central rojo anaranjado. Maceta de plástico color teja.",
+      "historia": "Comprado en Leroy Merlin el 13 de agosto de 2026, el mismo día y en el mismo sitio que el helecho nuevo. Va al salón, en la parte alejada de la ventana. Es la primera planta de la casa cuyo interés principal es el color de la hoja y no la flor.",
+      "riego": {
+        "resumen": "Cuando la capa de arriba esté seca: cada 4 días en verano, cada 7 en invierno, ~200 ml.",
+        "detalle": "RHS lo dice corto: «riega cuando la capa superior del sustrato se haya secado, preferiblemente con agua de lluvia a temperatura ambiente», y reduce el riego en invierno cuando el crecimiento se frena. Para esta maceta de 14 cm son unos 200 ml cada 4 días en agosto y cada 7 en invierno, comprobando con el dedo los 2 cm de arriba. Ni encharcado ni seco del todo, y las dos desviaciones tienen la misma consecuencia visible, que es lo que hace confusa esta planta: el croton suelta hojas por exceso de agua y también por sequía. Distinguirlas es cuestión de mirar el sustrato antes de decidir, no la hoja caída: si está húmedo y suelta hoja, es podredumbre de raíz —el otro problema que nombra RHS— y hay que dejarlo secar; si está seco, es sed. Móstoles tiene agua dura y RHS prefiere agua de lluvia, así que filtrada o de lluvia si puede ser, y nunca fría del grifo, porque un cambio brusco de temperatura en las raíces es otra de las causas de que suelte hoja.",
+        "dias_verano": 4,
+        "dias_invierno": 7,
+        "ml_aprox": 200,
+        "profundidad_cm": 2,
+        "ultimo": null,
+        "calculable": true,
+        "disparador": "comprobar que los 2 cm de arriba del sustrato están secos al meter el dedo",
+        "ancla": "2026-08-13",
+        "ancla_tipo": "llegada_a_casa"
+      },
+      "luz": {
+        "resumen": "Mucha luz indirecta, y ahí va a tener un escalón menos: el color amarillo depende de eso.",
+        "detalle": "RHS: «los crotones necesitan luz brillante pero indirecta en verano para crecer bien», con dos avisos a los lados: con luz insuficiente «las hojas pueden perder sus colores vivos o caerse», y a pleno sol se pueden quemar. O sea que quiere el máximo de luz que no sea sol directo, y ése es exactamente el punto donde su sitio se queda corto: la parte alejada del ventanal es luz difusa a media distancia, un escalón por debajo. Merece la pena comparar con el helecho que llega el mismo día al mismo rincón, porque el número es el mismo y la consecuencia no: en el helecho ese escalón cae dentro de su tolerancia publicada —RHS lo pone en sombra parcial— y en el croton cae justo sobre el rasgo por el que se compra la planta, que es la nervadura amarilla. Lo que NO es la solución es ponerlo en el tramo de sol directo de la mañana junto al cristal: RHS avisa de la quemadura y en una hoja variegada el sol quema primero las zonas claras. Lo razonable es el punto más luminoso de esa zona alejada, y comprobar el resultado en la hoja nueva.",
+        "nivel": 3,
+        "categoria_ideal": "indirecta_brillante",
+        "categoria_recibida": "indirecta_media",
+        "sol_directo_matinal": false,
+        "distancia_m": null,
+        "nivel_ideal": 3,
+        "nivel_actual": 2,
+        "orientacion": "noreste",
+        "tramos": [
+          {
+            "franja": "primera hora de la mañana",
+            "tipo": "indirecto_medio"
+          },
+          {
+            "franja": "resto del día",
+            "tipo": "indirecto_medio"
+          }
+        ],
+        "sol_directo": {
+          "desde": null,
+          "hasta": null,
+          "descripcion": "el tramo de sol directo de la mañana no llega a la parte alejada del ventanal",
+          "confirmado_por": "Carlos"
+        }
+      },
+      "humedad": {
+        "resumen": "Quiere aire húmedo: plato de grava mojada. El chorro del aire acondicionado le tira la hoja.",
+        "detalle": "RHS: «a estas plantas tropicales les gusta el aire húmedo, así que pon la maceta sobre una bandeja de guijarros o de arcilla expandida húmedos», y añade pasar un paño húmedo a las hojas de vez en cuando, que en un croton se agradece dos veces porque la hoja es grande, brillante y coge polvo. El 50 % objetivo es criterio propio: RHS pide aire húmedo sin dar porcentaje. Y aquí la humedad no es el riesgo principal sino la corriente: RHS avisa de que las corrientes frías y los cambios bruscos de temperatura le hacen soltar hoja, y en este salón hay un aparato que hace las dos cosas a la vez en verano —el aire acondicionado, que enfría y deshumidifica— y otro en invierno, la calefacción, que seca el aire durante meses. Elegir el sitio mirando por dónde sale el aire vale más que cualquier truco de humedad.",
+        "hr_objetivo_pct": 50
+      },
+      "temperatura": {
+        "min_c": 18,
+        "max_c": 35,
+        "detalle": "RHS es explícito y da una franja ancha: «necesitan calor constante todo el año, alrededor de 18-35 °C. Asegúrate de que no bajen de 15 °C». Y esto convierte al croton en un caso raro y agradable en este fichero: es la primera planta de la casa cuya banda térmica encaja entera con lo que hace la casa, sin advertencias. El salón está a 21-24 °C en invierno con la calefacción y con un tope de 28 °C en verano con el aire acondicionado: las dos cifras caen de lleno dentro de 18-35, y el suelo de 15 °C queda lejos. O sea que lo que en otras fichas es un problema —el invierno cálido de esta casa— aquí es justo lo que la planta pide. El riesgo térmico no es la temperatura media sino el salto: RHS nombra las corrientes frías y las fluctuaciones como causa de caída de hoja, y eso en verano tiene nombre y sitio, que es el chorro del aire acondicionado, y en invierno también, que es la ventana abierta a mediodía y el pasillo. `minima_letal_c` sigue en null: los 15 °C son un suelo de cultivo publicado, no una temperatura letal, y convertir uno en otro sería inventar.",
+        "optimo_min_c": null,
+        "optimo_max_c": null,
+        "minima_letal_c": null,
+        "rusticidad_rhs": null,
+        "casa_verano_max_c": 28,
+        "casa_invierno_c": null,
+        "casa_invierno_min_c": 21,
+        "casa_invierno_max_c": 24
+      },
+      "sustrato": {
+        "resumen": "Sustrato ACIDO sin turba, ligero y de drenaje rápido: 3 partes de sustrato para acidófilas y 1 de gravilla.",
+        "detalle": "Es la única de las diez plantas de la casa que pide sustrato ácido, y lo pide RHS por escrito: «usa un sustrato para acidófilas (ericaceous) sin turba, que sea ligero, de drenaje rápido y sin tierra franca, como una mezcla de tres partes de sustrato para acidófilas sin turba y una de gravilla». Vale la pena no traducirlo a «universal y ya está», porque es el dato que distingue su ficha de las otras nueve: el sustrato para acidófilas se vende hecho —el de camelias, azaleas y arándanos— y la gravilla es cualquier árido de jardinería. Que sea sin turba es criterio de RHS en todas sus guías, no una preferencia. `cambiar_ahora` va en false por lo mismo que el helecho nuevo: acaba de llegar hoy y trasplantar el día de la compra suma el estrés de la raíz al del cambio de sitio. El sustrato de producción que trae aguanta perfectamente hasta la primavera.",
+        "mezcla": "3 partes de sustrato para acidófilas sin turba + 1 parte de gravilla",
+        "cambiar_ahora": false
+      },
+      "abonado": {
+        "resumen": "Mensual en temporada de crecimiento, a media dosis. Y esto es criterio propio: RHS no lo publica.",
+        "detalle": "Aquí hay que decir de dónde sale el consejo, porque no sale de la fuente habitual: la guía de RHS para codiaeum NO da pauta de abonado —lo he comprobado buscándolo expresamente— así que la recomendación es criterio propio de cultivo en maceta, el mismo que se aplica en el resto del fichero: abono general de plantas de interior, a media dosis, una vez al mes en temporada de crecimiento, de abril a septiembre en Madrid, y nada en invierno. Media dosis porque la dosis de etiqueta está pensada para suelo y en maceta acumula sales con el riego frecuente. Un matiz que sí se apoya en RHS por vía indirecta: si pierde color, la respuesta no es abonar más. RHS atribuye la pérdida de color a la luz insuficiente, y abonar un croton apagado solo añade sales. Y como acaba de llegar de producción con el sustrato fertilizado, el primer abono puede esperar tres o cuatro semanas.",
+        "temporada": "abril a septiembre",
+        "meses": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "condicion": null,
+        "media_dosis": true
+      },
+      "trasplante": {
+        "resumen": "En primavera, a una talla más, cuando las raíces llenen la maceta de 14 cm.",
+        "detalle": "RHS: «trasplanta en primavera a un recipiente ligeramente más grande» cuando las raíces se apiñen, cada pocos años. La maceta que trae es de 14 cm —lo dice la etiqueta, «C 14»—, así que el paso siguiente son 16 o 18 cm, no un salto grande: en una maceta demasiado grande el sustrato tarda en secarse y esta planta paga eso con podredumbre de raíz. En el mismo momento, RHS recomienda la poda: «poda en primavera para favorecer que ramifique». Dos avisos para cuando llegue ese día, y los dos son de RHS: guantes, porque el látex blanco que sale al cortar es irritante de piel y ojos; y si quieres hacer más plantas, esquejes de madera blanda a principios de verano.",
+        "cuando": "en primavera, cada pocos años",
+        "meses": [
+          3,
+          4,
+          5
+        ],
+        "condicion": "cuando las raíces llenen la maceta de 14 cm; subir solo una talla, a 16-18 cm"
+      },
+      "plagas_comunes": [
+        {
+          "plaga": "Caída de hoja",
+          "senal": "Hojas que se sueltan enteras, empezando por las de abajo, a veces sin amarillear antes.",
+          "respuesta": "Es el problema característico del croton y RHS le da cuatro causas, que conviene descartar en este orden: sustrato seco, aire seco, corriente fría y temperatura por debajo de 15 °C. En esta casa la sospechosa número uno en verano es la corriente del aire acondicionado y la número dos el sustrato seco; la temperatura no lo es, porque el salón no baja de 21 °C. Antes de cambiar nada, mete el dedo en el sustrato: es lo que separa «sed» de «frío», y las respuestas son distintas."
+        },
+        {
+          "plaga": "Podredumbre de raíz",
+          "senal": "Hojas que caen con el sustrato todavía húmedo, base del tallo blanda, sustrato que sigue mojado días después de regar.",
+          "respuesta": "RHS la nombra por exceso de riego. Es la trampa de esta planta: el síntoma visible —hoja que cae— es el mismo que el de la sequía, así que la reacción intuitiva de regar más la empeora. La regla es mirar el sustrato antes de regar y no la hoja después. Si ya ha pasado: saca el cepellón, corta las raíces blandas y oscuras, cambia el sustrato y riega mucho menos durante un mes."
+        },
+        {
+          "plaga": "Araña roja y cochinilla",
+          "senal": "Punteado pálido fino en el haz con telaraña muy fina en el envés y en las axilas, o bultitos pardos quietos pegados al nervio.",
+          "respuesta": "Esto es vigilancia y va marcado como criterio propio: la guía de RHS para codiaeum no destaca estas plagas, y se vigilan porque llega hoy del vivero y porque el aire caliente y seco de interior favorece la araña roja. Revisa el envés esta semana y otra vez a la semana siguiente, antes de que pase a las otras ocho del salón. El punteado del coleo grande sigue siendo el foco sospechoso de la casa."
+        }
+      ],
+      "toxicidad_mascotas": {
+        "gatos": "Tóxica",
+        "perros": "Tóxica",
+        "detalle": "Aquí la fuente habitual falla y hay que decirlo: ASPCA no tiene entrada para Codiaeum variegatum ni para «croton» —lo he buscado en su listado por letra y en el listado imprimible para perros el 13 de agosto de 2026—, así que la toxicidad no se cita de la referencia veterinaria de siempre. Lo que sí hay son dos fuentes que van en la misma dirección. RHS, en su guía de cultivo, dice que «todas las partes de la planta son venenosas» y que el látex blanco es irritante de piel y ojos. Y Pet Poison Helpline, que es un centro de toxicología veterinaria, tiene entrada de especie: «la ingestión puede causar irritación oral y gastrointestinal leve, con babeo, vómitos y/o diarrea; también puede haber irritación cutánea menor tras el contacto con la savia de hojas, tallos y raíces». Las dos juntas sostienen el `toxica`, y la gravedad conviene decirla como la dice la fuente: leve, no dramática. En esta casa no hay animales, así que es dato informativo — y la vía que sí aplica hoy es la humana, que está en `manipulacion`.",
+        "clave": "toxica"
+      },
+      "dificultad": "exigente",
+      "fuentes": [
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "Etiqueta de vivero",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "La etiqueta dice «CROTON PETRA C 14» y su pasaporte fitosanitario da el binomio en el campo A: «A CODIAEUM VARIEGATUM». Es evidencia comercial y coincide con la observación: hojas alternas, oblongo-lanceoladas, de margen entero, gruesas y coriáceas, muy brillantes, con nervadura principal y secundaria marcadas en amarillo crema y el nervio central rojo anaranjado en las hojas viejas; savia blanca al cortar (no comprobada, no se ha cortado nada). Eso es Codiaeum variegatum. «PETRA» es nombre de cultivar comercial y el patrón de nervadura amarilla encaja con lo que se vende con ese nombre, pero se deja en la transcripción de la etiqueta y NO en `nombre_cientifico`: POWO no cataloga cultivares comerciales, y los del croton son innumerables y se solapan."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "IPNI (Kew)",
+          "url": "https://www.ipni.org/n/85073-3",
+          "consultado": "2026-08-13",
+          "nota": "Registro abierto y comprobado: Codiaeum variegatum, autoría «(L.) A.Juss.», Euphorbiaceae, publicado en De Euphorbiacearum Generibus… Tentamen (1824). Diferencia de autoría que conviene anotar: GBIF da la forma larga «(L.) Rumph. ex A.Juss.» para el mismo nombre. No son dos nombres distintos ni un sinónimo, es la misma combinación citada con más o menos detalle de la cadena de autores; para el binomio y la familia da igual, y por eso `nombre_cientifico` se guarda sin autoría, como en el resto del fichero."
+        },
+        {
+          "campo": "nombre_cientifico",
+          "fuente": "POWO",
+          "url": "https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:85073-3",
+          "consultado": "2026-08-13",
+          "nota": "Ficha de POWO localizada por el identificador de IPNI (85073-3). POWO devuelve 403 a peticiones automáticas y NO he podido abrirla, así que no se le atribuye nada: nombre aceptado y familia se citan de IPNI y de GBIF, que sí se abren. Se deja la URL porque POWO es la autoridad nomenclatural y para poder auditarlo a mano."
+        },
+        {
+          "campo": "familia",
+          "fuente": "GBIF",
+          "url": "https://api.gbif.org/v1/species/3071476",
+          "consultado": "2026-08-13",
+          "nota": "Registro abierto del backbone de GBIF (clave 3071476): Codiaeum variegatum (L.) Rumph. ex A.Juss., ACEPTADO, familia Euphorbiaceae, orden Malpighiales. Aquí las dos fuentes coinciden en la familia —al revés que en el helecho nuevo, donde IPNI y GBIF discrepan—, así que Euphorbiaceae se afirma sin reservas. Y la familia no es un adorno: es lo que explica el látex blanco irritante, que es un rasgo de las euforbiáceas."
+        },
+        {
+          "campo": "riego",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "Guía de cultivo de RHS para codiaeum, abierta y comprobada. Literal: «riega cuando la capa superior del sustrato se haya secado, preferiblemente con agua de lluvia a temperatura ambiente»; reducir el riego en invierno cuando el crecimiento se frena. Los 200 ml y los días son traducción a esta maceta de 14 cm y a Móstoles. Que la hoja caída no distinga sed de encharcamiento sale de cruzar los dos problemas que la propia guía enumera."
+        },
+        {
+          "campo": "luz",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS, literal: «los crotones necesitan luz brillante pero indirecta en verano para crecer bien»; «con luz insuficiente, las hojas pueden perder sus colores vivos o caerse»; y a pleno sol pueden quemarse. Que su sitio sea la parte alejada del ventanal, con luz difusa a media distancia y sin sol directo, es dato de la casa dicho por Carlos el 13 de agosto de 2026."
+        },
+        {
+          "campo": "luz.distancia_m",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato: son los metros de la maceta al cristal y solo los puede medir alguien de la casa. En esta planta el número importa más que en las demás, porque la luz es su punto flojo y el diagrama de luz lo necesita. Pregunta concreta: ¿a cuántos metros del ventanal va a quedar?"
+        },
+        {
+          "campo": "humedad",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS, literal: «a estas plantas tropicales les gusta el aire húmedo, así que pon la maceta sobre una bandeja de guijarros o gránulos de arcilla húmedos», y limpiar las hojas con un paño húmedo de vez en cuando. El 50 % de `hr_objetivo_pct` es criterio propio: RHS pide aire húmedo y no publica porcentaje."
+        },
+        {
+          "campo": "temperatura",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS, literal: «necesitan calor constante todo el año, alrededor de 18-35 °C (65-95 °F). Asegúrate de que no bajen de 15 °C (55 °F)»; y las corrientes frías y las fluctuaciones de temperatura causan caída de hoja. Los 15 °C se guardan en el `detalle` y no en `minima_letal_c`, que sigue en null: un suelo de cultivo publicado no es una temperatura letal."
+        },
+        {
+          "campo": "temperatura.minima_letal_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin dato verificable. RHS publica un suelo de cultivo (15 °C) y una franja de trabajo (18-35 °C), no una letal. Convertir el suelo en letal sería inventar precisión, y es el mismo criterio que en las otras nueve fichas."
+        },
+        {
+          "campo": "temperatura.casa_invierno_c",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "La calefacción mantiene el SALÓN entre 21 y 24 °C, dicho por Carlos; se guarda como banda —min 21, max 24— y `casa_invierno_c` queda en null a propósito, porque reducir 21-24 a 22,5 sería inventar precisión. Son constantes de la habitación replicadas en las nueve plantas del salón, no medidas junto a esta maceta. En esta ficha el dato juega a favor por primera vez: 21-24 cae dentro de los 18-35 que pide RHS."
+        },
+        {
+          "campo": "sustrato",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS, literal: «usa un sustrato para acidófilas (ericaceous) sin turba, ligero, de drenaje rápido y sin tierra franca, como una mezcla de tres partes de sustrato para acidófilas sin turba y una parte de gravilla». Es la única de las diez plantas de la casa que pide sustrato ácido, y se guarda tal cual en vez de traducirlo a «universal»."
+        },
+        {
+          "campo": "abonado",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Sin fuente para el abonado: la guía de RHS para codiaeum no da pauta de abono, y lo he buscado expresamente en ella. Lo que hay en la ficha es criterio propio de cultivo en maceta —general de interior, media dosis, mensual de abril a septiembre— y así está rotulado en el `detalle`. Lo que resolvería el hueco es una fuente que publique pauta para el género; mientras no la haya, el consejo se sostiene solo como criterio, no como dato verificado."
+        },
+        {
+          "campo": "trasplante",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS: «trasplanta en primavera a un recipiente ligeramente más grande» cuando las raíces se apiñen; «poda en primavera para favorecer que ramifique»; y para multiplicar, «esquejes de madera blanda a principios de verano». Que la maceta actual sea de 14 cm lo dice la etiqueta («C 14»); el salto a 16-18 y el motivo —maceta grande, sustrato que tarda en secar— es criterio propio."
+        },
+        {
+          "campo": "plagas_comunes",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS nombra para el croton la caída de hoja (con sus cuatro causas: sustrato seco, aire seco, corrientes frías y menos de 15 °C) y la podredumbre de raíz por exceso de riego. La araña roja y la cochinilla van como vigilancia de criterio propio y así están rotuladas en su respuesta: no las destaca RHS para esta especie, se vigilan por ser planta recién comprada y por el aire caliente y seco de interior."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "Pet Poison Helpline",
+          "url": "https://www.petpoisonhelpline.com/poison/croton/",
+          "consultado": "2026-08-13",
+          "nota": "Entrada de especie abierta y comprobada: «Croton», Codiaeum variegatum, con los nombres alternativos Fire Croton, Garden Croton y Variegated Croton. Literal: «la ingestión puede causar irritación oral y gastrointestinal leve, con babeo, vómitos y/o diarrea. También puede producirse irritación cutánea menor tras la exposición a la savia contenida en hojas, tallos y raíces». Se cita esta fuente y no ASPCA porque ASPCA no tiene entrada para esta planta: lo he comprobado el 13 de agosto de 2026 en su listado por letra C y en el listado imprimible para perros. Es la primera vez que este fichero cita una fuente veterinaria distinta de ASPCA, y queda dicho para que se vea que es una sustitución deliberada y no un descuido."
+        },
+        {
+          "campo": "toxicidad_mascotas",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "La guía de cultivo de RHS afirma que «todas las partes de la planta son venenosas» y que el látex blanco es irritante de piel y ojos. Es una fuente hortícola y no veterinaria, así que sostiene el hecho de la toxicidad pero no describe signos en perros o gatos: eso lo aporta Pet Poison Helpline. Nota de método: no he encontrado Codiaeum en la lista de plantas potencialmente dañinas de RHS —esa que sí clasifica a Epipremnum en categoría C—, lo que dice más de la lista que de la planta, porque la propia RHS lo advierte en la guía de cultivo. Se cuenta como lo que es: la lista no es exhaustiva."
+        },
+        {
+          "campo": "manipulacion",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/codiaeum/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "RHS, literal: «usa guantes al manipular codiaeums, porque la savia blanca parecida al látex es irritante de piel y ojos, y todas las partes de la planta son venenosas». Es la advertencia de manipulación más explícita de las diez fichas —más que la del poto, que viene de una lista de categorías— y por eso su `epi` son guantes."
+        },
+        {
+          "campo": "etiqueta_vivero",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Transcripción literal de la pegatina de la foto `croton-etiqueta.jpg`, legible entera: «CROTON PETRA C 14», «LM», «5.29 €», código de barras 8436037830716, y el pasaporte fitosanitario europeo con «A CODIAEUM VARIEGATUM», «B CE-ES-01042003», «C 04-449/625MPS», «D ES». «C 14» se lee como maceta de 14 cm, que es el formato comercial habitual, y eso es lectura y no cifra impresa en claro: por eso está dicho en la nota. No hay nombre de vivero ni dirección: es etiqueta de tienda, y que la tienda sea Leroy Merlin lo dice Carlos y lo respalda el «LM»."
+        },
+        {
+          "campo": "historia",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Dato personal, dicho por Carlos el 13 de agosto de 2026: comprado ese día en Leroy Merlin, para el salón en la parte alejada de la ventana. La frase sobre que es la primera planta de la casa que se compra por el color de la hoja es observación del conjunto del fichero, no algo que él haya dicho."
+        },
+        {
+          "campo": "notas",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Lista vacía: acaba de llegar hoy y nadie ha dictado nada. Cuando Carlos, Noah o Vanesa cuenten algo, entra como {autor, texto}."
+        },
+        {
+          "campo": "ubicacion",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Dato de la casa, dicho por Carlos el 13 de agosto de 2026: va al salón, «en la parte alejada de la ventana», con luz difusa decente a media distancia y sin sol directo. Es el dato que convierte la luz en el punto flojo de esta ficha, así que no es un detalle de contexto: es la mitad del diagnóstico."
+        },
+        {
+          "campo": "tareas",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Las tareas se derivan de los campos de cuidado y de sus fuentes; no son un dato nuevo. Las de hoy salen de que la planta llega hoy sin regar y de que el sitio y la corriente se eligen al colocarla. La de comparar el color de la hoja nueva al mes sale del aviso de RHS sobre pérdida de color con luz insuficiente, y es la comprobación que decide si hay que moverla."
+        },
+        {
+          "campo": "riego.ultimo",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null: Carlos ha dicho expresamente que el croton y el helecho nuevo son las dos que NO se han regado hoy. Así que consta cuándo entró en casa, no cuándo se regó, y por eso el ancla es `llegada_a_casa`. En cuanto alguien lo riegue y lo apunte, pasa a `riego_registrado`."
+        },
+        {
+          "campo": "riego.ancla",
+          "fuente": "Carlos",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Se cuenta desde el 13 de agosto de 2026, el día en que entró en casa, porque es lo mejor que se sabe: no hay riego registrado. Tipo `llegada_a_casa`."
+        },
+        {
+          "campo": "riego.dias_invierno",
+          "fuente": "RHS",
+          "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+          "consultado": "2026-08-13",
+          "nota": "El «reduce el riego en invierno» de RHS está escrito para casas frías. Ésta no lo es: su guía de plantas de interior avisa de que «las macetas se secan más deprisa en invierno cuando la humedad atmosférica baja por la calefacción central» y de que «las plantas de una habitación fría necesitan riego menos a menudo que las de una habitación cálida». Con el salón a 21-24 °C, el invierno de este croton son 7 días y no dos semanas."
+        },
+        {
+          "campo": "estado",
+          "fuente": "observación de foto",
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Diagnóstico sobre las dos fotos del 13 de agosto de 2026 —la planta entera y el detalle de la maceta con la etiqueta—, más dos recortes ampliados de la base del tallo y de una hoja superior. Tomadas en la cocina, sobre la tabla, antes de llevarlo a su sitio del salón."
+        },
+        {
+          "campo": "estados[0].verificacion",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null porque no hay diagnóstico anterior que juzgar: éste es el primero de esta planta."
+        },
+        {
+          "campo": "temperatura.optimo_min_c",
+          "fuente": null,
+          "url": null,
+          "consultado": "2026-08-13",
+          "nota": "Null a propósito, y corrige un dato que estaba mal puesto. Este campo solo se rellena «cuando una fuente publica un óptimo» (ver `meta.escalas.temperatura`), y RHS publica para esta especie UNA franja de trabajo, no un óptimo dentro de ella. Al copiar la franja en los dos pares de campos, el equivalente en texto del diagrama decía «aguanta de 18 a 35 °C, le gusta entre 18 y 35», que es la misma cifra dicha dos veces con dos significados distintos: afirma un óptimo que nadie ha publicado y encima no añade información. Detectado el 13 de agosto de 2026 al leer la frase renderizada en el navegador, no el JSON — el fichero se veía perfectamente coherente. Lo que rellenaría este campo es una fuente que publique un óptimo distinto del rango tolerado, como la begonia, que sí lo tiene (10-13 °C dentro de 10-22)."
+        }
+      ],
+      "ubicacion": {
+        "habitacion": "salón",
+        "relacion_ventana": "en la parte del salón alejada del ventanal, a media distancia y fuera del tramo de sol directo",
+        "distancia_m": null
+      },
+      "etiqueta_vivero": {
+        "vivero": "Leroy Merlin",
+        "productor": null,
+        "procedencia": null,
+        "nombre_etiqueta": "CROTON PETRA C 14",
+        "precio_eur": 5.29,
+        "maceta_cm": 14,
+        "maceta_texto": "C 14",
+        "ean": "8436037830716",
+        "codigo_vivero": null,
+        "fitosanitario": null,
+        "pasaporte_fitosanitario": "A CODIAEUM VARIEGATUM · B CE-ES-01042003 · C 04-449/625MPS · D ES",
+        "otros": "Junto al pasaporte, la bandera de la Unión Europea impresa en trama de puntos. La etiqueta lleva «LM» donde las de Projardín llevan el nombre del vivero.",
+        "nota": "Etiqueta de tienda, no de vivero: no imprime productor ni dirección, solo el nombre comercial, el precio y el código de barras, más el pasaporte fitosanitario del productor. «C 14» se lee como maceta de 14 cm —formato comercial habitual—, así que `maceta_cm` es esa lectura y no una cifra escrita en claro. «PETRA» es el cultivar comercial y se queda aquí, en la transcripción, sin subir a `nombre_cientifico`. Es la primera etiqueta del fichero cuyo nombre comercial y cuya especie coinciden con lo que se ve en la planta: lo contrario del caso de la margarita."
+      },
+      "foto_etiqueta": "croton-etiqueta.jpg",
+      "alt_etiqueta": "Detalle de la maceta de plástico color teja del croton con su etiqueta blanca: «CROTON PETRA C 14», «LM», 5,29 €, un código de barras con el número 8436037830716 y, debajo, el pasaporte fitosanitario europeo que dice «A CODIAEUM VARIEGATUM».",
+      "fecha_llegada": "2026-08-13",
+      "fecha_llegada_texto": null,
+      "dias_en_casa": 0,
+      "notas": [],
+      "manipulacion": {
+        "resumen": "Guantes siempre: el látex blanco que sale al cortar es irritante de piel y ojos.",
+        "detalle": "Es la advertencia de manipulación más explícita de las diez fichas, y viene textual de la guía de cultivo de RHS: «usa guantes al manipular codiaeums, porque la savia blanca parecida al látex es irritante de piel y ojos, y todas las partes de la planta son venenosas». El látex es un rasgo de familia —las euforbiáceas— y no una peculiaridad de este ejemplar, así que aplica cada vez que se corte algo: poda de primavera, esquejes, retirar una hoja. Guantes, no te frotes los ojos, lávate las manos al terminar y no dejes los restos de poda donde alguien los toque. Con guantes puestos es una planta perfectamente manejable; sin ellos, es la que más papeletas tiene de dar un problema en esta casa.",
+        "epi": "guantes"
+      },
+      "procedencia_nota": null,
+      "tareas": [
+        {
+          "id": "sitio-sin-corriente",
+          "titulo": "Colocarlo en el punto más luminoso de la zona alejada, y FUERA del chorro del aire acondicionado",
+          "tipo": "fecha",
+          "fecha": "2026-08-13",
+          "prioridad": 1
+        },
+        {
+          "id": "regar-al-llegar",
+          "titulo": "Meter el dedo en el sustrato y regar si está seco: llegó sin regar",
+          "tipo": "fecha",
+          "fecha": "2026-08-13",
+          "prioridad": 1
+        },
+        {
+          "id": "revisar-enves",
+          "titulo": "Revisar el envés de varias hojas por si trae araña roja o cochinilla del vivero",
+          "tipo": "fecha",
+          "fecha": "2026-08-20",
+          "prioridad": 1
+        },
+        {
+          "id": "comparar-color",
+          "titulo": "Comparar una hoja nueva con una de hoy: si sale con menos amarillo, le falta luz",
+          "tipo": "fecha",
+          "fecha": "2026-09-13",
+          "prioridad": 2
+        },
+        {
+          "id": "abonado",
+          "titulo": "Abonar",
+          "tipo": "temporada",
+          "meses": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "condicion": "general de interior a media dosis, y no antes de 3 o 4 semanas desde la compra",
+          "prioridad": 3
+        },
+        {
+          "id": "trasplante",
+          "titulo": "Cambiar de maceta",
+          "tipo": "temporada",
+          "meses": [
+            3,
+            4,
+            5
+          ],
+          "condicion": "cuando las raíces llenen la maceta de 14 cm; subir solo una talla, a 16-18 cm, y con guantes",
+          "prioridad": 3
+        },
+        {
+          "id": "riego",
+          "titulo": "Regar",
+          "tipo": "ritmo",
+          "dias_verano": 4,
+          "dias_invierno": 7,
+          "calculable": true,
+          "por_que_no": null,
+          "prioridad": 2,
+          "ancla": "2026-08-13",
+          "ancla_tipo": "llegada_a_casa"
+        }
+      ],
+      "estados": [
+        {
+          "fecha_foto": "2026-08-13",
+          "foto": "croton.jpg",
+          "limitacion_foto": "Tomada sobre la tabla de la cocina, con luz artificial cálida y no en su sitio del salón. Eso tiene dos consecuencias: la luz cálida exagera el amarillo de la nervadura, así que el contraste real de color habrá que juzgarlo con luz de día, y la foto no dice nada de la luz que va a recibir —eso viene de lo que ha dicho Carlos—. El envés de las hojas no se ve en ninguna de las dos fotos.",
+          "severidad": "sana",
+          "titulo": "Recién comprado y con el color intacto: lo que hay que cuidar es la luz y la corriente",
+          "senales": [
+            "Hojas gruesas, coriáceas y muy brillantes, todas turgentes; ninguna acucharada, arrugada ni marchita.",
+            "Nervadura principal y secundaria dibujada en amarillo crema sobre verde muy oscuro, con contraste alto: es el rasgo por el que se compra la planta y está en su punto.",
+            "En las hojas más viejas —las de abajo— el nervio central es rojo anaranjado y la lámina tiene tonos bronce. Es la maduración normal del color en esta planta, no un daño.",
+            "Margen de la hoja entero, sin bordes marrones, sin puntas secas y sin agujeros de mordedura.",
+            "Sin punteado pálido en el haz, sin telaraña visible y sin bultitos en los nervios.",
+            "Mata compacta con hojas repartidas desde la base del tallo hasta arriba: no hay tramo pelado abajo, o sea que no ha soltado hoja en producción ni en el transporte.",
+            "Un par de hojas con un pliegue o una punta doblada, compatible con el manejo del transporte.",
+            "Sustrato oscuro y de grano fino, húmedo en apariencia, con algunas fibras claras en la superficie junto al borde de la maceta.",
+            "Maceta de plástico color teja de las de vivero, con su etiqueta pegada; el sustrato llega hasta el borde."
+          ],
+          "causas_probables": [
+            {
+              "id": "color-intacto",
+              "tipo": "afirmacion",
+              "resumen": "Está sano, y en un croton la prueba es el contraste de la nervadura",
+              "detalle": "En esta planta el indicador de que todo va bien no es que las hojas estén verdes: es que el amarillo esté vivo y bien dibujado sobre el verde oscuro. RHS lo dice al revés y por eso sirve de test: con luz insuficiente las hojas pierden sus colores vivos. Aquí el contraste es alto y llega hasta las hojas de abajo, y además la mata tiene hoja desde la base, que significa que no ha soltado ninguna. Es una planta bien cultivada y sin daño de transporte: el punto de partida es bueno.",
+              "patron": "Lo que lo desmentiría: que la hoja NUEVA salga con la nervadura apagada, verdosa o mucho menos marcada que las de hoy. Es el primer síntoma y llega antes que la caída de hoja."
+            },
+            {
+              "id": "luz-corta",
+              "tipo": "riesgo",
+              "resumen": "Su sitio le da un escalón menos de luz del que pide, y el color es lo que se paga",
+              "detalle": "RHS: luz brillante pero indirecta; con luz insuficiente las hojas pierden color o caen. La parte alejada del ventanal es luz difusa a media distancia, o sea alrededor de un nivel 2 cuando querría un 3. Conviene compararlo con el helecho que llega hoy al mismo rincón: mismo escalón de menos, consecuencia distinta, porque el helecho tolera sombra parcial por ficha de RHS y el croton no. Y la salida no es el cristal: en el tramo de sol directo de la mañana se quema, y en una hoja variegada el sol quema primero las zonas claras. La salida es el punto más luminoso de esa zona alejada.",
+              "patron": "Compara al mes una hoja nueva con una de hoy. Si sale con menos amarillo o el amarillo más pálido, le falta luz. Ojo con el orden de lectura: si además se le caen hojas, primero mira el sustrato, porque eso puede ser agua y no luz."
+            },
+            {
+              "id": "corriente-aire",
+              "tipo": "riesgo",
+              "resumen": "La corriente del aire acondicionado le puede tirar la hoja, y eso pasa en días",
+              "detalle": "RHS nombra las corrientes frías y las fluctuaciones de temperatura como causa de caída de hoja. En este salón hay un aparato que hace exactamente eso en verano y está encendido con objetivo de 28 °C: el aire acondicionado, que además deshumidifica. Es el riesgo más rápido de esta ficha —la temperatura media de la casa le va bien, es el chorro de aire lo que no— y se evita gratis eligiendo bien el sitio el primer día. Míralo antes de colocarlo, no después.",
+              "patron": "Hojas que se sueltan enteras, empezando por las de abajo, con el sustrato todavía húmedo. Si el sustrato está seco, la causa es otra: sed."
+            },
+            {
+              "id": "agua-ambigua",
+              "tipo": "riesgo",
+              "resumen": "Suelta hoja por sequía y también por encharcamiento: el síntoma no distingue",
+              "detalle": "Es la trampa propia del croton y merece leerse antes del primer riego. RHS da como causas de caída de hoja el sustrato seco y también la podredumbre de raíz por exceso de agua, o sea que la misma hoja caída puede querer decir dos cosas opuestas. La consecuencia práctica: la decisión de regar NO se toma mirando la hoja, se toma metiendo el dedo dos centímetros en el sustrato. Regar «porque está tirando hojas» es la forma más rápida de matarlo.",
+              "patron": "Antes de tocar la regadera, dedo en el sustrato: húmedo y con hoja cayendo es podredumbre —dejar secar—; seco y con hoja cayendo es sed —regar—."
+            },
+            {
+              "id": "savia",
+              "tipo": "aclaracion",
+              "resumen": "Es una euforbiácea: al cortarla sale látex blanco irritante",
+              "detalle": "No es un problema de salud de la planta, es cómo hay que tratarla. La familia Euphorbiaceae —confirmada en IPNI y en GBIF— explica el rasgo, y RHS lo advierte expresamente: guantes, porque el látex blanco es irritante de piel y ojos y todas las partes son venenosas. Va como aclaración y no como riesgo porque no le va a pasar nada a la planta: le puede pasar a quien la pode. Es la más explícita de las diez fichas en este punto.",
+              "patron": "No hay que mirar nada en la planta: aplica siempre que se corte algo. Poda de primavera, esquejes o retirar una hoja, con guantes."
+            },
+            {
+              "id": "plaga-de-vivero",
+              "tipo": "riesgo",
+              "resumen": "Llega hoy del vivero: hoy es sospechoso, y en el salón hay ocho plantas más",
+              "detalle": "Una planta recién comprada es la vía normal de entrada de una plaga en una casa, y las nueve del salón comparten habitación: lo que entre con él se reparte. En la foto no hay ni punteado ni telaraña ni bultitos, así que esto es vigilancia y no un hallazgo. El aire caliente y seco de interior favorece la araña roja, que es la que más habría que buscar; y esto es criterio propio, porque RHS no la destaca para esta especie.",
+              "patron": "Punteado pálido muy fino en el haz y telaraña finísima en el envés y en las axilas; o bultitos pardos quietos pegados al nervio central. Revísalo hoy y otra vez el día 20."
+            }
+          ],
+          "tratamiento": [
+            "Hoy, y es la decisión que más importa: elige el sitio mirando por dónde sale el aire acondicionado. El punto más luminoso de la zona alejada del ventanal, pero fuera del chorro. Ni pegado al cristal —se quema— ni en la corriente —suelta hoja—.",
+            "Hoy: mete el dedo dos centímetros en el sustrato. No se ha regado al llegar, así que si está seco, riega ~200 ml y deja escurrir.",
+            "Hoy: ponlo sobre un plato con grava o arcilla expandida mojada, con el agua justo por debajo de la superficie de la grava. Es lo que pide RHS para el aire húmedo.",
+            "Esta semana: revísale el envés de varias hojas buscando punteado, telaraña fina o bultitos pardos. Repítelo el día 20.",
+            "Riego de mantenimiento: ~200 ml cuando los 2 cm de arriba estén secos, en la práctica cada 4 días en agosto y cada 7 en invierno. Agua a temperatura ambiente, filtrada o de lluvia si puede ser.",
+            "Cada mes o dos: pasa un paño húmedo a las hojas. Son grandes y brillantes, cogen polvo, y el polvo le resta la luz de la que ya va corto.",
+            "Al mes (13 de septiembre): compara una hoja nueva con una de hoy. Si el amarillo sale más pálido o menos dibujado, muévelo a un punto más luminoso de la misma zona.",
+            "Abono a partir de mediados de septiembre: general de interior a media dosis, una vez al mes hasta que acabe la temporada. Y si pierde color, NO abones más: eso es luz, no comida.",
+            "Cuando lo podes o le hagas esquejes: guantes puestos, porque sale látex blanco irritante. Poda en primavera, y los esquejes a principios de verano."
+          ],
+          "revisar_en": "1 mes (13 de septiembre de 2026): la comprobación es el color de la hoja nueva comparado con una de hoy. Si el amarillo sale más pálido o peor dibujado, la luz de ese sitio no le basta y hay que moverlo dentro de la misma zona, nunca al tramo de sol directo. Antes de eso, a la semana (20 de agosto): mira si ha soltado alguna hoja y con qué sustrato —húmedo es corriente o encharcamiento, seco es sed— y revísale el envés por plaga de vivero.",
+          "revisar_fecha": "2026-09-13",
+          "revisar_dias": null,
+          "revisar_desde": null,
+          "no_visible_en_foto": [
+            "El envés de las hojas, que es donde estarían la araña roja y la cochinilla. Ninguna de las dos fotos lo muestra.",
+            "El estado de las raíces y si el cepellón está apretado en la maceta de 14 cm.",
+            "La humedad real del cepellón. Llegó sin regar y en la foto el sustrato solo parece húmedo: eso no se mide con los ojos.",
+            "Si la maceta de vivero tiene los agujeros libres o taponados por el sustrato apretado.",
+            "Qué son las fibras claras que se ven en la superficie del sustrato junto al borde. Pueden ser perlita, fibra del sustrato o raíces superficiales, y a esta resolución no se puede decir cuál.",
+            "El látex blanco: no se ha cortado nada, así que la savia no se ha visto. Se afirma por familia y por la advertencia de RHS, no por observación.",
+            "El cultivar. La etiqueta dice «PETRA» y el patrón de nervadura encaja, pero los cultivares de croton son innumerables y se solapan; POWO no los cataloga.",
+            "Cuánta luz le va a llegar de verdad en su sitio: la foto está hecha en la cocina, sobre una tabla, antes de colocarlo."
           ],
           "plan_recuperacion": null,
           "verificacion": null

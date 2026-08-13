@@ -56,6 +56,20 @@ const SILUETAS = {
     detalle: ["M24 33V13"],
     lectura: "hoja de crisantemo, con lóbulos gruesos y profundamente hendidos",
   },
+  // Oblongo-lanceolada, margen ENTERO —sin un diente— y coriácea, con el nervio
+  // central y los laterales muy marcados. Ese nervio es el rasgo: en el croton el
+  // dibujo amarillo de la hoja va exactamente por ahí, así que trazar la nervadura
+  // no es adorno, es decir dónde está el color.
+  croton: {
+    contorno: "M24 45C20 40 14 32 14 24 14 15 19 6 24 3c5 3 10 12 10 21 0 8-6 16-10 21Z",
+    detalle: [
+      "M24 44V4",
+      "M24 34c-3-2-6-4-8-7", "M24 34c3-2 6-4 8-7",
+      "M24 26c-3-2-5-4-7-7", "M24 26c3-2 5-4 7-7",
+      "M24 18c-2-2-4-3-6-6", "M24 18c2-2 4-3 6-6",
+    ],
+    lectura: "hoja de croton, alargada y de borde entero, con el nervio central y los laterales muy marcados: por ahí va el amarillo",
+  },
   // Acorazonada y entera, JUVENIL. La adulta es pinnatisecta; la nuestra no.
   poto: {
     contorno: "M24 44C13 38 6 29 6 20 6 12 12 6 19 6c2 0 4 1 5 3 1-2 3-3 5-3 7 0 13 6 13 14 0 9-7 18-18 24Z",
@@ -64,11 +78,21 @@ const SILUETAS = {
   },
 };
 
-/* El helecho va aparte: el contorno de fronde SÍ se sostiene —que es un helecho
-   está confirmado—, y lo que no se sostiene es el género. Por eso la trama de
-   «sin dato» va DENTRO del contorno: marca exactamente dónde está la
-   incertidumbre real. Dibujarle un Adiantum bonito sería afirmar una especie
-   con un lápiz, que es la misma mentira que rellenar un campo a ojo. */
+/* Los dos helechos van aparte, y la diferencia entre sus dos dibujos ES el dato.
+   En los dos el contorno de fronde se sostiene —que son helechos está confirmado—,
+   y lo que cambia es hasta dónde llega la evidencia:
+
+   · `helecho` (el del salón): el género no se sabe, así que la trama de «sin dato»
+     va DENTRO del contorno y marca exactamente dónde está la incertidumbre real.
+     Dibujarle un Adiantum bonito sería afirmar una especie con un lápiz, que es la
+     misma mentira que rellenar un campo a ojo.
+   · `helecho2` (el de Leroy Merlin, 13/08/2026): la etiqueta da la especie y la
+     planta la confirma, así que su fronde va SIN trama y con los rasgos de
+     Nephrolepis exaltata: más larga, más estrecha y con más pares de pinnas, que
+     es lo que la distingue de una fronde genérica.
+
+   O sea que el único adorno que llevan es el que significa algo: la trama. Dos
+   dibujos casi iguales cuya única diferencia es lo que se sabe. */
 const FRONDE = {
   contorno: "M24 45V9",
   pinnas: [
@@ -76,8 +100,22 @@ const FRONDE = {
   ],
 };
 
-/** Los dos coleos comparten silueta: los distingue el tamaño, no la forma. */
-const ALIAS = { "coleo-pequeno": "coleo-grande" };
+/* Nephrolepis: fronde larga y estrecha, con muchos más pares de pinnas y las de
+   abajo más cortas. Once pares en vez de ocho, y el raquis llega más arriba. */
+const FRONDE_NEPHROLEPIS = {
+  contorno: "M24 46V6",
+  pinnas: [
+    [13.5, 6], [12, 9.5], [11, 13], [10.5, 16.5], [10.5, 20], [11, 23.5],
+    [12, 27], [13.5, 30.5], [15.5, 34], [18, 37.5], [21, 41],
+  ],
+};
+
+const contornoFrondeNephrolepis = () =>
+  "M24 46C22 36 19 24 17 15 15.5 8 20 3 24 2c4 1 8.5 6 7 13-2 9-5 21-7 31Z";
+
+/** Los dos coleos comparten silueta: los distingue el tamaño, no la forma.
+ *  Y los dos potos comparten especie: la misma hoja acorazonada juvenil. */
+const ALIAS = { "coleo-pequeno": "coleo-grande", poto2: "poto" };
 
 /**
  * El rasgo en palabras, que es el que hace que la silueta sea información.
@@ -93,11 +131,17 @@ export function lecturaDe(id) {
       "que es un helecho está confirmado; el género, no. Sin una fronde adulta " +
       "desarrollada no hay evidencia para llegar a especie.";
   }
+  if (id === "helecho2") {
+    return "Fronde de Nephrolepis exaltata: larga, estrecha y con muchos pares de " +
+      "pinnas pequeñas. Va sin la trama de «sin dato» que lleva el otro helecho, y " +
+      "esa es la diferencia entre los dos dibujos: de ésta se sabe la especie.";
+  }
   return (SILUETAS[ALIAS[id] ?? id]?.lectura) ?? null;
 }
 
 export function siluetaDe(id, { grande = false } = {}) {
   if (id === "helecho") return frondeSinIdentificar(grande);
+  if (id === "helecho2") return frondeIdentificada(grande);
 
   const spec = SILUETAS[ALIAS[id] ?? id];
   if (!spec) return null;
@@ -130,6 +174,27 @@ function frondeSinIdentificar(grande) {
   for (const [x, y] of FRONDE.pinnas) {
     svg.append(e("path", { class: "silueta__pinna", d: `M24 ${y + 4}L${x} ${y}` }));
     svg.append(e("path", { class: "silueta__pinna", d: `M24 ${y + 4}L${48 - x} ${y}` }));
+  }
+  return svg;
+}
+
+/** La fronde del helecho identificado: mismo lenguaje gráfico, sin la trama.
+ *
+ *  Va `aria-hidden` como las seis siluetas de hoja y a diferencia de la del helecho
+ *  sin identificar, y el motivo es el mismo en los dos casos: la silueta se anuncia
+ *  cuando dice algo que no está escrito al lado. «Fronde de helecho sin identificar»
+ *  no está en ningún otro sitio de la tarjeta; «Nephrolepis exaltata» sí, en el
+ *  binomio, justo debajo del nombre. Repetirlo sería ruido para un lector de
+ *  pantalla. La lectura del dibujo sigue disponible en `lecturaDe()`.
+ */
+function frondeIdentificada(grande) {
+  const svg = lienzo(grande, "silueta--fronde");
+  svg.setAttribute("aria-hidden", "true");
+  svg.append(e("path", { class: "silueta__contorno", d: contornoFrondeNephrolepis() }));
+  svg.append(e("path", { class: "silueta__raquis", d: FRONDE_NEPHROLEPIS.contorno }));
+  for (const [x, y] of FRONDE_NEPHROLEPIS.pinnas) {
+    svg.append(e("path", { class: "silueta__pinna", d: `M24 ${y + 3.5}L${x} ${y}` }));
+    svg.append(e("path", { class: "silueta__pinna", d: `M24 ${y + 3.5}L${48 - x} ${y}` }));
   }
   return svg;
 }

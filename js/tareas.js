@@ -177,7 +177,7 @@ export function clasificar(tarea, hoy) {
     if (faltan === 0) return { enHoy: true, estado: "hoy", rotulo: "Hoy", cuando: null, nota: tarea.condicion, tono: "hoy", dias: 0 };
     if (faltan < 0) {
       /* Una `fecha` que ya pasó NO se reetiqueta como vencida: `vencida` es una
-         clasificación de `botanist` y hoy solo hay una en las siete. Se dice el
+         clasificación de `botanist` y hoy solo hay una en las diez. Se dice el
          hecho —la fecha era otro día— sin subir el tono ni acusar a nadie. */
       return {
         enHoy: true,
@@ -253,14 +253,14 @@ export function clasificar(tarea, hoy) {
 
   if (tipo === "ritmo") {
     /* EL RIEGO, Y ESTO ES LO QUE NO SE NEGOCIA.
-       `riego.ultimo` es null en las siete: un intervalo sin día de partida no
-       produce un vencimiento, y decir «hoy toca regar» desde «cada 4 días» es
-       inventarse el origen de la cuenta.
+       Un intervalo sin día de partida no produce un vencimiento, y decir «hoy
+       toca regar» desde «cada 4 días» es inventarse el origen de la cuenta.
 
        Y hay un caso más fino que hay que resolver a mano, porque el JSON invita
-       a lo contrario: cuatro plantas traen `calculable: true` con
-       `ancla_tipo: "llegada_a_casa"`, o sea que la aritmética SÍ saldría. No se
-       usa. Para el riego el disparador correcto nunca es el calendario, es el
+       a lo contrario: hay plantas con `calculable: true` y
+       `ancla_tipo: "llegada_a_casa"` —hoy el helecho nuevo y el croton, que
+       llegaron el 13/08/2026 sin regar—, o sea que la aritmética SÍ saldría. No
+       se usa. Para el riego el disparador correcto nunca es el calendario, es el
        sustrato, así que un ancla exacta produciría un vencimiento
        aritméticamente impecable y agronómicamente falso — regar por calendario
        en una casa con aire acondicionado y sol de mañana es cómo se ahoga una
@@ -272,14 +272,15 @@ export function clasificar(tarea, hoy) {
        plantas; una que dice «riega hoy» solo da órdenes, y a los cuatro días se
        equivoca. */
     /* Y AQUÍ ESTABA UN DEFECTO REAL, que avisó `botanist` dos veces.
-       El comentario de arriba decía «`riego.ultimo` es null en las siete» y ya no
-       lo es: **la begonia, el helecho y el poto tienen `riego.ultimo:
-       "2026-08-11"`**, porque Carlos los regó ese día, y su `ancla_tipo` pasó a
-       `riego_registrado`. Devolver `sinRegistro: true` para todo `ritmo` hacía
-       que la ficha rotulara «sin registrar» en tres plantas donde el dato SÍ
-       consta — o sea el error simétrico del que este módulo existe para evitar:
-       en vez de inventarse un dato, negaba uno que había.
-       Ahora `sinRegistro` sale del dato y no del tipo. */
+       El comentario de arriba decía «`riego.ultimo` es null en las siete» y dejó
+       de serlo en cuanto Carlos empezó a decir cuándo regaba. Devolver
+       `sinRegistro: true` para todo `ritmo` hacía que la ficha rotulara «sin
+       registrar» en plantas donde el dato SÍ consta — o sea el error simétrico
+       del que este módulo existe para evitar: en vez de inventarse un dato,
+       negaba uno que había. Ahora `sinRegistro` sale del dato y no del tipo, que
+       es lo que ha permitido que el reparto cambie tres veces sin tocar código:
+       a 13/08/2026 son OCHO de diez las que tienen `riego.ultimo`, y las dos que
+       no son las que llegaron ese día sin regar. */
     const ultimo = diaDeISO(tarea.ultimo);
     const desdeElUltimo = ultimo == null ? null : hoy.dia - ultimo;
 

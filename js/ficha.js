@@ -166,7 +166,7 @@ function caraDeLaTarjeta(q, planta, grupo, idTitulo, idAbrir) {
      Toda la cara es el `<summary>` —la tarjeta entera es la diana—, así que el
      nombre calculado del contenido serían cuarenta palabras: severidad, familia,
      nombre, binomio, titular del diagnóstico y cinco pastillas de datos, por
-     cada una de las siete. Con `aria-labelledby` el botón se llama «Poto ·
+     cada una de las diez. Con `aria-labelledby` el botón se llama «Poto ·
      abrir la ficha» y el resto sigue siendo contenido, legible en modo lectura. */
   const cara = q(".planta__cara");
   cara.setAttribute("aria-labelledby", `${idTitulo} ${idAbrir}`);
@@ -500,9 +500,9 @@ function indiceDelExpediente(q, planta) {
   }
   indice.hidden = false;
 
-  /* Siete índices en la misma página son siete <nav>, y un <nav> sin nombre
+  /* Diez índices en la misma página son diez <nav>, y un <nav> sin nombre
      entre varios no se distingue de sus hermanos: un lector de pantalla que
-     liste las regiones oiría «navegación» siete veces. */
+     liste las regiones oiría «navegación» diez veces. */
   indice.setAttribute("aria-label", `En el expediente de ${planta.nombre_comun}`);
 }
 

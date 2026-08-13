@@ -82,10 +82,11 @@ async function arrancar() {
 
   montarCabecera(plantas, meta);
   montarParteDelDia(plantas);
-  /* La cronología es un censo de las SIETE, así que se monta con la lista
-     completa y no se refiltra: un censo que se recorta con el buscador deja de
-     ser un censo, y el dato que da —tres órdenes de magnitud en el mismo salón—
-     solo existe estando las siete. */
+  /* La cronología es un censo de TODAS, así que se monta con la lista completa
+     y no se refiltra: un censo que se recorta con el buscador deja de ser un
+     censo, y el dato que da —tres órdenes de magnitud, de dos décadas a un día—
+     solo existe estando todas. Desde el 13/08/2026 son diez y ya no todas son
+     del mismo salón, así que el eje mide el tiempo en casa y no la habitación. */
   if (!montarCronologia(el.cronologia, plantas, HOY)) el.cronologia?.remove();
   montarFacetas(plantas);
   montarPie(plantas);
@@ -101,7 +102,7 @@ async function arrancar() {
  * La separación es el trabajo de la página, y de paso resuelve el problema que
  * llevaba meses en el backlog sin solución: **el día bueno**. Cuando ninguna
  * planta necesite nada, la banda de arriba no aparece pidiendo perdón —
- * desaparece—, y la página dice `ESTÁN BIEN · 7 DE 7` sin inventar urgencia. Ese
+ * desaparece—, y la página dice `ESTÁN BIEN · 10 DE 10` sin inventar urgencia. Ese
  * estado es el que el proyecto existe para producir, y ahora sale por
  * construcción en vez de por un caso especial diseñado a mano.
  *
@@ -152,15 +153,44 @@ function mostrarAviso(texto) {
 
 /* ── cabecera y pie ─────────────────────────────────────────────────────────── */
 
-/** La bajada de la cabecera dice de cuándo son los diagnósticos, y la fecha sale
- *  de `meta`, no de una constante: una web que afirma un estado tiene que decir
- *  de qué momento habla. */
+/**
+ * La bajada de la cabecera dice de cuándo son los diagnósticos, y una web que
+ * afirma un estado tiene que decir de qué momento habla.
+ *
+ * La fecha se calcula de las PLANTAS y no de `meta.fecha_diagnostico`, y el cambio
+ * es del 13 de agosto de 2026, cuando entró la segunda tanda de fotos. Hasta ese
+ * día las siete fichas eran del mismo día y una fecha única era cierta; con tres
+ * plantas fotografiadas el 13 y las siete anteriores sin volver a fotografiar,
+ * «visto el 13 de agosto» habría sido falso para siete de las diez. Así que se
+ * imprime el RANGO cuando hay más de una fecha, y una sola cuando coinciden.
+ *
+ * Cada planta aporta la fecha de su diagnóstico vigente, que `js/datos.js` resuelve
+ * por `fecha_foto` más alta y no por índice.
+ */
 function montarCabecera(plantas, meta) {
   if (!el.cabeceraMeta) return;
   const trozos = [`Móstoles · ${plantas.length} macetas`];
-  const visto = fechaLargaISO(meta?.fecha_diagnostico);
-  if (visto) trozos.push(`visto el ${visto}`);
+  const visto = rangoDeDiagnosticos(plantas) ?? fechaLargaISO(meta?.fecha_diagnostico);
+  if (visto) trozos.push(visto);
   el.cabeceraMeta.textContent = trozos.join(" · ");
+}
+
+/** «visto el 11 de agosto de 2026» o «visto entre el 11 y el 13 de agosto de 2026». */
+function rangoDeDiagnosticos(plantas) {
+  const fechas = [...new Set(plantas.map((p) => p.estado?.fecha_foto).filter(Boolean))].sort();
+  if (fechas.length === 0) return null;
+  const primera = fechaLargaISO(fechas[0]);
+  if (!primera) return null;
+  if (fechas.length === 1) return `visto el ${primera}`;
+  const ultima = fechaLargaISO(fechas[fechas.length - 1]);
+  if (!ultima) return `visto el ${primera}`;
+  /* «entre el 11 y el 13 de agosto de 2026»: si el mes y el año coinciden, se dicen
+     una vez. Repetirlos sería correcto y se leería peor. */
+  const soloDia = /^(\d+) de (.+)$/.exec(primera);
+  const mismoResto = soloDia && ultima.endsWith(soloDia[2]);
+  return mismoResto
+    ? `visto entre el ${soloDia[1]} y el ${ultima}`
+    : `visto entre el ${primera} y el ${ultima}`;
 }
 
 function montarPie(plantas) {

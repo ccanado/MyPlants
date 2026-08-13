@@ -471,3 +471,58 @@ está en `docs/retomar.md` § 2; aquí solo las decisiones y sus alternativas de
 - [agente] **El riesgo no es técnico: es convertirse en un gestor de tareas**, que es justo lo que el
   proyecto decidió no ser —sin rachas, sin porcentajes, sin premiar la visita—. La contención no es
   no hacerlo: es que marcar registre una **observación fechada** y no puntúe a nadie.
+
+## Trigésima vuelta — tres plantas nuevas, y la casa deja de ser una habitación
+
+- [Carlos] **Tres plantas más: `poto2`, `helecho2` y `croton`**, con sus fotos. El poto llevaba más
+  de veinte años en la cocina sin ficha; las otras dos se compraron el 13 de agosto de 2026 en
+  Leroy Merlin para el salón, en la parte alejada del ventanal. Descartado añadirlas «como
+  aparezcan»: se les hizo el mismo recorrido que a las siete —identificación verificada, derivados
+  de imagen, ficha con fuentes campo a campo, silueta y diagnóstico fechado—, porque una ficha más
+  floja al lado de nueve buenas contamina la confianza de las diez.
+- [agente/Carlos] **Los tres campos `casa_*` de temperatura del poto de la cocina van en NULL**, y
+  es la decisión de contenido de esta vuelta. Los 28 °C de tope de verano y los 21-24 °C de
+  invierno los dio Carlos **para el salón**. Descartado copiarlos: una constante de otra habitación
+  presentada en esta ficha se leería como una medida de este sitio, que es exactamente el error que
+  el aviso de `meta.escalas.temperatura` llevaba escrito desde el principio esperando este caso.
+- [agente] **El rótulo de la habitación en el diagrama térmico sale del dato y no de un literal.**
+  `js/svg.js` escribía «el salón está a…» a mano. Con los campos en null la frase se calla sola, así
+  que el fallo no era visible hoy — se arregla igual, porque el día que alguien mida la cocina el
+  literal habría rotulado como del salón una temperatura de otra habitación. Descartado esperar a
+  que fallara.
+- [agente] **La cabecera dice el RANGO de fechas de diagnóstico, no una fecha.** Con dos tandas de
+  fotos (11 y 13 de agosto) y las siete primeras sin volver a fotografiar, «visto el 13 de agosto»
+  habría sido falso para siete de las diez. Se calcula de las plantas y no de
+  `meta.fecha_diagnostico`, que pasa a documentar la última tanda. Descartado re-fechar las siete
+  fichas viejas, que habría sido convertir una fecha falsa en diez.
+- [agente] **`meta.tandas` como registro de qué se fotografió cada día**, en vez de dejar esa
+  información implícita en los `estados[].fecha_foto`. La verdad por planta sigue estando ahí; esto
+  es el índice, y existe porque el reparto por tandas es lo que explica por qué conviven tres
+  regímenes de daño visible en el mismo fichero.
+- [agente] **Se cita Pet Poison Helpline para la toxicidad del croton**, y es la primera fuente
+  veterinaria del proyecto que no es ASPCA. Motivo: ASPCA no tiene entrada para *Codiaeum
+  variegatum* —comprobado en su listado por letra C y en el imprimible para perros el 13 de agosto—
+  y RHS afirma que todas las partes son venenosas. Descartado dejarlo en `sin_datos`, que habría
+  sido más cómodo y menos cierto para una planta con látex irritante. Es suplente y no sustituto:
+  donde ASPCA tenga entrada, manda ASPCA.
+- [agente] **La familia del helecho nuevo se declara con su discrepancia.** IPNI lo archiva en
+  Oleandraceae y GBIF en Nephrolepidaceae; POWO, que es quien decide, devuelve 403. Se elige
+  Nephrolepidaceae —la clasificación vigente en el índice que sí abre— y la otra queda escrita al
+  lado. Descartado elegir una y callar la otra, que es cómo una ficha parece más firme de lo que es.
+- [agente] **Las citas de GBIF apuntan a `api.gbif.org` y no a `www.gbif.org`**, porque la web
+  devuelve 403 a clientes automáticos y la API devuelve el registro entero y se abre. No es una
+  fuente nueva: es la misma citada **por la puerta que de verdad se ha abierto**.
+- [agente] **El presupuesto de imágenes pasa de un total plano a dos por planta** (440 KB por planta
+  y 95 KB de derivado de rejilla, los dos derivados de lo medido). El tope de 2.500 KB daba ERROR
+  con las plantas nuevas sin que nada estuviera mal. Descartado recomprimir fotos correctas para que
+  el número siguiera en verde: **un tope que depende de cuántas plantas tenga Carlos tiene que
+  escalar con ellas o no es un tope, es un techo al proyecto.**
+- [agente] **El rango óptimo de temperatura se retira de los dos potos y del croton** (queda null).
+  Repetía el rango tolerado, y el diagrama lo decía en voz alta: *«aguanta de 18 a 30, le gusta
+  entre 18 y 30»*. RHS publica una franja de trabajo, no un óptimo dentro de ella. Uno de los tres
+  venía del 11 de agosto: se corrige la ficha vieja además de las nuevas, porque dejar el error
+  donde estaba habría sido escribir dos criterios para el mismo campo.
+- [agente] **La silueta del helecho nuevo es la del viejo sin la trama de «sin dato»**, con más
+  pares de pinnas y más estrecha. Descartado dibujarle algo distinto por variedad visual: la única
+  diferencia entre los dos dibujos es lo que se sabe de cada planta, y esa es toda la información
+  que la trama transporta.

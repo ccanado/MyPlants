@@ -314,7 +314,7 @@ export function diagramaTemperatura(t) {
   frag.append(svg);
   const p = document.createElement("p");
   p.className = "diagrama__equivalente";
-  p.textContent = frasePisoTermico(tol, opt, invMin, invMax, numero(t?.casa_verano));
+  p.textContent = frasePisoTermico(tol, opt, invMin, invMax, numero(t?.casa_verano), t?.habitacion);
   frag.append(p);
   return frag;
 }
@@ -324,11 +324,19 @@ export function diagramaTemperatura(t) {
  * `minima_letal_c` es `null` en las siete y el máximo tolerado falta en el
  * helecho, así que la frase se compone de lo que hay y calla lo que no.
  *
- * La banda de casa se rotula como **del salón** y no de la planta: los tres campos
- * valen lo mismo en las siete porque son una constante de la habitación, y
- * atribuírsela a la planta sería afirmar que se ha medido junto a su maceta.
+ * La banda de casa se rotula como **de la habitación** y no de la planta: los tres
+ * campos valen lo mismo en todas las del salón porque son una constante de la
+ * habitación, y atribuírsela a la planta sería afirmar que se ha medido junto a su
+ * maceta.
+ *
+ * Y la habitación viene del dato, no escrita a mano. Hasta el 13/08/2026 esta frase
+ * decía «el salón» como literal, y era cierto porque las siete estaban en el salón.
+ * Con el segundo poto en la cocina dejó de serlo: aquella planta trae los tres
+ * campos de casa en null —nadie ha medido la cocina—, así que hoy la frase se calla
+ * sola; pero el día que alguien mida esa habitación, el literal habría rotulado
+ * como del salón una temperatura de la cocina. Se arregla antes de que pase.
  */
-function frasePisoTermico(tol, opt, invMin, invMax, verano) {
+function frasePisoTermico(tol, opt, invMin, invMax, verano, habitacion) {
   const partes = [];
   if (tol[0] != null && tol[1] != null) partes.push(`Aguanta de ${formatear(tol[0])} a ${formatear(tol[1])} °C`);
   else if (tol[0] != null) partes.push(`Aguanta desde ${formatear(tol[0])} °C (sin máximo publicado)`);
@@ -339,7 +347,7 @@ function frasePisoTermico(tol, opt, invMin, invMax, verano) {
   const casa = [];
   if (invMin != null && invMax != null) casa.push(`${formatear(invMin)}–${formatear(invMax)} °C en invierno`);
   if (verano != null) casa.push(`${formatear(verano)} °C de tope en verano`);
-  if (casa.length > 0) partes.push(`el salón está a ${casa.join(" y ")}`);
+  if (casa.length > 0) partes.push(`${habitacion ? `el ${habitacion}` : "la habitación"} está a ${casa.join(" y ")}`);
 
   return partes.length > 0 ? `${partes.join(", ")}.` : "Sin rango de temperatura verificado.";
 }

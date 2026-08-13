@@ -190,7 +190,7 @@ function filaDe({ planta, dias, certeza, texto }) {
      - el dato es el texto de al lado («74 días»), y el punto solo lo repite en
        forma de posición. Un pseudo-elemento no existe en el DOM, así que no hay
        ningún nodo que pueda confundirse con contenido;
-     - y `tests/estructura.js` lo cazó con razón: siete `<span>` pequeños con
+     - y `tests/estructura.js` lo cazó con razón: una decena de `<span>` pequeños con
        fondo y sin texto son indistinguibles del clásico «punto de color» que
        codifica un estado. La forma de que no lo sean no es explicárselo al test,
        es que dejen de ser nodos.

@@ -333,19 +333,26 @@ function normalizarMedidas(p) {
       max_tolerado: temp.max_tolerado ?? temp.max_c ?? p.temp_max ?? null,
       min_optimo: temp.optimo_min_c ?? temp.min_optimo ?? null,
       max_optimo: temp.optimo_max_c ?? temp.max_optimo ?? null,
-      // `minima_letal_c` es null en las siete y es deliberado: RHS publica
+      // `minima_letal_c` es null en las diez y es deliberado: RHS publica
       // bandas de rusticidad, no el grado al que se muere una planta.
       letal_min: temp.minima_letal_c ?? temp.letal_min ?? null,
       casa_invierno: temp.casa_invierno_c ?? temp.casa_invierno ?? null,
       /* La calefacción es una BANDA (21–24 °C), no un punto. `botanist` dejó
          `casa_invierno_c` en null a propósito para que nadie dibujase el punto
          medio: un 22,5 que nadie ha medido. Y las tres son constantes del SALÓN,
-         iguales en las siete, así que se rotulan como de la habitación y no de la
-         planta. El día que Carlos diga dónde hay radiadores dejarán de ser
-         iguales sin que el esquema cambie. */
+         iguales en las nueve plantas del salón, así que se rotulan como de la
+         habitación y no de la planta. El día que Carlos diga dónde hay radiadores
+         dejarán de ser iguales sin que el esquema cambie.
+
+         Desde el 13/08/2026 hay una planta en la COCINA y las tres vienen en null
+         ahí, porque nadie ha medido esa habitación: el diagrama entonces no pinta
+         banda ni marca de verano, que es lo correcto. Por eso viaja `habitacion`
+         hasta aquí: el rótulo decía «el salón» a mano, y una constante rotulada con
+         la habitación equivocada es peor que no rotularla. */
       casa_invierno_min: temp.casa_invierno_min_c ?? null,
       casa_invierno_max: temp.casa_invierno_max_c ?? null,
       casa_verano: temp.casa_verano_max_c ?? temp.casa_verano ?? null,
+      habitacion: texto(objeto(p.ubicacion).habitacion),
       rusticidad: texto(temp.rusticidad_rhs),
     },
   };

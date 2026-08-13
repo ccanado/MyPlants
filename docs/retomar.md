@@ -4,7 +4,7 @@
 histórico: cuenta cómo se llegó aquí y no se actualiza, solo crece. El mapa completo de qué es cada
 fichero está en `CLAUDE.md`.
 
-Última actualización: **12 de agosto de 2026**, commit `730e97d`.
+Última actualización: **13 de agosto de 2026**, con las tres plantas nuevas dentro.
 
 **Se trabaja en solitario.** El equipo de cinco agentes que construyó esto está parado y el modo
 Agent Teams retirado. Si encuentras referencias a `ux-lead`, `builder`, `botanist`, `qa-visual` o
@@ -19,10 +19,15 @@ usar esos instrumentos.
 
 ## Qué es la web hoy
 
-Campo oscuro cálido, **las siete fotos de las plantas llevando la página**, y chartreuse ácido
+Campo oscuro cálido, **las diez fotos de las plantas llevando la página**, y chartreuse ácido
 —sacado del borde de hoja del coleo grande real— como único acento. El veredicto del día
-(`3 DE 7 PIDEN MIRADA`) a escala de display, que es lo más grande de la pantalla. Las fichas
+(`3 DE 10 PIDEN MIRADA`) a escala de display, que es lo más grande de la pantalla. Las fichas
 agrupadas en dos bandas, **PIDEN MIRADA** y **ESTÁN BIEN**, con su recuento.
+
+**Son diez plantas desde el 13 de agosto de 2026, y ya no todas viven en el salón**: nueve sí, y el
+segundo poto está en la cocina. Eso no es un detalle de inventario — es lo que obligó a dejar en
+null los tres campos de temperatura de casa en esa ficha, porque los 21-24 °C de invierno y los
+28 °C de tope de verano son del salón y nadie ha medido la cocina.
 
 Esa piel la propuso `ui-designer` en la carpeta `alternativa/`, **Carlos la eligió mirando dos
 versiones renderizadas** y el 12 de agosto se aplicó a la web entera. La carpeta ya no está: hizo
@@ -44,12 +49,17 @@ push). En local: `python3 -m http.server 8000`.
 - Los **diagramas**: riego, luz como hueco entre lo que quiere y lo que tiene, y rango térmico con
   la banda de la casa rotulada **como banda de la casa**. Y la **cronología** con eje logarítmico
   de verdad (R² 0,9995), que ahora va debajo de la rejilla.
-- Las **siete siluetas de hoja**, que bajaron al expediente con su rasgo en palabras, y la del
-  helecho con la trama de sin-dato **dentro del contorno** porque su especie no está identificada.
+- Las **siluetas de hoja** —ocho dibujos para diez plantas: los dos coleos comparten forma y los
+  dos potos, especie—, que bajaron al expediente con su rasgo en palabras. Los dos helechos son el
+  mejor ejemplo de para qué sirven: mismo lenguaje gráfico y **la única diferencia es la trama de
+  sin-dato**, que lleva el del salón porque su especie no está identificada y no lleva el nuevo,
+  que trae la especie en la etiqueta.
 - Los **diez iconos de campo**, la búsqueda, los filtros, el histórico de estados y las **fuentes
   citadas al pie de cada campo**.
-- La **pegatina de Projardín**, reconstruida en HTML y CSS —el código de barras es un gradiente
-  repetido— dentro del bloque `LA PRUEBA`, al lado de la foto de la etiqueta real.
+- La **pegatina reconstruida** en HTML y CSS —el código de barras es un gradiente repetido—
+  dentro del bloque `LA PRUEBA`, al lado de la foto de la etiqueta real. Ya no es solo la de
+  Projardín: se dibuja con el emisor que traiga cada planta, y desde el 13 de agosto hay tres
+  procedencias distintas (Projardín, el productor de la begonia y Leroy Merlin).
 
 Lo garantiza un número y no una impresión: `cobertura-datos` da **0 campos que no llegan a la
 página**. Es la guarda contra el riesgo real de un rediseño, que es perder contenido sin enterarse.
@@ -66,7 +76,7 @@ página**. Es la guarda contra el riesgo real de un rediseño, que es perder con
 - **Las fotos de diagnóstico no se filtran.** Ni duotono, ni grado, ni viñeta. Más grandes y mejor
   presentadas sí; mejor de lo que están, no. En la única planta que se muere, embellecer la foto
   corrompe la prueba.
-- **Ni un dato inventado.** Siete plantas y son las que hay. Un campo vacío está vacío a propósito.
+- **Ni un dato inventado.** Diez plantas y son las que hay. Un campo vacío está vacío a propósito.
 
 ---
 
@@ -93,17 +103,54 @@ el mismo cambio: **el sujeto vuelve a su propia portada.**
 
 ---
 
+## 13 de agosto de 2026 · tres plantas más
+
+Carlos añadió tres plantas y las fotografió: **poto2**, que llevaba más de veinte años en la cocina
+sin ficha; y **helecho2** y **croton**, comprados ese día en Leroy Merlin para la parte del salón
+alejada del ventanal. Se hizo con ellas lo mismo que con las siete: identificación verificada,
+derivados de imagen, ficha completa con sus fuentes, silueta y diagnóstico fechado.
+
+Lo que trajeron, además del contenido:
+
+- **La casa dejó de ser una habitación.** El poto nuevo está en la cocina, así que `meta.contexto`
+  ya no puede decir «las siete, en el salón» y los tres campos `casa_*` de esa ficha van en null.
+  El rótulo del diagrama térmico decía «el salón» **escrito a mano**: ahora sale del dato
+  (`ubicacion.habitacion`), porque el literal habría rotulado como del salón una temperatura de la
+  cocina en cuanto alguien la midiera.
+- **Segunda tanda de fotos**, y con ella la primera fecha de diagnóstico que no vale para todas. La
+  cabecera decía «visto el 11 de agosto»; con tres fichas del 13 eso habría sido **falso para siete
+  de las diez**, así que ahora calcula el rango de las plantas: «visto entre el 11 y el 13».
+  `meta.tandas` guarda qué se fotografió cada día.
+- **La primera planta `no_toxica` de la casa**: ASPCA lista el helecho de Boston como no tóxico
+  para perros ni gatos. Hasta ese día la escala decía que ninguna lo era, y era verdad.
+- **La primera cita que no es ASPCA**: no tiene entrada para *Codiaeum variegatum* —comprobado en
+  su listado por letra y en el imprimible para perros—, así que la toxicidad del croton se apoya en
+  Pet Poison Helpline y en RHS. Suplente, no sustituto.
+- **Una discrepancia de familia declarada en vez de escondida**: IPNI archiva el helecho nuevo en
+  Oleandraceae y GBIF en Nephrolepidaceae. Se elige la de GBIF y se escribe la otra al lado; quien
+  lo cerraría es POWO, que devuelve 403.
+- Y **el riego de las siete viejas cambió**: Carlos dio fechas nuevas (helecho, begonia y los dos
+  potos el 12; los dos coleos, el ficus y la margarita el 13). Ocho de las diez tienen ya riego
+  registrado; las dos que no son las que llegaron el 13 sin regar.
+
+Tres cosas se arreglaron en los instrumentos porque impedían verificar algo del alcance, y están
+contadas en `docs/aprendizaje.md`: el presupuesto de imágenes, el comprobador de enlaces y un dato
+que solo se veía mal en la frase renderizada.
+
+---
+
 ## Lo que queda
 
 Por orden, y con lo que hace falta para cerrarlo.
 
 ### 1. Las `notas` de la casa — **solo puede hacerlo una persona**
 
-Vacías en las siete. El panel del cuaderno solo se renderiza con contenido, así que hoy no se ve un
-hueco: se ve una web sin voz, y esa capa es la razón de que el panel exista. Basta una frase por
-planta, de quien la riega. **No se inventan nunca.**
+Vacías en las diez, y ahora hay tres huecos más: las plantas nuevas tampoco tienen voz. El panel
+del cuaderno se renderiza con `historia` —que sí tienen—, así que no se ve un vacío; lo que no se
+ve es a nadie de la casa hablando. Basta una frase por planta, de quien la riega.
+**No se inventan nunca.**
 
-Sitio para escribirlas: `docs/inventario.md`, que está preparado con las siete y su hueco.
+Sitio para escribirlas: `docs/inventario.md`, que está preparado con las diez y su hueco.
 
 ### 2. Marcar lo hecho, y que quede — **aprobado en concepto por Carlos el 12 de agosto**
 
@@ -119,24 +166,35 @@ La web pide cosas al que cuida las plantas y no puede recibir respuesta: no hay 
 
 #### Esto ya está medio hecho, y por ahí se entra
 
-Tres plantas tienen hoy `riego.ultimo: "2026-08-11"` con `ancla_tipo: riego_registrado`. **Eso ya
-es una marca**: Carlos regó, se registró como dato con su fecha, y la ficha dice «se regó hace un
-día» en vez de «sin registrar». El campo existe, el render lo usa y el test lo verifica. Así que
+**Ocho de las diez** tienen ya `riego.ultimo` con `ancla_tipo: riego_registrado` — el 12 de agosto
+el helecho, la begonia y los dos potos; el 13, los dos coleos, el ficus y la margarita. **Eso ya es
+una marca**: alguien regó, se registró como dato con su fecha, y la ficha dice «se regó hace tres
+días» en vez de «sin registrar». El campo existe, el render lo usa y el test lo verifica. Así que
 esto **no es añadir persistencia: es automatizar la entrada de un campo que ya existe**, y por eso
 es mucho más pequeño y mucho más seguro de lo que parece.
+
+Y el 13 de agosto dio la mejor prueba de por qué hace falta: las ocho fechas las dijo Carlos **en
+una frase, en el chat**, y hubo que traducirlas a mano a ocho pares de campos. Ese es exactamente
+el trabajo que la marca elimina. De paso enseñó un caso que hay que tratar: dijo el 12 donde la
+ficha traía el 11, y no consta si fueron dos riegos o una corrección. `ultimo` guarda el más
+reciente y la nota lo dice; una marca automática tendrá que decidir lo mismo y decirlo igual.
 
 #### La regla que gobierna, y no la afloja el alcance
 
 «Hacer todo» significa las cinco clases de tarea, **no** que marcar signifique lo mismo en todas. El
 `tipo` que ya está escrito en el dato lo decide:
 
+Recuento a 13 de agosto de 2026, con las tres plantas nuevas dentro — **eran 35 tareas y ahora son
+53**, así que si vuelve a cambiar el inventario hay que contarlas otra vez y no fiarse de esta
+tabla:
+
 | tipo | cuántas | qué hace la marca |
 | --- | --- | --- |
-| `fecha` | 14 | **cierra la tarea**: el calendario manda de verdad |
-| `temporada` | 9 | **cierra la ventana** de este año |
+| `fecha` | 23 | **cierra la tarea**: el calendario manda de verdad |
+| `temporada` | 14 | **cierra la ventana** de este año |
 | `vencida` | 1 | **deja de vencer** |
-| `ritmo` (riego) | 7 | **solo enriquece la observación**: «se regó hace 3 días». **NUNCA «hoy toca»** |
-| `condicionada` | 4 | **nada**: su disparador es mirar la planta, no el calendario |
+| `ritmo` (riego) | 10 | **solo enriquece la observación**: «se regó hace 3 días». **NUNCA «hoy toca»** |
+| `condicionada` | 5 | **nada**: su disparador es mirar la planta, no el calendario |
 
 Los dos últimos renglones no son alcance recortado, son honestidad de contenido. Está argumentado
 en `js/tareas.js`: para el riego el disparador real **no es el calendario, es el sustrato**. Con una
@@ -205,10 +263,19 @@ sucia**. Falta también la medición en frío del peso transferido (9.7), que ho
 
 ### 4. Dos presupuestos que se incumplen en verde
 
-`peso-assets.py` avisa de `css/app.css` (78,8 KB contra un tope de 60) y de `js/` (156,6 KB contra
+`peso-assets.py` avisa de `css/app.css` (79,5 KB contra un tope de 60) y de `js/` (156,3 KB contra
 60). Los dos topes son números redondos sin procedencia, igual que el 20/62/600. **Un tope que se
 incumple en verde no es un tope**: o se deriva o se retira. Y no lo decide un informe de QA — un
 informe puede medir contra un objetivo, no crearlo.
+
+**El tercero de esa lista ya no está, y lo resolvió chocarse con él.** El tope de imágenes eran
+2.500 KB planos, y las tres plantas del 13 de agosto lo pasaron a ERROR sin que nada estuviera mal:
+las fotos nuevas pesan lo mismo que las viejas. El fallo era la FORMA del número — un total fijo
+depende de cuántas plantas tenga Carlos, y eso lo decide Carlos, así que «arreglarlo» habría sido
+recomprimir fotos correctas o no añadir la planta. Sustituido por dos presupuestos por planta
+derivados de lo medido: 440 KB de imágenes por planta (peor caso real 411,5, el ficus) y 95 KB de
+derivado de rejilla (peor caso 89,6), que es lo único que baja al abrir la web. Queda como pauta
+para los otros dos: **un tope se deriva de una medición o se retira.**
 
 ### 5. El índice de síntomas como lista navegable
 
@@ -240,6 +307,15 @@ Hacer comprobable una cita correcta que apunta al taxón equivocado.
 El esquema ya es histórico: la ficha diagnostica un momento fechado y no el presente. Añadir un
 estado nuevo no rompe nada — el distintivo toma el peor de todos y el vigente se lee por
 `fecha_foto`.
+
+**El 13 de agosto se ejercitó por primera vez**, aunque en la variante fácil: tres plantas nuevas
+con su primer estado, no un segundo estado de una planta ya fichada. Lo que se aprendió y sirve para
+la próxima vez: el camino de la imagen es `docs/plants/<nombre>.jpg` (original, fuera de git) →
+`assets/img/<id>.jpg` a 800×1067 → `assets/img/rejilla/<id>.jpg` a 480×640 con **el mismo
+encuadre** → y `assets/img/<id>-etiqueta.jpg` a 500×667 si hay pegatina. Con `sips` basta; si la
+foto viene apaisada hay que recortar a 3:4 antes, y el recorte se elige mirándolo. Lo que sigue sin
+ejercitarse es el caso interesante: una segunda foto de la MISMA planta, que es la que convierte
+`estados[].verificacion` de campo vacío en el sitio donde una hipótesis se confirma o se cae.
 
 ---
 

@@ -29,9 +29,39 @@ import struct
 import sys
 from pathlib import Path
 
-# --- presupuestos (una web de fichas de planta no necesita más) -------------------------
-MAX_IMG_KB = 300          # por imagen
-MAX_TOTAL_IMG_KB = 2500   # todas las imágenes juntas
+# --- presupuestos -----------------------------------------------------------------------
+# Aquí había un tope plano de 2.500 KB para todas las imágenes juntas, con el
+# comentario «una web de fichas de planta no necesita más». El 13 de agosto de 2026
+# entraron tres plantas y el tope pasó a dar ERROR sin que nada estuviera mal: las
+# fotos nuevas pesan lo mismo que las viejas y están dimensionadas igual.
+#
+# El problema no era el número, era su FORMA. Un presupuesto total fijo depende de
+# cuántas plantas tenga Carlos, y eso lo decide Carlos: con el tope plano, añadir la
+# octava planta se convierte en un fallo de rendimiento, y la única manera de
+# «arreglarlo» es recomprimir fotos que estaban bien o no añadir la planta. Un
+# instrumento que se opone al contenido legítimo mide mal.
+#
+# Así que se sustituye por dos presupuestos POR PLANTA, los dos derivados de lo
+# medido en las diez fichas del 13 de agosto de 2026 y no de un número redondo:
+#
+#   KB_IMG_POR_PLANTA = 440  → ficha (800×1067) + derivado de rejilla (480×640) +
+#     foto de etiqueta (500×667). Peor planta medida el 13/08/2026: el ficus, 233,2 +
+#     87,8 + 90,5 = 411,5 KB, y la más pesada de las nuevas es el croton con 394,6.
+#     El tope deja un 7 % sobre el peor caso REAL —el primer número que escribí aquí
+#     fue el del croton, y era el peor de las nuevas y no el peor de las diez: se
+#     corrigió ejecutando el comprobador en vez de fiarse de la cuenta—. Se comprueba
+#     PLANTA A PLANTA, que es más estricto que sobre la suma: si una regresión mete
+#     una foto de 3 MB, el aviso nombra la planta en vez de decir que el total subió.
+#
+#   KB_REJILLA_POR_PLANTA = 95 → lo único que baja al abrir la web, porque las fotos
+#     de ficha viven dentro de un <details> cerrado y son `lazy`. Peor derivado
+#     medido: 89,6 KB. Es el presupuesto que le importa a quien abre la página.
+#
+# El total en disco se sigue informando, pero ya no es un tope: es la suma de los
+# per-planta, y comprobarlos uno a uno lo cubre.
+MAX_IMG_KB = 300             # por fichero, sea de quien sea
+KB_IMG_POR_PLANTA = 440      # ficha + rejilla + etiqueta de una misma planta
+KB_REJILLA_POR_PLANTA = 95   # solo el derivado: es la carga inicial real
 MAX_FUENTE_KB = 90        # woff2 subseteada a latín
 MAX_CSS_KB = 60
 MAX_JS_KB = 60
@@ -110,6 +140,20 @@ CSS_URL = re.compile(r"""url\(\s*['"]?([^'")]+)""", re.I)
 
 def kb(n: int) -> float:
     return round(n / 1024, 1)
+
+
+def nombre_corto(ruta: Path, raiz: Path) -> str:
+    """`assets/img/rejilla/poto.jpg` → `rejilla/poto.jpg`, y si cae fuera, el nombre.
+
+    Relativo a `assets/img/` y no `.name`: desde que hay derivados en `rejilla/` hay
+    dos ficheros con el mismo nombre, y un aviso que nombra mal el fichero manda a
+    alguien a mirar donde no está.
+    """
+    img = (raiz / "assets" / "img").resolve()
+    try:
+        return ruta.resolve().relative_to(img).as_posix()
+    except ValueError:
+        return ruta.name
 
 
 def main() -> int:
@@ -204,6 +248,9 @@ def main() -> int:
         if datos is not None:
             plantas = datos if isinstance(datos, list) else datos.get("plantas", [])
             info.append(f"content/plantas.json: {len(plantas)} planta(s), {kb(jpath.stat().st_size)} KB")
+            # Lo que pesa CADA planta, para poder decir cuál se ha pasado.
+            por_planta: dict[str, list[Path]] = {}
+            rejillas: list[Path] = []
             # js/datos.js antepone "./assets/img/" a los nombres sin barra, así que un
             # `foto` pelado como "poto.jpg" es correcto y no debe darse por roto.
             for p in plantas:
@@ -222,6 +269,7 @@ def main() -> int:
                     if ruta is None:
                         continue
                     referenciados.add(ruta)
+                    por_planta.setdefault(str(p.get("id") or p.get("nombre_comun")), []).append(ruta)
                     if not ruta.is_file():
                         errores.append(
                             f"content/plantas.json: {campo} de '{p.get('id') or p.get('nombre_comun')}' "
@@ -234,7 +282,37 @@ def main() -> int:
                     # sepa lo que el código hace. Su existencia la exige
                     # tests/coherencia.py; esto solo evita el falso positivo.
                     if campo == "foto" and "/" not in foto:
-                        referenciados.add((raiz / "assets" / "img" / "rejilla" / foto).resolve())
+                        der = (raiz / "assets" / "img" / "rejilla" / foto).resolve()
+                        referenciados.add(der)
+                        por_planta.setdefault(str(p.get("id") or p.get("nombre_comun")), []).append(der)
+                        rejillas.append(der)
+
+            # --- los dos presupuestos por planta ---------------------------------------
+            # Se comprueba planta a planta y no sobre la suma: así el aviso nombra la
+            # planta que se ha pasado en vez de decir que el total ha subido, que es
+            # la diferencia entre poder arreglarlo y tener que buscarlo.
+            for pid, rutas in sorted(por_planta.items()):
+                presentes = [r for r in rutas if r.is_file()]
+                suma = sum(r.stat().st_size for r in presentes)
+                detalle = ", ".join(f"{nombre_corto(r, raiz)} {kb(r.stat().st_size)}" for r in presentes)
+                info.append(f"planta '{pid}': {kb(suma)} KB en imágenes ({detalle})")
+                if suma > KB_IMG_POR_PLANTA * 1024:
+                    errores.append(
+                        f"planta '{pid}' suma {kb(suma)} KB de imágenes (presupuesto "
+                        f"{KB_IMG_POR_PLANTA} KB por planta: ficha + rejilla + etiqueta)"
+                    )
+            if rejillas:
+                carga = sum(r.stat().st_size for r in rejillas if r.is_file())
+                tope = KB_REJILLA_POR_PLANTA * len(plantas)
+                info.append(
+                    f"derivados de rejilla: {kb(carga)} KB los {len(rejillas)} "
+                    f"(presupuesto {tope} KB = {KB_REJILLA_POR_PLANTA} × {len(plantas)} plantas)"
+                )
+                if carga > tope * 1024:
+                    errores.append(
+                        f"los derivados de rejilla suman {kb(carga)} KB y el presupuesto de carga "
+                        f"inicial es {tope} KB ({KB_REJILLA_POR_PLANTA} KB × {len(plantas)} plantas)"
+                    )
 
     # --- imágenes en assets/ -----------------------------------------------------------
     img_dir = raiz / "assets" / "img"
@@ -251,7 +329,7 @@ def main() -> int:
             # rejilla/ hay dos ficheros con el mismo nombre, y el aviso señalaba
             # al que no era. Un instrumento que nombra mal el objeto manda a
             # alguien a mirar donde no está.
-            rel = f.relative_to(img_dir).as_posix()
+            rel = nombre_corto(f, raiz)
             info.append(f"assets/img/{rel}: {kb(peso)} KB, {d}")
             if peso > MAX_IMG_KB * 1024:
                 errores.append(f"assets/img/{rel} pesa {kb(peso)} KB (máximo {MAX_IMG_KB} KB)")
@@ -261,8 +339,10 @@ def main() -> int:
                 avisos.append(f"assets/img/{rel} es {d}: demasiado grande para una ficha")
             if f.resolve() not in referenciados:
                 avisos.append(f"assets/img/{rel} no lo referencia nadie (huérfano)")
-        if total_img > MAX_TOTAL_IMG_KB * 1024:
-            errores.append(f"assets/img/ suma {kb(total_img)} KB (presupuesto {MAX_TOTAL_IMG_KB} KB)")
+        # El total en disco se informa y NO se compara con ningún tope: el tope está
+        # por planta, unos párrafos arriba, y comprobarlo planta a planta es más
+        # estricto que comprobar la suma. Ver el bloque de presupuestos.
+        info.append(f"assets/img/ suma {kb(total_img)} KB en total (informativo, sin tope)")
     else:
         avisos.append("assets/img/ no existe todavía")
 
