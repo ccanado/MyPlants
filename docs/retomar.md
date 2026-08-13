@@ -4,7 +4,8 @@
 histórico: cuenta cómo se llegó aquí y no se actualiza, solo crece. El mapa completo de qué es cada
 fichero está en `CLAUDE.md`.
 
-Última actualización: **13 de agosto de 2026**, con las tres plantas nuevas dentro.
+Última actualización: **13 de agosto de 2026**, commit `ab28895`, con las tres plantas nuevas
+dentro y medidas: `docs/qa/informe-5.md`.
 
 **Se trabaja en solitario.** El equipo de cinco agentes que construyó esto está parado y el modo
 Agent Teams retirado. Si encuentras referencias a `ux-lead`, `builder`, `botanist`, `qa-visual` o
@@ -12,7 +13,7 @@ Agent Teams retirado. Si encuentras referencias a `ux-lead`, `builder`, `botanis
 mandar un mensaje.
 
 Lee, en este orden: este fichero, `CLAUDE.md`, y **`docs/aprendizaje.md`** — que no es opcional,
-porque documenta diecisiete formas en que los instrumentos de este proyecto han mentido, y vas a
+porque documenta veinte formas en que los instrumentos de este proyecto han mentido, y vas a
 usar esos instrumentos.
 
 ---
